@@ -136,8 +136,10 @@ export default async function PlaceBarrierFree({ params }: Props) {
               {neighbors.map((n) => (
                 <div key={n.contentId} className={s.bfGroup}>
                   <h3 className={s.bfGroupTit}>{n.title}</h3>
+                  {/* 좌표를 빌린 곳(서악서원)은 빌린 좌표로 잰 거리라 적지 않는다(오시는 길·가까운 편의시설과 같은 규칙) */}
                   <p className={s.bfMeta}>
-                    {n.typeLabel} · 직선거리 {fmtM(n.distanceM)}
+                    {n.typeLabel}
+                    {!p.approx && !n.coordsBorrowed && <> · 직선거리 {fmtM(n.distanceM)}</>}
                   </p>
                   <BoardTable
                     caption={`${n.title} 무장애 정보`}
@@ -153,7 +155,7 @@ export default async function PlaceBarrierFree({ params }: Props) {
                 className={s.tipsAfterTable}
                 items={[
                   <Ph key="a">
-                    위 표는 {withJosa(p.name, "이/가")} 아니라 300m 안에 있는 다른 곳의 한국관광공사 무장애 여행 정보입니다.
+                    위 표는 {withJosa(p.name, "이/가")} 아니라 {p.approx ? "" : "300m 안에 있는 "}다른 곳의 한국관광공사 무장애 여행 정보입니다.
                   </Ph>,
                   ...(p.approx
                     ? [<Ph key="b">지도 위 자리는 가까운 곳의 좌표를 빌려 쓴 것이라 실제 자리와 조금 다를 수 있습니다.</Ph>]

@@ -156,7 +156,8 @@ export function sourceLines(srcs: Iterable<AmenitySrc | "osmRest">): string[] {
   const S = AM.sources;
   const lines: string[] = [];
   const ref = (s: Source) => (s.refDates ? `데이터기준일자 ${s.refDates[1]}` : `${s.fetched.slice(0, 10)} 받음`);
-  if (set.has("korwith")) lines.push(`자료: ${S.korwith.name}(${ref(S.korwith)})`);
+  // 이름 끝 괄호(KorWithService2, 내려받기 판 등)는 떼고 적는다. 같은 쪽 무장애 표 출처 줄과 같은 이름이 되게
+  if (set.has("korwith")) lines.push(`자료: ${S.korwith.name.replace(/\(.*\)$/, "")}(${ref(S.korwith)})`);
   if (set.has("toiletStd")) lines.push(`자료: ${S.toiletStd.name.replace(/\(.*\)$/, "")}(${ref(S.toiletStd)})`);
   if (set.has("bfCulture")) lines.push(`자료: ${S.bfCulture.name}(최종작성일 2022-11-25)`);
   if (set.has("parking")) lines.push(`자료: ${S.parking.name}(${ref(S.parking)})`);
