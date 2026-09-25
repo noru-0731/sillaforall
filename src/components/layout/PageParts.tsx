@@ -42,8 +42,8 @@ export function SideNav({ section, current }: { section: NavItem; current: strin
   return <SideMenuNav menu={sideMenuOf(section)} current={current} />;
 }
 
-/** 쪽 안 목차: "이 페이지의 구성" 상자(궁능에는 없음, 예전 쪽 호환용) */
-export function InPageNav({ title, items }: { title: string; items: { id: string; label: string }[] }) {
+/** 쪽 안 목차: "이 페이지의 구성" 상자(궁능에는 없음. KRDS 쪽 안 목차의 이름표). 관광지 무장애 정보 쪽이 쓴다 */
+export function InPageNav({ title, items }: { title: string; items: { id: string; label: React.ReactNode }[] }) {
   return (
     <nav className="rc-inpage" aria-label={`${title} 이 페이지의 구성`}>
       <p className="rc-inpage__tit">이 페이지의 구성</p>

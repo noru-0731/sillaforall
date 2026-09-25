@@ -183,7 +183,7 @@ export default function SourcesPage() {
       <Section id="osm" title="오픈스트리트맵(OpenStreetMap)">
         <ul className={`${s.bullets} ${s.bulletsTight}`}>
           <li>
-            <Ph>관광지 둘레 화장실·벤치·쉼터(가까운 편의시설 지도)</Ph>
+            <Ph>관광지 둘레 화장실·벤치·쉼터</Ph>
           </li>
           <li>
             <Ph>버스 정류장·노선 번호(오시는 길 대중교통)</Ph>

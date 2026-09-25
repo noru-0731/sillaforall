@@ -1007,6 +1007,10 @@ body {
   border: 0.1rem solid var(--rc-line);
   background: var(--rc-bg-table);
 }
+/* 본문 맨 앞에 올 때(관광지 무장애 정보 쪽에서 문의 전화·그림 줄이 없는 곳)는 윗선 아래 여백(.rc-subcon)만 */
+.rc-subcon > .rc-inpage:first-child {
+  margin-top: 0;
+}
 .rc-inpage__tit {
   font-size: 1.6rem;
   font-weight: 700;

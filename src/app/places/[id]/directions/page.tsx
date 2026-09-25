@@ -7,7 +7,7 @@
 //
 // 무장애 시안(bf-draft)에서 더한 것:
 // - 지도 위에 500m 안 공영주차장(장애인전용주차구역이 있는 곳은 1km 안까지) 번호 네모, 주차 안내 아래에 같은 번호의 표.
-//   (전국주차장정보표준데이터, 도구/10_편의시설_지도.py). 화장실·충전기는 무장애 정보 쪽 "가까운 편의시설"에 있다.
+//   (전국주차장정보표준데이터, 도구/10_편의시설_지도.py). 화장실·충전기는 무장애 정보 쪽 "편의시설"에 있다.
 // - 대중교통 아래에 경주시교통약자이동지원센터(전국교통약자이동지원센터정보표준데이터, 시 전체 한 곳).
 //
 // 페르소나 장점 취합(가1·가2·가13)에서 더한 것:
@@ -257,7 +257,7 @@ export default async function PlaceDirections({ params }: Props) {
         {pk.length > 0 && (
           <div className={s.pkWrap}>
             <p className={s.transUnitTit}>
-              <Ph>가까운 공영주차장</Ph>
+              <Ph>공영주차장</Ph>
             </p>
             <AmenityTable items={pk} idPrefix="pk" showKind={false} caption={`${p.name} 가까운 공영주차장: 번호, 이름, 직선거리, 내용, 자료`} />
             <TipList

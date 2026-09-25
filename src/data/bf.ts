@@ -43,6 +43,17 @@ export function bfGroupNamesOf(id: string): string[] {
 /** 채워진 칸 수 */
 export const bfFilledOf = (id: string) => BF.places[id]?.filled ?? 0;
 
+// 칸 이름을 화면에 적을 때: 값이 대여 이야기인 두 칸은 열린관광 무장애 편의정보 칸 이름으로(문구 대조 BF02). 자료 칸 이름은 그대로 둔다.
+const FIELD_LABEL: Record<string, string> = { 휠체어: "휠체어대여", 유모차: "유모차 대여" };
+export const bfLabel = (k: string) => FIELD_LABEL[k] ?? k;
+
+/** 글이 적힌 칸 이름(묶음·칸 차례). 무장애 쪽 머리 그림 줄(가9)에 쓴다. '… 기타' 칸은 시설 이름이 아니라서 뺀다. 명부에 없으면 빈 목록 */
+export function bfFilledFieldsOf(id: string): string[] {
+  return bfGroupsOf(id)
+    .flatMap((g) => g.rows.map(([k]) => k))
+    .filter((k) => !k.endsWith("기타"));
+}
+
 // 관광공사 콘텐츠 유형: 12 관광지, 14 문화시설 (숙박 32·음식점 39 후보는 싣지 않는다)
 const TYPE_LABEL: Record<string, string> = { "12": "관광지", "14": "문화시설" };
 export type BfNeighbor = { title: string; contentId: string; typeLabel: string; distanceM: number; coordsBorrowed: boolean; groups: BfGroup[] };
