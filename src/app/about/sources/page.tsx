@@ -7,6 +7,7 @@ import { Icon } from "@/components/icons";
 import { MENU } from "@/site/ia";
 import { koglCondition, photoCredit, type KoglType } from "@/data/photos";
 import { SOURCES } from "@/data/bf";
+import { BUS_META } from "@/data/bus";
 import { BoardTable } from "@/components/royal";
 import s from "../about.module.css";
 
@@ -137,22 +138,34 @@ export default function SourcesPage() {
 
       <Section id="portal" title="공공데이터포털(data.go.kr)">
         <BoardTable
-          caption="가까운 편의시설과 교통약자 이동 지원에 쓴 공공데이터: 자료, 제공 기관, 이용허락, 기준일, 주소"
+          caption="가까운 편의시설, 교통약자 이동 지원, 버스 정류장에 쓴 공공데이터: 자료, 제공 기관, 이용허락, 기준일, 주소"
           head={["자료", "제공 기관", "이용허락", "기준일", "주소"]}
           cols={["24%", "18%", "20%", "14%", "auto"]}
           align={["l", "l", "l", "c", "l"]}
-          rows={PORTAL_KEYS.map((k) => {
-            const src = SOURCES[k];
-            return [
-              src.name.replace(/\(.*\)$/, ""),
-              src.provider,
-              src.license.startsWith("이용허락범위 제한 없음") ? "이용허락범위 제한 없음" : <Ph key="l">표준데이터 쪽에 이용허락 표시 없음</Ph>,
-              REF_DATE[k],
-              <OutLink key="u" href={src.url}>
-                {src.url.replace(/^https:\/\//, "")}
+          rows={[
+            ...PORTAL_KEYS.map((k) => {
+              const src = SOURCES[k];
+              return [
+                src.name.replace(/\(.*\)$/, ""),
+                src.provider,
+                src.license.startsWith("이용허락범위 제한 없음") ? "이용허락범위 제한 없음" : <Ph key="l">표준데이터 쪽에 이용허락 표시 없음</Ph>,
+                REF_DATE[k],
+                <OutLink key="u" href={src.url}>
+                  {src.url.replace(/^https:\/\//, "")}
+                </OutLink>,
+              ];
+            }),
+            // 오시는 길 대중교통의 정류장 위치·이름·번호(도구/07_버스.py, 07_버스_읽는법.md 3-1)
+            [
+              BUS_META.molit.name,
+              "국토교통부",
+              BUS_META.molit.license,
+              `정보수집일 ${BUS_META.molit.refDate}`,
+              <OutLink key="u" href={BUS_META.molit.url}>
+                {BUS_META.molit.url.replace(/^https:\/\//, "")}
               </OutLink>,
-            ];
-          })}
+            ],
+          ]}
         />
       </Section>
 
@@ -171,6 +184,9 @@ export default function SourcesPage() {
         <ul className={`${s.bullets} ${s.bulletsTight}`}>
           <li>
             <Ph>관광지 둘레 화장실·벤치·쉼터(가까운 편의시설 지도)</Ph>
+          </li>
+          <li>
+            <Ph>버스 정류장·노선 번호(오시는 길 대중교통)</Ph>
           </li>
           <li>© OpenStreetMap 기여자</li>
           <li>ODbL(Open Database License)</li>

@@ -177,19 +177,15 @@ export function nearestRegistered(p: Place): { text: string; name: string; place
 }
 
 /**
- * 관광공사 개요를 첫 문장과 나머지 문단으로 나눈다(소개 쪽: 첫 문장은 굵게, 나머지는 본문).
- * 문단은 줄바꿈으로 나눈다.
+ * 관광공사 개요 문단(data/overview.json)을 첫 문장과 나머지 문단으로 나눈다(소개 쪽: 첫 문장은 굵게, 나머지는 본문).
+ * 첫 문장은 첫 문단에서 "다." 또는 "요." 다음에 빈칸이나 끝이 오는 자리까지. 첫 문단의 남은 글이 본문 첫 문단이 된다.
  */
-export function splitOverview(text: string | null): { first: string; rest: string[] } | null {
-  const t = (text ?? "").trim();
-  if (!t) return null;
-  const m = t.match(/^[\s\S]*?[다요]\.(?=\s|$)/);
-  const first = (m ? m[0] : t).trim();
-  const rest = t
-    .slice(m ? m[0].length : t.length)
-    .split(/\n+/)
-    .map((s) => s.trim())
-    .filter(Boolean);
+export function splitParas(paras: string[]): { first: string; rest: string[] } | null {
+  if (!paras.length) return null;
+  const [p0, ...more] = paras;
+  const m = p0.match(/^[\s\S]*?[다요]\.(?=\s|$)/);
+  const first = (m ? m[0] : p0).trim();
+  const rest = [p0.slice(m ? m[0].length : p0.length).trim(), ...more].filter(Boolean);
   return { first, rest };
 }
 

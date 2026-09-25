@@ -148,6 +148,7 @@
   font-size: 1.6rem;
   line-height: 1.6;
   color: var(--rc-text-sub);
+  white-space: pre-line;
   word-break: keep-all;
 }
 .boxTxt a {
@@ -252,6 +253,7 @@
   color: var(--rc-text-sub);
   white-space: pre-line;
   word-break: keep-all;
+  overflow-wrap: anywhere;
 }
 .infoWrap {
   padding-top: 5.5rem;
@@ -427,4 +429,11 @@
 .transDots a {
   text-decoration: underline;
   text-underline-offset: 0.3rem;
+}
+/* 오시는 길 대중교통: 정류장·경주역(KTX) 칸 아래 거리 풀이(※ 줄)와 출처 줄. 표 아래 ※ 줄과 같은 15 띄움 */
+.busNote {
+  margin-top: 1.5rem;
+}
+.busNote > :first-child {
+  margin-top: 0;
 }

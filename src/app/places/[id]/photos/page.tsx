@@ -1,6 +1,6 @@
 // 관광지 사진(61곳). 궁능 누리집 "경복궁 이야기"(gbg_story) 모양:
 // 윗선 바로 아래 칸 격자(궁능: 전각 이름 → 우리: 같은 권역 관광지, 누르면 그 관광지 사진 쪽) → 관광지 이름 → 사진 넘기기
-// → 설명 문단(궁능: 작은 사진 줄 아래 고른 전각의 설명 → 우리: 관광공사 개요, 소개 쪽과 같은 글).
+// → 설명 문단(궁능: 작은 사진 줄 아래 고른 전각의 설명 → 우리: 관광공사 개요, 소개 쪽과 같은 글·같은 문단 나누기).
 // 궁능의 "전체 다운로드"·"이 저작물만 다운로드"는 없다: 관광공사 사진 서버가 다른 누리집에서 파일을 받아 가는 허락(CORS)을 주지 않아
 // 브라우저에서 파일로 내려받게 할 수 없다. 대신 "원본 보기"(새 창)가 그 자리에 있다(PhotoViewer).
 import type { Metadata } from "next";
@@ -10,6 +10,7 @@ import { placeById, places } from "@/data";
 import { placeCrumbs, placePages, placeSideMenu, PLACE_BANNER } from "@/site/ia";
 import { SubPage } from "@/components/layout/PageParts";
 import { Caret } from "@/components/icons";
+import { overviewParas } from "@/data/overview";
 import { photosOf, sameArea, viewerPhotos } from "@/components/place/placeData";
 import PhotoViewer from "@/components/place/PhotoViewer";
 import type { ViewerItem } from "@/components/place/PhotoViewer";
@@ -45,10 +46,7 @@ export default async function PlacePhotos({ params }: Props) {
     return { ...v, ...(a?.large ? { large: a.large } : {}), ...(tall ? { tall } : {}) };
   });
   const gridLabel = "같은 권역 관광지 사진";
-  const paras = (p.overview ?? "")
-    .split(/\n+/)
-    .map((t) => t.trim())
-    .filter(Boolean);
+  const paras = overviewParas(p.id);
 
   return (
     <SubPage crumbs={placeCrumbs(p, page)} title={page.label} banner={PLACE_BANNER} sideMenu={placeSideMenu(p)} current={page.href}>

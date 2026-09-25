@@ -1,6 +1,6 @@
 // 관광지 무장애 정보(61곳). 궁능 누리집 "관람시간"(hours) 모양:
 // 윗줄 상자(궁능 정기휴일 두 상자 → 우리: 주차·걷는 길·화장실 세 상자) + ※ 줄 → 표(궁능 일반관람시간 표 → 우리: 무장애 정보 칸).
-// 명부(한국관광공사 무장애 여행 정보) 글은 손대지 않고 그대로 싣는다.
+// 명부(한국관광공사 무장애 여행 정보) 글은 손대지 않고 그대로 싣는다. 줄바꿈이 빠져 붙은 자리만 줄을 나눈다(lib/breaks.ts).
 //
 // 무장애 시안(bf-draft)에서 더한 것:
 // - 명부의 채워진 칸을 모두(예전에는 이동 일곱 칸만). 관광공사 묶음(지체장애, 시각장애, 청각장애, 영유아 가족)대로 나누고 칸 이름은 자료 그대로.
@@ -17,6 +17,7 @@ import { Ph, Section, SubPage } from "@/components/layout/PageParts";
 import { Icon, type IconName } from "@/components/icons";
 import { BoardTable, TipList } from "@/components/royal";
 import { withJosa } from "@/lib/josa";
+import { bfLines } from "@/lib/breaks";
 import { nearestRegistered } from "@/components/place/placeData";
 import { AmenityMap, AmenityTable, SourceLines, amenityPoints, legendOf } from "@/components/place/Amenities";
 import s from "@/components/place/Place.module.css";
@@ -72,13 +73,13 @@ export default async function PlaceBarrierFree({ params }: Props) {
           <Section title="주차·접근로·화장실">
             <ul className={s.boxes}>
               <Box icon="parking" title="주차">
-                {p.three.parking ?? EMPTY}
+                {bfLines(p.three.parking) ?? EMPTY}
               </Box>
               <Box icon="walk" title="접근로">
-                {p.three.walk ?? EMPTY}
+                {bfLines(p.three.walk) ?? EMPTY}
               </Box>
               <Box icon="toilet" title="화장실">
-                {p.three.toilet ?? EMPTY}
+                {bfLines(p.three.toilet) ?? EMPTY}
               </Box>
             </ul>
           </Section>

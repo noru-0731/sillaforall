@@ -3,6 +3,8 @@
 // - amenities.json: 곳마다 가까운 편의시설 요약, 배리어프리 문화예술관광지 짝, 시 전체 창구(교통약자이동지원센터), 자료 출처. 같은 도구.
 // - amenities_near.json: 지도에 찍을 가까운 화장실·공영주차장·충전기(번호 매김)와 벤치·쉼터. 만드는 곳: 도구/10_편의시설_지도.py
 // 칸 이름은 원본 자료의 칸 이름을 그대로 쓴다(새 글이 아니다). 거리는 모두 직선거리(m).
+// 무장애 칸 글은 줄바꿈이 빠져 붙은 자리만 줄을 나눠 돌려준다(lib/breaks.ts bfLines, 글자는 그대로).
+import { bfLines } from "@/lib/breaks";
 import bfRaw from "./barrierfree.json";
 import amRaw from "./amenities.json";
 import nearRaw from "./amenities_near.json";
@@ -25,7 +27,7 @@ export type BfGroup = { name: string; rows: [string, string][] };
 function groupsOf(fields: Record<string, string | null | undefined>): BfGroup[] {
   return BF_GROUPS.map((g) => ({
     name: g,
-    rows: BF.meta.groups[g].filter((k) => fields[k]?.trim()).map((k) => [k, fields[k]!.trim()] as [string, string]),
+    rows: BF.meta.groups[g].filter((k) => fields[k]?.trim()).map((k) => [k, bfLines(fields[k]!.trim())] as [string, string]),
   })).filter((g) => g.rows.length > 0);
 }
 

@@ -9,6 +9,12 @@
 // - 지도 위에 500m 안 공영주차장(장애인전용주차구역이 있는 곳은 1km 안까지) 번호 네모, 주차 안내 아래에 같은 번호의 표.
 //   (전국주차장정보표준데이터, 도구/10_편의시설_지도.py). 화장실·충전기는 무장애 정보 쪽 "가까운 편의시설"에 있다.
 // - 대중교통 아래에 경주시교통약자이동지원센터(전국교통약자이동지원센터정보표준데이터, 시 전체 한 곳).
+//
+// 페르소나 장점 취합(가1·가2·가13)에서 더한 것:
+// - 대중교통 첫머리에 가까운 정류장 셋(궁능 버스 칸 "경복궁 하차 / 간선 …" 모양: 굵은 제목에 정류장 이름과 번호, 아래 줄에 직선거리와 노선 번호).
+//   자료는 data/bus.json(도구/12_버스_문단_사이트.py). 좌표를 빌린 서악서원은 거리 없이 이름이 맞은 정류장, 블루원워터파크는 없음.
+// - 그 아래 경주역(KTX) 칸: 경주역(KTX) 정류장에서 이 곳 정류장 쪽으로 가는 노선 번호(국립경주박물관 교통안내 "철도" 칸 자리).
+// - 이용시간·쉬는 날·무장애 글은 붙은 줄을 나눠 보인다(lib/breaks.ts, 글자는 그대로).
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { areaOf, placeById, places, zipOf } from "@/data";
@@ -20,6 +26,8 @@ import MapView from "@/components/map/MapView";
 import RealMap from "@/components/map/RealMap";
 import { kakaoTo, phoneOf, sameArea } from "@/components/place/placeData";
 import { amenitiesOf, MOBILITY, NEAR_RADII, sourceLines } from "@/data/bf";
+import { BUS_SOURCE_LINES, KTX_NAME, busStopsOf, ktxLinesOf } from "@/data/bus";
+import { bfLines, hoursLines } from "@/lib/breaks";
 import { AmenityTable, SourceLines, amenityPoints, legendOf } from "@/components/place/Amenities";
 import s from "@/components/place/Place.module.css";
 
@@ -38,6 +46,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 const EMPTY = <Ph>적힌 내용 없음</Ph>;
+const fmtM = (m: number) => `${m.toLocaleString("ko-KR")}m`;
 
 /** 원(돈) 선 아이콘: 공통 아이콘에 없어 여기서 직접 그렸다(궁능 "주차요금" 아이콘 자리) */
 function WonIcon() {
@@ -72,11 +81,16 @@ export default async function PlaceDirections({ params }: Props) {
   // 주차 안내 상자의 점 줄: 관광정보의 일반 주차 글 + 무장애 여행 정보의 주차 글(있을 때만)
   const parking: { label: string; text: string }[] = [];
   if (p.parkingInfo) parking.push({ label: "한국관광공사 관광정보", text: p.parkingInfo.trim() });
-  if (reg && p.move["주차"]) parking.push({ label: "한국관광공사 무장애 여행 정보", text: p.move["주차"]! });
+  if (reg && p.move["주차"]) parking.push({ label: "한국관광공사 무장애 여행 정보", text: bfLines(p.move["주차"]!) });
 
   // 가까운 공영주차장(번호는 이 쪽에서 1부터 다시 매김)
   const pk = (amenitiesOf(p.id)?.items ?? []).filter((i) => i.kind === "parking").map((i, n) => ({ ...i, show: n + 1 }));
   const M = MOBILITY;
+
+  // 가까운 버스 정류장 셋과 경주역(KTX)에서 오는 노선
+  const stops = busStopsOf(p.id);
+  const ktx = ktxLinesOf(p.id);
+  const stopTit = (name: string, no: string | null) => `${name} 정류장${no ? `(${no})` : ""}`;
 
   return (
     <SubPage crumbs={placeCrumbs(p, page)} title={page.label} banner={PLACE_BANNER} sideMenu={placeSideMenu(p)} current={page.href} tabs={pills}>
@@ -148,9 +162,34 @@ export default async function PlaceDirections({ params }: Props) {
 
         <div className={s.transCon}>
           <IconHeading icon="bus">대중교통</IconHeading>
+          {stops.map((b) => (
+            <div key={b.stopNo ?? b.name} className={s.transUnit}>
+              <p className={s.transUnitTit}>{stopTit(b.name, b.stopNo)}</p>
+              <p className={s.transUnitTxt}>
+                {b.distM !== null && `직선거리 ${fmtM(b.distM)}\n`}
+                노선 {b.routes.length ? b.routes.join(", ") : EMPTY}
+              </p>
+            </div>
+          ))}
+          {ktx.length > 0 && (
+            <div className={s.transUnit}>
+              <p className={s.transUnitTit}>{KTX_NAME}</p>
+              <p className={s.transUnitTxt}>
+                {ktx.map((l) => `노선 ${l.routes.join(", ")} → ${stopTit(l.name, l.stopNos.join(", ") || null)}`).join("\n")}
+              </p>
+            </div>
+          )}
+          {stops.length > 0 && (
+            <div className={s.busNote}>
+              {stops.some((b) => b.distM !== null) && (
+                <TipList items={[<Ph key="a">거리는 두 곳 사이의 직선거리입니다. 길을 따라 걷는 거리와 다릅니다.</Ph>]} />
+              )}
+              <SourceLines lines={BUS_SOURCE_LINES} />
+            </div>
+          )}
           <div className={s.transUnit}>
             <p className={s.transUnitTit}>한국관광공사 무장애 여행 정보</p>
-            <p className={s.transUnitTxt}>{(reg && p.move["대중교통"]) || EMPTY}</p>
+            <p className={s.transUnitTxt}>{bfLines((reg && p.move["대중교통"]) || null) || EMPTY}</p>
           </div>
           <div className={s.transUnit}>
             <p className={s.transUnitTit}>{M.name}</p>
@@ -247,8 +286,8 @@ export default async function PlaceDirections({ params }: Props) {
           rowHeader
           rows={[
             ["이용요금", p.fee ? <span className={s.pre}>{p.fee.trim()}</span> : EMPTY],
-            ["이용시간", p.hours ? <span className={s.pre}>{p.hours.trim()}</span> : EMPTY],
-            ["휴무일", p.closed ? <span className={s.pre}>{p.closed.trim()}</span> : EMPTY],
+            ["이용시간", p.hours ? <span className={s.pre}>{hoursLines(p.hours.trim())}</span> : EMPTY],
+            ["휴무일", p.closed ? <span className={s.pre}>{hoursLines(p.closed.trim())}</span> : EMPTY],
           ]}
         />
       </div>

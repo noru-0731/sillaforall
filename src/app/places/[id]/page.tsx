@@ -7,6 +7,7 @@
 // 칸: 이용시간, 쉬는 날, 주차, 걷는 길, 화장실, 가까운 장애인 화장실, 문의 전화, 지도에서 보기. 값은 관광공사 관광정보·무장애 여행 정보 글 그대로,
 // 가까운 장애인 화장실은 도구/10_편의시설_지도.py 의 가장 가까운 한 곳(이름과 직선거리). 글이 없는 칸은 "적힌 내용 없음".
 // 칸을 누르면 그 값이 자세히 있는 쪽으로 간다. 긴 값은 세 줄까지 보이고 나머지는 줄임표(읽기 도구는 끝까지 읽는다).
+// 이용시간·쉬는 날·무장애 글은 붙은 줄을 나눠 보인다(lib/breaks.ts, 글자는 그대로).
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -14,6 +15,7 @@ import { areaOf, placeById, places } from "@/data";
 import { largeUrl, photoCreditOf } from "@/data/photos";
 import { placePages } from "@/site/ia";
 import { withJosa } from "@/lib/josa";
+import { bfLines, hoursLines } from "@/lib/breaks";
 import { Icon, type IconName } from "@/components/icons";
 import { CircleButton, Photo } from "@/components/royal";
 import { Ph } from "@/components/layout/Ph";
@@ -53,11 +55,11 @@ export default async function PlaceSubmain({ params }: Props) {
   const clean = (v: string | null | undefined) => (v ? v.replace(/\s*\n\s*/g, "\n").replace(/[ \t]{2,}/g, " ").trim() || null : null);
   const toiletA = nearestAccessibleToilet(p.id);
   const quick: { label: React.ReactNode; key: string; value: React.ReactNode | null; href: string; icon: IconName; tel?: boolean }[] = [
-    { key: "hours", label: "이용시간", value: clean(p.hours), href: `${intro.href}#basic`, icon: "clock" },
-    { key: "closed", label: "쉬는 날", value: clean(p.closed), href: `${intro.href}#basic`, icon: "calendar" },
-    { key: "parking", label: "주차", value: clean((p.registered && p.move["주차"]) || p.parkingInfo), href: `${dir.href}#parking`, icon: "parking" },
-    { key: "walk", label: "걷는 길", value: clean(p.three.walk), href: bf.href, icon: "walk" },
-    { key: "toilet", label: "화장실", value: clean(p.three.toilet), href: bf.href, icon: "toilet" },
+    { key: "hours", label: "이용시간", value: clean(hoursLines(p.hours)), href: `${intro.href}#basic`, icon: "clock" },
+    { key: "closed", label: "쉬는 날", value: clean(hoursLines(p.closed)), href: `${intro.href}#basic`, icon: "calendar" },
+    { key: "parking", label: "주차", value: clean(bfLines((p.registered && p.move["주차"]) || p.parkingInfo)), href: `${dir.href}#parking`, icon: "parking" },
+    { key: "walk", label: "걷는 길", value: clean(bfLines(p.three.walk)), href: bf.href, icon: "walk" },
+    { key: "toilet", label: "화장실", value: clean(bfLines(p.three.toilet)), href: bf.href, icon: "toilet" },
   ];
   if (!p.approx)
     quick.push({

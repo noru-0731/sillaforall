@@ -1,5 +1,6 @@
 // 관광지 소개(61곳). 궁능 누리집 "경복궁 소개·역사"(gbg_intro) 모양:
 // 어긋난 테두리 큰 사진 → 작은 건물 그림(궁능 ic_wrap 자리, 직접 그린 선 그림) → 굵은 첫 문장(가운데) → 본문 → "기본 정보" 표(궁능 "역사" 표 자리).
+// 본문은 관광공사 개요를 문단으로 나눈 것(data/overview.json, 도구/12_버스_문단_사이트.py). 글자는 원문 그대로, 나누기만 했다.
 // 본문은 궁능 "궁궐의 역사"(story_history) 모양: 왼쪽에 사진을 세로로 쌓고(309×213, 사이 20) 오른쪽에 글(왼쪽 30 띄움).
 //   사진은 큰 사진과 다른 장, 제1유형 먼저. 장 수는 본문 높이에 맞춘다(sideCount). 휴대전화는 사진 3칸 격자 뒤에 글.
 //   궁능은 사진마다 아래에 이름 띠를 얹지만, 우리 사진 이름은 대부분 관광지 이름이나 파일 이름이라 띠를 넣지 않았다.
@@ -12,7 +13,9 @@ import type { Photo as PhotoData } from "@/data/photos";
 import { placeCrumbs, placePages, placeSideMenu, PLACE_BANNER } from "@/site/ia";
 import { Ph, Section, SubPage } from "@/components/layout/PageParts";
 import { BoardTable, OffsetPhoto, Photo } from "@/components/royal";
-import { anyPhoto, areaLabelOf, cleanPhotoName, coverPhoto, phoneOf, photosOf, splitOverview } from "@/components/place/placeData";
+import { overviewParas } from "@/data/overview";
+import { hoursLines } from "@/lib/breaks";
+import { anyPhoto, areaLabelOf, cleanPhotoName, coverPhoto, phoneOf, photosOf, splitParas } from "@/components/place/placeData";
 import IntroMark from "@/components/place/IntroMark";
 import s from "@/components/place/Place.module.css";
 import st from "./intro.module.css";
@@ -78,15 +81,15 @@ export default async function PlaceIntro({ params }: Props) {
 
   const page = placePages(p)[1];
   const photo = coverPhoto(p.id) ?? anyPhoto(p.id);
-  const ov = splitOverview(p.overview);
+  const ov = splitParas(overviewParas(p.id));
   const side = ov && ov.rest.length ? sidePhotos(p.id, photo?.url ?? null, sideCount(ov.rest)) : [];
   const body = ov?.rest.map((x, i) => <p key={i}>{x}</p>);
 
   const rows: React.ReactNode[][] = [
     ["주소", cell(p.address)],
     ["읍면동·권역", `${p.dong} · ${areaLabelOf(p)}`],
-    ["이용시간", cell(p.hours)],
-    ["휴무일", cell(p.closed)],
+    ["이용시간", cell(hoursLines(p.hours))],
+    ["휴무일", cell(hoursLines(p.closed))],
     ["이용요금", cell(p.fee)],
     ["주차", cell(p.parkingInfo)],
     ["문의", contactCell(p)],
