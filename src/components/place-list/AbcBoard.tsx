@@ -2,7 +2,8 @@
 // 관광지 목록 > 가나다순(궁능유적본부 누리집 공지사항 쪽 모양, 나무 파일 notice_1440).
 // 알약 줄(전체 + 권역)은 SubPage의 tabs 자리(제목과 윗선 사이)에, 표는 본문에 있어 둘이 떨어져 있다.
 // 그래서 AbcProvider로 SubPage 전체를 감싸 고른 권역을 함께 쓴다.
-// 본문: "전체: 61곳" + 검색(궁능처럼 고르기[전체/관광지/읍면동] + 입력 + 검색, 화면 안에서 거르기) + 표(번호/권역/관광지/읍면동/무장애 정보/사진). 쪽 나누기 없음.
+// 본문: "전체: 61곳" + 검색(궁능처럼 고르기[전체/관광지/읍면동] + 입력 + 검색, 화면 안에서 거르기) + 표(번호/권역/관광지/읍면동/분류/쉬는 날/무장애 정보/사진). 쪽 나누기 없음.
+// 분류·쉬는 날(가6)은 자료 글 그대로 보이기만 한다(분류로 거르는 단추는 두지 않는다).
 // 고르기 항목 이름과 입력 칸 안내 글은 무장애 목록 두 쪽(app/barrier-free/_parts/Board.tsx)과 같다.
 // 알약 줄은 휴대전화에서 한 줄 + ‹ › 넘기기(궁능 휴대전화 공지사항).
 import { createContext, useContext, useId, useState } from "react";
@@ -109,14 +110,16 @@ export function AbcBoard({ rows, options }: { rows: BoardRow[]; options: AreaOpt
 
       <div className={s.tableWrap}>
         <table className={`rc-board ${s.board}`}>
-          <caption className="sr-only">관광지 {shown.length}곳 가나다순 목록: 번호, 권역, 관광지, 읍면동, 무장애 정보, 사진</caption>
+          <caption className="sr-only">관광지 {shown.length}곳 가나다순 목록: 번호, 권역, 관광지, 읍면동, 분류, 쉬는 날, 무장애 정보, 사진</caption>
           <colgroup>
             <col className={s.cNum} />
             <col className={s.cArea} />
             <col />
             <col className={s.cDong} />
+            <col className={s.cCat} />
+            <col className={s.cClosed} />
             <col className={s.cFlag} />
-            <col className={s.cFlag} />
+            <col className={s.cPhoto} />
           </colgroup>
           <thead>
             <tr>
@@ -126,6 +129,8 @@ export function AbcBoard({ rows, options }: { rows: BoardRow[]; options: AreaOpt
               <th scope="col">권역</th>
               <th scope="col">관광지</th>
               <th scope="col">읍면동</th>
+              <th scope="col">분류</th>
+              <th scope="col">쉬는 날</th>
               <th scope="col">무장애 정보</th>
               <th scope="col" className={s.mNone}>
                 사진
@@ -143,6 +148,14 @@ export function AbcBoard({ rows, options }: { rows: BoardRow[]; options: AreaOpt
                   <Link href={`/places/${r.id}`}>{r.name}</Link>
                 </td>
                 <td className={s.dong}>{r.dong}</td>
+                <td className={s.cat}>
+                  <span className={s.mOnly}>분류 : </span>
+                  {r.category ?? "-"}
+                </td>
+                <td className={s.closed}>
+                  <span className={s.mOnly}>쉬는 날 : </span>
+                  <span className={s.closedTxt}>{r.closed ?? "-"}</span>
+                </td>
                 <td className={s.flag}>
                   {r.registered ? (
                     <>
@@ -168,7 +181,7 @@ export function AbcBoard({ rows, options }: { rows: BoardRow[]; options: AreaOpt
             ))}
             {shown.length === 0 && (
               <tr>
-                <td colSpan={6} className={s.empty}>
+                <td colSpan={8} className={s.empty}>
                   등록된 관광지가 없습니다.
                 </td>
               </tr>

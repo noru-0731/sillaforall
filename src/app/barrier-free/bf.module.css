@@ -385,6 +385,42 @@
 .board td.near {
   text-align: left;
 }
+/* 정보가 적힌 곳: 세 칸에 명부 글(가7). 칸 글자는 표 글자(15px) 그대로, 왼쪽 맞춤, 붙은 줄은 나눈 글 */
+.board td.three {
+  padding-top: 1.2rem;
+  padding-bottom: 1.2rem;
+  text-align: left;
+}
+.threeTxt {
+  white-space: pre-line;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+/* 무장애 묶음 이름표(가8): 목록 카드 이름표와 같은 모양(테두리 알약, 14px). 보이기만 한다 */
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.6rem;
+  margin-top: 0.6rem;
+}
+.tag {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.2rem;
+  padding: 0 0.9rem;
+  border: 0.1rem solid var(--rc-line-table);
+  border-radius: 1.3rem;
+  background: var(--rc-bg);
+  font-size: 1.4rem;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--rc-text);
+  white-space: nowrap;
+}
+.board tbody th .tags {
+  margin-top: 0.8rem;
+  margin-bottom: 0.4rem;
+}
 .empty {
   padding: 4rem 2rem !important;
   text-align: center;
@@ -536,6 +572,36 @@
   }
   .mMeta .mark {
     margin-left: 0.4rem;
+    font-size: 1.7rem;
+  }
+  .mItem .tags {
+    margin: 0.2rem 0 1rem;
+  }
+  /* 정보가 적힌 곳: 세 항목 이름 : 명부 글(가7) */
+  .mThree {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    font-size: 1.6rem;
+    line-height: 1.5;
+    color: var(--rc-text-sub);
+  }
+  .mThree > div {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .mThree dt {
+    flex: 0 0 auto;
+    min-width: 5.2rem;
+    font-weight: 500;
+    color: var(--rc-text);
+  }
+  .mThree dd {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .mThree .mark {
     font-size: 1.7rem;
   }
   .mEmpty {

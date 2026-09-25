@@ -296,35 +296,41 @@
 .nearList {
   margin-top: 1rem;
 }
-/* 궁능 sub_main_bd 줄: 738×36, 안쪽 4 0, 제목 18px 500, 날짜 자리 14.8px #131313 */
+/* 궁능 sub_main_bd 줄: 738×36, 안쪽 4 0, 제목 18px 500, 날짜 자리 14.8px #131313
+   날짜 자리에 "동네 · 직선거리 350m"(가5). 이름과 한 줄에 다 들어가지 않으면(휴대전화·글자 크게)
+   이름은 줄을 바꿔 다 보이고, 그래도 좁으면 날짜 자리가 다음 줄 오른쪽으로 내려간다. */
 .nearList a {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 2rem;
+  gap: 0 2rem;
   min-height: 3.6rem;
   padding: 0.4rem 0;
   color: var(--rc-text);
 }
 .nearName {
-  flex: 1 1 auto;
+  flex: 1 1 14rem;
   min-width: 0;
-  overflow: hidden;
   font-size: 1.8rem;
   font-weight: 500;
   line-height: 2.34rem;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
 }
 .nearList a:hover .nearName {
   text-decoration: underline;
   text-underline-offset: 0.4rem;
 }
 .nearDong {
-  flex: 0 0 auto;
+  flex: 0 1 auto;
+  min-width: 0;
+  margin-left: auto;
   font-size: 1.48rem;
   line-height: 1.924rem;
   color: var(--rc-text);
+  text-align: right;
+  word-break: keep-all;
 }
 .right {
   flex: 1 1 auto;

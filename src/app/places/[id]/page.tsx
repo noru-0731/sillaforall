@@ -8,6 +8,9 @@
 // 가까운 장애인 화장실은 도구/10_편의시설_지도.py 의 가장 가까운 한 곳(이름과 직선거리). 글이 없는 칸은 "적힌 내용 없음".
 // 칸을 누르면 그 값이 자세히 있는 쪽으로 간다. 긴 값은 세 줄까지 보이고 나머지는 줄임표(읽기 도구는 끝까지 읽는다).
 // 이용시간·쉬는 날·무장애 글은 붙은 줄을 나눠 보인다(lib/breaks.ts, 글자는 그대로).
+//
+// 페르소나 장점 취합(가5): 주변 관광지 줄의 날짜 자리(동네) 뒤에 두 곳 사이 직선거리(경주문화관광 코스의 곳 사이 거리 자리).
+// 좌표를 빌린 두 곳(서악서원, 블루원워터파크)이 끼면 거리를 뺀다. 걷는 분은 자료가 없어 싣지 않는다.
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -20,7 +23,7 @@ import { Icon, type IconName } from "@/components/icons";
 import { CircleButton, Photo } from "@/components/royal";
 import { Ph } from "@/components/layout/Ph";
 import { nearestAccessibleToilet } from "@/data/bf";
-import { anyPhoto, areaLabelOf, coverPhoto, nearby, nearbySlides, phoneOf, stripCredit, stripSlots } from "@/components/place/placeData";
+import { anyPhoto, areaLabelOf, coverPhoto, fmtDist, nearby, nearbySlides, phoneOf, stripCredit, stripSlots } from "@/components/place/placeData";
 import NearbySlider from "@/components/place/NearbySlider";
 import s from "@/components/place/Submain.module.css";
 
@@ -180,11 +183,14 @@ export default async function PlaceSubmain({ params }: Props) {
               <CircleButton href={`/map/${key}`} label={`${areaLabel} 관광지 지도`} />
             </div>
             <ul className={s.nearList}>
-              {near.map((q) => (
+              {near.map(({ place: q, distM }) => (
                 <li key={q.id}>
                   <Link href={`/places/${q.id}`}>
                     <span className={s.nearName}>{q.name}</span>
-                    <span className={s.nearDong}>{q.dong}</span>
+                    <span className={s.nearDong}>
+                      {q.dong}
+                      {distM !== null && <> · 직선거리 {fmtDist(distM)}</>}
+                    </span>
                   </Link>
                 </li>
               ))}

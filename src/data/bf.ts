@@ -36,6 +36,10 @@ export function bfGroupsOf(id: string): BfGroup[] {
   const f = BF.places[id]?.fields;
   return f ? groupsOf(f) : [];
 }
+/** 글이 적힌 칸이 하나라도 있는 묶음 이름(묶음 차례). 목록 카드·표의 이름표(가8)에 쓴다. 명부에 없으면 빈 목록 */
+export function bfGroupNamesOf(id: string): string[] {
+  return bfGroupsOf(id).map((g) => g.name);
+}
 /** 채워진 칸 수 */
 export const bfFilledOf = (id: string) => BF.places[id]?.filled ?? 0;
 

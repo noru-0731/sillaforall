@@ -3,6 +3,7 @@
  * 윗줄: "전체: 785건" 16px 500 #444 / 검색 입력 320×50 바탕 #eaeaea 둥글기 25 + 검색 단추 120×50 #131313 둥글기 25.
  * 윗줄 아래 60 → 표: 위 2px 검정, 아래 1px #aeaeae, 머리 #f8f8f8 55 높이, 줄 아래 1px #dfdfdf, 세로선 없음.
  * 칸 폭 82 / 155 / 나머지 / 155 / 103 / 103 (1030 기준). 글자 15px(공통 .rc-board).
+ * 분류·쉬는 날 두 칸(가6)을 더하면서 번호·권역·읍면동·사진 칸을 줄였다. 칸 글자 크기는 그대로.
  */
 .condition {
   display: flex;
@@ -97,16 +98,25 @@
   width: 100%;
 }
 .cNum {
-  width: 8%;
+  width: 6%;
 }
 .cArea {
-  width: 15%;
+  width: 11%;
 }
 .cDong {
-  width: 15%;
+  width: 10%;
+}
+.cCat {
+  width: 13%;
+}
+.cClosed {
+  width: 18%;
 }
 .cFlag {
   width: 10%;
+}
+.cPhoto {
+  width: 7%;
 }
 .tableWrap .board th,
 .tableWrap .board td {
@@ -133,6 +143,17 @@
   color: var(--rc-text);
   text-decoration: underline;
   text-underline-offset: 0.3rem;
+}
+.cat {
+  word-break: keep-all;
+}
+/* 쉬는 날: 칸 가운데에 두되 여러 줄이면 줄 머리를 맞춘다(붙은 줄은 나눠 둔 글) */
+.closedTxt {
+  display: inline-block;
+  text-align: left;
+  white-space: pre-line;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
 }
 .flag svg {
   display: inline-block;
@@ -194,8 +215,12 @@
   .tableWrap .board td.mNone {
     display: none;
   }
+  /* 줄 상자: 권역 → 이름 → [읍면동 · 분류 · 무장애 정보] → 쉬는 날 */
   .tableWrap .board tr {
     box-sizing: border-box;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
     padding: 2rem 1.5rem;
     border-bottom: 0.1rem solid var(--rc-line-footer);
   }
@@ -221,14 +246,28 @@
     color: var(--rc-text);
   }
   .tableWrap .board .dong,
+  .tableWrap .board .cat,
   .tableWrap .board .flag {
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
     width: auto;
+    max-width: 100%;
     margin-right: 1.6rem;
     font-size: 1.5rem;
     color: var(--rc-text-sub);
+  }
+  .tableWrap .board .cat {
+    display: inline;
+  }
+  .tableWrap .board .closed {
+    order: 1;
+    margin-top: 0.4rem;
+    font-size: 1.5rem;
+    color: var(--rc-text-sub);
+  }
+  .tableWrap .board .empty {
+    flex: 1 1 100%;
   }
   .mOnly {
     display: inline;

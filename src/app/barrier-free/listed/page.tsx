@@ -1,8 +1,11 @@
 // 무장애 정보 > 정보가 적힌 곳(궁능 공지사항 모양): 권역 알약, "전체: N곳", 이름 검색, 게시판 표.
 // (무장애 시안 bf-draft: 표 위 무장애 조건 거르기 줄을 뺐다.)
-// 표는 명부에 오른 관광지마다 주차·걷는 길·화장실 칸에 글이 있는지(○ / −)를 보인다. 글 자체는 관광지의 무장애 정보 쪽에 있다.
+// 표는 명부에 오른 관광지마다 주차·접근로·화장실 칸의 명부 글을 한 줄에(가7, 붙은 줄은 나눔, 없으면 −),
+// 관광지 이름 아래에 글이 적힌 칸이 있는 무장애 묶음 이름표(가8)를 보인다. 칸마다 온 글은 관광지의 무장애 정보 쪽에 있다.
 import type { Metadata } from "next";
 import { areaOf, areas, places } from "@/data";
+import { bfGroupNamesOf } from "@/data/bf";
+import { bfLines } from "@/lib/breaks";
 import { Ph, SubPage } from "@/components/layout/PageParts";
 import { TipList } from "@/components/royal";
 import { groupByArea, menuPage } from "@/components/place-list/helpers";
@@ -24,7 +27,8 @@ export default function ListedPage() {
     dong: p.dong,
     area: areaOf(p),
     areaLabel: label(areaOf(p)),
-    three: { parking: !!p.three.parking, walk: !!p.three.walk, toilet: !!p.three.toilet },
+    three: { parking: bfLines(p.three.parking), walk: bfLines(p.three.walk), toilet: bfLines(p.three.toilet) },
+    groups: bfGroupNamesOf(p.id),
   }));
 
   return (
@@ -40,12 +44,12 @@ export default function ListedPage() {
           kind="listed"
           rows={rows}
           threeText={THREE_TEXT}
-          caption={`무장애 정보가 적힌 곳 목록: 번호, 권역, 관광지, ${THREE_TEXT.parking}, ${THREE_TEXT.walk}, ${THREE_TEXT.toilet}(○ 적힘, − 적힌 내용 없음)`}
+          caption={`무장애 정보가 적힌 곳 목록: 번호, 권역, 관광지(무장애 묶음), ${THREE_TEXT.parking}, ${THREE_TEXT.walk}, ${THREE_TEXT.toilet}(− 적힌 내용 없음)`}
         />
         <TipList
           className={s.tips}
           items={[
-            <Ph key="a">○ 표시는 한국관광공사 무장애 여행 정보에 그 항목의 글이 적혀 있다는 뜻이고, − 표시는 적힌 내용이 없다는 뜻입니다.</Ph>,
+            <Ph key="a">− 표시는 한국관광공사 무장애 여행 정보에 그 항목의 적힌 내용이 없다는 뜻입니다.</Ph>,
             <Ph key="b">관광지 이름을 누르면 무장애 정보 쪽에서 적힌 글을 볼 수 있습니다.</Ph>,
           ]}
         />

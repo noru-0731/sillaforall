@@ -31,13 +31,21 @@ export function distKm(a: Pick<Place, "lat" | "lon">, b: Pick<Place, "lat" | "lo
   return 2 * R * Math.asin(Math.sqrt(h));
 }
 
-/** 서브메인 아래 "주변 관광지": 같은 권역에서 가까운 차례로 n곳 */
-export function nearby(p: Place, n = 9): Place[] {
+/** 주변 관광지 한 줄: 그 곳과 직선거리(m). 좌표를 빌린 곳(approx)이 한쪽이라도 끼면 거리는 null(무장애 시안 규칙과 같음) */
+export type NearPlace = { place: Place; distM: number | null };
+
+/** 서브메인 아래 "주변 관광지": 같은 권역에서 가까운 차례로 n곳과 직선거리 */
+export function nearby(p: Place, n = 9): NearPlace[] {
   return sameArea(p, false)
     .map((q) => ({ q, d: distKm(p, q) }))
     .sort((a, b) => a.d - b.d)
     .slice(0, n)
-    .map((x) => x.q);
+    .map((x) => ({ place: x.q, distM: p.approx || x.q.approx ? null : Math.round(x.d * 1000) }));
+}
+
+/** 직선거리 글: 1km 아래는 m(무장애 시안 "직선거리 131m" 꼴), 1km부터는 km 소수 한 자리 */
+export function fmtDist(m: number): string {
+  return m < 1000 ? `${m.toLocaleString("ko-KR")}m` : `${(m / 1000).toFixed(1)}km`;
 }
 
 /** credit: 그 사진의 출처 한 줄(관광정보 / 관광사진 정보 촬영자) */

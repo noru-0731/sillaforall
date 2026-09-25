@@ -3,6 +3,8 @@
 // 무장애 목록 두 쪽(정보가 적힌 곳 / 정보가 없는 곳)의 게시판(궁능 공지사항 모양).
 // 알약 줄은 SubPage의 tabs 자리(제목과 윗선 사이)에, 표는 본문에 들어가므로 둘이 같은 고름을 보도록 BoardState로 감싼다.
 // 무거운 자료(places.json, photos.json)는 부르지 않는다. 쪽(서버)이 계산한 줄만 props로 받는다.
+// 페르소나 장점 취합: 정보가 적힌 곳 표의 세 칸에 ○ 대신 명부 글을 한 줄에(가7, 경주문화관광 무장애 여행정보의 곳마다 한 줄),
+// 관광지 이름 아래 무장애 묶음 이름표(가8). 이름표는 보이기만 하고 누르는 거르기가 아니다.
 import { createContext, useContext, useId, useMemo, useState } from "react";
 import Link from "next/link";
 import PillTabs from "@/components/royal/PillTabs";
@@ -18,8 +20,10 @@ export type BoardRow = {
   dong: string;
   area: AreaKey;
   areaLabel: string;
-  /** 정보가 적힌 곳: 세 항목에 글이 있는지 */
-  three?: { parking: boolean; walk: boolean; toilet: boolean };
+  /** 정보가 적힌 곳: 세 항목의 명부 글(붙은 줄은 나눔). 없으면 null */
+  three?: { parking: string | null; walk: string | null; toilet: string | null };
+  /** 정보가 적힌 곳: 글이 적힌 칸이 있는 무장애 묶음 이름(보이기만 한다) */
+  groups?: string[];
   /** 정보가 없는 곳: 가까운 등록 관광지(없으면 null) */
   nearest?: string | null;
 };
@@ -61,22 +65,38 @@ export function BoardPills({ areas }: { areas: BoardArea[] }) {
 
 const colorOf = (k: AreaKey) => ({ "--c": `var(--rc-area-${k})` }) as React.CSSProperties;
 
-/** ○ 적힘 / − 안 적힘. 읽기 도구에는 글자로 */
-function Mark({ on }: { on: boolean }) {
+/** 명부 글 그대로. 비어 있으면 − (읽기 도구에는 "적힌 내용 없음") */
+function ThreeText({ text }: { text: string | null }) {
+  if (text) return <span className={s.threeTxt}>{text}</span>;
   return (
     <>
-      <span className={`${s.mark}${on ? "" : " " + s.markOff}`} aria-hidden="true">
-        {on ? "○" : "−"}
+      <span className={`${s.mark} ${s.markOff}`} aria-hidden="true">
+        −
       </span>
-      <span className="sr-only">{on ? "적힘" : "적힌 내용 없음"}</span>
+      <span className="sr-only">적힌 내용 없음</span>
     </>
+  );
+}
+
+/** 무장애 묶음 이름표(열린관광 목록 카드 이름표 모양). 누르지 않는 표시 */
+function GroupTags({ groups }: { groups?: string[] }) {
+  if (!groups?.length) return null;
+  return (
+    <span className={s.tags}>
+      <span className="sr-only">무장애 정보: </span>
+      {groups.map((g) => (
+        <span key={g} className={s.tag}>
+          {g}
+        </span>
+      ))}
+    </span>
   );
 }
 
 /**
  * 곳 수 + 검색 줄 + 표(넓은 화면) / 목록(좁은 화면).
  * (무장애 시안 bf-draft: 무장애 조건 거르기 줄과 주소 뒤 ?조건= 읽기를 뺐다. FilterPills·barrierConds·useConds 파일은 그대로 둔다.)
- * kind="listed": 번호 / 권역 / 관광지 / 주차 / 걷는 길 / 화장실(○ −)
+ * kind="listed": 번호 / 권역 / 관광지(+ 무장애 묶음 이름표) / 주차 / 접근로 / 화장실(명부 글 한 줄, 없으면 −)
  * kind="unlisted": 번호 / 권역 / 관광지 / 읍면동 / 가까운 등록 관광지
  */
 export function BoardList({
@@ -166,11 +186,11 @@ export function BoardList({
           <table className={`rc-board ${s.board}`}>
             <caption>{caption}</caption>
             <colgroup>
-              <col style={{ width: "8%" }} />
-              <col style={{ width: "15%" }} />
+              <col style={{ width: kind === "listed" ? "6%" : "8%" }} />
+              <col style={{ width: kind === "listed" ? "11%" : "15%" }} />
               <col />
               {kind === "listed" ? (
-                keys.map((k) => <col key={k} style={{ width: "12%" }} />)
+                keys.map((k) => <col key={k} style={{ width: "20%" }} />)
               ) : (
                 <>
                   <col style={{ width: "14%" }} />
@@ -217,11 +237,12 @@ export function BoardList({
                   </td>
                   <th scope="row">
                     <Link href={href(r)}>{r.name}</Link>
+                    <GroupTags groups={r.groups} />
                   </th>
                   {kind === "listed" && r.three ? (
                     keys.map((k) => (
-                      <td key={k}>
-                        <Mark on={r.three![k]} />
+                      <td key={k} className={s.three}>
+                        <ThreeText text={r.three![k]} />
                       </td>
                     ))
                   ) : (
@@ -254,15 +275,20 @@ export function BoardList({
               <Link href={href(r)} className={s.mName}>
                 {r.name}
               </Link>
+              <GroupTags groups={r.groups} />
               {kind === "listed" && r.three ? (
-                <p className={s.mMeta}>
+                <dl className={s.mThree}>
                   {keys.map((k) => (
-                    <span key={k}>
-                      <Ph>{threeText[k]}</Ph>
-                      <Mark on={r.three![k]} />
-                    </span>
+                    <div key={k}>
+                      <dt>
+                        <Ph>{threeText[k]}</Ph>
+                      </dt>
+                      <dd>
+                        <ThreeText text={r.three![k]} />
+                      </dd>
+                    </div>
                   ))}
-                </p>
+                </dl>
               ) : (
                 <p className={s.mMeta}>
                   <span>{r.dong}</span>
