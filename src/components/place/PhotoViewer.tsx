@@ -21,7 +21,19 @@ export default function PhotoViewer({ photos, placeName }: { photos: ViewerItem[
   const [i, setI] = useState(0);
   const n = photos.length;
   const thumbsRef = useRef<HTMLUListElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
   const moved = useRef(false);
+
+  // 서브메인 작은 사진(가15)에서 왔으면 주소 끝 "#photo-번호"의 사진부터 보이고, 넘기기 칸으로 내려온다(번호는 1부터, photosOf 차례)
+  useEffect(() => {
+    const m = window.location.hash.match(/^#photo-(\d+)$/);
+    const j = m ? Number(m[1]) - 1 : -1;
+    if (j < 0 || j >= n) return;
+    moved.current = true;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- 주소의 # 부분은 화면을 그린 뒤에만 읽을 수 있다
+    setI(j);
+    rootRef.current?.scrollIntoView({ block: "start" });
+  }, [n]);
 
   // 작은 사진 줄은 한 줄 가로 넘김(궁능 swiper_thumb01). 고른 작은 사진이 줄 안에 보이도록 옆으로만 민다.
   useEffect(() => {
@@ -55,7 +67,7 @@ export default function PhotoViewer({ photos, placeName }: { photos: ViewerItem[
   const go = (d: number) => pick((i + d + n) % n);
 
   return (
-    <div className={s.root} role="region" aria-roledescription="넘기기" aria-label={`${placeName} 사진`}>
+    <div className={s.root} ref={rootRef} role="region" aria-roledescription="넘기기" aria-label={`${placeName} 사진`}>
       <div className={s.head}>
         <p className={s.count} aria-live="polite" aria-atomic="true">
           <b>{i + 1}</b>/{n}

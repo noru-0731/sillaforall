@@ -67,7 +67,7 @@ export type BannerPhotoProp = string | { url: string; caption?: string } | null;
  * - side: 왼쪽 메뉴를 붙일 1차 메뉴(MENU[i]). sideMenu: 왼쪽 메뉴 자유 정의(관광지 쪽: placeSideMenu(p)). 둘 다 없으면 왼쪽 메뉴 없이 넓게.
  * - current: 왼쪽 메뉴에서 굵게 할 주소(기본: crumbs 마지막 주소).
  * - banner: 배너 글자(기본: 1차 메뉴 이름). bannerPhoto: 배너 사진(제1유형만. 기본: 1차 메뉴별 고정 사진, null이면 사진 없이 회색).
- * - tools: 공유·인쇄 단추(기본 true). tabs: 제목과 윗선 사이에 둘 알약 줄 등.
+ * - tools: 공유·인쇄 단추(기본 true). printAlways: 휴대전화에서도 인쇄 단추를 남긴다(한 곳 모아 인쇄 쪽). tabs: 제목과 윗선 사이에 둘 알약 줄 등.
  * - inPage: 쪽 안 목차 상자. wide: 예전 호환용(뜻 없음).
  */
 export function SubPage({
@@ -82,6 +82,7 @@ export function SubPage({
   bannerPhoto,
   sideMenu,
   tools = true,
+  printAlways,
   tabs,
   children,
 }: {
@@ -96,6 +97,7 @@ export function SubPage({
   bannerPhoto?: BannerPhotoProp;
   sideMenu?: SideMenu;
   tools?: boolean;
+  printAlways?: boolean;
   tabs?: React.ReactNode;
   children: React.ReactNode;
 }) {
@@ -144,7 +146,7 @@ export function SubPage({
           <Breadcrumb items={crumbs} />
           <div className="rc-titlewrap">
             <h1>{title}</h1>
-            {tools && <PageTools title={titleText} />}
+            {tools && <PageTools title={titleText} printAlways={printAlways} />}
           </div>
           {tabs && <div className="rc-subtabs">{tabs}</div>}
           <div className="rc-subcon">

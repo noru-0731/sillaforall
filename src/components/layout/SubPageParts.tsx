@@ -107,8 +107,9 @@ export function MobileMenuBar({ label, links, current }: { label: string; links:
 }
 
 /** 쪽 제목 오른쪽 동그란 단추: 소리로 듣기(ReadAloud.tsx), 공유(주소 복사 또는 휴대전화 공유 창), 인쇄. QR은 뺐다.
- *  소리로 듣기는 한국어 목소리를 찾은 뒤에야 나타나므로 맨 앞에 두어 공유·인쇄 자리가 움직이지 않게 했다. */
-export function PageTools({ title }: { title: string }) {
+ *  소리로 듣기는 한국어 목소리를 찾은 뒤에야 나타나므로 맨 앞에 두어 공유·인쇄 자리가 움직이지 않게 했다.
+ *  동그라미 아래에 보이는 이름(페르소나 장점 취합 가11). 휴대전화는 궁능처럼 인쇄 단추를 숨기되, printAlways면 남긴다(한 곳 모아 인쇄 쪽). */
+export function PageTools({ title, printAlways = false }: { title: string; printAlways?: boolean }) {
   const [msg, setMsg] = useState("");
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -145,12 +146,25 @@ export function PageTools({ title }: { title: string }) {
     <div className="rc-tools">
       <ReadAloud />
       <button type="button" className="rc-tool rc-tool--share" onClick={share} title="공유하기">
-        <Icon name="share" size={30} strokeWidth={1.6} />
-        <span className="sr-only">공유하기</span>
+        <span className="rc-tool__circle">
+          <Icon name="share" size={30} strokeWidth={1.6} />
+        </span>
+        <span className="rc-tool__label">
+          공유<span className="sr-only">하기</span>
+        </span>
       </button>
-      <button type="button" className="rc-tool rc-tool--print" onClick={() => window.print()} title="인쇄하기">
-        <Icon name="print" size={30} strokeWidth={1.6} />
-        <span className="sr-only">인쇄하기</span>
+      <button
+        type="button"
+        className={`rc-tool rc-tool--print${printAlways ? " rc-tool--always" : ""}`}
+        onClick={() => window.print()}
+        title="인쇄하기"
+      >
+        <span className="rc-tool__circle">
+          <Icon name="print" size={30} strokeWidth={1.6} />
+        </span>
+        <span className="rc-tool__label">
+          인쇄<span className="sr-only">하기</span>
+        </span>
       </button>
       <p className="rc-tools__msg" aria-hidden="true">
         {msg}

@@ -204,22 +204,30 @@ export default function SiteHeader({ areaCards }: { areaCards: AreaCard[] }) {
             ))}
           </ul>
 
-          <button type="button" className="rc-circle rc-circle--pink" onClick={openSettings} title="글자·화면 설정">
-            <span className="rc-circle__ga" aria-hidden="true">
-              가
+          {/* 동그라미 단추 아래 보이는 이름(페르소나 장점 취합 가11, 교토관광Navi 머리의 그림 + 글 단추). 휴대전화에서만 보인다.
+              PC는 왼쪽 막대의 "가 글자·화면 설정" 칸이 같은 일을 하므로 머리 동그라미는 그대로 둔다. */}
+          <button type="button" className="rc-hbtn rc-hbtn--pink" onClick={openSettings} title="글자·화면 설정">
+            <span className="rc-circle rc-circle--pink">
+              <span className="rc-circle__ga" aria-hidden="true">
+                가
+              </span>
             </span>
-            <span className="sr-only">글자·화면 설정</span>
+            <span className="rc-hbtn__label">글자·화면 설정</span>
           </button>
           <button
             type="button"
             ref={menuBtnRef}
-            className="rc-circle rc-circle--ink rc-only-mobile"
+            className="rc-hbtn rc-hbtn--ink rc-only-mobile"
             aria-expanded={mobileOpen}
             aria-controls="rc-mnav"
             onClick={() => setMobileOpen(true)}
           >
-            <Icon name="menu" size={26} strokeWidth={1.8} />
-            <span className="sr-only">전체메뉴 열기</span>
+            <span className="rc-circle rc-circle--ink">
+              <Icon name="menu" size={26} strokeWidth={1.8} />
+            </span>
+            <span className="rc-hbtn__label">
+              전체메뉴<span className="sr-only"> 열기</span>
+            </span>
           </button>
         </div>
       </div>

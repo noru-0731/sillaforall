@@ -1,6 +1,7 @@
 "use client";
 
-// 쪽 제목 오른쪽 동그란 단추 줄(공유·인쇄)의 "소리로 듣기" 단추. SubPageParts.tsx의 PageTools가 쓴다.
+// 쪽 제목 오른쪽 동그란 단추 줄(공유·인쇄)의 "소리로 듣기" 단추. SubPageParts.tsx의 PageTools와 관광지 서브메인 관람 도우미 제목 칸이 쓴다.
+// 동그라미 아래에 이름("소리로 듣기")을 보인다(페르소나 장점 취합 가11).
 // 브라우저에 든 음성(speechSynthesis)으로 이 쪽 본문을 한국어 목소리로 읽는다.
 // - 읽는 범위: #contents 안(쪽 제목부터 본문 끝). 빵부스러기, 단추 줄, 메뉴, 알약 줄, 단추, 그림은 뺀다.
 // - 긴 글은 문장으로 잘라 차례로 읽힌다(크롬은 한 번에 긴 글을 주면 중간에 끊긴다).
@@ -241,8 +242,10 @@ export default function ReadAloud({ rootId = "contents" }: { rootId?: string }) 
       onClick={on ? stop : start}
       title={on ? "소리로 듣기 멈추기" : "소리로 듣기"}
     >
-      <Icon name={on ? "stop" : "volume"} size={30} strokeWidth={1.6} />
-      <span className="sr-only">소리로 듣기</span>
+      <span className="rc-tool__circle">
+        <Icon name={on ? "stop" : "volume"} size={30} strokeWidth={1.6} />
+      </span>
+      <span className="rc-tool__label">소리로 듣기</span>
     </button>
   );
 }

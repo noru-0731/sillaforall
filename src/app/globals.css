@@ -423,7 +423,35 @@ body {
   text-underline-offset: 0.4rem;
 }
 
-/* 동그라미 단추(분홍: 글자·화면 설정, 검정: 전체메뉴) */
+/* 동그라미 단추(분홍: 글자·화면 설정, 검정: 전체메뉴).
+   단추(.rc-hbtn) = 동그라미(.rc-circle) + 아래 보이는 이름(.rc-hbtn__label, 휴대전화에서만. 페르소나 장점 취합 가11).
+   PC 머리에서는 이름을 화면 밖 글로만 둔다(왼쪽 막대의 "가 글자·화면 설정" 칸이 같은 일을 한다). */
+.rc-hbtn {
+  flex: 0 0 auto;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--rc-text);
+  cursor: pointer;
+}
+.rc-hbtn--pink {
+  margin-left: 3rem;
+}
+.rc-hbtn--ink {
+  margin-left: 1rem;
+}
+.rc-hbtn__label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
 .rc-circle {
   flex: 0 0 auto;
   display: inline-flex;
@@ -434,14 +462,11 @@ body {
   border-radius: 50%;
   border: 0.1rem solid var(--rc-line-footer);
   color: #ffffff;
-  cursor: pointer;
 }
 .rc-circle--pink {
-  margin-left: 3rem;
   background: var(--rc-pink);
 }
 .rc-circle--ink {
-  margin-left: 1rem;
   background: #131313;
   border-color: #131313;
 }
@@ -937,13 +962,27 @@ body {
   color: var(--rc-text);
   word-break: keep-all;
 }
+/* 단추(.rc-tool) = 동그라미(.rc-tool__circle, 궁능 PC 80×80·휴대전화 40×40) + 아래 보이는 이름(.rc-tool__label).
+   이름은 페르소나 장점 취합 가11(교토관광Navi 머리의 그림 + 글 단추). 글은 단추의 원래 이름(소리로 듣기, 공유, 인쇄)이다. */
 .rc-tools {
   position: relative;
   flex: 0 0 auto;
   display: flex;
+  align-items: flex-start;
   gap: 1rem;
 }
 .rc-tool {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--rc-text-sub);
+  cursor: pointer;
+}
+.rc-tool__circle {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -952,11 +991,20 @@ body {
   border: 0.1rem solid var(--rc-line);
   border-radius: 50%;
   background: var(--rc-bg);
-  color: var(--rc-text-sub);
-  cursor: pointer;
 }
-.rc-tool:hover {
+.rc-tool:hover .rc-tool__circle {
   border-color: var(--rc-text);
+}
+.rc-tool__label {
+  font-size: 1.4rem;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--rc-text);
+  white-space: nowrap;
+}
+.rc-tool:hover .rc-tool__label {
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
 }
 .rc-tools__msg {
   position: absolute;
@@ -1233,11 +1281,22 @@ body {
     width: 5rem;
     height: 5rem;
   }
-  .rc-circle--pink {
+  .rc-hbtn--pink {
     margin-left: 1rem;
   }
   .rc-circle__ga {
     font-size: 2rem;
+  }
+  /* 동그라미 아래 보이는 이름: 왼쪽 막대 칸 이름과 같은 12px 500. 동그라미(50)와 이름(한 줄 14.4)이 머리(80) 안에 든다. */
+  .rc-hbtn__label {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip: auto;
+    font-size: 1.2rem;
+    font-weight: 500;
+    line-height: 1.2;
   }
 
   /* 궁능 390: 관련사이트 펼침이 맨 위, 그 아래 회색(#f8f8f8) 바탕 정책 링크 줄 */
@@ -1323,6 +1382,9 @@ main {
     font-size: 2.6rem;
   }
   .rc-tool {
+    gap: 0.3rem;
+  }
+  .rc-tool__circle {
     width: 4rem; /* 궁능 390 공유 단추 40×40 */
     height: 4rem;
   }
@@ -1330,7 +1392,11 @@ main {
     width: 2rem;
     height: 2rem;
   }
-  .rc-tool--print {
+  .rc-tool__label {
+    font-size: 1.2rem;
+  }
+  /* 궁능 390은 인쇄 단추가 없다. 한 곳 모아 인쇄 쪽(가14)과 서브메인의 인쇄 쪽 가기(--always)는 남긴다 */
+  .rc-tool--print:not(.rc-tool--always) {
     display: none;
   }
   .rc-subcon {
@@ -1768,6 +1834,14 @@ a.rc-blackbar:hover {
   font-weight: 700;
 }
 
+/* 아주 좁은 본문(휴대전화에서 글자 크게·가장 크게, 본문 299 이하): 제목 오른쪽 단추 줄(보이는 이름 포함)이 제목과 한 줄에 들지 않으면
+   단추 줄을 제목 아래로 내린다(가11·가14에서 단추 아래 이름과 휴대전화 인쇄 단추가 더해져 넓어졌다) */
+@container rc-main (max-width: 299px) {
+  .rc-titlewrap {
+    flex-wrap: wrap;
+  }
+}
+
 /* 임시 문구: 점선 밑줄(사용자 확인 전, 새로 지은 글) */
 .ph {
   text-decoration: underline dashed;
@@ -1775,7 +1849,7 @@ a.rc-blackbar:hover {
   text-underline-offset: 0.3em;
 }
 
-/* 인쇄: 틀을 빼고 본문만 */
+/* 인쇄: 틀을 빼고 본문만. 제목 아래 알약 줄(같은 권역 관광지로 가기)과 쪽 안 목차도 종이에서는 쓸 데가 없어 뺀다(가14) */
 @media print {
   .rc-leftbar,
   .rc-hd,
@@ -1784,6 +1858,8 @@ a.rc-blackbar:hover {
   .rc-lnb,
   .rc-mbar,
   .rc-tools,
+  .rc-subtabs,
+  .rc-inpage,
   .rc-footer,
   #krds-skip-link {
     display: none !important;
