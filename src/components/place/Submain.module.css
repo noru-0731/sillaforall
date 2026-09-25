@@ -60,9 +60,10 @@
   overflow: hidden;
   color: var(--rc-text);
 }
+/* 올렸을 때 선은 칸 바깥(사이 틈)에 그린다. 안쪽에 그리면 사진 가장자리 위에 선이 얹힌다(제3유형은 사진 위에 아무것도 얹지 않음) */
 .thumb:hover {
   outline: 0.2rem solid var(--rc-text);
-  outline-offset: -0.2rem;
+  outline-offset: 0.2rem;
 }
 .thumbMore {
   display: flex;
