@@ -85,7 +85,6 @@ export default function MapView({
   onAreaSelect,
   selectedArea,
   legend = true,
-  highlightLabel,
   plain = false,
 }: MapViewProps) {
   const router = useRouter();
@@ -437,7 +436,6 @@ export default function MapView({
   const selList = sel?.kind === "list" ? sel.ids.map((id) => places.find((p) => p.id === id)).filter((p): p is Place => !!p) : [];
   const t = `translate(${vw.tx} ${vw.ty}) scale(${vw.k})`;
   const hlPlace = highlightId ? places.find((p) => p.id === highlightId) : undefined;
-  const hasOther = pts.some((q) => !q.own);
 
   // 높이: height를 주면 그대로. 아니면 경계 상자 비율(높이 상한 72vh에 걸리면 폭도 같은 비율로 줄여 지도가 잘리지 않게).
   // 넓은 칸(.big)에서는 CSS가 폭 100%, 높이 69.3rem으로 바꾼다.
@@ -639,7 +637,7 @@ export default function MapView({
                 <svg viewBox="0 0 16 20" width="16" height="20">
                   <path d="M8 0 L15 19 L8 14 L1 19 Z" />
                 </svg>
-                <Ph>북</Ph>
+                N
               </span>
               <span className={s.scale}>
                 <span className={s.scaleBar} style={{ width: layout.sc.px }} />
@@ -694,7 +692,7 @@ export default function MapView({
           ) : (
             <>
               <p id={titleId} ref={panelTitleRef} className={s.panelTitle} tabIndex={-1}>
-                <Ph>이 자리의 관광지 {selList.length}곳</Ph>
+                전체: {selList.length}곳
               </p>
               <ul className={s.panelList}>
                 {selList.map((p) => (
@@ -717,27 +715,19 @@ export default function MapView({
 
       {legend && (
         <ul ref={legendRef} className={s.legend} aria-label="범례">
-          {(highlightLabel || hlPlace) && (
-            <li>
-              <span className={s.swatch} aria-hidden="true">
-                <span className={cn(s.dot, s.dotHl)} />
-              </span>
-              <Ph>{highlightLabel ?? "이 관광지"}</Ph>
-            </li>
-          )}
           {(interactive || !hlPlace) && (
             <>
               <li>
                 <span className={s.swatch} aria-hidden="true">
                   <span className={cn(s.dot, s.dotOn)} />
                 </span>
-                <Ph>무장애 정보가 적힌 곳</Ph>
+                <Ph>정보가 적힌 곳</Ph>
               </li>
               <li>
                 <span className={s.swatch} aria-hidden="true">
                   <span className={cn(s.dot, s.dotOff)} />
                 </span>
-                <Ph>무장애 정보가 없는 곳</Ph>
+                <Ph>정보가 없는 곳</Ph>
               </li>
             </>
           )}
@@ -751,19 +741,11 @@ export default function MapView({
               <Ph>거점 관광지</Ph>
             </li>
           )}
-          {hasOther && (
-            <li>
-              <span className={s.swatch} aria-hidden="true">
-                <span className={cn(s.dot, s.dotOther)} />
-              </span>
-              <Ph>{hlPlace && !interactive ? "다른 관광지" : "다른 권역의 관광지"}</Ph>
-            </li>
-          )}
           <li>
             <span className={s.swatch} aria-hidden="true">
               <span className={cn(s.bubble, s.bubbleSwatch, !interactive && hlPlace && s.bubbleOther)} />
             </span>
-            <Ph>{interactive ? "가까이 모인 곳(숫자는 곳 수, 누르면 크게 보기)" : "가까이 모인 곳(숫자는 곳 수)"}</Ph>
+            <Ph>가까이 모인 곳</Ph>
           </li>
           {areaMode && (
             <li>

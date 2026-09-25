@@ -76,12 +76,8 @@ export default function AboutPage() {
               <li>
                 <Ph>관광객 자료: 한국관광 데이터랩</Ph>
               </li>
-              <li>
-                <Ph>관광지 정보와 무장애 여행 정보: 한국관광공사 TourAPI</Ph>
-              </li>
-              <li>
-                <Ph>읍면동 경계선: 통계청 SGIS 행정구역 경계</Ph>
-              </li>
+              <li>관광지 사진과 소개글: 한국관광공사 관광정보(TourAPI)</li>
+              <li>읍면동 경계선: 통계청 SGIS 행정구역 경계(2026년 7월), vuski/admdongkor 가공(CC BY 4.0)</li>
             </ul>
             <p>
               <Link href={SOURCES.href}>{SOURCES.label}</Link>
@@ -93,8 +89,6 @@ export default function AboutPage() {
             <p>
               <Ph>2026 한국관광 데이터랩 활용 경진대회 제출물과의 관계를 적습니다.</Ph>
             </p>
-            {/* 궁능 인사말 끝 문단을 바꿔 쓴 것 */}
-            <p>아울러 {SITE_NAME} 누리집 방문을 통해 경주 관광지에 대한 이해에 도움이 되길 바랍니다.</p>
             <p>감사합니다.</p>
             <p>{SITE_NAME} 만든 팀</p>
           </div>

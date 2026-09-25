@@ -49,7 +49,7 @@ export function PhotoCredit() {
 }
 
 /** 무장애 세 항목의 이름. 문구는 사용자 확인 전이라 한곳에 모아 둔다. */
-export const THREE_TEXT: Record<ThreeKey, string> = { parking: "주차", walk: "걷는 길", toilet: "화장실" };
+export const THREE_TEXT: Record<ThreeKey, string> = { parking: "주차", walk: "접근로", toilet: "화장실" };
 
 export function ThreeLabel({ k }: { k: ThreeKey }) {
   return <Ph>{THREE_TEXT[k]}</Ph>;

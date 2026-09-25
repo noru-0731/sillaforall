@@ -69,8 +69,6 @@ export default function MapExplorer({
 
   const bySeg = all.filter((p) => seg === "all" || (seg === "listed" ? p.registered : !p.registered));
   const list = conds.length ? bySeg.filter((p) => meetsAll(condMap.get(p.id), conds)) : bySeg;
-  // 조건을 고르면 빠지는 무장애 정보가 없는 곳
-  const unlisted = bySeg.filter((p) => !p.registered).length;
   const wanted = selId ?? placeParam;
   const sel = list.find((p) => p.id === wanted) ?? list[0];
   const emph = hub ? list.filter((p) => p.cluster === hub).map((p) => p.id) : [];
@@ -127,14 +125,6 @@ export default function MapExplorer({
         selected={conds}
         onChange={(v) => setConds(v as CondKey[])}
         count={<>전체 {list.length}곳</>}
-        note={
-          conds.length > 0 ? (
-            <Ph>
-              고른 항목이 모두 있다고 적힌 곳만 보입니다.
-              {unlisted > 0 && <> 무장애 정보가 없는 곳 {unlisted}곳은 빠집니다.</>}
-            </Ph>
-          ) : undefined
-        }
       />
 
       <div className={s.map}>
@@ -145,11 +135,10 @@ export default function MapExplorer({
           highlightId={sel?.id}
           emphasisIds={emph}
           onSelectPlace={choose}
-          highlightLabel="고른 관광지"
         />
       </div>
 
-      <InfoBox className={s.info}>관광지 이름을 누르시면 아래 화면에서 관광지 사진을 볼 수 있습니다.</InfoBox>
+      <InfoBox className={s.info}>관광지 이름을 누르시면 아래 화면에서 사진을 볼 수 있습니다.</InfoBox>
 
       {list.length > 0 ? (
         <ul className={s.names} aria-label="관광지 이름">
@@ -166,7 +155,7 @@ export default function MapExplorer({
         </ul>
       ) : (
         <p className={s.empty}>
-          <Ph>해당하는 관광지가 없습니다.</Ph>
+          등록된 관광지가 없습니다.
         </p>
       )}
 
@@ -190,7 +179,7 @@ export default function MapExplorer({
           </div>
           <div className={s.btnWrap}>
             <Link href={`/places/${sel.id}`} className={s.btnInk}>
-              관광지 자세히 보기
+              자세히 보기
               <Icon name="arrow-right" size={18} strokeWidth={2} />
             </Link>
           </div>

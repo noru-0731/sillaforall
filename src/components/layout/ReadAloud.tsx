@@ -242,7 +242,7 @@ export default function ReadAloud({ rootId = "contents" }: { rootId?: string }) 
       title={on ? "소리로 듣기 멈추기" : "소리로 듣기"}
     >
       <Icon name={on ? "stop" : "volume"} size={30} strokeWidth={1.6} />
-      <span className="sr-only">소리로 듣기(이 쪽 글 읽어 주기)</span>
+      <span className="sr-only">소리로 듣기</span>
     </button>
   );
 }

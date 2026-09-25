@@ -7,7 +7,6 @@ import Link from "next/link";
 import type { AreaKey } from "@/data/types";
 import MapView from "@/components/map/MapView";
 import { Icon } from "@/components/icons";
-import { Ph } from "@/components/layout/Ph";
 import { MoreLink } from "./bits";
 import s from "./home.module.css";
 
@@ -64,12 +63,12 @@ export default function HomeBoard({ title, lists }: { title: string; lists: Boar
         </div>
 
         <div className={s.boardRight}>
-          <Link href="/map" className={s.mapCard} aria-label="관광지 지도 바로가기">
+          <Link href="/map" className={s.mapCard} aria-label="관광지 지도 더보기">
             <div className={s.mapBox}>
               <MapView view="full" interactive={false} showAreas={false} height="var(--home-map-h)" ariaLabel="경주 전체 관광지 지도" />
             </div>
             <div className={s.mapBar}>
-              <Ph>관광지 지도 바로가기</Ph>
+              관광지 지도 더보기
               <Icon name="arrow-right" size={22} strokeWidth={2} />
             </div>
           </Link>

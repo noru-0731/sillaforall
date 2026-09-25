@@ -11,7 +11,7 @@ import { placePages } from "@/site/ia";
 import { withJosa } from "@/lib/josa";
 import { Icon, type IconName } from "@/components/icons";
 import { CircleButton, Photo } from "@/components/royal";
-import { anyPhoto, areaLabelOf, categoryWord, coverPhoto, nearby, nearbySlides, phoneOf, stripCredit, stripSlots } from "@/components/place/placeData";
+import { anyPhoto, areaLabelOf, coverPhoto, nearby, nearbySlides, phoneOf, stripCredit, stripSlots } from "@/components/place/placeData";
 import NearbySlider from "@/components/place/NearbySlider";
 import s from "@/components/place/Submain.module.css";
 
@@ -53,12 +53,11 @@ export default async function PlaceSubmain({ params }: Props) {
   if (tel) quick.push({ label: "문의 전화", href: `tel:${tel.replace(/-/g, "")}`, icon: "phone", tel: true });
 
   // 사진 띠 4개(궁능: 소개·역사 / 이야기 / 통합예약 / 관람코스)
-  const word = categoryWord(p);
   const strips = [
-    { small: `경주의 ${word ? word + " " : ""}${withJosa(p.name, "을/를")} 소개합니다.`, big: intro.label, href: intro.href },
-    { small: `${withJosa(p.name, "이/가")} 품고 있는 다양한 모습을 살펴보세요.`, big: photos.label, href: photos.href },
-    { small: "무장애 정보 서비스를 이용해보세요.", big: bf.label, href: bf.href },
-    { small: `${p.name} 가는 길을 안내해드립니다.`, big: dir.label, href: dir.href },
+    { small: `${withJosa(p.name, "을/를")} 소개합니다.`, big: intro.label, href: intro.href },
+    { small: "", big: photos.label, href: photos.href },
+    { small: "", big: bf.label, href: bf.href },
+    { small: "", big: dir.label, href: dir.href },
   ];
   const slots = stripSlots(p.id, hero?.url ?? null);
   const slotCredit = stripCredit(slots);
@@ -90,10 +89,6 @@ export default async function PlaceSubmain({ params }: Props) {
         <div className={`${s.inner} ${s.quickInner}`}>
           <div className={s.quickTit}>
             <h2 id="quick-tit">{p.name} 관람 도우미</h2>
-            <p>
-              {p.name} 관람에 도움이 되는
-              <br /> 바로가기를 안내합니다.
-            </p>
           </div>
           <ul className={s.quickList}>
             {quick.map((q) => (
@@ -150,7 +145,7 @@ export default async function PlaceSubmain({ params }: Props) {
                       )}
                     </span>
                     <span className={s.stripTxt}>
-                      <span className={s.stripSmall}>{st.small}</span>
+                      {st.small && <span className={s.stripSmall}>{st.small}</span>}
                       <span className={s.stripBig}>{st.big}</span>
                     </span>
                   </Link>

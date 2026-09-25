@@ -9,7 +9,6 @@ import { cn } from "@/lib/cn";
 import { Icon } from "@/components/icons";
 import PillTabs from "@/components/royal/PillTabs";
 import FilterPills from "@/components/royal/FilterPills";
-import { Ph } from "@/components/layout/Ph";
 import { COND_KEYS, COND_LABEL, meetsAll, type CondKey } from "./barrierConds";
 import { useConds } from "./useConds";
 import MapView from "@/components/map/MapView";
@@ -30,8 +29,6 @@ export default function AreaListView({ cards, options, credits }: { cards: CardP
   const curLabel = cur === "all" ? "경주 전체" : (options.find((o) => o.key === cur)?.label ?? "");
   const inArea = cur === "all" ? cards : cards.filter((c) => c.area === cur);
   const shown = conds.length ? inArea.filter((c) => meetsAll(c.conds, conds)) : inArea;
-  // 조건을 고르면 빠지는 무장애 정보가 없는 곳(지금 권역 안)
-  const unlisted = inArea.filter((c) => !c.registered).length;
   // 작은 지도: 아무것도 거르지 않으면 전부, 거른 결과가 0곳이면 점 없이(빈 배열은 전부로 읽히므로 없는 id 하나)
   const mapIds = cur === "all" && !conds.length ? undefined : shown.length ? shown.map((c) => c.id) : ["-"];
   const toggle = (k: AreaKey) => setCur(cur === k ? "all" : k);
@@ -109,20 +106,12 @@ export default function AreaListView({ cards, options, credits }: { cards: CardP
           items={COND_ITEMS}
           selected={conds}
           onChange={(v) => setConds(v as CondKey[])}
-          note={
-            conds.length > 0 ? (
-              <Ph>
-                고른 항목이 모두 있다고 적힌 곳만 보입니다.
-                {unlisted > 0 && <> 무장애 정보가 없는 곳 {unlisted}곳은 빠집니다.</>}
-              </Ph>
-            ) : undefined
-          }
         />
         {shown.length > 0 ? (
           <PlaceCardList items={shown} />
         ) : (
           <p className={s.empty}>
-            <Ph>해당하는 관광지가 없습니다.</Ph>
+            등록된 관광지가 없습니다.
           </p>
         )}
         <CreditLines lines={credits} />

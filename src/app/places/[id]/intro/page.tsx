@@ -86,7 +86,7 @@ export default async function PlaceIntro({ params }: Props) {
     ["주소", cell(p.address)],
     ["읍면동·권역", `${p.dong} · ${areaLabelOf(p)}`],
     ["이용시간", cell(p.hours)],
-    ["쉬는 날", cell(p.closed)],
+    ["휴무일", cell(p.closed)],
     ["이용요금", cell(p.fee)],
     ["주차", cell(p.parkingInfo)],
     ["문의", contactCell(p)],
@@ -129,7 +129,7 @@ export default async function PlaceIntro({ params }: Props) {
           </>
         ) : (
           <p className={s.introTit}>
-            <Ph>한국관광공사 관광정보에 소개 글이 없습니다.</Ph>
+            등록된 소개 글이 없습니다.
           </p>
         )}
       </div>

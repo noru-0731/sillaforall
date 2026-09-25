@@ -93,7 +93,6 @@ export default function NearbySlider({
             <div className={s.ctrl}>
               <span className={s.count}>
                 <b>{i + 1}</b>/{n}
-                <span className="sr-only"> 번째</span>
               </span>
               <button type="button" className={s.btn} onClick={() => go(-1)}>
                 <Icon name="chevron-left" size={20} strokeWidth={2} />

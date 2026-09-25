@@ -8,8 +8,7 @@ import { placeById, places } from "@/data";
 import { placeCrumbs, placePages, placeSideMenu, PLACE_BANNER } from "@/site/ia";
 import { Ph, Section, SubPage } from "@/components/layout/PageParts";
 import { Icon, type IconName } from "@/components/icons";
-import { BoardTable, TipList } from "@/components/royal";
-import { withJosa } from "@/lib/josa";
+import { BoardTable } from "@/components/royal";
 import { nearestRegistered } from "@/components/place/placeData";
 import s from "@/components/place/Place.module.css";
 
@@ -53,22 +52,18 @@ export default async function PlaceBarrierFree({ params }: Props) {
     <SubPage crumbs={placeCrumbs(p, page)} title={page.label} banner={PLACE_BANNER} sideMenu={placeSideMenu(p)} current={page.href}>
       {p.registered ? (
         <>
-          <Section title="주차·걷는 길·화장실">
+          <Section title="주차·접근로·화장실">
             <ul className={s.boxes}>
               <Box icon="parking" title="주차">
                 {p.three.parking ?? EMPTY}
               </Box>
-              <Box icon="walk" title="걷는 길">
+              <Box icon="walk" title="접근로">
                 {p.three.walk ?? EMPTY}
               </Box>
               <Box icon="toilet" title="화장실">
                 {p.three.toilet ?? EMPTY}
               </Box>
             </ul>
-            <TipList
-              className={s.tipsAfterBoxes}
-              items={[<Ph key="a">상자와 아래 표의 글은 한국관광공사 무장애 여행 정보에 적힌 글 그대로입니다.</Ph>]}
-            />
           </Section>
 
           <Section title={`${p.name} 무장애 정보`}>
@@ -78,18 +73,18 @@ export default async function PlaceBarrierFree({ params }: Props) {
               cols={["25%", "auto"]}
               align={["c", "l"]}
               rowHeader
-              rows={Object.entries(p.move).map(([k, v]) => [k, v ?? EMPTY])}
+              rows={Object.entries(p.move).map(([k, v]) => [k === "휠체어" ? "휠체어대여" : k, v ?? EMPTY])}
             />
           </Section>
         </>
       ) : (
-        <Section title="주차·걷는 길·화장실">
+        <Section title="주차·접근로·화장실">
           <ul className={s.boxes}>
             <Box icon="wheelchair" title="무장애 여행 정보">
-              <Ph>{withJosa(p.name, "은/는")} 한국관광공사 무장애 여행 정보 명부에 올라 있지 않습니다.</Ph>
+              등록된 무장애 여행 정보가 없습니다.
             </Box>
             {near && (
-              <Box icon="pin" title={<Ph>가장 가까운 등록 관광지</Ph>}>
+              <Box icon="pin" title="인근 무장애 ‘명소’">
                 {near.place ? (
                   <>
                     <Link href={`/places/${near.place.id}/barrier-free`}>{near.place.name}</Link>
@@ -101,10 +96,6 @@ export default async function PlaceBarrierFree({ params }: Props) {
               </Box>
             )}
           </ul>
-          <TipList
-            className={s.tipsAfterBoxes}
-            items={[<Ph key="a">명부에 없는 곳이라 주차·걷는 길·화장실 글이 없습니다.</Ph>]}
-          />
         </Section>
       )}
     </SubPage>

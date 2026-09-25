@@ -101,9 +101,7 @@ export default function Home() {
         title="경주 관광지"
         desc={
           <>
-            {withJosa(SITE_NAME, "은/는")} 경주의 관광지를 누구나 즐길 수 있도록 힘쓰고{" "}
-            <br />
-            한눈에 볼 수 있는 경주 관광지 {places.length}곳의 위치와 무장애 정보를 제공합니다.
+            {withJosa(SITE_NAME, "은/는")} 한눈에 볼 수 있는 경주 관광지 {places.length}곳의 위치와 무장애 정보를 제공합니다.
           </>
         }
         moreHref="/list"

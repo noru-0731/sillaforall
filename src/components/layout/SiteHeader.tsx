@@ -11,7 +11,6 @@ import { createPortal } from "react-dom";
 import { AREA_LINKS, LEFT_BAR, MENU, SITE_NAME, depth3Of, sectionOf } from "@/site/ia";
 import { Icon } from "@/components/icons";
 import { useDisplaySettings } from "./DisplaySettings";
-import { Ph } from "./Ph";
 import d3 from "./HeaderParts.module.css";
 
 /** 휴대전화 전체메뉴 맨 위 권역 사진 카드(서버에서 골라 넘긴다: layout.tsx) */
@@ -88,8 +87,8 @@ export default function SiteHeader({ areaCards }: { areaCards: AreaCard[] }) {
           <span className="rc-leftbar__ga" aria-hidden="true">
             가
           </span>
-          <span className="rc-leftbar__boxlabel">화면 설정</span>
-          <span className="sr-only">(글자·화면 설정 창 열기)</span>
+          <span className="rc-leftbar__boxlabel">글자·화면 설정</span>
+          <span className="sr-only"> 글자·화면 설정 창 열기</span>
         </button>
         <ul>
           {LEFT_BAR.map((b) => (
@@ -138,14 +137,14 @@ export default function SiteHeader({ areaCards }: { areaCards: AreaCard[] }) {
                       onKeyDown={(e) => onBtnKey(e, i)}
                     >
                       {m.label}
-                      {here && <span className="sr-only">(지금 보는 메뉴)</span>}
+                      {here && <span className="sr-only"> 현재 선택됨</span>}
                     </button>
                     <div className={`rc-gnb__panel ${d3.panel}`} id={id} hidden={!open}>
                       <div className="rc-gnb__intro">
                         <p className="rc-gnb__intro-tit">{m.label}</p>
                         {m.desc && (
                           <p className="rc-gnb__intro-desc">
-                            <Ph>{m.desc}</Ph>
+                            {m.desc}
                           </p>
                         )}
                       </div>

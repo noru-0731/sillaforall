@@ -39,7 +39,7 @@ export default function UnlistedPage() {
           kind="unlisted"
           rows={rows}
           threeText={THREE_TEXT}
-          caption="무장애 정보가 없는 곳 목록: 번호, 권역, 관광지, 읍면동, 가까운 등록 관광지"
+          caption="무장애 정보가 없는 곳 목록: 번호, 권역, 관광지, 읍면동, 인근 무장애 ‘명소’"
         />
         <TipList
           className={s.tips}

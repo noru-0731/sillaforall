@@ -1,11 +1,11 @@
 // 무장애 정보 > 무장애 정보 보는 법(궁능 관람규칙·한복무료관람 가이드라인 모양).
-// 회색 안내 상자 → 장 바로가기 격자 → 제1장 세 항목 표(가이드라인 표) → 제2·3장 조 상자(관람규칙) → 제4장 숫자 표.
+// 장 바로가기 격자 → 제1장 세 항목 표(가이드라인 표) → 제2·3장 조 상자(관람규칙) → 제4장 숫자 표. 맨 위 회색 안내 상자는 문구 대조 E01로 뺐다.
 // 숫자는 모두 places.json에서 센다. 새로 지은 문장은 <Ph>.
 import type { Metadata } from "next";
 import Link from "next/link";
 import { byName, places } from "@/data";
 import { Ph, Section, SubPage } from "@/components/layout/PageParts";
-import { BoardTable, TipList } from "@/components/royal";
+import { BoardTable } from "@/components/royal";
 import { Icon, type IconName } from "@/components/icons";
 import { THREE_KEYS, menuPage, type ThreeKey } from "@/components/place-list/helpers";
 import { THREE_TEXT } from "@/components/place-list/Parts";
@@ -16,21 +16,7 @@ const page = menuPage(HREF);
 
 export const metadata: Metadata = { title: page.title };
 
-// 세 항목에 무엇이 적히는지(임시 문구)
-const THREE_DESC: Record<ThreeKey, string> = {
-  parking: "장애인 주차 구역이 있는지 적는 칸입니다.",
-  walk: "입구까지 가는 길과 출입구에 턱이나 경사로가 있는지 적는 칸입니다.",
-  toilet: "장애인 화장실이 있는지 적는 칸입니다.",
-};
-// 명부의 어느 칸 글을 옮기는지(05_사이트/도구/01_자료.py: 걷는 길 = 접근로, 비면 출입통로)
-const THREE_FROM: Record<ThreeKey, string> = {
-  parking: "명부의 ‘주차’ 칸 글을 그대로 옮깁니다.",
-  walk: "명부의 ‘접근로’ 칸 글을 옮기고, 그 칸이 비어 있으면 ‘출입통로’ 칸 글을 옮깁니다.",
-  toilet: "명부의 ‘화장실’ 칸 글을 그대로 옮깁니다.",
-};
 const THREE_ICON: Record<ThreeKey, IconName> = { parking: "parking", walk: "walk", toilet: "toilet" };
-// 명부의 칸 이름(한국관광공사 무장애 여행 정보)
-const THREE_COLS: Record<ThreeKey, string> = { parking: "명부의 주차 칸", walk: "명부의 접근로·출입통로 칸", toilet: "명부의 화장실 칸" };
 
 // 장 바로가기(궁능 "제1장 총칙" 격자)
 const CHAPTERS = [
@@ -46,8 +32,6 @@ export default function BarrierFreeGuidePage() {
   const unregistered = places.filter((p) => !p.registered);
   const filled = (k: ThreeKey) => places.filter((p) => p.three[k]).length;
   const allThree = places.filter((p) => THREE_KEYS.every((k) => p.three[k])).length;
-  const regGap = registered.filter((p) => THREE_KEYS.some((k) => !p.three[k])).length;
-  const withNearest = unregistered.filter((p) => p.nearestRegistered).length;
   // 예로 보일 곳: 첨성대(세 칸이 모두 적힌 곳). 없으면 세 칸이 모두 적힌 첫 곳(가나다순)
   const sample =
     places.find((p) => p.name === "첨성대" && THREE_KEYS.every((k) => p.three[k])) ??
@@ -65,21 +49,6 @@ export default function BarrierFreeGuidePage() {
       side={page.section}
       current={HREF}
     >
-      {/* 회색 안내 상자(궁능 관람규칙 맨 위) */}
-      <div className={s.intro}>
-        <div className={s.introBody}>
-          <h2 className={s.introTit}>{page.title}</h2>
-          <p className={s.introTxt}>
-            관광지에 가시기 전에 꼭 확인해 주셔야 할 사항입니다
-            <br />
-            모두에게 기분좋은 여행이 될 수 있도록 무장애 정보를 살펴보시기 바랍니다
-          </p>
-        </div>
-        <span className={s.introIcon} aria-hidden="true">
-          <Icon name="wheelchair" size={90} strokeWidth={1.1} />
-        </span>
-      </div>
-
       {/* 장 바로가기 */}
       <nav aria-label="이 페이지의 구성">
         <ul className={s.chapters}>
@@ -119,24 +88,13 @@ export default function BarrierFreeGuidePage() {
                 <Ph>{THREE_TEXT[k]}</Ph>
               </span>,
               <div className={s.detail} key="d">
-                <span>
-                  1. <Ph>{THREE_DESC[k]}</Ph>
-                </span>
-                <span>
-                  2. <Ph>{THREE_FROM[k]}</Ph>
-                </span>
                 {sample && (
                   <span>
-                    3. <Ph>적힌 예({sample.name})</Ph>
+                    1. (예시) {sample.name}
                     <br />
                     <q className={s.sample}>{sample.three[k]}</q>
                   </span>
                 )}
-                <span className={s.detailTip}>
-                  <Ph>
-                    관광지 {total}곳 가운데 {filled(k)}곳에 적혀 있습니다.
-                  </Ph>
-                </span>
               </div>,
             ])}
           />
@@ -158,7 +116,7 @@ export default function BarrierFreeGuidePage() {
       >
         <div className={s.article}>
           <h3 className={s.artTit}>
-            1. <Ph>명부에 올라 있다는 뜻</Ph>
+            1. 정의
           </h3>
           <div className={s.artBox}>
             <p>
@@ -176,19 +134,10 @@ export default function BarrierFreeGuidePage() {
             <ul className={s.numList}>
               {THREE_KEYS.map((k) => (
                 <li key={k}>
-                  <Ph>
-                    {THREE_TEXT[k]}({THREE_COLS[k]})
-                  </Ph>
+                  <Ph>{THREE_TEXT[k]}</Ph>
                 </li>
               ))}
             </ul>
-            <TipList
-              items={[
-                <Ph key="a">
-                  경주 관광지 {total}곳 가운데 {registered.length}곳이 명부에 올라 있습니다.
-                </Ph>,
-              ]}
-            />
           </div>
         </div>
         <div className={s.article}>
@@ -199,13 +148,6 @@ export default function BarrierFreeGuidePage() {
             <p>
               <Ph>명부에 올라 있다는 것은 무장애 정보를 적는 칸이 있다는 뜻입니다. 칸마다 글이 모두 적혀 있다는 뜻은 아닙니다.</Ph>
             </p>
-            <TipList
-              items={[
-                <Ph key="a">
-                  명부에 오른 {registered.length}곳 가운데 {regGap}곳은 세 항목 가운데 하나 이상이 비어 있습니다.
-                </Ph>,
-              ]}
-            />
           </div>
         </div>
       </Section>
@@ -240,16 +182,9 @@ export default function BarrierFreeGuidePage() {
           <div className={s.artBox}>
             <p>
               <Ph>
-                명부에 오르지 않은 {unregistered.length}곳은 세 항목이 모두 ‘적힌 내용 없음’으로 보입니다.
+                명부에 오르지 않은 곳은 세 항목이 모두 ‘적힌 내용 없음’으로 보입니다.
               </Ph>
             </p>
-            <TipList
-              items={[
-                <Ph key="a">
-                  이 가운데 {withNearest}곳은 ‘정보가 없는 곳’ 목록에 가장 가까운 등록 관광지를 함께 적었습니다.
-                </Ph>,
-              ]}
-            />
           </div>
         </div>
       </Section>
@@ -272,10 +207,10 @@ export default function BarrierFreeGuidePage() {
             align={["l", "c"]}
             rowHeader
             rows={[
-              [<Ph key="k">전체 관광지</Ph>, total],
-              [<Ph key="k">명부에 오른 곳</Ph>, registered.length],
-              [<Ph key="k">명부에 오르지 않은 곳</Ph>, unregistered.length],
-              ...THREE_KEYS.map((k) => [<Ph key="k">{THREE_TEXT[k]} 글이 적힌 곳</Ph>, filled(k)]),
+              ["전체", total],
+              ["정보가 적힌 곳", registered.length],
+              ["정보가 없는 곳", unregistered.length],
+              ...THREE_KEYS.map((k) => [THREE_TEXT[k], filled(k)]),
               [<Ph key="k">세 항목이 모두 적힌 곳</Ph>, allThree],
             ]}
           />

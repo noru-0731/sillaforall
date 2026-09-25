@@ -6,7 +6,7 @@ import type { Place } from "@/data";
 export type NavItem = {
   label: string;
   href: string;
-  /** 1차 메뉴 펼침판의 한 줄 설명(궁능 누리집의 회색 상자 글). 새로 지은 글이라 화면에서는 <Ph>로 보인다. */
+  /** 1차 메뉴 펼침판 회색 상자의 둘째 줄. 궁능은 이 자리에 기관 이름(궁능유적본부)을 두므로 사이트 이름을 점선 없이 쓴다. */
   desc?: string;
   children?: NavItem[];
 };
@@ -22,15 +22,15 @@ export const MENU: NavItem[] = [
   {
     label: "관광지 지도",
     href: "/map",
-    desc: "경주 관광지 61곳을 지도에서 찾아봅니다.",
+    desc: SITE_NAME,
     children: [{ label: "경주 전체", href: "/map" }, ...areas.map((a) => ({ label: a.label, href: `/map/${a.key}` }))],
   },
   {
     label: "관광지 목록",
     href: "/list",
-    desc: "지역별, 가나다순, 거점별로 관광지를 모아 봅니다.",
+    desc: SITE_NAME,
     children: [
-      { label: "지역별", href: "/list" },
+      { label: "권역별", href: "/list" },
       { label: "가나다순", href: "/list/abc" },
       { label: "거점별", href: "/list/hub" },
     ],
@@ -38,7 +38,7 @@ export const MENU: NavItem[] = [
   {
     label: "무장애 정보",
     href: "/barrier-free",
-    desc: "주차, 걷는 길, 화장실 정보를 관광지마다 살펴봅니다.",
+    desc: SITE_NAME,
     children: [
       { label: "무장애 정보 보는 법", href: "/barrier-free" },
       { label: "정보가 적힌 곳", href: "/barrier-free/listed" },
@@ -48,7 +48,7 @@ export const MENU: NavItem[] = [
   {
     label: "사이트 소개",
     href: "/about",
-    desc: "이 사이트를 만든 까닭과 자료 출처를 알려 드립니다.",
+    desc: SITE_NAME,
     children: [
       { label: "만든 까닭", href: "/about" },
       { label: "자료 출처와 저작권", href: "/about/sources" },
@@ -145,4 +145,4 @@ export function placeCrumbs(p: Place, page?: SideMenuLink) {
 }
 
 /** 관광지 쪽 배너 글자 */
-export const PLACE_BANNER = "관광지 안내";
+export const PLACE_BANNER = "관광지 목록";

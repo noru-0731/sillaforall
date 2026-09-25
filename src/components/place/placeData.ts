@@ -152,7 +152,7 @@ export function cleanPhotoName(name?: string | null): string | null {
 /** made: 관광공사 사진 이름이 없어 새로 지은 이름("{관광지} 사진 {n}", 궁능에 짝 없음 → 화면에서 <Ph>). by: 관광사진 정보 사진의 촬영자 */
 export type ViewerPhoto = { url: string; small: string; type: Photo["type"]; name: string; made?: boolean; by?: string };
 
-/** 사진 쪽 넘기기에 넘길 사진 목록(보일 이름 포함). 이름이 없으면 "{관광지} 사진 {n}". */
+/** 사진 쪽 넘기기에 넘길 사진 목록(보일 이름 포함). 이름이 없으면 "{관광지} {n}"(열린관광 사진 이름 꼴). */
 export function viewerPhotos(p: Place): ViewerPhoto[] {
   return photosOf(p.id).map((ph, i) => {
     const clean = cleanPhotoName(ph.name);
@@ -160,7 +160,7 @@ export function viewerPhotos(p: Place): ViewerPhoto[] {
       url: ph.url,
       small: ph.small ?? ph.url,
       type: ph.type,
-      name: clean ?? `${p.name} 사진 ${i + 1}`,
+      name: clean ?? `${p.name} ${i + 1}`,
       made: !clean,
       ...(ph.from === "gallery" ? { by: ph.by ?? "" } : {}),
     };
