@@ -130,10 +130,10 @@ export function placeLabel(
 }
 
 /** 축척 막대: 1km 폭(px)을 받아 60~140px 사이의 보기 좋은 길이를 고른다. */
-export function niceScale(pxPerKm: number) {
+export function niceScale(pxPerKm: number, maxPx = 140) {
   const steps = [0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20];
   let pick = steps[0];
-  for (const s of steps) if (s * pxPerKm <= 140) pick = s;
+  for (const s of steps) if (s * pxPerKm <= maxPx) pick = s;
   return { px: pick * pxPerKm, label: pick < 1 ? `${Math.round(pick * 1000)}m` : `${pick}km` };
 }
 

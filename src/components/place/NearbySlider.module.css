@@ -7,6 +7,7 @@
   flex-direction: column;
   min-height: 42rem;
   background: var(--rc-ink);
+  container: nearby / inline-size; /* 판 폭으로 이름 판·조작 상자 배치를 정한다(아래 @container nearby) */
 }
 .photo {
   position: relative;
@@ -109,5 +110,16 @@
   .ctrl {
     width: auto;
     padding: 0 1.5rem;
+  }
+}
+/* 판이 좁으면(휴대전화 + 글자 크게·가장 크게) 조작 상자(약 20rem)가 이름 판 자리를 다 차지해
+   이름이 한 글자씩 세로로 늘어서고 판 위로 넘쳤다. 조작 상자를 다음 줄 오른쪽으로 내려 이름 판이 한 줄 폭을 쓰게 한다.
+   300 = 조작 상자 200 + 사이 10 + 이름 판이 한 글자씩 끊기지 않을 폭 90(보통·조금 크게의 휴대전화는 그대로). */
+@container nearby (max-width: 299px) {
+  .bar {
+    flex-wrap: wrap;
+  }
+  .ctrl {
+    margin-left: auto;
   }
 }

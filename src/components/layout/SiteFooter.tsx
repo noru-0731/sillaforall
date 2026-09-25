@@ -1,6 +1,7 @@
 // 공통 푸터(궁능유적본부 누리집 모양): 위 줄 링크 + 관련사이트 펼침, 아래 회색 판에 사이트 이름·"관광지별 연락처" 펼침·만든 곳·출처.
 // 정부 누리집이 아니므로 인증 마크·운영기관 식별자는 넣지 않는다. KRDS 출처 문장은 지우지 않는다.
 // 관광지별 연락처(궁능 "관리소별 연락처" 표: 기관 / 주소 / 연락처): 문의 글이 있는 관광지(가나다순), 주소 앞 [우편번호].
+import { Fragment } from "react";
 import Link from "next/link";
 import { SITE_NAME } from "@/site/ia";
 import { byName, places, zipOf } from "@/data";
@@ -10,6 +11,22 @@ import FooterRelated from "./FooterRelated";
 import FooterTel from "./FooterTel";
 import f from "./Footer.module.css";
 
+/** 전화번호는 붙임표 뒤에서만 줄이 바뀌게 한다(궁능 휴대전화 표처럼 "054-772-" / "9289"). 묶음 안에서는 끊지 않는다.
+ *  좁은 칸(휴대전화, 글자 크게)에서 번호가 칸과 화면 밖으로 나가지 않게. */
+function TelText({ tel }: { tel: string }) {
+  const parts = tel.split("-");
+  return (
+    <>
+      {parts.map((g, i) => (
+        <Fragment key={i}>
+          {i > 0 && <wbr />}
+          <span className={f.telPart}>{i < parts.length - 1 ? `${g}-` : g}</span>
+        </Fragment>
+      ))}
+    </>
+  );
+}
+
 /** 문의 글에서 첫 전화번호만 누르면 걸리게 */
 function Contact({ text }: { text: string }) {
   const tel = phoneOf(text);
@@ -18,7 +35,9 @@ function Contact({ text }: { text: string }) {
   return (
     <>
       {text.slice(0, at)}
-      <a href={`tel:${tel.replace(/-/g, "")}`}>{tel}</a>
+      <a href={`tel:${tel.replace(/-/g, "")}`}>
+        <TelText tel={tel} />
+      </a>
       {text.slice(at + tel.length)}
     </>
   );

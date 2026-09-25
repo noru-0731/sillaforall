@@ -178,7 +178,9 @@ body {
   left: 0;
   z-index: 950;
   width: var(--rc-bar-w);
-  height: 100vh;
+  /* 글자·화면 설정(body zoom)이면 vh도 zoom배가 되어 막대가 화면보다 길어지고 안에서 내려 볼 수 없다.
+     zoom 값(--rc-zoom, DisplaySettings.tsx)으로 나눠 화면 높이에 맞춘다. 넘치는 칸은 막대 안에서 내려 본다. */
+  height: calc(100vh / var(--rc-zoom, 1));
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-width: none;
@@ -307,13 +309,18 @@ body {
 .rc-gnb__btn[aria-expanded="true"] {
   font-weight: 700;
 }
-/* 펼침판: 폭 전체 흰 판(머리 아래, 왼쪽 막대 오른쪽) */
+/* 펼침판: 폭 전체 흰 판(머리 아래, 왼쪽 막대 오른쪽)
+   격자 두 칸 = [소개 상자 자리 34(왼쪽 여백 2 + 상자 32)][2차 칸 격자]. 줄 높이는 긴 쪽을 따르므로
+   3차가 길어(시내 29줄) 판 안에서 내려 볼 때도 회색 소개 상자가 끝까지 칠해진다.
+   판이 아주 좁으면(좁은 PC + 글자 가장 크게) 소개 상자 자리가 먼저 줄어든다. */
 .rc-gnb__panel {
   position: absolute;
   top: 100%;
   left: var(--rc-bar-w);
   right: 0;
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 34rem) auto;
+  justify-content: start;
   min-height: 25.7rem;
   background: var(--rc-bg);
   border-top: 0.1rem solid var(--rc-line-light);
@@ -323,7 +330,7 @@ body {
   display: none;
 }
 .rc-gnb__intro {
-  flex: 0 0 32rem;
+  min-width: 0;
   margin-left: 2rem;
   padding: 3.5rem 3.5rem;
   background: var(--rc-bg-bar);
@@ -477,11 +484,20 @@ body {
     font-size: 1.6rem;
   }
 }
-@media (max-width: 1359px) {
+/* 펼침판 2차 칸 격자: 판 폭이 모자라면 3칸 → 2칸 → 1칸.
+   글자·화면 설정(body zoom)을 키우면 @media 폭은 그대로라 판 밖으로 잘렸다. 머리 안 폭(rc-hd, = 판 폭 - 40)으로 정한다.
+   3칸은 판 폭 1270(소개 340 + 여백 70 + 칸 240×3 + 사이 70×2), 2칸은 890(340 + 40 + 240×2 + 30)이 있어야 한다.
+   1239 이하는 예전 @media (max-width: 1359px)와 같은 자리(zoom 1이면 화면 1359 이하). */
+@container rc-hd (max-width: 1239px) {
   .rc-gnb__grid {
     grid-template-columns: repeat(2, 24rem);
     gap: 1rem 3rem;
     margin-left: 4rem;
+  }
+}
+@container rc-hd (max-width: 849px) {
+  .rc-gnb__grid {
+    grid-template-columns: 24rem;
   }
 }
 
@@ -1037,29 +1053,47 @@ body {
   justify-content: space-between;
   min-height: 7rem;
 }
+/* 줄이 넘어갈 때(글자 크게 + 좁은 폭) 둘째 줄 맨 앞에 구분선이 오지 않게 한다.
+   구분선은 li + li의 왼쪽 여백 -0.7rem으로 링크 칸 왼쪽 0.7rem 바깥에 두고, 줄 첫머리에 온 구분선은 목록 상자 밖이 되어 잘린다.
+   초점 테두리(0.5rem 바깥)는 보이도록 0.5rem 바깥까지는 자르지 않는다.
+   li 오른쪽 여백(+0.7rem)과 구분선 뒤 링크 왼쪽 안쪽 여백(-0.6rem)으로 되돌려 한 줄일 때 글자·구분선 자리는 예전과 같다. */
 .rc-ft-links {
+  --ft-link-pad: 3.5rem;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  overflow: clip;
+  overflow-clip-margin: 0.5rem;
 }
 .rc-ft-links li {
   display: flex;
   align-items: center;
 }
+.rc-ft-links li + li {
+  margin-left: -0.7rem;
+}
+.rc-ft-links li:not(:last-child) {
+  margin-right: 0.7rem; /* 위 -0.7rem을 되돌려 한 줄 안에서는 자리가 예전과 같다 */
+}
 .rc-ft-links li + li::before {
   content: "";
+  flex: none;
   width: 0.1rem;
   height: 1.6rem;
+  margin-right: 0.6rem;
   background: #cccccc;
 }
 .rc-ft-links a {
   display: inline-flex;
   align-items: center;
   line-height: 2.08rem; /* 궁능 ft_policy 링크 높이 21 */
-  padding: 0 3.5rem;
+  padding: 0 var(--ft-link-pad);
   font-size: 1.6rem;
   font-weight: 500;
   color: var(--rc-text);
+}
+.rc-ft-links li + li a {
+  padding-left: calc(var(--ft-link-pad) - 0.6rem);
 }
 .rc-ft-links li:first-child a {
   padding-left: 0;
@@ -1197,17 +1231,22 @@ body {
     align-items: stretch;
     padding: 0;
   }
+  /* 좌우 안쪽 2rem은 같은 색 테두리로 준다(위의 자르기가 안쪽 여백이 아니라 글자 칸 가장자리에서 일어나게) */
   .rc-ft-links {
-    padding: 1rem 2rem;
+    --ft-link-pad: 1.6rem;
+    padding: 1rem 0;
+    border-inline: 2rem solid var(--rc-bg-table);
     background: var(--rc-bg-table);
-  }
-  .rc-ft-links a {
-    padding: 0 1.6rem;
   }
   .rc-ft-related {
     width: auto;
     border: 0;
     border-bottom: 0.1rem solid var(--rc-line-footer);
+  }
+  /* PC에서는 관련사이트 칸의 좌우 테두리 1px을 덮으려고 목록을 1px씩 넓힌다. 휴대전화는 칸이 화면 전체 폭이라 넓히면 쪽이 옆으로 밀린다. */
+  .rc-ft-related ul {
+    left: 0;
+    right: 0;
   }
   .rc-ft-related > button {
     min-height: 5.6rem;

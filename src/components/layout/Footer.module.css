@@ -68,10 +68,13 @@
   border-left: 0.1rem solid var(--rc-line-light);
 }
 .table a {
-  white-space: nowrap; /* 전화번호가 붙임표에서 끊기지 않게 */
   color: inherit;
   text-decoration: underline;
   text-underline-offset: 0.2rem;
+}
+/* 전화번호 한 묶음("054-")은 끊지 않고, 묶음 사이(<wbr>)에서만 줄이 바뀐다(SiteFooter.tsx TelText) */
+.telPart {
+  white-space: nowrap;
 }
 .c1 {
   width: 30%;

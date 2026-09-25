@@ -90,7 +90,9 @@ export function DisplaySettingsProvider({ children }: { children: React.ReactNod
   // 열리면 초점을 창 안(지금 고른 크기)으로 옮긴다
   useEffect(() => {
     if (!open || !shown) return;
-    const el = dialogRef.current?.querySelector<HTMLElement>('input:checked, input, button');
+    // querySelector('a, b')는 선택자 차례가 아니라 문서 차례로 첫 요소를 주므로(늘 첫 라디오 '작게'), 고른 칸을 먼저 따로 찾는다
+    const box = dialogRef.current;
+    const el = box?.querySelector<HTMLElement>("input:checked") ?? box?.querySelector<HTMLElement>("input, button");
     el?.focus();
   }, [open, shown]);
 

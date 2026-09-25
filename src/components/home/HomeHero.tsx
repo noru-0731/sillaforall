@@ -8,6 +8,7 @@ import { useCallback, useEffect, useId, useRef, useState } from "react";
 import Link from "next/link";
 import { Icon, type IconName } from "@/components/icons";
 import Photo from "@/components/royal/Photo";
+import { Ph } from "@/components/layout/Ph";
 import { useReducedMotion } from "./bits";
 import s from "./home.module.css";
 
@@ -22,7 +23,14 @@ export type HeroSlide = {
   /** 사진 출처 한 줄("사진: 한국관광공사 관광정보, 공공누리 제1유형" 등. 서버에서 photoCreditOf로 만듦) */
   credit: string;
 };
-export type QuickItem = { label: string; href: string; icon: IconName; children?: { label: string; href: string }[] };
+export type QuickItem = {
+  label: string;
+  href: string;
+  icon: IconName;
+  children?: { label: string; href: string }[];
+  /** 궁능에 짝이 없어 새로 지은 이름(점선 밑줄 Ph로 보인다) */
+  ph?: boolean;
+};
 
 const AUTO_MS = 6000;
 const RING = 2 * Math.PI * 20; // 멈춤 단추 둘레 원(지름 40)의 길이
@@ -164,9 +172,13 @@ function QuickRow({ items }: { items: QuickItem[] }) {
   const popId = useId();
 
   // 펼치면 첫 링크로 초점을 옮긴다(펼침판은 줄 밖에 있어 휴대전화 가로 넘기기 칸에 잘리지 않는다).
+  // 줄이 화면 위쪽에 있으면 위로 열린 판이 고정 머리 밑에 가려지므로, 먼저 판이 머리 아래에 다 보이게 쪽을 옮긴다
+  // (머리 높이만큼 비키는 값은 home.module.css .quickPop의 scroll-margin-top).
   useEffect(() => {
     if (open === null) return;
-    popRef.current?.querySelector<HTMLElement>("a")?.focus();
+    const pop = popRef.current;
+    pop?.scrollIntoView({ block: "nearest" });
+    pop?.querySelector<HTMLElement>("a")?.focus({ preventScroll: true });
     const onDown = (e: PointerEvent) => {
       if (!rowRef.current?.contains(e.target as Node)) setOpen(null);
     };
@@ -207,7 +219,7 @@ function QuickRow({ items }: { items: QuickItem[] }) {
           const body = (
             <>
               <Icon name={q.icon} size={36} strokeWidth={1.5} className={s.quickIcon} />
-              <span>{q.label}</span>
+              <span>{q.ph ? <Ph>{q.label}</Ph> : q.label}</span>
             </>
           );
           return (

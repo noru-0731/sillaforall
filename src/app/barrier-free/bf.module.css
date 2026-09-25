@@ -420,11 +420,14 @@
     align-items: stretch;
     gap: 2rem;
   }
+  /* 글자 크게 + 좁은 폭: 고르기 칸과 단추는 폭이 고정이라 입력 칸만 줄어 거의 없어졌다.
+     검색 상자가 20rem(고르기 9.6 + 입력 10.4)보다 좁아지면 검색 단추를 다음 줄로 내린다(보통 크기 휴대전화는 한 줄 그대로). */
   .search {
+    flex-wrap: wrap;
     gap: 1rem;
   }
   .searchBox {
-    flex: 1 1 auto;
+    flex: 1 1 20rem;
     min-width: 0;
   }
   .select {

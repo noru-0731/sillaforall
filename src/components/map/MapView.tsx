@@ -215,7 +215,9 @@ export default function MapView({
     if (!size || !fit || !shapes) return null;
     const { w, h, fs, afs, ufs } = size;
     const onScreen = (q: Pt, m: number) => q.x >= -m && q.x <= w + m && q.y >= -m && q.y <= h + m;
-    const sc = niceScale(basePxKm * vw.k);
+    // 축척 막대는 오른쪽 위 + − ↻ 단추 앞에서 끝나게(좁은 칸 + 글자 크게에서 막대가 단추 밑으로 들어가지 않게).
+    // 왼쪽 위 모서리 = 왼쪽 여백 16 + 방위표 16 + 사이 16(MapView.module.css .corner)
+    const sc = niceScale(basePxKm * vw.k, interactive ? Math.min(140, Math.max(40, w - 48 - (CTRL.right + CTRL.w + 8))) : 140);
 
     const markers: Marker[] = [];
     // 고정 지도는 강조한 곳을 따로(묶지 않고) 그린다. 누를 수 있는 지도는 고른 곳도 함께 묶어 누름 영역이 겹치지 않게 한다.

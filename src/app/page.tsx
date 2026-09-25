@@ -51,7 +51,8 @@ const QUICK: QuickItem[] = [
   { label: MENU[0].label, href: MENU[0].href, icon: "map", children: MENU[0].children?.map((c) => ({ label: c.label, href: c.href })) },
   { label: MENU[1].label, href: MENU[1].href, icon: "list" },
   { label: MENU[2].label, href: MENU[2].href, icon: "wheelchair", children: MENU[2].children?.map((c) => ({ label: c.label, href: c.href })) },
-  { label: "거점별 관광지", href: "/list/hub", icon: "hub" },
+  // 넷째 칸 이름은 메뉴 이름("거점별")·가운데 띠("거점 관광지")와 달라 새로 지은 글로 둔다(점선)
+  { label: "거점별 관광지", href: "/list/hub", icon: "hub", ph: true },
   { label: "이용 안내", href: "/about/guide", icon: "guide" },
 ];
 

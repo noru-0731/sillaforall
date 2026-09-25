@@ -60,6 +60,8 @@ export default function PillTabs({
 function PillScroller({ mode, children }: { mode: "mobile" | "always"; children: React.ReactNode }) {
   const box = useRef<HTMLDivElement>(null);
   const [edge, setEdge] = useState({ over: false, start: true, end: true });
+  // 사람이 줄을 직접 옮겼는지(그 뒤에는 고른 알약으로 되돌리지 않는다)
+  const touched = useRef(false);
 
   const ulOf = () => box.current?.querySelector<HTMLUListElement>("ul.rc-pills") ?? null;
   const measure = useCallback(() => {
@@ -73,17 +75,34 @@ function PillScroller({ mode, children }: { mode: "mobile" | "always"; children:
     const ul = ulOf();
     if (!ul) return;
     // 고른 알약이 보이게(쪽 전체는 움직이지 않고 줄만)
-    const on = ul.querySelector<HTMLElement>(".is-active");
-    if (on && ul.scrollWidth > ul.clientWidth) {
-      const li = on.parentElement as HTMLElement;
-      ul.scrollLeft = Math.max(0, li.offsetLeft - ul.offsetLeft - (ul.clientWidth - li.offsetWidth) / 2);
-    }
-    // 넘침 여부는 ResizeObserver가 처음 한 번 부르는 것으로 잰다(관찰을 시작하면 바로 한 번 불린다)
+    const center = () => {
+      const on = ul.querySelector<HTMLElement>(".is-active");
+      if (on && ul.scrollWidth > ul.clientWidth) {
+        const li = on.parentElement as HTMLElement;
+        ul.scrollLeft = Math.max(0, li.offsetLeft - ul.offsetLeft - (ul.clientWidth - li.offsetWidth) / 2);
+      }
+    };
+    center();
+    // 글자·화면 설정(body zoom)은 첫 화면을 그린 뒤에 걸리고 글꼴도 늦게 올 수 있어, 줄 폭이 바뀌면 다시 가운데로 옮긴다.
+    // 넘침 여부도 여기서 잰다(관찰을 시작하면 바로 한 번 불린다).
+    const onResize = () => {
+      if (!touched.current) center();
+      measure();
+    };
+    const onTouch = () => {
+      touched.current = true;
+    };
     ul.addEventListener("scroll", measure, { passive: true });
-    const ro = new ResizeObserver(measure);
+    ul.addEventListener("pointerdown", onTouch, { passive: true });
+    ul.addEventListener("wheel", onTouch, { passive: true });
+    ul.addEventListener("keydown", onTouch);
+    const ro = new ResizeObserver(onResize);
     ro.observe(ul);
     return () => {
       ul.removeEventListener("scroll", measure);
+      ul.removeEventListener("pointerdown", onTouch);
+      ul.removeEventListener("wheel", onTouch);
+      ul.removeEventListener("keydown", onTouch);
       ro.disconnect();
     };
   }, [measure]);
@@ -91,6 +110,7 @@ function PillScroller({ mode, children }: { mode: "mobile" | "always"; children:
   const move = (dir: number) => {
     const ul = ulOf();
     if (!ul) return;
+    touched.current = true;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     ul.scrollBy({ left: dir * Math.max(120, ul.clientWidth * 0.8), behavior: reduce ? "auto" : "smooth" });
   };
