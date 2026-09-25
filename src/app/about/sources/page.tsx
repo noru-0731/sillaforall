@@ -102,7 +102,8 @@ export default function SourcesPage() {
         <ul className={s.bullets}>
           <li>
             <Ph>
-              사진은 모두 한국관광공사 관광정보(TourAPI)의 사진입니다. 관광지 {places.length}곳 가운데 {withPhoto}곳에 사진이 있습니다.
+              사진은 한국관광공사 관광정보(TourAPI)와 관광사진 정보(한국관광콘텐츠랩)의 사진입니다. 관광지 {places.length}곳 가운데{" "}
+              {withPhoto}곳에 사진이 있습니다.
             </Ph>
           </li>
           <li>
@@ -134,7 +135,14 @@ export default function SourcesPage() {
           <li>관광정보</li>
           <li>무장애 여행 정보</li>
           <li>대표사진</li>
+          <li>관광사진 정보</li>
         </ul>
+        <p>
+          <OutLink href="https://api.visitkorea.or.kr/#/useServiceGuide/2">api.visitkorea.or.kr/#/useServiceGuide/2</OutLink>
+        </p>
+        <p>
+          <OutLink href="https://knto.or.kr/helpdeskCopyrightguide">knto.or.kr/helpdeskCopyrightguide</OutLink>
+        </p>
       </Section>
 
       <Section id="boundary" title="읍면동 경계선">
@@ -145,6 +153,19 @@ export default function SourcesPage() {
         </ul>
         <p>
           <OutLink href="https://github.com/vuski/admdongkor">github.com/vuski/admdongkor</OutLink>
+        </p>
+      </Section>
+
+      <Section id="osm" title="오픈스트리트맵(OpenStreetMap)">
+        <ul className={`${s.bullets} ${s.bulletsTight}`}>
+          <li>
+            <Ph>관광지 오시는 길 지도</Ph>
+          </li>
+          <li>© OpenStreetMap 기여자</li>
+          <li>ODbL(Open Database License)</li>
+        </ul>
+        <p>
+          <OutLink href="https://www.openstreetmap.org/copyright">www.openstreetmap.org/copyright</OutLink>
         </p>
       </Section>
 

@@ -11,6 +11,21 @@
   color: var(--rc-text-faint);
   text-align: right;
 }
+/* 궁능 gbg_intro ic_wrap: 사진 아래 50, 높이 78, 가운데 110×69 그림, 아래 30 띄우고 굵은 첫 문장 */
+.introMark {
+  display: flex;
+  justify-content: center;
+  height: 7.8rem;
+  margin-top: 5rem;
+  color: var(--rc-text-sub);
+}
+.introMark svg {
+  width: 11rem;
+  height: 6.9rem;
+}
+.introMark + .introTit {
+  margin-top: 3rem;
+}
 .introTit {
   margin-top: 5rem;
   font-size: 2.4rem;
@@ -364,4 +379,16 @@
   .bdBox {
     padding: 2rem;
   }
+}
+
+/* 사진 쪽 아래 설명 문단(궁능 gbg_story: 사진 묶음 아래 약 40 띄우고 16px #131313, 줄 27.2, 문단 사이 없음) */
+.photoDesc {
+  margin-top: 4rem;
+}
+.photoDesc p {
+  font-size: 1.6rem;
+  line-height: 2.72rem;
+  color: var(--rc-text);
+  word-break: keep-all;
+  overflow-wrap: anywhere;
 }

@@ -6,6 +6,9 @@
 import { createContext, useContext, useId, useMemo, useState } from "react";
 import Link from "next/link";
 import PillTabs from "@/components/royal/PillTabs";
+import FilterPills from "@/components/royal/FilterPills";
+import { COND_KEYS, COND_LABEL, meetsAll, type CondKey } from "@/components/place-list/barrierConds";
+import { useConds } from "@/components/place-list/useConds";
 import { Ph } from "@/components/layout/Ph";
 import { Icon } from "@/components/icons";
 import type { AreaKey } from "@/data/types";
@@ -20,6 +23,8 @@ export type BoardRow = {
   areaLabel: string;
   /** 정보가 적힌 곳: 세 항목에 글이 있는지 */
   three?: { parking: boolean; walk: boolean; toilet: boolean };
+  /** 정보가 적힌 곳: 무장애 조건 거르기에서 "있다고 적힌" 항목(components/place-list/barrierConds.ts) */
+  conds?: CondKey[];
   /** 정보가 없는 곳: 가까운 등록 관광지(없으면 null) */
   nearest?: string | null;
 };
@@ -45,7 +50,7 @@ export function BoardState({ children }: { children: React.ReactNode }) {
   return <Ctx.Provider value={{ area, setArea, query, setQuery }}>{children}</Ctx.Provider>;
 }
 
-/** 권역 알약 줄(전체 + 권역 5). 궁능 공지사항의 궁 알약 줄 자리. */
+/** 권역 알약 줄(전체 + 권역 5). 궁능 공지사항의 궁 알약 줄 자리. 휴대전화에서는 한 줄 + ‹ › 넘기기(궁능 notice_m390). */
 export function BoardPills({ areas }: { areas: BoardArea[] }) {
   const { area, setArea } = useBoard();
   return (
@@ -54,6 +59,7 @@ export function BoardPills({ areas }: { areas: BoardArea[] }) {
       current={area}
       onSelect={setArea}
       items={[{ label: "전체", value: "all", grad: true }, ...areas.map((a) => ({ label: a.label, value: a.key, area: a.key }))]}
+      scroll="mobile"
     />
   );
 }
@@ -72,8 +78,11 @@ function Mark({ on }: { on: boolean }) {
   );
 }
 
+const COND_ITEMS = COND_KEYS.map((k) => ({ label: COND_LABEL[k], value: k }));
+
 /**
- * 곳 수 + 검색 줄 + 표(넓은 화면) / 목록(좁은 화면).
+ * (정보가 적힌 곳만) 무장애 조건 거르기 줄 + 곳 수 + 검색 줄 + 표(넓은 화면) / 목록(좁은 화면).
+ * 조건은 주소 뒤 ?조건= 에 남는다(useConds).
  * kind="listed": 번호 / 권역 / 관광지 / 주차 / 걷는 길 / 화장실(○ −)
  * kind="unlisted": 번호 / 권역 / 관광지 / 읍면동 / 가까운 등록 관광지
  */
@@ -90,6 +99,8 @@ export function BoardList({
   caption: string;
 }) {
   const { area, query, setQuery } = useBoard();
+  const [conds, setConds] = useConds();
+  const condOn = kind === "listed";
   const [field, setField] = useState<Field>("all");
   const [draft, setDraft] = useState("");
   const uid = useId();
@@ -98,6 +109,7 @@ export function BoardList({
     const q = query.text.replace(/\s+/g, "");
     return rows.filter((r) => {
       if (area !== "all" && r.area !== area) return false;
+      if (condOn && !meetsAll(r.conds, conds)) return false;
       if (!q) return true;
       const name = r.name.replace(/\s+/g, "");
       const dong = r.dong.replace(/\s+/g, "");
@@ -105,7 +117,7 @@ export function BoardList({
       if (query.field === "dong") return dong.includes(q);
       return name.includes(q) || dong.includes(q);
     });
-  }, [rows, area, query]);
+  }, [rows, area, query, condOn, conds]);
 
   const keys = ["parking", "walk", "toilet"] as const;
   const cols = kind === "listed" ? 6 : 5;
@@ -114,6 +126,17 @@ export function BoardList({
 
   return (
     <div>
+      {condOn && (
+        <FilterPills
+          className={s.condPills}
+          label="무장애 정보"
+          icon="wheelchair"
+          items={COND_ITEMS}
+          selected={conds}
+          onChange={(v) => setConds(v as CondKey[])}
+          note={conds.length > 0 ? <Ph>고른 항목이 모두 있다고 적힌 곳만 보입니다.</Ph> : undefined}
+        />
+      )}
       <div className={s.cond}>
         <p className={s.count} aria-live="polite">
           전체: <strong>{shown.length}</strong>곳

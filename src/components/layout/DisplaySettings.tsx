@@ -27,6 +27,9 @@ export const useDisplaySettings = () => useContext(Ctx);
 function apply(scale: Scale, mode: Mode) {
   const z = SCALES.find((s) => s.value === scale)?.zoom ?? 1;
   document.body.style.zoom = z === 1 ? "" : String(z);
+  // zoom 안에서는 화면 높이 단위(dvh)도 z배가 된다. 화면 높이에 맞출 곳(1차 메뉴 펼침판 등)이 나눠 쓰도록 값을 둔다.
+  if (z === 1) document.body.style.removeProperty("--rc-zoom");
+  else document.body.style.setProperty("--rc-zoom", String(z));
   document.documentElement.setAttribute("data-krds-mode", mode);
 }
 

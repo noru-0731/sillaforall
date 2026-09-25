@@ -351,6 +351,30 @@
   padding: 6rem 0 7rem;
   background: var(--home-pale);
 }
+/* 바탕 흐린 선 그림: 칸 왼쪽 아래에 크게(궁능 main_s1 궁궐 선 그림 자리), 글·카드 뒤 */
+.cardsArt {
+  position: absolute;
+  left: 2rem;
+  bottom: 0;
+  width: 72rem;
+  max-width: 90%;
+  color: var(--rc-navy);
+  opacity: 0.1;
+  pointer-events: none;
+}
+.cardsArt svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+/* 크게 늘려도 선은 가늘게(궁능 선 그림처럼) */
+.cardsArt path {
+  vector-effect: non-scaling-stroke;
+  stroke-width: 3px;
+}
+.cardsSec > .inner {
+  z-index: 1;
+}
 .head {
   position: relative;
   padding-right: 40rem;

@@ -66,6 +66,11 @@
   margin-left: auto;
 }
 
+/* 무장애 조건 거르기 줄(components/royal/FilterPills): 윗줄 아래, 지도 상자까지 30 */
+.conds {
+  margin-bottom: 3rem;
+}
+
 .map {
   margin-bottom: 3rem;
 }

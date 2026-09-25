@@ -1,9 +1,66 @@
-// 공통 푸터(궁능유적본부 누리집 모양): 위 줄 링크 + 관련사이트 펼침, 아래 회색 판에 사이트 이름·만든 곳·출처.
+// 공통 푸터(궁능유적본부 누리집 모양): 위 줄 링크 + 관련사이트 펼침, 아래 회색 판에 사이트 이름·"관광지별 연락처" 펼침·만든 곳·출처.
 // 정부 누리집이 아니므로 인증 마크·운영기관 식별자는 넣지 않는다. KRDS 출처 문장은 지우지 않는다.
+// 관광지별 연락처(궁능 "관리소별 연락처" 표: 기관 / 주소 / 연락처): 문의 글이 있는 관광지(가나다순), 주소 앞 [우편번호].
 import Link from "next/link";
 import { SITE_NAME } from "@/site/ia";
+import { byName, places, zipOf } from "@/data";
+import { phoneOf } from "@/components/place/placeData";
 import { Ph } from "./Ph";
 import FooterRelated from "./FooterRelated";
+import FooterTel from "./FooterTel";
+import f from "./Footer.module.css";
+
+/** 문의 글에서 첫 전화번호만 누르면 걸리게 */
+function Contact({ text }: { text: string }) {
+  const tel = phoneOf(text);
+  if (!tel) return <>{text}</>;
+  const at = text.indexOf(tel);
+  return (
+    <>
+      {text.slice(0, at)}
+      <a href={`tel:${tel.replace(/-/g, "")}`}>{tel}</a>
+      {text.slice(at + tel.length)}
+    </>
+  );
+}
+
+function TelTable() {
+  const rows = places.filter((p) => p.contact).sort(byName);
+  return (
+    <table className={f.table}>
+      <caption className="sr-only">관광지별 연락처 표 - 관광지, 주소, 연락처로 구성</caption>
+      <colgroup>
+        <col className={f.c1} />
+        <col className={f.c2} />
+        <col className={f.c3} />
+      </colgroup>
+      <thead>
+        <tr>
+          <th scope="col">관광지</th>
+          <th scope="col">주소</th>
+          <th scope="col">연락처</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((p) => {
+          const zip = zipOf(p.id);
+          return (
+            <tr key={p.id}>
+              <th scope="row">{p.name}</th>
+              <td>
+                {zip && <>[{zip}] </>}
+                {p.address ?? "-"}
+              </td>
+              <td>
+                <Contact text={p.contact!} />
+              </td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  );
+}
 
 export default function SiteFooter() {
   return (
@@ -28,6 +85,9 @@ export default function SiteFooter() {
         <div className="rc-ft-inner">
           <p className="rc-ft-logo">{SITE_NAME}</p>
           <div className="rc-ft-txt">
+            <FooterTel label="관광지별 연락처">
+              <TelTable />
+            </FooterTel>
             <p className="rc-ft-maker">
               만든 곳 <Ph>2026 한국관광 데이터랩 활용 경진대회 출품 팀</Ph>
             </p>
@@ -41,6 +101,9 @@ export default function SiteFooter() {
                 ’에서 무료로 다운받으실 수 있습니다.
               </li>
               <li>관광지 사진과 소개글: 한국관광공사 관광정보(TourAPI)</li>
+              <li>
+                <Ph>관광지 사진 일부: 한국관광공사 관광사진 정보(한국관광콘텐츠랩)</Ph>
+              </li>
               <li>읍면동 경계선: 통계청 SGIS 행정구역 경계(2026년 7월), vuski/admdongkor 가공(CC BY 4.0)</li>
             </ul>
           </div>

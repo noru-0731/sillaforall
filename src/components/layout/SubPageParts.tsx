@@ -1,11 +1,12 @@
 "use client";
 
-// 서브 쪽 틀에서 누르면 움직이는 부분: 왼쪽 메뉴(3단 여닫기), 휴대전화 검정 드롭다운 막대, 공유·인쇄 단추.
+// 서브 쪽 틀에서 누르면 움직이는 부분: 왼쪽 메뉴(3단 여닫기), 휴대전화 검정 드롭다운 막대, 소리로 듣기·공유·인쇄 단추.
 // PageParts.tsx(서버)가 쓴다. 쪽에서 직접 쓸 일은 없다.
 import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
 import type { SideMenu, SideMenuLink } from "@/site/ia";
 import { Caret, Icon } from "@/components/icons";
+import ReadAloud from "./ReadAloud";
 
 /** PC 왼쪽 메뉴(폭 250): 검정 머리 + 테두리 상자 목록. 3단이 있는 항목은 누르면 여닫힌다. */
 export function SideMenuNav({ menu, current }: { menu: SideMenu; current: string }) {
@@ -105,7 +106,8 @@ export function MobileMenuBar({ label, links, current }: { label: string; links:
   );
 }
 
-/** 쪽 제목 오른쪽 동그란 단추: 공유(주소 복사 또는 휴대전화 공유 창)와 인쇄. QR은 뺐다. */
+/** 쪽 제목 오른쪽 동그란 단추: 소리로 듣기(ReadAloud.tsx), 공유(주소 복사 또는 휴대전화 공유 창), 인쇄. QR은 뺐다.
+ *  소리로 듣기는 한국어 목소리를 찾은 뒤에야 나타나므로 맨 앞에 두어 공유·인쇄 자리가 움직이지 않게 했다. */
 export function PageTools({ title }: { title: string }) {
   const [msg, setMsg] = useState("");
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -141,6 +143,7 @@ export function PageTools({ title }: { title: string }) {
 
   return (
     <div className="rc-tools">
+      <ReadAloud />
       <button type="button" className="rc-tool rc-tool--share" onClick={share} title="공유하기(주소 복사)">
         <Icon name="share" size={30} strokeWidth={1.6} />
         <span className="sr-only">공유하기(이 쪽 주소 복사)</span>

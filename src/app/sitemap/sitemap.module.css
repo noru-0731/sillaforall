@@ -82,6 +82,15 @@
   }
 }
 
+/* 관광지 목록의 권역 이름 줄: 한 줄을 다 쓰고 아래 가는 선. 그 아래 관광지마다 한 칸(2차 모양) + 쪽 다섯("- " 줄) */
+.head {
+  padding-bottom: 1rem;
+  border-bottom: 0.1rem solid var(--rc-line-light);
+}
+.head .d2 {
+  font-weight: 700;
+}
+
 /* 관광지 목록의 권역 칸: 한 줄을 다 쓰고 관광지 이름을 4칸으로 흘린다 */
 .wide {
   grid-column: 1 / -1;

@@ -151,3 +151,17 @@
     padding: 0 1.6rem;
   }
 }
+
+/* 무장애 조건 거르기 줄(components/royal/FilterPills): 권역 알약 줄 아래, 카드 줄 윗선까지 20 */
+.conds {
+  margin-bottom: 2rem;
+}
+/* 거른 결과가 없을 때: 카드 줄 자리(윗선 2px 남색, 아랫선 1px 회색) */
+.empty {
+  padding: 4rem 2rem;
+  border-top: 0.2rem solid var(--rc-sitemap-line);
+  border-bottom: 0.1rem solid var(--rc-line-table);
+  font-size: 1.7rem;
+  color: var(--rc-text-sub);
+  text-align: center;
+}

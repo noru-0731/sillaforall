@@ -1,7 +1,7 @@
 // 관광지 쪽(61곳 × 5쪽)이 함께 쓰는 자료 도우미. 서버 컴포넌트에서만 부른다(photos.json을 클라이언트로 보내지 않으려고).
 import { areaOf, areas, byName, places } from "@/data";
 import type { Place } from "@/data";
-import { anyPhoto, coverPhoto, photosOf, type1List } from "@/data/photos";
+import { anyPhoto, coverPhoto, creditLines, photoCreditOf, photosOf, type1List } from "@/data/photos";
 import type { Photo } from "@/data/photos";
 
 export type { Place, Photo };
@@ -40,7 +40,8 @@ export function nearby(p: Place, n = 9): Place[] {
     .map((x) => x.q);
 }
 
-export type NearbySlide = { id: string; name: string; dong: string; url: string };
+/** credit: 그 사진의 출처 한 줄(관광정보 / 관광사진 정보 촬영자) */
+export type NearbySlide = { id: string; name: string; dong: string; url: string; credit: string };
 
 /**
  * 서브메인 오른쪽 넘기기 판: 같은 권역 다른 관광지의 제1유형 사진(가까운 차례).
@@ -53,7 +54,7 @@ export function nearbySlides(p: Place, n = 8): NearbySlide[] {
       .filter((x) => x.c)
       .sort((a, b) => a.d - b.d)
       .slice(0, n)
-      .map((x) => ({ id: x.q.id, name: x.q.name, dong: x.q.dong, url: x.c!.url }));
+      .map((x) => ({ id: x.q.id, name: x.q.name, dong: x.q.dong, url: x.c!.url, credit: photoCreditOf(x.c!) }));
   const same = pick(sameArea(p, false));
   if (same.length) return same;
   return pick(places.filter((q) => q.id !== p.id));
@@ -129,13 +130,14 @@ export function stripSlots(id: string, heroUrl: string | null): StripSlot[] {
   });
 }
 
-/** 띠에 실제로 쓴 사진 유형대로 출처 한 줄: "사진: 한국관광공사 관광정보, 공공누리 제1유형·제3유형". 사진이 없으면 null */
+/**
+ * 띠에 실제로 쓴 사진대로 출처 줄: "사진: 한국관광공사 관광정보, 공공누리 제1유형·제3유형",
+ * 관광사진 정보 사진이 있으면 " / 사진: ⓒ한국관광콘텐츠랩-촬영자, 공공누리 제1유형"을 잇는다. 사진이 없으면 null
+ */
 export function stripCredit(slots: StripSlot[]): string | null {
-  const has1 = slots.some((x) => x.kind === "type1");
-  const has3 = slots.some((x) => x.kind === "film");
-  if (!has1 && !has3) return null;
-  const kinds = [has1 ? "제1유형" : null, has3 ? "제3유형" : null].filter(Boolean).join("·");
-  return `사진: 한국관광공사 관광정보, 공공누리 ${kinds}`;
+  const used = slots.flatMap((x) => (x.kind === "type1" ? [x.photo] : x.kind === "film" ? x.photos : []));
+  const lines = creditLines(used);
+  return lines.length ? lines.join(" / ") : null;
 }
 
 /** 사진 이름이 파일 이름("경북_경주_…_외부_06.jpg", "경주_보리사(경주) (2)")이면 쓰지 않는다. */
@@ -147,8 +149,8 @@ export function cleanPhotoName(name?: string | null): string | null {
   return t;
 }
 
-/** made: 관광공사 사진 이름이 없어 새로 지은 이름("{관광지} 사진 {n}", 궁능에 짝 없음 → 화면에서 <Ph>) */
-export type ViewerPhoto = { url: string; small: string; type: Photo["type"]; name: string; made?: boolean };
+/** made: 관광공사 사진 이름이 없어 새로 지은 이름("{관광지} 사진 {n}", 궁능에 짝 없음 → 화면에서 <Ph>). by: 관광사진 정보 사진의 촬영자 */
+export type ViewerPhoto = { url: string; small: string; type: Photo["type"]; name: string; made?: boolean; by?: string };
 
 /** 사진 쪽 넘기기에 넘길 사진 목록(보일 이름 포함). 이름이 없으면 "{관광지} 사진 {n}". */
 export function viewerPhotos(p: Place): ViewerPhoto[] {
@@ -160,6 +162,7 @@ export function viewerPhotos(p: Place): ViewerPhoto[] {
       type: ph.type,
       name: clean ?? `${p.name} 사진 ${i + 1}`,
       made: !clean,
+      ...(ph.from === "gallery" ? { by: ph.by ?? "" } : {}),
     };
   });
 }

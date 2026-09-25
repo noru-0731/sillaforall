@@ -22,22 +22,58 @@
   align-items: center;
   gap: 1.5rem;
 }
+/* 궁능 검색 줄: [고르기 130][입력 320]이 한 회색 둥근 상자(#eaeaea, 둥글기 25, 높이 50) 안에, 사이 15 [검색 120] */
+.searchBox {
+  display: flex;
+  align-items: stretch;
+  height: 5rem;
+  border-radius: 2.5rem;
+  background: var(--rc-line-light);
+}
+.selectWrap {
+  position: relative;
+  display: flex;
+}
+.select {
+  width: 13rem;
+  height: 5rem;
+  padding: 0 3rem 0 2rem;
+  border: 0;
+  border-radius: 2.5rem 0 0 2.5rem;
+  background: transparent;
+  font: inherit;
+  font-size: 1.6rem;
+  color: var(--rc-text);
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.selectWrap svg {
+  position: absolute;
+  right: 1.2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--rc-text);
+}
 .input {
   width: 32rem;
   height: 5rem;
   padding: 0 2.5rem;
-  border: 0.1rem solid transparent;
-  border-radius: 2.5rem;
-  background: var(--rc-line-light);
+  border: 0;
+  border-radius: 0 2.5rem 2.5rem 0;
+  background: transparent;
+  font: inherit;
   font-size: 1.6rem;
   color: var(--rc-text);
 }
 .input::placeholder {
   color: var(--rc-text-faint);
+  opacity: 1;
 }
-:global([data-krds-mode="high-contrast"]) .input {
-  background: var(--rc-bg-bar);
-  border-color: var(--rc-line);
+:global([data-krds-mode="high-contrast"]) .searchBox {
+  background: var(--rc-bg-table);
+  box-shadow: inset 0 0 0 0.1rem var(--rc-line);
 }
 .submit {
   flex: 0 0 auto;
@@ -121,10 +157,23 @@
   .search {
     gap: 0.8rem;
   }
+  .searchBox {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .select {
+    width: 9.6rem;
+    padding-left: 1.6rem;
+    padding-right: 2.8rem;
+  }
+  .selectWrap svg {
+    right: 1rem;
+  }
   .input {
     flex: 1 1 0;
     width: 0; /* 좁은 폭(글자 크게)에서도 칸이 줄어들게: 입력 칸 본래 폭이 줄을 밀어내지 않도록 */
     min-width: 0;
+    padding: 0 1.4rem 0 0.6rem;
   }
   .submit {
     min-width: 8rem;

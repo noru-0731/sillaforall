@@ -6,7 +6,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { areaOf, placeById, places } from "@/data";
-import { photoCredit } from "@/data/photos";
+import { largeUrl, photoCreditOf } from "@/data/photos";
 import { placePages } from "@/site/ia";
 import { withJosa } from "@/lib/josa";
 import { Icon, type IconName } from "@/components/icons";
@@ -74,14 +74,14 @@ export default async function PlaceSubmain({ params }: Props) {
       <div className={`${s.visual}${cover ? " " + s.fade : hero ? " " + s.visualContain : ""}`}>
         {cover ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={cover.url} alt={`${p.name} 사진`} decoding="async" fetchPriority="high" />
+          <img src={largeUrl(cover)} alt={`${p.name} 사진`} decoding="async" fetchPriority="high" />
         ) : (
           <Photo photo={hero} alt={`${p.name} 사진`} height="100%" bg="dark" loading="eager" />
         )}
       </div>
       {hero && (
         <p className={`${s.inner} ${s.credit}`}>
-          {p.name} · {photoCredit(hero.type)}
+          {p.name} · {photoCreditOf(hero)}
         </p>
       )}
 
@@ -184,8 +184,7 @@ export default async function PlaceSubmain({ params }: Props) {
           <div className={s.right}>
             {slides.length ? (
               <>
-                <NearbySlider slides={slides} label={`${areaLabel} 관광지 사진`} />
-                <p className={s.credit}>{photoCredit("Type1")}</p>
+                <NearbySlider slides={slides} label={`${areaLabel} 관광지 사진`} creditClassName={s.credit} />
               </>
             ) : (
               <Photo photo={null} alt="" height="100%" />

@@ -6,3 +6,5 @@ export { BlackBar, IconHeading, OffsetPhoto, InfoBox, CircleButton, TipList } fr
 export { default as Photo } from "./Photo";
 export { default as KoglBox } from "./KoglBox";
 export { default as Slider } from "./Slider";
+export { default as FilterPills } from "./FilterPills";
+export type { FilterPillItem } from "./FilterPills";

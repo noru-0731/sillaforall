@@ -42,7 +42,9 @@ export type IconName =
   | "calendar"
   | "question"
   | "photo"
-  | "check";
+  | "check"
+  | "volume"
+  | "stop";
 
 const PATHS: Record<IconName, React.ReactNode> = {
   sitemap: (
@@ -236,6 +238,14 @@ const PATHS: Record<IconName, React.ReactNode> = {
     </>
   ),
   check: <path d="m5 12.5 4.5 4.5L19 7.5" />,
+  volume: (
+    <>
+      {/* 소리로 듣기: KRDS ico_volume(스피커 + 소리 물결 둘)을 선으로 다시 그림 */}
+      <path d="M3 9h3.5l6-4.5v15l-6-4.5H3z" />
+      <path d="M15.5 9a4.2 4.2 0 0 1 0 6M18.3 6.3a8 8 0 0 1 0 11.4" />
+    </>
+  ),
+  stop: <rect x="6.5" y="6.5" width="11" height="11" rx="1.5" />,
 };
 
 export function Icon({

@@ -1,16 +1,17 @@
 // 사이트맵(궁능 sitemap 쪽 모양): 왼쪽 회색 칸에 1차 이름, 오른쪽에 2차·3차 목록.
-// 관광지 61곳은 "관광지 목록" 아래 권역별로 나열한다.
+// 관광지 61곳은 "관광지 목록" 아래 권역별로 나열한다. 권역 이름 줄 아래에 관광지마다 한 칸,
+// 그 아래 "- " 줄로 관광지 쪽 다섯(궁능: 경복궁 아래 - 경복궁, - 경복궁 소개·역사, - 경복궁 이야기).
 import type { Metadata } from "next";
 import Link from "next/link";
 import { SubPage } from "@/components/layout/PageParts";
-import { MENU } from "@/site/ia";
+import { MENU, placePages } from "@/site/ia";
 import type { SideMenu } from "@/site/ia";
 import { areas, byName, placeById } from "@/data";
 import s from "./sitemap.module.css";
 
 export const metadata: Metadata = { title: "사이트맵" };
 
-type Col = { label: string; href: string; items?: { label: string; href: string }[]; wide?: boolean };
+type Col = { label: string; href: string; items?: { label: string; href: string }[]; wide?: boolean; head?: boolean };
 
 // 궁능의 "가이드" 묶음(사이트맵·개인정보처리방침·저작권정책…)을 우리 쪽들로
 const GUIDE: SideMenu = {
@@ -29,7 +30,8 @@ function groups(): { label: string; cols: Col[] }[] {
       // 관광지 목록: 권역마다 관광지 이름(가나다순)
       for (const a of areas) {
         const ps = a.placeIds.map((id) => placeById(id)!).sort(byName);
-        cols.push({ label: a.label, href: `/map/${a.key}`, items: ps.map((p) => ({ label: p.name, href: `/places/${p.id}` })), wide: true });
+        cols.push({ label: a.label, href: `/map/${a.key}`, wide: true, head: true });
+        for (const p of ps) cols.push({ label: p.name, href: `/places/${p.id}`, items: placePages(p) });
       }
     }
     return { label: m.label, cols };
@@ -54,7 +56,7 @@ export default function SitemapPage() {
             <h2 className={s.d1}>{g.label}</h2>
             <ul className={s.cols}>
               {g.cols.map((c) => (
-                <li className={c.wide ? `${s.col} ${s.wide}` : s.col} key={c.href + c.label}>
+                <li className={[s.col, c.wide ? s.wide : "", c.head ? s.head : ""].filter(Boolean).join(" ")} key={c.href + c.label}>
                   <Link href={c.href} className={s.d2}>
                     {c.label}
                   </Link>

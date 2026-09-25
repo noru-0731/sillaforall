@@ -1,0 +1,165 @@
+/*
+ * 진짜 지도(RealMap) 모양: 궁능유적본부 누리집 오시는 길 지도 상자(나무/directions_1440.txt map_box, directions_m390.png)를 재서 우리 CSS로 새로 씀.
+ * - 상자: PC 1030×429, 휴대전화(390 화면) 360×289, 1px rgb(234,234,234)→--rc-line-light 테두리, 둥글기 없음.
+ *   높이는 본문 폭(main 컨테이너)의 40%를 289~429 사이로 둔다(PC 본문에서는 429, 390 화면에서는 289).
+ * - 축척 막대: 궁능 왼쪽 6·아래 0, 막대 높이 6(왼·오른·아래 2px 선), 글자 10px 700 줄 14.
+ * - 오른쪽 위 세로 단추: 우리 그린 지도(MapView.module.css .controls/.ctrl)와 같은 값(32×32, 위·오른쪽 16).
+ * 핀 크기는 Leaflet 기준점(RealMap.tsx iconSize 29×42)과 짝이라 px로 둔다.
+ * 색은 --rc-* 변수만. 지도 그림(타일)은 선명한 화면 모드에서도 밝은 그대로라, 지도 위 글자는 바탕 판(--rc-bg)을 깔아 읽히게 한다.
+ */
+.box {
+  position: relative;
+  isolation: isolate; /* Leaflet 겹(z-index 200~1000)이 고정 머리·펼침판 위로 올라오지 않게 상자 안에 가둔다 */
+  width: 100%;
+  height: clamp(28.9rem, 40cqi, 42.9rem);
+  overflow: hidden;
+  border: 0.1rem solid var(--rc-line-light);
+  background: var(--rc-bg-bar);
+}
+.map {
+  position: absolute;
+  inset: 0;
+}
+
+/* Leaflet 기본 글꼴(0.75rem = 이 사이트에서는 7.5px)과 회색 바탕을 사이트 것으로 */
+.box :global(.leaflet-container) {
+  font-family: inherit;
+  font-size: 1.2rem;
+  line-height: 1.5;
+  background: var(--rc-bg-bar);
+}
+/* 타일 사이 흰 줄 막기: 상자가 쪽에서 소수 px 자리(예: 465.59)에 놓이면 휴대전화(화소 3배)에서
+   Leaflet 1.9의 plus-lighter 겹침이 타일 경계를 밝은 줄로 그린다. 겹침을 보통으로 두고 타일을 0.5px 키워 틈을 덮는다. */
+.box :global(.leaflet-container img.leaflet-tile) {
+  mix-blend-mode: normal;
+  width: 256.5px !important;
+  height: 256.5px !important;
+}
+.box :global(.leaflet-container:focus-visible) {
+  outline: 0.3rem solid var(--rc-focus);
+  outline-offset: -0.3rem;
+}
+
+/* 핀: Leaflet divIcon 뿌리(기본 흰 네모 없애기) */
+.box :global(.leaflet-marker-icon).marker {
+  background: none;
+  border: 0;
+}
+.pin {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: block;
+  width: 29px;
+  height: 42px;
+  overflow: visible;
+  filter: drop-shadow(0 1px 2px var(--rc-dim));
+}
+.pinBody {
+  fill: var(--rc-pink);
+  stroke: var(--rc-bg);
+  stroke-width: 1.5;
+}
+.pinDot {
+  fill: var(--rc-bg);
+}
+/* 이름 상자: 핀 끝 바로 아래 가운데(긴 이름도 휴대전화 상자 안에 들어가게) */
+.pinName {
+  position: absolute;
+  left: 14.5px;
+  top: 46px;
+  transform: translateX(-50%);
+  padding: 0.3rem 0.8rem;
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.4;
+  white-space: nowrap;
+  color: var(--rc-text);
+  background: var(--rc-bg);
+  border: 0.1rem solid var(--rc-text);
+}
+
+/* 오른쪽 위 세로 단추(+ − ↻): MapView와 같은 값 */
+.controls {
+  position: absolute;
+  top: 1.6rem;
+  right: 1.6rem;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 0.4rem;
+}
+.ctrl {
+  display: grid;
+  place-items: center;
+  width: 3.2rem;
+  height: 3.2rem;
+  padding: 0;
+  border: 0;
+  background: var(--rc-ink);
+  color: var(--rc-on-ink);
+  cursor: pointer;
+}
+.ctrl + .ctrl {
+  border-top: 0.1rem solid color-mix(in srgb, var(--rc-on-ink) 25%, var(--rc-ink));
+}
+.ctrl:hover {
+  background: color-mix(in srgb, var(--rc-ink) 80%, var(--rc-on-ink));
+}
+.ctrl[aria-disabled="true"] {
+  cursor: default;
+  color: color-mix(in srgb, var(--rc-on-ink) 45%, var(--rc-ink));
+  background: var(--rc-ink);
+}
+
+/* 왼쪽 아래 줄: 축척 막대 + 저작자 표시(궁능 축척 막대 + 카카오 로고 자리) */
+.foot {
+  position: absolute;
+  left: 0.6rem;
+  bottom: 0;
+  z-index: 1000;
+  display: flex;
+  flex-wrap: wrap; /* 좁으면(글자 가장 크게 + 휴대전화) 저작자 표시가 통째로 다음 줄로 */
+  align-items: flex-end;
+  gap: 0.2rem 0.8rem;
+  max-width: calc(100% - 1.2rem);
+  padding: 0.2rem 0.4rem;
+  background: color-mix(in srgb, var(--rc-bg) 80%, transparent);
+}
+.scale {
+  display: flex;
+  flex: none;
+  align-items: flex-end;
+  gap: 0.3rem;
+  padding-bottom: 0.2rem;
+}
+.scaleBar {
+  display: block;
+  height: 0.6rem;
+  border: 0.2rem solid var(--rc-text);
+  border-top: 0;
+}
+.scaleTxt {
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.4rem;
+  color: var(--rc-text);
+}
+.attr {
+  margin: 0;
+  white-space: nowrap;
+  font-size: 1.2rem;
+  line-height: 1.5;
+  color: var(--rc-text);
+}
+.attr a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+@media print {
+  .controls {
+    display: none;
+  }
+}

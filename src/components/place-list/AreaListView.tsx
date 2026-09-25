@@ -1,12 +1,17 @@
 "use client";
 // 관광지 목록 > 지역별(궁능유적본부 누리집 문화행사 쪽 모양, 나무 파일 events_1440).
 // 왼쪽(357) = 달력 자리에 경주 권역 작은 지도: 머리(지금 권역 이름 28px + ‹ › 검정 단추), 지도, 권역 색 범례.
-// 오른쪽(623) = 알약(전체 + 권역) + "전체 61곳" + 카드 줄. 지도·범례·알약 어느 것을 눌러도 같은 권역으로 거른다.
+// 오른쪽(623) = 알약(전체 + 권역) + "전체 61곳" + 무장애 조건 거르기 줄 + 카드 줄. 지도·범례·알약 어느 것을 눌러도 같은 권역으로 거른다.
+// 무장애 조건(주차·걷는 길·화장실·휠체어·엘리베이터)은 여러 개 고르면 모두 갖춘 곳만 남고, 주소 뒤 ?조건= 에 남는다.
 import { useState } from "react";
 import type { AreaKey } from "@/data/types";
 import { cn } from "@/lib/cn";
 import { Icon } from "@/components/icons";
 import PillTabs from "@/components/royal/PillTabs";
+import FilterPills from "@/components/royal/FilterPills";
+import { Ph } from "@/components/layout/Ph";
+import { COND_KEYS, COND_LABEL, meetsAll, type CondKey } from "./barrierConds";
+import { useConds } from "./useConds";
 import MapView from "@/components/map/MapView";
 import { CreditLines, PlaceCardList } from "./PlaceCards";
 import type { AreaOption, CardPlace } from "./types";
@@ -14,13 +19,21 @@ import s from "./AreaList.module.css";
 
 type Pick = "all" | AreaKey;
 
+const COND_ITEMS = COND_KEYS.map((k) => ({ label: COND_LABEL[k], value: k }));
+
 export default function AreaListView({ cards, options, credits }: { cards: CardPlace[]; options: AreaOption[]; credits: string[] }) {
   const [cur, setCur] = useState<Pick>("all");
+  const [conds, setConds] = useConds();
   const order: Pick[] = ["all", ...options.map((o) => o.key)];
   const idx = order.indexOf(cur);
   const go = (d: number) => setCur(order[(idx + d + order.length) % order.length]);
   const curLabel = cur === "all" ? "경주 전체" : (options.find((o) => o.key === cur)?.label ?? "");
-  const shown = cur === "all" ? cards : cards.filter((c) => c.area === cur);
+  const inArea = cur === "all" ? cards : cards.filter((c) => c.area === cur);
+  const shown = conds.length ? inArea.filter((c) => meetsAll(c.conds, conds)) : inArea;
+  // 조건을 고르면 빠지는 무장애 정보가 없는 곳(지금 권역 안)
+  const unlisted = inArea.filter((c) => !c.registered).length;
+  // 작은 지도: 아무것도 거르지 않으면 전부, 거른 결과가 0곳이면 점 없이(빈 배열은 전부로 읽히므로 없는 id 하나)
+  const mapIds = cur === "all" && !conds.length ? undefined : shown.length ? shown.map((c) => c.id) : ["-"];
   const toggle = (k: AreaKey) => setCur(cur === k ? "all" : k);
 
   return (
@@ -45,7 +58,7 @@ export default function AreaListView({ cards, options, credits }: { cards: CardP
               labels={false}
               legend={false}
               plain
-              placeIds={cur === "all" ? undefined : shown.map((c) => c.id)}
+              placeIds={mapIds}
               onAreaSelect={toggle}
               selectedArea={cur === "all" ? null : cur}
               ariaLabel="경주 권역 지도"
@@ -88,7 +101,30 @@ export default function AreaListView({ cards, options, credits }: { cards: CardP
             {cur === "all" ? "전체" : curLabel} {shown.length}곳
           </p>
         </div>
-        <PlaceCardList items={shown} />
+        <FilterPills
+          className={s.conds}
+          label="무장애 정보"
+          icon="wheelchair"
+          allTone="ink"
+          items={COND_ITEMS}
+          selected={conds}
+          onChange={(v) => setConds(v as CondKey[])}
+          note={
+            conds.length > 0 ? (
+              <Ph>
+                고른 항목이 모두 있다고 적힌 곳만 보입니다.
+                {unlisted > 0 && <> 무장애 정보가 없는 곳 {unlisted}곳은 빠집니다.</>}
+              </Ph>
+            ) : undefined
+          }
+        />
+        {shown.length > 0 ? (
+          <PlaceCardList items={shown} />
+        ) : (
+          <p className={s.empty}>
+            <Ph>해당하는 관광지가 없습니다.</Ph>
+          </p>
+        )}
         <CreditLines lines={credits} />
       </div>
     </div>

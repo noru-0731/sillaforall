@@ -1,0 +1,77 @@
+/* 알약 줄 한 줄 넘기기(궁능 휴대전화 공지사항 notice_m390: 알약 줄 양옆에 ‹ › 가는 꺾쇠, 줄은 좌우 약 35 안쪽).
+   mobile: 본문 폭 767 이하에서만 한 줄, always: 늘 한 줄. ‹ ›는 줄이 넘칠 때만 보인다(.over). */
+.wrap {
+  position: relative;
+}
+.btn {
+  position: absolute;
+  top: 50%;
+  z-index: 1;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 4.4rem;
+  margin-top: -2.2rem;
+  padding: 0;
+  border: 0;
+  background: var(--rc-bg);
+  color: var(--rc-text);
+  cursor: pointer;
+}
+.btn[hidden] {
+  display: none !important;
+}
+.btn:disabled {
+  color: var(--rc-line);
+  cursor: default;
+}
+.prev {
+  left: 0;
+}
+.next {
+  right: 0;
+}
+
+/* 한 줄 모양(공통) */
+.always :global(.rc-pills) {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+  scroll-snap-type: x proximity;
+}
+.always :global(.rc-pills)::-webkit-scrollbar {
+  display: none;
+}
+.always :global(.rc-pills > li) {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+}
+.always.over {
+  padding: 0 3.5rem;
+}
+.always .btn {
+  display: inline-flex;
+}
+
+@container rc-main (max-width: 767px) {
+  .mobile :global(.rc-pills) {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    scroll-snap-type: x proximity;
+  }
+  .mobile :global(.rc-pills)::-webkit-scrollbar {
+    display: none;
+  }
+  .mobile :global(.rc-pills > li) {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+  }
+  .mobile.over {
+    padding: 0 3.5rem;
+  }
+  .mobile .btn {
+    display: inline-flex;
+  }
+}

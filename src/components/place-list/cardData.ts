@@ -1,9 +1,10 @@
 // 목록 쪽 자료 만들기. 서버 컴포넌트에서만 부른다(photos.json을 읽는다).
 import { areaOf, areas, byName, places } from "@/data";
 import type { Place } from "@/data";
-import { photoCredit } from "@/data/photos";
+import { photoCredit, photoCreditOf } from "@/data/photos";
 import { pickPhoto } from "@/components/map/explorerData";
 import type { AreaOption, BoardRow, CardPlace } from "./types";
+import { condsOf } from "./barrierConds";
 
 const labelOf = (p: Place) => areas.find((a) => a.key === areaOf(p))?.label ?? "";
 
@@ -20,6 +21,8 @@ export function toCard(p: Place): CardPlace {
     address: p.address,
     hours: cleanHours(p.hours),
     photo: pickPhoto(p.id),
+    registered: p.registered,
+    conds: condsOf(p),
   };
 }
 
@@ -50,8 +53,10 @@ export function areaOptions(): AreaOption[] {
   return areas.map((a) => ({ key: a.key, label: a.label, count: a.placeIds.length }));
 }
 
-/** 카드에 쓴 사진의 출처 줄(쓴 유형만) */
+/** 카드에 쓴 사진의 출처 줄(관광정보 사진은 쓴 유형만, 관광사진 정보 사진은 촬영자마다 한 줄) */
 export function creditsFor(cards: CardPlace[]): string[] {
-  const types = new Set(cards.map((c) => c.photo?.type).filter((t): t is "Type1" | "Type3" => !!t));
-  return (["Type1", "Type3"] as const).filter((t) => types.has(t)).map(photoCredit);
+  const tour = cards.filter((c) => c.photo && c.photo.from !== "gallery");
+  const types = new Set(tour.map((c) => c.photo!.type));
+  const gallery = [...new Set(cards.filter((c) => c.photo?.from === "gallery").map((c) => photoCreditOf(c.photo!)))];
+  return [...(["Type1", "Type3"] as const).filter((t) => types.has(t)).map(photoCredit), ...gallery];
 }

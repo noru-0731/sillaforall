@@ -1,0 +1,135 @@
+/* 머리 부품 모양: 로고 표장, 1차 메뉴 펼침판·휴대전화 전체메뉴의 3차 목록. */
+
+/* 머리 왼쪽 표장(궁능 로고 그림 125×43 안의 둥근 표장 약 38×38) + 사이트 이름 글자 */
+.logo {
+  gap: 1rem;
+}
+.mark {
+  flex: 0 0 auto;
+  width: 3.8rem;
+  height: 3.8rem;
+}
+
+/* 1차 메뉴 펼침판·휴대전화 전체메뉴의 3차 목록.
+   치수는 궁능 나무/menu_depth3.txt(PC 1440, 휴대전화 390에서 2차 ∨를 누른 모습)에서 잼.
+   PC: 2차 칸 240×43(∨), 아래 5 띄우고 3차 줄 240×37(16px 500 #666, 안쪽 8 15, 앞에 작은 네모), 목록 아래 5.
+   휴대전화: 2차 칸 51(열리면 바탕 #f7f7f7, ∧), 아래 5 띄우고 3차 줄 34(14px 500 #666, 안쪽 8 15). */
+
+/* 3차가 길면(시내 29줄) 펼침판이 화면보다 길어진다. 판 안에서 내려 보게 한다. */
+.panel {
+  /* 글자·화면 설정(body zoom)이면 dvh도 커지므로 zoom 값(--rc-zoom, DisplaySettings.tsx)으로 나눈다 */
+  max-height: calc(100dvh / var(--rc-zoom, 1) - var(--rc-header-h));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* ── PC ── */
+.toggle {
+  width: 100%;
+  gap: 1rem;
+  background: var(--rc-bg);
+  font-family: inherit;
+  font-size: 1.6rem;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+.toggle svg {
+  flex: 0 0 auto;
+}
+.itemOpen .toggle {
+  border-color: var(--rc-line-strong);
+}
+.list {
+  margin-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+.list[hidden] {
+  display: none;
+}
+.link {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  padding: 0.8rem 1.5rem;
+  font-size: 1.6rem;
+  font-weight: 500;
+  line-height: 2.1rem;
+  color: var(--rc-text-faint);
+  overflow-wrap: anywhere;
+}
+.link::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 0.4rem;
+  height: 0.4rem;
+  margin-bottom: 0.3rem;
+  background: currentColor;
+}
+.link:hover,
+.link[aria-current="page"] {
+  color: var(--rc-text);
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+}
+.link[aria-current="page"] {
+  font-weight: 700;
+}
+
+/* ── 휴대전화 전체메뉴 ── */
+.mToggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  min-height: 5.1rem;
+  padding: 1.2rem 1rem;
+  border: 0;
+  border-bottom: 0.1rem solid var(--rc-line-light);
+  background: none;
+  font-family: inherit;
+  font-size: 1.575rem;
+  color: var(--rc-text);
+  text-align: left;
+  cursor: pointer;
+}
+.mToggle svg {
+  flex: 0 0 auto;
+}
+.mToggleOn {
+  background: var(--rc-bg-bar);
+}
+.mList {
+  padding: 0.5rem 0;
+  border-bottom: 0.1rem solid var(--rc-line-light);
+}
+.mList[hidden] {
+  display: none;
+}
+/* 전역 .rc-mnav__sec a(2차 줄 모양)보다 앞서도록 두 겹으로 */
+.mList .mLink {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  min-height: 3.4rem;
+  padding: 0.8rem 1.5rem;
+  border-bottom: 0;
+  font-size: 1.4rem;
+  font-weight: 500;
+  line-height: 1.8rem;
+  color: var(--rc-text-faint);
+  overflow-wrap: anywhere; /* 글자 가장 크게에서 긴 이름(마우나오션리조트 등)이 칸 밖으로 나가지 않게 */
+}
+.mList .mLink::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 0.4rem;
+  height: 0.4rem;
+  margin-bottom: 0.2rem;
+  background: currentColor;
+}
+.mList .mLink[aria-current="page"] {
+  color: var(--rc-text);
+  font-weight: 700;
+}

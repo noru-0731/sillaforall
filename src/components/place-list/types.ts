@@ -2,8 +2,10 @@
 // 클라이언트 부품은 이 파일의 형만 쓴다(places.json·photos.json을 클라이언트로 보내지 않기 위해).
 import type { AreaKey } from "@/data/types";
 import type { KoglType } from "@/data/photos";
+import type { CondKey } from "./barrierConds";
 
-export type CardPhoto = { url: string; type: KoglType } | null;
+/** from·by: 관광사진 정보(한국관광콘텐츠랩) 사진이면 "gallery"와 촬영자 */
+export type CardPhoto = { url: string; type: KoglType; from?: "tourapi" | "gallery"; by?: string } | null;
 
 /** 카드 한 장(궁능 문화행사 카드 모양) */
 export type CardPlace = {
@@ -15,6 +17,10 @@ export type CardPlace = {
   address: string | null;
   hours: string | null;
   photo: CardPhoto;
+  /** 무장애 여행 정보 명부에 올라 있는지 */
+  registered: boolean;
+  /** 무장애 조건 거르기에서 "있다고 적힌" 항목(barrierConds.ts) */
+  conds: CondKey[];
 };
 
 /** 게시판 표 한 줄(궁능 공지사항 표 모양) */

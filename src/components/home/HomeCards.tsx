@@ -11,6 +11,7 @@ import type { AreaKey } from "@/data/types";
 import type { KoglType } from "@/data/photos";
 import { Icon } from "@/components/icons";
 import Photo from "@/components/royal/Photo";
+import IntroMark from "@/components/place/IntroMark";
 import { MoreLink, useReducedMotion } from "./bits";
 import s from "./home.module.css";
 
@@ -33,11 +34,14 @@ export default function HomeCards({
   desc,
   moreHref,
   items,
+  credits,
 }: {
   title: string;
   desc: React.ReactNode;
   moreHref: string;
   items: CardItem[];
+  /** 카드 사진 출처 줄(서버에서 creditLines로 만듦). 없으면 유형만 보고 관광정보 한 줄 */
+  credits?: string[];
 }) {
   const n = items.length;
   // 처음 가운데 카드는 셋째(궁능 첫 화면처럼 "3"). 왼쪽 두 칸도 사진 있는 카드가 오게.
@@ -61,6 +65,8 @@ export default function HomeCards({
 
   return (
     <section className={s.cardsSec} aria-labelledby="home-cards-title">
+      {/* 바탕의 흐린 선 그림(궁능 main_s1의 궁궐 선 그림 자리). 궁능 그림 대신 소개 쪽과 같은 직접 그린 기와 건물 선 그림 */}
+      <IntroMark className={s.cardsArt} />
       <div className={s.inner}>
         <div className={s.head}>
           <h2 id="home-cards-title" className={s.secTitle}>
@@ -156,7 +162,14 @@ export default function HomeCards({
           </ul>
         </div>
         <p className={s.cardsCredit}>
-          사진: 한국관광공사 관광정보, 공공누리 제1유형{hasType3 ? "·제3유형" : ""}
+          {credits?.length
+            ? credits.map((c, i) => (
+                <span key={c}>
+                  {i > 0 && <br />}
+                  {c}
+                </span>
+              ))
+            : `사진: 한국관광공사 관광정보, 공공누리 제1유형${hasType3 ? "·제3유형" : ""}`}
         </p>
       </div>
     </section>

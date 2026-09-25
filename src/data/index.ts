@@ -1,6 +1,7 @@
 import raw from "./places.json";
 import regionsRaw from "./regions.json";
 import boundaryRaw from "./boundary.json";
+import zipRaw from "./zipcodes.json";
 import type { Area, AreaKey, Box, Place, Region, Unit } from "./types";
 
 export const places = raw.places as Place[];
@@ -40,6 +41,11 @@ export const areas: Area[] = AREA_DEFS.map((a) => {
 });
 
 export const areaByKey = (k: string) => areas.find((a) => a.key === k);
+
+// 우편번호: 관광공사 관광정보(detailCommon2 zipcode)에서 꺼낸 다섯 자리(도구/05_우편번호.py). 없는 곳 7곳은 null.
+const ZIPS = zipRaw as Record<string, string>;
+/** 관광지 우편번호(다섯 자리). 없으면 null */
+export const zipOf = (id: string): string | null => ZIPS[id] ?? null;
 export const placeById = (id: string) => places.find((p) => p.id === id);
 
 // 거점: 보고서의 거점 묶음(문무대왕면, 안강·선도, 산내·건천)

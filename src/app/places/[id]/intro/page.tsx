@@ -1,14 +1,15 @@
 // 관광지 소개(61곳). 궁능 누리집 "경복궁 소개·역사"(gbg_intro) 모양:
-// 어긋난 테두리 큰 사진 → 굵은 첫 문장(가운데) → 본문 → "기본 정보" 표(궁능 "역사" 표 자리).
+// 어긋난 테두리 큰 사진 → 작은 건물 그림(궁능 ic_wrap 자리, 직접 그린 선 그림) → 굵은 첫 문장(가운데) → 본문 → "기본 정보" 표(궁능 "역사" 표 자리).
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { placeById, places } from "@/data";
 import type { Place } from "@/data";
-import { photoCredit } from "@/data/photos";
+import { photoCreditOf } from "@/data/photos";
 import { placeCrumbs, placePages, placeSideMenu, PLACE_BANNER } from "@/site/ia";
 import { Ph, Section, SubPage } from "@/components/layout/PageParts";
 import { BoardTable, OffsetPhoto, Photo } from "@/components/royal";
 import { anyPhoto, areaLabelOf, coverPhoto, phoneOf, splitOverview } from "@/components/place/placeData";
+import IntroMark from "@/components/place/IntroMark";
 import s from "@/components/place/Place.module.css";
 
 type Props = { params: Promise<{ id: string }> };
@@ -73,7 +74,8 @@ export default async function PlaceIntro({ params }: Props) {
         <OffsetPhoto>
           <Photo photo={photo} alt={`${p.name} 사진`} ratio="101/50" bg="light" loading="eager" />
         </OffsetPhoto>
-        {photo && <p className={s.photoCredit}>{photoCredit(photo.type)}</p>}
+        {photo && <p className={s.photoCredit}>{photoCreditOf(photo)}</p>}
+        <IntroMark className={s.introMark} />
 
         {ov ? (
           <>

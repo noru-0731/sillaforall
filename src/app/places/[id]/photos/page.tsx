@@ -1,5 +1,6 @@
 // 관광지 사진(61곳). 궁능 누리집 "경복궁 이야기"(gbg_story) 모양:
-// 윗선 바로 아래 칸 격자(궁능: 전각 이름 → 우리: 같은 권역 관광지, 누르면 그 관광지 사진 쪽) → 관광지 이름 → 사진 넘기기.
+// 윗선 바로 아래 칸 격자(궁능: 전각 이름 → 우리: 같은 권역 관광지, 누르면 그 관광지 사진 쪽) → 관광지 이름 → 사진 넘기기
+// → 설명 문단(궁능: 작은 사진 줄 아래 고른 전각의 설명 → 우리: 관광공사 개요, 소개 쪽과 같은 글).
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -34,6 +35,10 @@ export default async function PlacePhotos({ params }: Props) {
   const same = sameArea(p);
   const photos = viewerPhotos(p);
   const gridLabel = "같은 권역 관광지 사진";
+  const paras = (p.overview ?? "")
+    .split(/\n+/)
+    .map((t) => t.trim())
+    .filter(Boolean);
 
   return (
     <SubPage crumbs={placeCrumbs(p, page)} title={page.label} banner={PLACE_BANNER} sideMenu={placeSideMenu(p)} current={page.href}>
@@ -73,6 +78,13 @@ export default async function PlacePhotos({ params }: Props) {
 
       <h2 className={s.photoTit}>{p.name}</h2>
       <PhotoViewer photos={photos} placeName={p.name} />
+      {paras.length > 0 && (
+        <div className={s.photoDesc}>
+          {paras.map((t, i) => (
+            <p key={i}>{t}</p>
+          ))}
+        </div>
+      )}
     </SubPage>
   );
 }

@@ -5,7 +5,7 @@ import { SubPage } from "@/components/layout/PageParts";
 import { KoglBox } from "@/components/royal";
 import AreaPills from "@/components/map/AreaPills";
 import MapExplorer from "@/components/map/MapExplorer";
-import { explorerHubs, explorerIds, explorerPhotos } from "@/components/map/explorerData";
+import { explorerHubs, explorerIds, explorerPhotos, koglKeys } from "@/components/map/explorerData";
 
 const SECTION = MENU[0];
 const SELF = SECTION.children?.[0] ?? { label: "경주 전체", href: "/map" };
@@ -14,6 +14,7 @@ export const metadata: Metadata = { title: `${SECTION.label} - ${SELF.label}` };
 
 export default function MapPage() {
   const ids = explorerIds("full");
+  const photos = explorerPhotos(ids);
   return (
     <SubPage
       crumbs={[
@@ -29,8 +30,12 @@ export default function MapPage() {
         view="full"
         ids={ids}
         hubs={explorerHubs(ids)}
-        photos={explorerPhotos(ids)}
-        kogl={{ Type1: <KoglBox type="Type1" />, Type3: <KoglBox type="Type3" /> }}
+        photos={photos}
+        kogl={{
+          Type1: <KoglBox type="Type1" />,
+          Type3: <KoglBox type="Type3" />,
+          ...Object.fromEntries(koglKeys(photos).bys.map((by) => [`by:${by}`, <KoglBox key={by} type="Type1" by={by} />])),
+        }}
       />
     </SubPage>
   );

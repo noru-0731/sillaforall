@@ -96,7 +96,7 @@ export default function PhotoViewer({ photos, placeName }: { photos: ViewerPhoto
         </ul>
       )}
 
-      <KoglBox type={cur.type} className={s.kogl} />
+      <KoglBox type={cur.type} by={cur.by} className={s.kogl} />
     </div>
   );
 }

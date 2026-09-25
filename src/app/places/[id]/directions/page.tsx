@@ -1,14 +1,18 @@
 // 관광지 오시는 길(61곳). 궁능 누리집 "오시는 길"(directions) 모양:
-// "{이름} 오시는 길" → 지도(테두리 상자) → 주소·연락처 줄 + 길찾기 → 검정 띠 "주차 및 이용안내"
+// 제목 아래 알약 줄(같은 권역 관광지의 오시는 길, 지금 곳 채움, 한 줄 + ‹ ›) → "{이름} 오시는 길" → 지도(테두리 상자)
+// → 주소(앞에 우편번호, 궁능 "(03045) 서울 …")·연락처 줄 + 길찾기 → 검정 띠 "주차 및 이용안내"
 // → 대중교통·자가용(아이콘 소제목) → 주차 안내 상자 → 이용요금 표.
+// 지도: 궁능처럼 도로가 보이는 진짜 지도(RealMap, 오픈스트리트맵). 좌표를 이웃 곳에서 빌린 두 곳(approx: 서악서원, 블루원워터파크)은
+// 진짜 지도에 핀을 꽂지 않고 우리 그린 지도(MapView)를 그대로 쓴다.
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { areaOf, placeById, places } from "@/data";
+import { areaOf, placeById, places, zipOf } from "@/data";
 import { placeCrumbs, placePages, placeSideMenu, PLACE_BANNER } from "@/site/ia";
 import { Ph, Section, SubPage } from "@/components/layout/PageParts";
 import { Icon } from "@/components/icons";
-import { BlackBar, BoardTable, IconHeading } from "@/components/royal";
+import { BlackBar, BoardTable, IconHeading, PillTabs } from "@/components/royal";
 import MapView from "@/components/map/MapView";
+import RealMap from "@/components/map/RealMap";
 import { kakaoTo, phoneOf, sameArea } from "@/components/place/placeData";
 import s from "@/components/place/Place.module.css";
 
@@ -47,6 +51,16 @@ export default async function PlaceDirections({ params }: Props) {
   const key = areaOf(p);
   const tel = phoneOf(p.contact);
   const reg = p.registered;
+  const zip = zipOf(p.id);
+  // 궁능 오시는 길 제목 아래 궁 알약 줄 자리: 같은 권역 관광지(가나다순)의 오시는 길
+  const pills = (
+    <PillTabs
+      label="관광지 고르기"
+      current={page.href}
+      scroll="always"
+      items={sameArea(p).map((q) => ({ label: q.name, href: `/places/${q.id}/directions`, area: key }))}
+    />
+  );
 
   // 주차 안내 상자의 점 줄: 관광정보의 일반 주차 글 + 무장애 여행 정보의 주차 글(있을 때만)
   const parking: { label: string; text: string }[] = [];
@@ -54,16 +68,20 @@ export default async function PlaceDirections({ params }: Props) {
   if (reg && p.move["주차"]) parking.push({ label: "한국관광공사 무장애 여행 정보", text: p.move["주차"]! });
 
   return (
-    <SubPage crumbs={placeCrumbs(p, page)} title={page.label} banner={PLACE_BANNER} sideMenu={placeSideMenu(p)} current={page.href}>
+    <SubPage crumbs={placeCrumbs(p, page)} title={page.label} banner={PLACE_BANNER} sideMenu={placeSideMenu(p)} current={page.href} tabs={pills}>
       <Section title={`${p.name} 오시는 길`}>
         <div className={s.mapBox}>
-          <MapView
-            view={key}
-            highlightId={p.id}
-            placeIds={sameArea(p).map((q) => q.id)}
-            height="clamp(32rem, 40vw, 42.9rem)"
-            ariaLabel={`${p.name} 위치 지도`}
-          />
+          {p.approx ? (
+            <MapView
+              view={key}
+              highlightId={p.id}
+              placeIds={sameArea(p).map((q) => q.id)}
+              height="clamp(32rem, 40vw, 42.9rem)"
+              ariaLabel={`${p.name} 위치 지도`}
+            />
+          ) : (
+            <RealMap lat={p.lat} lon={p.lon} name={p.name} label={`${p.name} 위치 지도`} zoom={16} />
+          )}
         </div>
         {p.approx && (
           <p className={s.approx}>
@@ -76,7 +94,10 @@ export default async function PlaceDirections({ params }: Props) {
               <div className={s.mapCon}>
                 <Icon name="pin" size={18} strokeWidth={2} />
                 <p className={s.mapConTit}>주소</p>
-                <p className={s.mapConTxt}>{p.address}</p>
+                <p className={s.mapConTxt}>
+                  {zip && <>({zip}) </>}
+                  {p.address}
+                </p>
               </div>
             )}
             {p.contact && (

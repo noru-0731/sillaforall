@@ -1,0 +1,108 @@
+/* 푸터 "관광지별 연락처" 단추와 표(궁능 나무/footer_tel.txt).
+   단추: 166×36, 바탕 #555, 흰 15px, 둥글기 3, 안쪽 3 50 3 20(∨는 오른쪽).
+   표: 단추 아래 10, 폭 960(휴대전화 360), 윗선 2px 검정, 아랫선 1px #aeaeae, 머리 #f8f8f8 15px 500 높이 42, 칸 15px #666 가운데, 안쪽 5 10.
+   칸 폭 30% / 50% / 20%. */
+.tel {
+  margin-bottom: 1.6rem;
+}
+.telBtn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 3.6rem;
+  padding: 0.3rem 5rem 0.3rem 2rem;
+  border: 0;
+  border-radius: 0.3rem;
+  background: var(--rc-text-muted);
+  font-family: inherit;
+  font-size: 1.5rem;
+  line-height: 3rem;
+  color: var(--rc-bg);
+  cursor: pointer;
+}
+.telBtn svg {
+  position: absolute;
+  right: 2rem;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.telWrap {
+  margin-top: 1rem;
+  max-width: 96rem;
+}
+.telWrap[hidden] {
+  display: none;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  border-top: 0.2rem solid var(--rc-line-strong);
+  border-bottom: 0.1rem solid var(--rc-line-table);
+  font-size: 1.5rem;
+  line-height: 1.5;
+  color: var(--rc-text-faint);
+}
+.table th,
+.table td {
+  padding: 0.5rem 1rem;
+  text-align: center;
+  vertical-align: middle;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+.table thead th {
+  height: 4.2rem;
+  background: var(--rc-bg-table);
+  font-weight: 500;
+}
+.table tbody td,
+.table tbody th {
+  height: 4.1rem;
+  border-top: 0.1rem solid var(--rc-line-light);
+  font-weight: 400;
+}
+.table td + td,
+.table th + td,
+.table thead th + th {
+  border-left: 0.1rem solid var(--rc-line-light);
+}
+.table a {
+  white-space: nowrap; /* 전화번호가 붙임표에서 끊기지 않게 */
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.2rem;
+}
+.c1 {
+  width: 30%;
+}
+.c2 {
+  width: 50%;
+}
+.c3 {
+  width: 20%;
+}
+@media (max-width: 1023px) {
+  .tel {
+    margin-bottom: 1.2rem;
+  }
+  .telBtn {
+    display: flex;
+    width: 100%;
+    min-height: 3.8rem;
+    padding: 0.6rem 5rem 0.6rem 2rem;
+    font-size: 1.3rem;
+  }
+  .table {
+    font-size: 1.3rem;
+  }
+  .c1 {
+    width: 28%;
+  }
+  .c2 {
+    width: 44%;
+  }
+  .c3 {
+    width: 28%;
+  }
+}

@@ -18,7 +18,9 @@ export type HeroSlide = {
   kicker: string | null;
   /** "권역 · 읍면동" */
   meta: string;
-  photo: { url: string; type: "Type1" };
+  photo: { url: string; type: "Type1"; w?: number; large?: string; lw?: number };
+  /** 사진 출처 한 줄("사진: 한국관광공사 관광정보, 공공누리 제1유형" 등. 서버에서 photoCreditOf로 만듦) */
+  credit: string;
 };
 export type QuickItem = { label: string; href: string; icon: IconName; children?: { label: string; href: string }[] };
 
@@ -87,7 +89,7 @@ export default function HomeHero({
                       <Link href={`/places/${sl.id}`}>{sl.name}</Link>
                     </p>
                     <p className={s.visualMeta}>{sl.meta}</p>
-                    <p className={s.visualCredit}>사진: 한국관광공사 관광정보, 공공누리 제1유형</p>
+                    <p className={s.visualCredit}>{sl.credit}</p>
                   </div>
                 </div>
               );

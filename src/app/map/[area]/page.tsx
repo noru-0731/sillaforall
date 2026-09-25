@@ -8,7 +8,7 @@ import { SubPage } from "@/components/layout/PageParts";
 import { KoglBox } from "@/components/royal";
 import AreaPills from "@/components/map/AreaPills";
 import MapExplorer from "@/components/map/MapExplorer";
-import { explorerHubs, explorerIds, explorerPhotos } from "@/components/map/explorerData";
+import { explorerHubs, explorerIds, explorerPhotos, koglKeys } from "@/components/map/explorerData";
 
 type Props = { params: Promise<{ area: string }> };
 
@@ -33,6 +33,7 @@ export default async function AreaMapPage({ params }: Props) {
 
   const href = `/map/${a.key}`;
   const ids = explorerIds(a.key);
+  const photos = explorerPhotos(ids);
   return (
     <SubPage
       crumbs={[
@@ -48,8 +49,12 @@ export default async function AreaMapPage({ params }: Props) {
         view={a.key}
         ids={ids}
         hubs={explorerHubs(ids)}
-        photos={explorerPhotos(ids)}
-        kogl={{ Type1: <KoglBox type="Type1" />, Type3: <KoglBox type="Type3" /> }}
+        photos={photos}
+        kogl={{
+          Type1: <KoglBox type="Type1" />,
+          Type3: <KoglBox type="Type3" />,
+          ...Object.fromEntries(koglKeys(photos).bys.map((by) => [`by:${by}`, <KoglBox key={by} type="Type1" by={by} />])),
+        }}
       />
     </SubPage>
   );

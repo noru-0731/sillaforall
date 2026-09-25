@@ -65,7 +65,7 @@
   font-weight: 400;
   opacity: 0.85;
 }
-/* 궁능 swiper-use-wrap 190×50: 쪽 수 칸 50, 단추 20×20, 사이 20(우리는 멈춤 단추가 없다) */
+/* 궁능 swiper-use-wrap 190×50: 쪽 수 칸 50, 단추 20×20(이전 · 멈춤 · 다음), 사이 20 */
 .ctrl {
   flex: 0 0 auto;
   display: flex;
