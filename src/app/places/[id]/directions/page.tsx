@@ -104,7 +104,7 @@ export default async function PlaceDirections({ params }: Props) {
         </div>
         {p.approx && (
           <p className={s.approx}>
-            <Ph>지도 위 자리는 가까운 곳의 좌표를 빌려 쓴 것이라 실제 자리와 조금 다를 수 있습니다.</Ph>
+            <Ph>지도 위 자리는 실제 자리와 조금 다를 수 있습니다.</Ph>
           </p>
         )}
         <div className={s.mapTxt}>
@@ -237,7 +237,7 @@ export default async function PlaceDirections({ params }: Props) {
       <div className={s.infoWrap}>
         <h3 className={`rc-iconhead rc-iconhead--plain ${s.infoTit}`}>
           <WonIcon />
-          <span>이용요금</span>
+          <span>이용안내</span>
         </h3>
         <BoardTable
           caption={`${p.name} 이용요금과 이용시간`}
@@ -248,7 +248,7 @@ export default async function PlaceDirections({ params }: Props) {
           rows={[
             ["이용요금", p.fee ? <span className={s.pre}>{p.fee.trim()}</span> : EMPTY],
             ["이용시간", p.hours ? <span className={s.pre}>{p.hours.trim()}</span> : EMPTY],
-            ["쉬는 날", p.closed ? <span className={s.pre}>{p.closed.trim()}</span> : EMPTY],
+            ["휴무일", p.closed ? <span className={s.pre}>{p.closed.trim()}</span> : EMPTY],
           ]}
         />
       </div>

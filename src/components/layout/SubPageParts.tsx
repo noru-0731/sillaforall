@@ -89,7 +89,7 @@ export function MobileMenuBar({ label, links, current }: { label: string; links:
       <button type="button" className="rc-mbar__btn" aria-expanded={open} aria-controls={id} onClick={() => setOpen(!open)}>
         <span>
           {label}
-          <span className="sr-only"> (같은 메뉴의 다른 쪽 {open ? "닫기" : "보기"})</span>
+          <span className="sr-only"> {open ? "닫기" : "열기"}</span>
         </span>
         <Caret up={open} size={16} />
       </button>
@@ -135,7 +135,7 @@ export function PageTools({ title }: { title: string }) {
     }
     try {
       await navigator.clipboard.writeText(url);
-      say("이 쪽 주소를 복사했습니다.");
+      say("주소를 복사했습니다.");
     } catch {
       say(`주소: ${url}`);
     }
@@ -144,9 +144,9 @@ export function PageTools({ title }: { title: string }) {
   return (
     <div className="rc-tools">
       <ReadAloud />
-      <button type="button" className="rc-tool rc-tool--share" onClick={share} title="공유하기(주소 복사)">
+      <button type="button" className="rc-tool rc-tool--share" onClick={share} title="공유하기">
         <Icon name="share" size={30} strokeWidth={1.6} />
-        <span className="sr-only">공유하기(이 쪽 주소 복사)</span>
+        <span className="sr-only">공유하기</span>
       </button>
       <button type="button" className="rc-tool rc-tool--print" onClick={() => window.print()} title="인쇄하기">
         <Icon name="print" size={30} strokeWidth={1.6} />

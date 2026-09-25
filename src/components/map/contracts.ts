@@ -32,8 +32,6 @@ export type MapViewProps = {
   selectedArea?: AreaKey | null;
   /** 범례를 보일지. 기본 true */
   legend?: boolean;
-  /** 강조한 곳(highlightId)의 범례 글. 주면 highlightId가 없어도 범례 칸을 늘 둔다 */
-  highlightLabel?: string;
   /** 둥근 테두리 없이(다른 틀 안에 넣는 작은 지도) */
   plain?: boolean;
 };

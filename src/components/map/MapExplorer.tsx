@@ -118,11 +118,10 @@ export default function MapExplorer({
           highlightId={sel?.id}
           emphasisIds={emph}
           onSelectPlace={choose}
-          highlightLabel="고른 관광지"
         />
       </div>
 
-      <InfoBox className={s.info}>관광지 이름을 누르시면 아래 화면에서 관광지 사진을 볼 수 있습니다.</InfoBox>
+      <InfoBox className={s.info}>관광지 이름을 누르시면 아래 화면에서 사진을 볼 수 있습니다.</InfoBox>
 
       {list.length > 0 ? (
         <ul className={s.names} aria-label="관광지 이름">
@@ -139,7 +138,7 @@ export default function MapExplorer({
         </ul>
       ) : (
         <p className={s.empty}>
-          <Ph>해당하는 관광지가 없습니다.</Ph>
+          등록된 관광지가 없습니다.
         </p>
       )}
 
@@ -163,7 +162,7 @@ export default function MapExplorer({
           </div>
           <div className={s.btnWrap}>
             <Link href={`/places/${sel.id}`} className={s.btnInk}>
-              관광지 자세히 보기
+              자세히 보기
               <Icon name="arrow-right" size={18} strokeWidth={2} />
             </Link>
           </div>

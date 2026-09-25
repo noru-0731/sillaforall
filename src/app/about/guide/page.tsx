@@ -23,7 +23,7 @@ export default function GuidePage() {
   const items: QA[] = [
     {
       id: "text-size",
-      q: <Ph>글자를 크게 보려면</Ph>,
+      q: "글자·화면 설정 이용 방법",
       a: (
         <>
           <p>
@@ -39,7 +39,7 @@ export default function GuidePage() {
     },
     {
       id: "map",
-      q: <Ph>지도 쓰는 법</Ph>,
+      q: "관광지 지도 이용 방법",
       a: (
         <>
           <ul>
@@ -64,7 +64,7 @@ export default function GuidePage() {
     },
     {
       id: "list",
-      q: <Ph>목록에서 관광지 찾는 법</Ph>,
+      q: "관광지 목록 이용 방법",
       a: (
         <>
           <p>

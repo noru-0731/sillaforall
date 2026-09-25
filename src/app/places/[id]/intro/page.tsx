@@ -1,16 +1,21 @@
 // 관광지 소개(61곳). 궁능 누리집 "경복궁 소개·역사"(gbg_intro) 모양:
 // 어긋난 테두리 큰 사진 → 작은 건물 그림(궁능 ic_wrap 자리, 직접 그린 선 그림) → 굵은 첫 문장(가운데) → 본문 → "기본 정보" 표(궁능 "역사" 표 자리).
+// 본문은 궁능 "궁궐의 역사"(story_history) 모양: 왼쪽에 사진을 세로로 쌓고(309×213, 사이 20) 오른쪽에 글(왼쪽 30 띄움).
+//   사진은 큰 사진과 다른 장, 제1유형 먼저. 장 수는 본문 높이에 맞춘다(sideCount). 휴대전화는 사진 3칸 격자 뒤에 글.
+//   궁능은 사진마다 아래에 이름 띠를 얹지만, 우리 사진 이름은 대부분 관광지 이름이나 파일 이름이라 띠를 넣지 않았다.
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { placeById, places } from "@/data";
 import type { Place } from "@/data";
-import { photoCreditOf } from "@/data/photos";
+import { creditLines, photoCreditOf } from "@/data/photos";
+import type { Photo as PhotoData } from "@/data/photos";
 import { placeCrumbs, placePages, placeSideMenu, PLACE_BANNER } from "@/site/ia";
 import { Ph, Section, SubPage } from "@/components/layout/PageParts";
 import { BoardTable, OffsetPhoto, Photo } from "@/components/royal";
-import { anyPhoto, areaLabelOf, coverPhoto, phoneOf, splitOverview } from "@/components/place/placeData";
+import { anyPhoto, areaLabelOf, cleanPhotoName, coverPhoto, phoneOf, photosOf, splitOverview } from "@/components/place/placeData";
 import IntroMark from "@/components/place/IntroMark";
 import s from "@/components/place/Place.module.css";
+import st from "./intro.module.css";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -27,6 +32,23 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 const EMPTY = <Ph>적힌 내용 없음</Ph>;
+
+/**
+ * 본문 옆 사진 장 수: 본문이 PC 글 칸(691px, 16px 글, 줄 27.2px, 한 줄 52자 안팎(띄어쓰기 포함), 문단 사이 27)에서 차지할 높이를
+ * 사진 한 칸(213 + 사이 20)으로 나눈 값. 1~5장(궁능 story_history는 5장).
+ */
+function sideCount(paras: string[]): number {
+  const lines = paras.reduce((n, x) => n + Math.ceil(x.length / 52), 0);
+  const h = lines * 27.2 + Math.max(0, paras.length - 1) * 27;
+  return Math.max(1, Math.min(5, Math.round((h + 20) / 233)));
+}
+
+/** 본문 옆 사진: 맨 위 큰 사진과 다른 장, 제1유형 먼저(차례 유지). 작은 칸이라 큰 판(large)은 넘기지 않는다. */
+function sidePhotos(id: string, topUrl: string | null, n: number): PhotoData[] {
+  const rest = photosOf(id).filter((x) => x.url !== topUrl);
+  const ordered = [...rest.filter((x) => x.type === "Type1"), ...rest.filter((x) => x.type !== "Type1")];
+  return ordered.slice(0, n).map(({ url, type, name, from, by }) => ({ url, type, name, from, by }));
+}
 
 /** 표 칸 글: 비면 "적힌 내용 없음", 줄바꿈은 살린다 */
 function cell(v: string | null) {
@@ -57,12 +79,14 @@ export default async function PlaceIntro({ params }: Props) {
   const page = placePages(p)[1];
   const photo = coverPhoto(p.id) ?? anyPhoto(p.id);
   const ov = splitOverview(p.overview);
+  const side = ov && ov.rest.length ? sidePhotos(p.id, photo?.url ?? null, sideCount(ov.rest)) : [];
+  const body = ov?.rest.map((x, i) => <p key={i}>{x}</p>);
 
   const rows: React.ReactNode[][] = [
     ["주소", cell(p.address)],
     ["읍면동·권역", `${p.dong} · ${areaLabelOf(p)}`],
     ["이용시간", cell(p.hours)],
-    ["쉬는 날", cell(p.closed)],
+    ["휴무일", cell(p.closed)],
     ["이용요금", cell(p.fee)],
     ["주차", cell(p.parkingInfo)],
     ["문의", contactCell(p)],
@@ -80,17 +104,32 @@ export default async function PlaceIntro({ params }: Props) {
         {ov ? (
           <>
             <p className={s.introTit}>{ov.first}</p>
-            {ov.rest.length > 0 && (
-              <div className={s.introBody}>
-                {ov.rest.map((t, i) => (
-                  <p key={i}>{t}</p>
-                ))}
-              </div>
-            )}
+            {ov.rest.length > 0 &&
+              (side.length ? (
+                <div className={st.story}>
+                  <div className={st.pics}>
+                    <ul className={st.picList}>
+                      {side.map((ph) => (
+                        <li key={ph.url}>
+                          <Photo photo={ph} alt={cleanPhotoName(ph.name) ?? `${p.name} 사진`} ratio="309/213" bg="light" />
+                        </li>
+                      ))}
+                    </ul>
+                    {creditLines(side).map((line) => (
+                      <p key={line} className={st.picCredit}>
+                        {line}
+                      </p>
+                    ))}
+                  </div>
+                  <div className={`${s.introBody} ${st.body}`}>{body}</div>
+                </div>
+              ) : (
+                <div className={s.introBody}>{body}</div>
+              ))}
           </>
         ) : (
           <p className={s.introTit}>
-            <Ph>한국관광공사 관광정보에 소개 글이 없습니다.</Ph>
+            등록된 소개 글이 없습니다.
           </p>
         )}
       </div>

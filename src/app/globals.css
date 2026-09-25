@@ -187,6 +187,10 @@ body {
   background: var(--rc-bg-bar);
   border-left: 0.2rem solid var(--rc-line-strong);
 }
+/* scrollbar-width를 모르는 사파리(18.1 이하)에서도 막대 안 스크롤바를 숨긴다 */
+.rc-leftbar::-webkit-scrollbar {
+  display: none;
+}
 .rc-leftbar__box {
   display: flex;
   flex-direction: column;
@@ -498,6 +502,13 @@ body {
 @container rc-hd (max-width: 849px) {
   .rc-gnb__grid {
     grid-template-columns: 24rem;
+  }
+}
+/* 휴대전화 머리: 좁은 전화(갤럭시 360)에서 글자·화면을 "가장 크게"로 하면 표장 글자("관광지")가 분홍 동그라미 밑으로 들어갔다.
+   머리 안 폭이 219 이하(360·375에서 가장 크게, 320에서 크게·가장 크게)면 표장 그림을 빼고 글자만 둔다. 크기는 그대로. */
+@container rc-hd (max-width: 219px) {
+  .rc-logo img {
+    display: none;
   }
 }
 

@@ -4,7 +4,7 @@
 // 브라우저에 든 음성(speechSynthesis)으로 이 쪽 본문을 한국어 목소리로 읽는다.
 // - 읽는 범위: #contents 안(쪽 제목부터 본문 끝). 빵부스러기, 단추 줄, 메뉴, 알약 줄, 단추, 그림은 뺀다.
 // - 긴 글은 문장으로 잘라 차례로 읽힌다(크롬은 한 번에 긴 글을 주면 중간에 끊긴다).
-// - 다시 누르면 멈춘다. 다른 쪽으로 가거나 쪽을 떠나도 멈춘다.
+// - 다시 누르면 멈춘다. 다른 쪽으로 가거나 쪽을 떠나도 멈춘다(파이어폭스는 읽던 문장까지 읽고 멈춘다: 아래 cancelBreaks).
 // - 한국어 목소리가 없거나 speechSynthesis가 없는 브라우저에서는 단추를 그리지 않는다.
 import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
@@ -45,6 +45,16 @@ const SKIP = [
   ".rc-seg",
   "[data-read-skip]",
 ].join(",");
+
+/**
+ * 파이어폭스는 읽는 도중 cancel()을 부르면 소리는 멎지만 음성 줄이 멈춘 채로 남는다(speaking이 계속 true).
+ * 그 뒤로는 쪽을 새로 열기 전까지 다시 눌러도 소리가 나지 않는다(09-25 맥 파이어폭스 155에서 확인, Mozilla 버그 1522074와 같은 모습).
+ * 그래서 파이어폭스에서는 cancel()을 부르지 않는다. 한 문장씩 넘기고, 멈추면 지금 읽는 문장까지만 읽고 멈춘다.
+ * 아이폰의 파이어폭스는 사파리 엔진이라 이 이름표(Firefox/)가 없고, 원래 방식대로 읽는다.
+ */
+function cancelBreaks(): boolean {
+  return typeof navigator !== "undefined" && /\bFirefox\//.test(navigator.userAgent);
+}
 
 /** 한국어 목소리 고르기: 기본 목소리 → 기기 안 목소리 → 아무 한국어 목소리 */
 function pickKoVoice(voices: SpeechSynthesisVoice[]): SpeechSynthesisVoice | null {
@@ -164,7 +174,8 @@ export default function ReadAloud({ rootId = "contents" }: { rootId?: string }) 
     setOn(false);
     if (active.current) {
       active.current = false;
-      window.speechSynthesis?.cancel();
+      // 파이어폭스는 cancel()을 부르면 음성 줄이 멈춘다(위 cancelBreaks). 지금 문장이 끝나면 다음 문장을 넘기지 않아 멈춘다.
+      if (!cancelBreaks()) window.speechSynthesis?.cancel();
     }
   }, []);
 
@@ -184,7 +195,9 @@ export default function ReadAloud({ rootId = "contents" }: { rootId?: string }) 
     const parts = toSentences(collectBlocks(root));
     if (!parts.length) return;
 
-    ss.cancel();
+    const oneByOne = cancelBreaks();
+    // 파이어폭스는 앞 차례의 마지막 문장이 아직 읽히는 중이면 그 뒤에 이어 읽는다(cancel()을 부르지 않는다)
+    if (!oneByOne) ss.cancel();
     const my = ++run.current;
     const finish = () => {
       if (run.current !== my) return;
@@ -198,18 +211,24 @@ export default function ReadAloud({ rootId = "contents" }: { rootId?: string }) 
       u.voice = voice;
       u.rate = RATE;
       if (i === parts.length - 1) u.onend = finish;
+      // 한 문장씩: 이 문장이 끝나면(그사이 멈추지 않았으면) 다음 문장을 넘긴다
+      else if (oneByOne)
+        u.onend = () => {
+          if (run.current === my) ss.speak(held.current[i + 1]);
+        };
       u.onerror = (e) => {
         // 멈춤(cancel)으로 생긴 알림은 무시하고, 그 밖의 오류는 전부 멈춘다
         if (e.error === "interrupted" || e.error === "canceled") return;
         if (run.current !== my) return;
-        ss.cancel();
+        if (!oneByOne) ss.cancel();
         finish();
       };
       return u;
     });
     active.current = true;
     setOn(true);
-    held.current.forEach((u) => ss.speak(u));
+    if (oneByOne) ss.speak(held.current[0]);
+    else held.current.forEach((u) => ss.speak(u));
     if (ss.paused) ss.resume(); // 크롬에서 앞서 멈춘 채로 남아 있으면 소리가 나지 않는다
   };
 
@@ -223,7 +242,7 @@ export default function ReadAloud({ rootId = "contents" }: { rootId?: string }) 
       title={on ? "소리로 듣기 멈추기" : "소리로 듣기"}
     >
       <Icon name={on ? "stop" : "volume"} size={30} strokeWidth={1.6} />
-      <span className="sr-only">소리로 듣기(이 쪽 글 읽어 주기)</span>
+      <span className="sr-only">소리로 듣기</span>
     </button>
   );
 }

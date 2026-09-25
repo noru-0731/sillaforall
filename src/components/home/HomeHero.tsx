@@ -69,7 +69,7 @@ export default function HomeHero({
           ref={rootRef}
           role="region"
           aria-roledescription="넘기기"
-          aria-label="이름난 관광지 사진"
+          aria-label="관광지 사진"
           onMouseEnter={() => setHold(true)}
           onMouseLeave={() => setHold(false)}
           onFocus={() => setHold(true)}
@@ -237,7 +237,7 @@ function QuickRow({ items }: { items: QuickItem[] }) {
                 >
                   {body}
                   <Icon name={open === i ? "chevron-down" : "chevron-up"} size={16} strokeWidth={2.4} className={s.quickCaret} />
-                  <span className="sr-only"> 펼치기</span>
+                  <span className="sr-only"> 열기</span>
                 </button>
               ) : (
                 <Link

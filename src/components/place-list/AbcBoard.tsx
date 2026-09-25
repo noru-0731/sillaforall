@@ -9,7 +9,6 @@ import { createContext, useContext, useId, useState } from "react";
 import Link from "next/link";
 import type { AreaKey } from "@/data/types";
 import { Icon } from "@/components/icons";
-import { Ph } from "@/components/layout/Ph";
 import PillTabs from "@/components/royal/PillTabs";
 import type { AreaOption, BoardRow } from "./types";
 import s from "./Abc.module.css";
@@ -170,7 +169,7 @@ export function AbcBoard({ rows, options }: { rows: BoardRow[]; options: AreaOpt
             {shown.length === 0 && (
               <tr>
                 <td colSpan={6} className={s.empty}>
-                  <Ph>찾는 관광지가 없습니다.</Ph>
+                  등록된 관광지가 없습니다.
                 </td>
               </tr>
             )}

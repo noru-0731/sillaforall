@@ -1,11 +1,10 @@
 // 사진 한 장. 공공누리 제3유형(변경 금지) 사진은 fit을 무시하고 자르지 않는다(contain + 단색 바탕).
-// 제1유형은 fit="cover"(기본)로 틀에 맞춰 잘라 쓴다. photo가 없으면 회색 판 + "사진 준비 중".
+// 제1유형은 fit="cover"(기본)로 틀에 맞춰 잘라 쓴다. photo가 없으면 회색 판 + "등록된 사진이 없습니다."(궁능 빈 자리 틀).
 // 크기: 부모가 정하거나 ratio("16/9" 등)·height로 준다. 사진 위에 글자를 겹치지 않는다(겹침 글자는 사진 밖에).
 // 큰 판: photo에 large(같은 사진의 가로 1,600픽셀 안팎 판)가 있으면 srcset으로 함께 주어, 넓은 화면·고해상도 화면에서는 브라우저가 큰 판을 받는다.
 //   sizes(기본 "100vw")는 이 사진이 화면에서 차지하는 너비다. 카드처럼 작은 자리에는 large를 넘기지 않거나 sizes를 작게 준다.
 // 사진 파일은 관광공사 서버 주소를 그대로 쓴다(한국관광콘텐츠랩 저작권 정책: 콘텐츠 캐싱(로컬서버 저장방식) 금지).
 import type { Photo as PhotoData } from "@/data/photos";
-import { Ph } from "@/components/layout/Ph";
 
 export default function Photo({
   photo,
@@ -40,7 +39,7 @@ export default function Photo({
   if (!photo) {
     return (
       <span className={`rc-photo rc-photo--empty${className ? " " + className : ""}`} style={{ ...style, minHeight: ratio || height ? undefined : "20rem" }}>
-        <Ph>사진 준비 중</Ph>
+        등록된 사진이 없습니다.
       </span>
     );
   }

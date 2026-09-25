@@ -21,7 +21,9 @@ type Scale = (typeof SCALES)[number]["value"];
 type Mode = (typeof MODES)[number]["value"];
 const KEY = "display-settings";
 
-const Ctx = createContext<() => void>(() => {});
+/** 창 여는 함수. 단추의 onClick에 그대로 넘기면 누른 단추(currentTarget)를 받아 닫을 때 그리로 초점을 돌려준다. */
+type OpenSettings = (e?: { currentTarget?: EventTarget | null }) => void;
+const Ctx = createContext<OpenSettings>(() => {});
 export const useDisplaySettings = () => useContext(Ctx);
 
 function apply(scale: Scale, mode: Mode) {
@@ -96,9 +98,11 @@ export function DisplaySettingsProvider({ children }: { children: React.ReactNod
     el?.focus();
   }, [open, shown]);
 
-  const openModal = useCallback(() => {
+  const openModal = useCallback<OpenSettings>((e) => {
+    // 사파리(아이폰·맥)는 단추를 눌러도 초점을 주지 않아 activeElement가 body다. 그래서 누른 단추를 먼저 쓴다.
+    const t = e?.currentTarget;
     const a = document.activeElement;
-    openerRef.current = a instanceof HTMLElement && a !== document.body ? a : null;
+    openerRef.current = t instanceof HTMLElement ? t : a instanceof HTMLElement && a !== document.body ? a : null;
     setOpen(true);
   }, []);
 

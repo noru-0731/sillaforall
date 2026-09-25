@@ -112,7 +112,7 @@ export function BoardList({
   const keys = ["parking", "walk", "toilet"] as const;
   const cols = kind === "listed" ? 6 : 5;
   const href = (r: BoardRow) => (kind === "listed" ? `/places/${r.id}/barrier-free` : `/places/${r.id}`);
-  const emptyText = <Ph>찾는 관광지가 없습니다.</Ph>;
+  const emptyText = "등록된 관광지가 없습니다.";
 
   return (
     <div>
@@ -193,7 +193,7 @@ export function BoardList({
                   <>
                     <th scope="col">읍면동</th>
                     <th scope="col">
-                      <Ph>가까운 등록 관광지</Ph>
+                      인근 무장애 ‘명소’
                     </th>
                   </>
                 )}
@@ -268,7 +268,7 @@ export function BoardList({
                   <span>{r.dong}</span>
                   {r.nearest && (
                     <span>
-                      <Ph>가까운 등록 관광지</Ph>: {r.nearest}
+                      인근 무장애 ‘명소’: {r.nearest}
                     </span>
                   )}
                 </p>

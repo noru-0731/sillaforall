@@ -10,9 +10,9 @@ export type CondKey = (typeof COND_KEYS)[number];
 /** 단추 이름: 사이트가 이미 쓰는 항목 이름(세 상자 이름 + 무장애 정보 표의 칸 이름) */
 export const COND_LABEL: Record<CondKey, string> = {
   parking: "주차",
-  walk: "걷는 길",
+  walk: "접근로",
   toilet: "화장실",
-  wheelchair: "휠체어",
+  wheelchair: "휠체어대여",
   elevator: "엘리베이터",
 };
 
@@ -74,7 +74,7 @@ export function meetsAll(have: readonly CondKey[] | undefined, want: readonly Co
 }
 
 // ── 주소 뒤 ?조건= ─────────────────────────────────────────
-/** 주소 뒤 이름: ?조건=주차,걷는길 */
+/** 주소 뒤 이름: ?조건=주차,접근로 */
 export const COND_PARAM = "조건";
 const squeeze = (s: string) => s.replace(/\s+/g, "");
 

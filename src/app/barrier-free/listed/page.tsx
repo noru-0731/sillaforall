@@ -46,7 +46,7 @@ export default function ListedPage() {
           className={s.tips}
           items={[
             <Ph key="a">○ 표시는 한국관광공사 무장애 여행 정보에 그 항목의 글이 적혀 있다는 뜻이고, − 표시는 적힌 내용이 없다는 뜻입니다.</Ph>,
-            <Ph key="b">관광지 이름을 누르면 그 관광지의 무장애 정보 쪽에서 적힌 글을 그대로 볼 수 있습니다.</Ph>,
+            <Ph key="b">관광지 이름을 누르면 무장애 정보 쪽에서 적힌 글을 볼 수 있습니다.</Ph>,
           ]}
         />
       </SubPage>

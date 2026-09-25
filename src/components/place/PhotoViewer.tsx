@@ -1,8 +1,12 @@
 "use client";
 
 // 관광지 사진 넘기기(궁능 "경복궁 이야기" gbg_story의 사진 칸 모양).
-// 위: "1/5" + 오른쪽 ‹ › 검정 네모 단추 → 큰 사진(1030×489) → 사진 이름 + "원본 보기" → 작은 사진 줄 → 공공누리 글자 상자.
-// 제3유형 사진은 <Photo>가 자르지 않는다(contain). 사진 이름은 사진 위에 겹치지 않고 사진 아래 줄에 둔다.
+// 위: "1/5" + 오른쪽 ‹ › 검정 네모 단추 → 큰 사진(1030×489) → 단추 줄("원본 보기") → 작은 사진 줄 → 공공누리 글자 상자.
+// 사진 이름: 궁능은 큰 사진 오른쪽 아래 어두운 상자(18px, 줄 50, 좌우 15, 검정 70%)에 둔다.
+//   제1유형은 그대로 사진 위 오른쪽 아래에 얹는다. 제3유형(변경 금지)은 사진 위에 글을 얹을 수 없어 사진 아래 단추 줄 왼쪽에 둔다.
+// "원본 보기"는 궁능 "이 저작물만 다운로드" 자리(14px 500, 높이 50, 좌우 20, 검정 바탕). 궁능에 짝이 없는 글이라 <Ph>.
+//   관광공사 사진 서버가 다른 누리집에서 파일을 받아 가는 허락(CORS)을 주지 않아 내려받기 대신 새 창으로 연다.
+//   같은 사진의 큰 판(large)이 있으면 그 주소를 연다.
 import { useEffect, useRef, useState } from "react";
 import { Icon } from "@/components/icons";
 import { Ph } from "@/components/layout/Ph";
@@ -10,7 +14,10 @@ import { KoglBox, Photo } from "@/components/royal";
 import type { ViewerPhoto } from "./placeData";
 import s from "./PhotoViewer.module.css";
 
-export default function PhotoViewer({ photos, placeName }: { photos: ViewerPhoto[]; placeName: string }) {
+/** large: 같은 사진의 큰 판 주소(있으면 "원본 보기"가 이것을 연다). tall: 세로 사진(세로 > 가로) */
+export type ViewerItem = ViewerPhoto & { large?: string; tall?: boolean };
+
+export default function PhotoViewer({ photos, placeName }: { photos: ViewerItem[]; placeName: string }) {
   const [i, setI] = useState(0);
   const n = photos.length;
   const thumbsRef = useRef<HTMLUListElement>(null);
@@ -38,6 +45,9 @@ export default function PhotoViewer({ photos, placeName }: { photos: ViewerPhoto
   }
 
   const cur = photos[i];
+  // 제1유형만 사진 위에 이름 상자를 얹는다(제3유형은 사진 아래 줄)
+  const onPhoto = cur.type === "Type1";
+  const nameText = cur.made ? <Ph>{cur.name}</Ph> : cur.name;
   const pick = (j: number) => {
     moved.current = true;
     setI(j);
@@ -65,13 +75,25 @@ export default function PhotoViewer({ photos, placeName }: { photos: ViewerPhoto
         )}
       </div>
 
-      <Photo key={cur.url} photo={cur} alt={cur.name} ratio="1030/489" bg="dark" loading="eager" />
+      <div className={s.stage}>
+        {/* 세로 사진은 1030×489 칸에 맞춰 자르면 가운데 띠만 남아(09-26 보리사마애석불) 제1유형이라도 자르지 않고 전체를 보인다 */}
+        <Photo
+          key={cur.url}
+          photo={{ url: cur.url, type: cur.type }}
+          alt={cur.name}
+          ratio="1030/489"
+          bg="dark"
+          loading="eager"
+          fit={cur.tall ? "contain" : "cover"}
+        />
+        {onPhoto && <p className={s.cap}>{nameText}</p>}
+      </div>
 
       <div className={s.bar}>
-        <p className={s.name}>{cur.made ? <Ph>{cur.name}</Ph> : cur.name}</p>
-        <a href={cur.url} target="_blank" rel="noopener noreferrer" className={s.orig}>
-          원본 보기
-          <Icon name="external" size={18} strokeWidth={1.8} />
+        {!onPhoto && <p className={s.name}>{nameText}</p>}
+        <a href={cur.large ?? cur.url} target="_blank" rel="noopener noreferrer" className={s.orig}>
+          <Ph>원본 보기</Ph>
+          <Icon name="external" size={16} strokeWidth={1.8} />
           <span className="sr-only">(새 창)</span>
         </a>
       </div>
