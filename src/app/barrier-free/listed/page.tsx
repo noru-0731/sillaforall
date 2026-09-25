@@ -1,5 +1,5 @@
 // 무장애 정보 > 정보가 적힌 곳(궁능 공지사항 모양): 권역 알약, "전체: N곳", 이름 검색, 게시판 표.
-// 표 위에 무장애 조건 거르기 줄(주차·걷는 길·화장실·휠체어·엘리베이터, 여러 개는 모두 갖춘 곳만, 주소 뒤 ?조건=).
+// (무장애 시안 bf-draft: 표 위 무장애 조건 거르기 줄을 뺐다.)
 // 표는 명부에 오른 관광지마다 주차·걷는 길·화장실 칸에 글이 있는지(○ / −)를 보인다. 글 자체는 관광지의 무장애 정보 쪽에 있다.
 import type { Metadata } from "next";
 import { areaOf, areas, places } from "@/data";
@@ -7,7 +7,6 @@ import { Ph, SubPage } from "@/components/layout/PageParts";
 import { TipList } from "@/components/royal";
 import { groupByArea, menuPage } from "@/components/place-list/helpers";
 import { THREE_TEXT } from "@/components/place-list/Parts";
-import { condsOf } from "@/components/place-list/barrierConds";
 import { BoardList, BoardPills, BoardState, type BoardRow } from "../_parts/Board";
 import s from "../bf.module.css";
 
@@ -26,7 +25,6 @@ export default function ListedPage() {
     area: areaOf(p),
     areaLabel: label(areaOf(p)),
     three: { parking: !!p.three.parking, walk: !!p.three.walk, toilet: !!p.three.toilet },
-    conds: condsOf(p),
   }));
 
   return (

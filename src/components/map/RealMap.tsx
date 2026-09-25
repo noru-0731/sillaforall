@@ -8,7 +8,15 @@
 // - 확대·축소·처음 크기 단추: 우리 그린 지도(MapView)와 같은 자리·모양(오른쪽 위 세로, 32×32)과 같은 이름.
 // - 마우스 휠 확대는 끈다(쪽 내리기가 먼저). 휴대전화·태블릿에서는 한 손가락 끌기도 꺼서 지도 위에서도 쪽이 내려가게 둔다(두 손가락 벌리기 확대는 된다).
 // - Leaflet은 불러오는 순간 window·document를 만지므로 브라우저에서만(useEffect 안의 import()) 불러온다. 서버는 빈 상자만 그린다.
-// 나중에 카카오맵으로 바꿀 때는 이 파일과 RealMap.module.css만 바꾸면 된다(props: lat, lon, name, label, zoom).
+// 나중에 카카오맵으로 바꿀 때는 이 파일과 RealMap.module.css만 바꾸면 된다(props: lat, lon, name, label, zoom, points, legend, tall).
+//
+// 편의시설 표시(무장애 시안 bf-draft에서 더함): 궁능 관람코스 편의시설 지도(레퍼런스/궁능_포맷/course*.png, 나무/course_1440.txt)를 재서 따름.
+// - 점: 궁능 범례 칸과 같은 24×24 둥글기 3 네모에 흰 번호(아래 목록의 번호). 같은 자리의 점은 번호를 이어 한 네모로.
+//   벤치·쉼터는 번호 없는 작은 점. 누르면 주소 뒤 #{href}로 옮겨 아래 목록의 그 줄을 보인다(궁능 "번호를 클릭하시면 아래 화면에서").
+// - 범례: 궁능처럼 지도 안 왼쪽에 세로로(네모 + 이름). 좁은 화면(본문 767 이하)에서는 지도 아래로 내린다.
+// - 처음 화면: points 가운데 near(반경 안)인 점과 관광지가 모두 들어오게 맞춘다(fitBounds). 먼 점은 찍어 두되 맞추기에서 뺀다.
+// - tall: 궁능 관람코스 지도 상자 높이(693)를 따른다. 없으면 오시는 길 상자(429).
+// 점은 키보드로 고르지 않는다(같은 내용이 아래 목록 표에 글로 있다).
 import { useEffect, useRef, useState } from "react";
 import type { Map as LeafletMap } from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -26,7 +34,30 @@ type Props = {
   label?: string;
   /** 처음 확대 단계(오픈스트리트맵 0~19). 16이면 동네 길이 보인다 */
   zoom?: number;
+  /** 편의시설 점(번호 네모, 벤치·쉼터 작은 점) */
+  points?: MapPoint[];
+  /** 범례(지도 안 왼쪽, 좁으면 지도 아래) */
+  legend?: LegendItem[];
+  /** 궁능 관람코스 지도 높이(693) */
+  tall?: boolean;
 };
+
+/** 지도 위 편의시설 점 하나. kind는 RealMap.module.css 의 pt_{kind} / dot_{kind} 색 */
+export type MapPoint = {
+  key: string;
+  kind: "toiletA" | "toilet" | "parking" | "charger" | "bench" | "shelter";
+  lat: number;
+  lon: number;
+  /** 네모 안 글자(번호). 없으면 작은 점 */
+  label?: string;
+  /** 마우스를 올리면 보이는 글 */
+  title?: string;
+  /** 누르면 옮겨 갈 쪽 안 자리(id, # 없이) */
+  href?: string;
+  /** 처음 화면 맞추기에 넣는지(반경 안) */
+  near?: boolean;
+};
+export type LegendItem = { kind: MapPoint["kind"] | "place"; label: string };
 
 const TILE_URL = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
 const OSM_COPYRIGHT = "https://www.openstreetmap.org/copyright";
@@ -63,9 +94,43 @@ function pinHtml(name: string) {
   );
 }
 
-export default function RealMap({ lat, lon, name, label, zoom = 16 }: Props) {
+/** 편의시설 점 HTML(번호 네모 또는 작은 점)과 크기 */
+function pointIcon(p: MapPoint) {
+  if (!p.label) return { html: `<span class="${s.dot} ${s[`dot_${p.kind}`] ?? ""}"></span>`, w: 12, h: 12 };
+  const w = Math.max(24, 10 + p.label.length * 8);
+  return { html: `<span class="${s.pt} ${s[`pt_${p.kind}`] ?? ""}" style="width:${w}px">${esc(p.label)}</span>`, w, h: 24 };
+}
+
+/** 범례 네모 안 선 그림(궁능 범례 칸의 흰 그림 자리. 직접 그림) */
+function LegendGlyph({ kind }: { kind: LegendItem["kind"] }) {
+  const svg = (d: React.ReactNode) => (
+    <svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
+      {d}
+    </svg>
+  );
+  switch (kind) {
+    case "toiletA":
+      return <Icon name="wheelchair" size={18} strokeWidth={2} />;
+    case "toilet":
+      return <Icon name="toilet" size={18} strokeWidth={2} />;
+    case "parking":
+      return svg(<path d="M9 18V6h4.5a3.5 3.5 0 0 1 0 7H9" />);
+    case "charger":
+      return svg(<path d="M13 3 6.5 13H12l-1 8 6.5-10H12z" />);
+    case "place":
+      return <Icon name="pin" size={18} strokeWidth={2} />;
+    default:
+      return null;
+  }
+}
+
+export default function RealMap({ lat, lon, name, label, zoom = 16, points, legend, tall }: Props) {
   const mapEl = useRef<HTMLDivElement>(null);
   const mapRef = useRef<LeafletMap | null>(null);
+  // 처음 화면(맞추기 결과). 처음 크기 단추가 이리로 돌아온다
+  const homeRef = useRef<{ center: [number, number]; zoom: number }>({ center: [lat, lon], zoom });
+  const legRef = useRef<HTMLUListElement>(null);
+  const ptsKey = points?.map((p) => `${p.key}:${p.lat},${p.lon}:${p.label ?? ""}`).join("|") ?? "";
   const [view, setView] = useState({ zoom, lat });
   const [ready, setReady] = useState(false);
 
@@ -93,6 +158,33 @@ export default function RealMap({ lat, lon, name, label, zoom = 16 }: Props) {
         interactive: false,
         keyboard: false,
       }).addTo(map);
+      // 편의시설 점: 작은 점(벤치·쉼터)을 아래에, 번호 네모를 위에
+      const pts = [...(points ?? [])].sort((a, b) => Number(!!a.label) - Number(!!b.label));
+      for (const p of pts) {
+        const ic = pointIcon(p);
+        const mk = L.marker([p.lat, p.lon], {
+          icon: L.divIcon({ className: s.marker, html: ic.html, iconSize: [ic.w, ic.h], iconAnchor: [ic.w / 2, ic.h / 2] }),
+          interactive: !!p.href,
+          keyboard: false,
+          title: p.title,
+          zIndexOffset: p.label ? 500 : 0,
+        }).addTo(map);
+        if (p.href) mk.on("click", () => (window.location.hash = p.href!));
+      }
+      // 처음 화면: 반경 안 점과 관광지가 모두 들어오게(너무 가까이 당기지는 않게 17까지)
+      const fit = (points ?? []).filter((p) => p.near);
+      if (fit.length) {
+        // 범례가 지도 안(왼쪽 위)에 있으면 그 폭만큼, 오른쪽은 + − ↻ 단추만큼 비워 점이 가리지 않게
+        const leg = legRef.current;
+        const legIn = leg && getComputedStyle(leg).position === "absolute";
+        map.fitBounds(L.latLngBounds([[lat, lon], ...fit.map((p) => [p.lat, p.lon] as [number, number])]), {
+          paddingTopLeft: [legIn ? leg.offsetWidth + 40 : 36, 40],
+          paddingBottomRight: [60, 40],
+          maxZoom: 17,
+          animate: false,
+        });
+      }
+      homeRef.current = { center: [map.getCenter().lat, map.getCenter().lng], zoom: map.getZoom() };
       const sync = () => setView({ zoom: map.getZoom(), lat: map.getCenter().lat });
       map.on("zoomend moveend", sync);
       sync();
@@ -109,14 +201,35 @@ export default function RealMap({ lat, lon, name, label, zoom = 16 }: Props) {
       mapRef.current = null;
       setReady(false);
     };
-  }, [lat, lon, name, zoom]);
+    // points 는 ptsKey 로 비교한다(쪽이 다시 그려질 때마다 새 배열이 와도 지도를 다시 만들지 않게)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lat, lon, name, zoom, ptsKey]);
 
   const canIn = ready && view.zoom < MAX_ZOOM;
   const canOut = ready && view.zoom > MIN_ZOOM;
   const scale = scaleOf(view.lat, view.zoom);
 
-  return (
-    <div className={s.box}>
+  const legendEl = legend?.length ? (
+    <ul ref={legRef} className={s.legend} aria-label="지도 범례">
+      {legend.map((g) => (
+        <li key={g.kind}>
+          {g.kind === "bench" || g.kind === "shelter" ? (
+            <span className={`${s.legSw} ${s.legDot}`} aria-hidden="true">
+              <span className={`${s.dot} ${s[`dot_${g.kind}`] ?? ""}`} />
+            </span>
+          ) : (
+            <span className={`${s.legSw} ${s[`pt_${g.kind}`] ?? ""}`} aria-hidden="true">
+              <LegendGlyph kind={g.kind} />
+            </span>
+          )}
+          <span>{g.label}</span>
+        </li>
+      ))}
+    </ul>
+  ) : null;
+
+  const box = (
+    <div className={`${s.box}${tall ? " " + s.tall : ""}`}>
       <div ref={mapEl} className={s.map} role="region" aria-label={label ?? `${name} 위치 지도`} />
 
       <div className={s.controls}>
@@ -132,7 +245,7 @@ export default function RealMap({ lat, lon, name, label, zoom = 16 }: Props) {
           aria-label="처음 크기"
           title="처음 크기"
           aria-disabled={!ready}
-          onClick={() => ready && mapRef.current?.setView([lat, lon], zoom)}
+          onClick={() => ready && mapRef.current?.setView(homeRef.current.center, homeRef.current.zoom)}
         >
           <Icon name="reset" size={18} strokeWidth={2} />
         </button>
@@ -153,6 +266,14 @@ export default function RealMap({ lat, lon, name, label, zoom = 16 }: Props) {
           기여자
         </p>
       </div>
+    </div>
+  );
+
+  if (!legendEl) return box;
+  return (
+    <div className={s.withLegend}>
+      {box}
+      {legendEl}
     </div>
   );
 }

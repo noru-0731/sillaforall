@@ -4,16 +4,23 @@
 // → 대중교통·자가용(아이콘 소제목) → 주차 안내 상자 → 이용요금 표.
 // 지도: 궁능처럼 도로가 보이는 진짜 지도(RealMap, 오픈스트리트맵). 좌표를 이웃 곳에서 빌린 두 곳(approx: 서악서원, 블루원워터파크)은
 // 진짜 지도에 핀을 꽂지 않고 우리 그린 지도(MapView)를 그대로 쓴다.
+//
+// 무장애 시안(bf-draft)에서 더한 것:
+// - 지도 위에 500m 안 공영주차장(장애인전용주차구역이 있는 곳은 1km 안까지) 번호 네모, 주차 안내 아래에 같은 번호의 표.
+//   (전국주차장정보표준데이터, 도구/10_편의시설_지도.py). 화장실·충전기는 무장애 정보 쪽 "가까운 편의시설"에 있다.
+// - 대중교통 아래에 경주시교통약자이동지원센터(전국교통약자이동지원센터정보표준데이터, 시 전체 한 곳).
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { areaOf, placeById, places, zipOf } from "@/data";
 import { placeCrumbs, placePages, placeSideMenu, PLACE_BANNER } from "@/site/ia";
 import { Ph, Section, SubPage } from "@/components/layout/PageParts";
 import { Icon } from "@/components/icons";
-import { BlackBar, BoardTable, IconHeading, PillTabs } from "@/components/royal";
+import { BlackBar, BoardTable, IconHeading, PillTabs, TipList } from "@/components/royal";
 import MapView from "@/components/map/MapView";
 import RealMap from "@/components/map/RealMap";
 import { kakaoTo, phoneOf, sameArea } from "@/components/place/placeData";
+import { amenitiesOf, MOBILITY, NEAR_RADII, sourceLines } from "@/data/bf";
+import { AmenityTable, SourceLines, amenityPoints, legendOf } from "@/components/place/Amenities";
 import s from "@/components/place/Place.module.css";
 
 type Props = { params: Promise<{ id: string }> };
@@ -67,6 +74,10 @@ export default async function PlaceDirections({ params }: Props) {
   if (p.parkingInfo) parking.push({ label: "한국관광공사 관광정보", text: p.parkingInfo.trim() });
   if (reg && p.move["주차"]) parking.push({ label: "한국관광공사 무장애 여행 정보", text: p.move["주차"]! });
 
+  // 가까운 공영주차장(번호는 이 쪽에서 1부터 다시 매김)
+  const pk = (amenitiesOf(p.id)?.items ?? []).filter((i) => i.kind === "parking").map((i, n) => ({ ...i, show: n + 1 }));
+  const M = MOBILITY;
+
   return (
     <SubPage crumbs={placeCrumbs(p, page)} title={page.label} banner={PLACE_BANNER} sideMenu={placeSideMenu(p)} current={page.href} tabs={pills}>
       <Section title={`${p.name} 오시는 길`}>
@@ -80,7 +91,15 @@ export default async function PlaceDirections({ params }: Props) {
               ariaLabel={`${p.name} 위치 지도`}
             />
           ) : (
-            <RealMap lat={p.lat} lon={p.lon} name={p.name} label={`${p.name} 위치 지도`} zoom={16} />
+            <RealMap
+              lat={p.lat}
+              lon={p.lon}
+              name={p.name}
+              label={`${p.name} 위치 지도`}
+              zoom={16}
+              points={pk.length ? amenityPoints(pk, "pk") : undefined}
+              legend={pk.length ? legendOf(["parking"], p.name) : undefined}
+            />
           )}
         </div>
         {p.approx && (
@@ -133,6 +152,36 @@ export default async function PlaceDirections({ params }: Props) {
             <p className={s.transUnitTit}>한국관광공사 무장애 여행 정보</p>
             <p className={s.transUnitTxt}>{(reg && p.move["대중교통"]) || EMPTY}</p>
           </div>
+          <div className={s.transUnit}>
+            <p className={s.transUnitTit}>{M.name}</p>
+            <ul className={`${s.dotList} ${s.transDots}`}>
+              <li>
+                <span className={s.dotLabel}>예약접수전화번호</span>
+                <a href={`tel:${M.phone.replace(/-/g, "")}`}>{M.phone}</a>
+              </li>
+              <li>
+                <span className={s.dotLabel}>보유차량종류</span>
+                {M.vehicles}(슬로프형휠체어차량대수 {M.slope})
+              </li>
+              <li>
+                <span className={s.dotLabel}>사전예약신청기간</span>
+                {M.reserve}(예약접수 평일 {M.reserveHours.weekday}, 주말 {M.reserveHours.weekend})
+              </li>
+              <li>
+                <span className={s.dotLabel}>차량관내운행지역·차량관외운행지역</span>
+                {M.area.inside} / {M.area.outside}
+              </li>
+              <li>
+                <span className={s.dotLabel}>차량이용요금</span>
+                {M.fare}
+              </li>
+              <li>
+                <span className={s.dotLabel}>차량이용대상</span>
+                {M.target.join("\n")}
+              </li>
+            </ul>
+            <SourceLines lines={[`자료: 전국교통약자이동지원센터정보표준데이터(데이터기준일자 ${M.refDate})`]} />
+          </div>
         </div>
 
         {p.address && (
@@ -166,6 +215,23 @@ export default async function PlaceDirections({ params }: Props) {
             <p className={s.transUnitTxt}>{EMPTY}</p>
           )}
         </div>
+        {pk.length > 0 && (
+          <div className={s.pkWrap}>
+            <p className={s.transUnitTit}>
+              <Ph>가까운 공영주차장</Ph>
+            </p>
+            <AmenityTable items={pk} idPrefix="pk" showKind={false} caption={`${p.name} 가까운 공영주차장: 번호, 이름, 직선거리, 내용, 자료`} />
+            <TipList
+              className={s.tipsAfterTable}
+              items={[
+                <Ph key="a">
+                  번호는 위 지도의 번호와 같습니다. 거리는 두 곳 사이의 직선거리입니다. {NEAR_RADII.parking}m 안의 공영주차장과, 장애인전용주차구역이 있는 가장 가까운 곳(1km 안)을 보입니다.
+                </Ph>,
+              ]}
+            />
+            <SourceLines lines={sourceLines(["parking"])} />
+          </div>
+        )}
       </div>
 
       <div className={s.infoWrap}>

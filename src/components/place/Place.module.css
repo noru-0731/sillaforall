@@ -392,3 +392,39 @@
   word-break: keep-all;
   overflow-wrap: anywhere;
 }
+
+/* ───────── 무장애 시안(bf-draft): 무장애 정보 묶음 표 ───────── */
+/* 묶음(지체장애·시각장애·청각장애·영유아 가족) 제목: 궁능 오시는 길 소제목(20px 700)과 같은 크기 */
+.bfGroup + .bfGroup {
+  margin-top: 4rem;
+}
+.bfGroupTit {
+  margin-bottom: 1.5rem;
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--rc-text);
+}
+.bfMeta {
+  margin: -0.5rem 0 1.5rem;
+  font-size: 1.6rem;
+  line-height: 1.5;
+  color: var(--rc-text-sub);
+}
+.tipsAfterTable {
+  margin-top: 1.5rem;
+}
+/* 오시는 길: 가까운 공영주차장 표(주차 안내 상자 아래 40), 교통약자이동지원센터 점 줄 */
+.pkWrap {
+  margin-top: 4rem;
+}
+.pkWrap .transUnitTit {
+  margin-bottom: 1.5rem;
+}
+.transDots {
+  margin-top: 1rem;
+}
+.transDots a {
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+}

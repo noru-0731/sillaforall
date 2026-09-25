@@ -2,6 +2,11 @@
 // 맨 위 큰 사진 → 관람 도우미(아이콘 6) → 사진 띠 4개 → 주변 관광지 상자 + 넘기기 판.
 // 사진 띠: 제1유형은 칸에 맞춰 자르고, 제1유형이 모자란 띠는 제3유형 사진 여러 장을 자르지 않고 나란히(필름 줄), 사진이 없으면 옅은 단색 판.
 // 문구는 궁능 문장의 명사만 바꾼 것이라 점선 밑줄(Ph)이 없다.
+//
+// 무장애 시안(bf-draft): 관람 도우미 칸에 바로가기 이름만이 아니라 이 곳의 자료 값을 함께 보인다(궁능은 아이콘 + 이름 바로가기 줄).
+// 칸: 이용시간, 쉬는 날, 주차, 걷는 길, 화장실, 가까운 장애인 화장실, 문의 전화, 지도에서 보기. 값은 관광공사 관광정보·무장애 여행 정보 글 그대로,
+// 가까운 장애인 화장실은 도구/10_편의시설_지도.py 의 가장 가까운 한 곳(이름과 직선거리). 글이 없는 칸은 "적힌 내용 없음".
+// 칸을 누르면 그 값이 자세히 있는 쪽으로 간다. 긴 값은 세 줄까지 보이고 나머지는 줄임표(읽기 도구는 끝까지 읽는다).
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -11,6 +16,8 @@ import { placePages } from "@/site/ia";
 import { withJosa } from "@/lib/josa";
 import { Icon, type IconName } from "@/components/icons";
 import { CircleButton, Photo } from "@/components/royal";
+import { Ph } from "@/components/layout/Ph";
+import { nearestAccessibleToilet } from "@/data/bf";
 import { anyPhoto, areaLabelOf, categoryWord, coverPhoto, nearby, nearbySlides, phoneOf, stripCredit, stripSlots } from "@/components/place/placeData";
 import NearbySlider from "@/components/place/NearbySlider";
 import s from "@/components/place/Submain.module.css";
@@ -41,16 +48,27 @@ export default async function PlaceSubmain({ params }: Props) {
   const cover = coverPhoto(p.id);
   const hero = cover ?? anyPhoto(p.id);
 
-  // 관람 도우미 6칸(문의 전화는 번호가 있을 때만)
+  // 관람 도우미 칸(값을 함께). 값이 없으면 null → "적힌 내용 없음"
   const tel = phoneOf(p.contact);
-  const quick: { label: string; href: string; icon: IconName; tel?: boolean }[] = [
-    { label: "이용시간", href: `${intro.href}#basic`, icon: "clock" },
-    { label: bf.label, href: bf.href, icon: "wheelchair" },
-    { label: "지도에서 보기", href: `/map/${key}?place=${p.id}`, icon: "map" },
-    { label: dir.label, href: dir.href, icon: "pin" },
-    { label: "사진 보기", href: photos.href, icon: "camera" },
+  const clean = (v: string | null | undefined) => (v ? v.replace(/\s*\n\s*/g, "\n").replace(/[ \t]{2,}/g, " ").trim() || null : null);
+  const toiletA = nearestAccessibleToilet(p.id);
+  const quick: { label: React.ReactNode; key: string; value: React.ReactNode | null; href: string; icon: IconName; tel?: boolean }[] = [
+    { key: "hours", label: "이용시간", value: clean(p.hours), href: `${intro.href}#basic`, icon: "clock" },
+    { key: "closed", label: "쉬는 날", value: clean(p.closed), href: `${intro.href}#basic`, icon: "calendar" },
+    { key: "parking", label: "주차", value: clean((p.registered && p.move["주차"]) || p.parkingInfo), href: `${dir.href}#parking`, icon: "parking" },
+    { key: "walk", label: "걷는 길", value: clean(p.three.walk), href: bf.href, icon: "walk" },
+    { key: "toilet", label: "화장실", value: clean(p.three.toilet), href: bf.href, icon: "toilet" },
   ];
-  if (tel) quick.push({ label: "문의 전화", href: `tel:${tel.replace(/-/g, "")}`, icon: "phone", tel: true });
+  if (!p.approx)
+    quick.push({
+      key: "toiletA",
+      label: <Ph>가까운 장애인 화장실</Ph>,
+      value: toiletA ? `${toiletA.name ?? "−"} · 직선거리 ${toiletA.distanceM.toLocaleString("ko-KR")}m` : null,
+      href: `${bf.href}#near`,
+      icon: "wheelchair",
+    });
+  quick.push({ key: "tel", label: "문의 전화", value: tel, href: tel ? `tel:${tel.replace(/-/g, "")}` : `${dir.href}`, icon: "phone", tel: !!tel });
+  quick.push({ key: "map", label: "지도에서 보기", value: `${areaLabel}`, href: `/map/${key}?place=${p.id}`, icon: "map" });
 
   // 사진 띠 4개(궁능: 소개·역사 / 이야기 / 통합예약 / 관람코스)
   const word = categoryWord(p);
@@ -95,29 +113,23 @@ export default async function PlaceSubmain({ params }: Props) {
               <br /> 바로가기를 안내합니다.
             </p>
           </div>
-          <ul className={s.quickList}>
-            {quick.map((q) => (
-              <li key={q.label}>
-                {q.tel ? (
-                  <a href={q.href}>
-                    <span className={s.quickIco}>
-                      <Icon name={q.icon} size={34} strokeWidth={1.4} />
-                    </span>
-                    <span>
-                      {q.label}
-                      <span className="sr-only"> {tel}</span>
-                    </span>
-                  </a>
-                ) : (
-                  <Link href={q.href}>
-                    <span className={s.quickIco}>
-                      <Icon name={q.icon} size={34} strokeWidth={1.4} />
-                    </span>
-                    <span>{q.label}</span>
-                  </Link>
-                )}
-              </li>
-            ))}
+          <ul className={s.quickGrid}>
+            {quick.map((q) => {
+              const inner = (
+                <>
+                  <span className={s.quickIco}>
+                    <Icon name={q.icon} size={34} strokeWidth={1.4} />
+                  </span>
+                  <span className={s.quickLabel}>{q.label}</span>
+                  <span className={s.quickVal}>{q.value ?? <Ph>적힌 내용 없음</Ph>}</span>
+                </>
+              );
+              return (
+                <li key={q.key}>
+                  {q.tel || q.href.startsWith("tel:") ? <a href={q.href}>{inner}</a> : <Link href={q.href}>{inner}</Link>}
+                </li>
+              );
+            })}
           </ul>
         </div>
       </section>

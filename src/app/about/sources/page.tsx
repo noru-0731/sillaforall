@@ -7,6 +7,8 @@ import { Icon } from "@/components/icons";
 import { MENU } from "@/site/ia";
 import { places } from "@/data";
 import { koglCondition, photoCredit, photosOf, type KoglType } from "@/data/photos";
+import { SOURCES } from "@/data/bf";
+import { BoardTable } from "@/components/royal";
 import s from "../about.module.css";
 
 const SECTION = MENU[3];
@@ -36,6 +38,17 @@ function KoglText({ type }: { type: KoglType }) {
     </span>
   );
 }
+
+// 무장애 시안(bf-draft): 가까운 편의시설·교통약자 이동지원센터·배리어프리 문화예술관광지에 쓴 공공데이터(amenities.json sources).
+// 칸 값은 도구/06_편의시설.py 가 포털 쪽과 받은 파일에서 확인해 적은 것(2026-09-25).
+const PORTAL_KEYS = ["toiletStd", "parking", "charger", "mobilityCenter", "bfCulture"] as const;
+const REF_DATE: Record<(typeof PORTAL_KEYS)[number], string> = {
+  toiletStd: "데이터기준일자 2019-09-21",
+  parking: "데이터기준일자 2026-04-16",
+  charger: "데이터기준일자 2025-09-15",
+  mobilityCenter: "데이터기준일자 2025-08-20",
+  bfCulture: "최종작성일 2022-11-25",
+};
 
 export default function SourcesPage() {
   // 사진 장 수(관광지마다 같은 주소는 한 번)
@@ -145,6 +158,27 @@ export default function SourcesPage() {
         </p>
       </Section>
 
+      <Section id="portal" title="공공데이터포털(data.go.kr)">
+        <BoardTable
+          caption="가까운 편의시설과 교통약자 이동 지원에 쓴 공공데이터: 자료, 제공 기관, 이용허락, 기준일, 주소"
+          head={["자료", "제공 기관", "이용허락", "기준일", "주소"]}
+          cols={["24%", "18%", "20%", "14%", "auto"]}
+          align={["l", "l", "l", "c", "l"]}
+          rows={PORTAL_KEYS.map((k) => {
+            const src = SOURCES[k];
+            return [
+              src.name.replace(/\(.*\)$/, ""),
+              src.provider,
+              src.license.startsWith("이용허락범위 제한 없음") ? "이용허락범위 제한 없음" : <Ph key="l">표준데이터 쪽에 이용허락 표시 없음</Ph>,
+              REF_DATE[k],
+              <OutLink key="u" href={src.url}>
+                {src.url.replace(/^https:\/\//, "")}
+              </OutLink>,
+            ];
+          })}
+        />
+      </Section>
+
       <Section id="boundary" title="읍면동 경계선">
         <ul className={`${s.bullets} ${s.bulletsTight}`}>
           <li>통계청 SGIS 행정구역 경계(2026년 7월)</li>
@@ -160,6 +194,9 @@ export default function SourcesPage() {
         <ul className={`${s.bullets} ${s.bulletsTight}`}>
           <li>
             <Ph>관광지 오시는 길 지도</Ph>
+          </li>
+          <li>
+            <Ph>관광지 둘레 화장실·벤치·쉼터(가까운 편의시설 지도)</Ph>
           </li>
           <li>© OpenStreetMap 기여자</li>
           <li>ODbL(Open Database License)</li>

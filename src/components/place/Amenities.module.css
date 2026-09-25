@@ -1,0 +1,163 @@
+/*
+ * 가까운 편의시설 표(무장애 시안 bf-draft). 표 틀은 궁능 게시판 표(.rc-board, globals.css)를 그대로 쓰고,
+ * 번호 칸의 색 네모는 지도 점(RealMap.module.css .pt)과 같은 색·크기(24×24, 둥글기 3).
+ * 좁은 화면(본문 767 이하): 줄마다 [번호] 이름·구분 / 직선거리 → 내용 → 자료 차례로 쌓는다.
+ */
+.wrap {
+  --am-toiletA: #1344cf;
+  --am-toilet: #b54a00;
+  --am-parking: #0e2b5e;
+  --am-charger: #2d7a36;
+  --am-on: #ffffff;
+}
+.info {
+  margin-top: 3rem; /* 궁능 course_info: 지도 아래 30 */
+  margin-bottom: 3rem;
+}
+.table td,
+.table th {
+  vertical-align: top;
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+.table thead th {
+  vertical-align: middle;
+}
+.row {
+  scroll-margin-top: calc(var(--rc-header-h) + 2rem);
+}
+.row:target td,
+.row:target th {
+  background: var(--rc-bg-active);
+}
+.row:target .name {
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+}
+.sw {
+  display: inline-grid;
+  place-items: center;
+  min-width: 2.4rem;
+  height: 2.4rem;
+  padding: 0 0.4rem;
+  border-radius: 0.3rem;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--am-on);
+  outline: 0.1rem solid var(--rc-text);
+  outline-offset: -0.1rem;
+}
+.k_toiletA {
+  background: var(--am-toiletA);
+}
+.k_toilet {
+  background: var(--am-toilet);
+}
+.k_parking {
+  background: var(--am-parking);
+}
+.k_charger {
+  background: var(--am-charger);
+}
+.name {
+  font-weight: 700 !important;
+  text-align: left !important;
+  word-break: keep-all;
+  background: transparent !important;
+}
+.mKind {
+  display: none;
+}
+.dist {
+  white-space: nowrap;
+}
+.fields dl {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.fields dl > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.8rem;
+}
+.fields dt {
+  flex: none;
+  font-weight: 700;
+  color: var(--rc-text);
+}
+.fields dd {
+  min-width: 0;
+  white-space: pre-line;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+.src {
+  font-size: 1.4rem;
+  word-break: keep-all;
+}
+.credit {
+  margin-top: 1.5rem;
+  font-size: 1.4rem;
+  line-height: 1.6;
+  color: var(--rc-text-faint);
+}
+
+@container rc-main (max-width: 767px) {
+  .table,
+  .table tbody {
+    display: block;
+  }
+  .table colgroup,
+  .table thead {
+    display: none;
+  }
+  .row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 0.6rem 1rem;
+    padding: 1.4rem 0.4rem;
+    border-bottom: 0.1rem solid var(--rc-line-light);
+  }
+  .table .row > * {
+    display: block;
+    height: auto;
+    padding: 0;
+    border: 0;
+    text-align: left;
+  }
+  .row .kind {
+    display: none;
+  }
+  .no {
+    grid-row: 1;
+    grid-column: 1;
+  }
+  .name {
+    grid-row: 1;
+    grid-column: 2;
+  }
+  .mKind {
+    display: block;
+    margin-top: 0.2rem;
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: var(--rc-text-sub);
+  }
+  .dist {
+    grid-row: 1;
+    grid-column: 3;
+    font-weight: 700;
+    color: var(--rc-text);
+  }
+  .fields {
+    grid-column: 1 / -1;
+  }
+  .src {
+    grid-column: 1 / -1;
+    color: var(--rc-text-faint);
+  }
+  .row:target {
+    background: var(--rc-bg-active);
+  }
+}

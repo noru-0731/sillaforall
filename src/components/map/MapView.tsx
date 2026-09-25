@@ -220,10 +220,11 @@ export default function MapView({
     const sc = niceScale(basePxKm * vw.k, interactive ? Math.min(140, Math.max(40, w - 48 - (CTRL.right + CTRL.w + 8))) : 140);
 
     const markers: Marker[] = [];
-    // 고정 지도는 강조한 곳을 따로(묶지 않고) 그린다. 누를 수 있는 지도는 고른 곳도 함께 묶어 누름 영역이 겹치지 않게 한다.
+    // 강조한 곳(이 관광지·고른 관광지)은 묶지 않고 따로, 맨 위에 그린다(무장애 시안 bf-draft: 누를 수 있는 지도에서도.
+    // 전에는 누를 수 있는 지도에서 강조한 곳도 묶음에 들어가 좌표를 빌린 두 곳의 오시는 길 지도에서 "이 관광지" 점이 이름 없이 묶였다).
     const makeGroups = (own: boolean, emph: boolean) => {
       const list = pts
-        .filter((q) => q.own === own && (interactive || !q.hl) && (!own || q.emph === emph))
+        .filter((q) => q.own === own && !q.hl && (!own || q.emph === emph))
         .map((q) => ({ ...toScreen(q.b, vw), q }))
         .filter((q) => onScreen(q, MERGE));
       const tag = own ? (emph ? "e-" : "g-") : "o-";
@@ -253,7 +254,7 @@ export default function MapView({
     makeGroups(false, false); // 흐린 점이 아래
     makeGroups(true, false);
     makeGroups(true, true); // 거점 점은 위에
-    const hlPt = interactive ? undefined : pts.find((q) => q.hl);
+    const hlPt = pts.find((q) => q.hl);
     if (hlPt) {
       const sp = toScreen(hlPt.b, vw);
       if (onScreen(sp, R_HL)) markers.push({ kind: "single", key: hlPt.p.id, p: hlPt.p, x: sp.x, y: sp.y, own: true, hl: true, emph: hlPt.emph });

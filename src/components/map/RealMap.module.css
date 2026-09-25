@@ -163,3 +163,120 @@
     display: none;
   }
 }
+
+/* ───────── 편의시설 표시(무장애 시안 bf-draft) ─────────
+ * 궁능 관람코스 편의시설 지도(나무/course_1440.txt amenities_wrap)를 재서 우리 CSS로 새로 씀.
+ * - 궁능 범례 칸: 24×24, 둥글기 3, 색 바탕에 흰 그림 18×18, 칸 사이 3(세로 27 간격). 이름표 14.4px 흰 글자, 안 여백 0 6.
+ * - 지도 상자 높이: 관람코스 1030×693.
+ * 점 색(흰 글자 대비 4.5:1 넘게): 장애인 화장실 파랑(휠체어 표지 색, --rc-blue와 같은 값), 화장실 짙은 주황(궁능 화장실 주황을 어둡게),
+ * 공영주차장 남색(--rc-navy와 같은 값), 충전기 짙은 초록(궁능 자동심장충격기 초록을 어둡게). 지도 그림은 선명한 화면 모드에서도 밝아서 점 색은 그대로 둔다.
+ */
+.withLegend {
+  --am-toiletA: #1344cf;
+  --am-toilet: #b54a00;
+  --am-parking: #0e2b5e;
+  --am-charger: #2d7a36;
+  --am-rest: #555555;
+  --am-on: #ffffff;
+  position: relative;
+}
+.tall {
+  height: clamp(32rem, 67cqi, 69.3rem);
+}
+/* 번호 네모 */
+.pt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  padding: 0 4px;
+  border-radius: 3px;
+  border: 1px solid var(--am-on);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--am-on);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.pt_toiletA {
+  background: var(--am-toiletA);
+}
+.pt_toilet {
+  background: var(--am-toilet);
+}
+.pt_parking {
+  background: var(--am-parking);
+}
+.pt_charger {
+  background: var(--am-charger);
+}
+.pt_place {
+  background: var(--rc-pink);
+}
+/* 벤치·쉼터 작은 점 */
+.dot {
+  display: block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--am-on);
+  background: var(--am-rest);
+  box-shadow: 0 0 0 1px var(--am-rest);
+}
+.dot_bench {
+  border-radius: 50%;
+}
+.dot_shelter {
+  border-radius: 1px;
+}
+
+/* 범례: 지도 안 왼쪽 위(오른쪽 위는 + − ↻ 단추) */
+.legend {
+  position: absolute;
+  top: 1.6rem;
+  left: 1.6rem;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  max-width: calc(100% - 8rem);
+  padding: 0.8rem 1rem;
+  background: color-mix(in srgb, var(--rc-bg) 92%, transparent);
+  border: 0.1rem solid var(--rc-line-light);
+}
+.legend li {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 1.44rem; /* 궁능 이름표 14.4px */
+  line-height: 2.4rem;
+  color: var(--rc-text);
+}
+.legSw {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 0.3rem;
+  color: var(--am-on);
+  outline: 0.1rem solid var(--rc-text);
+  outline-offset: -0.1rem;
+}
+.legDot {
+  outline: 0;
+}
+
+/* 좁은 화면: 범례를 지도 아래로 가로 줄 */
+@container rc-main (max-width: 767px) {
+  .legend {
+    position: static;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.6rem 1.6rem;
+    max-width: none;
+    margin-top: 1rem;
+    padding: 1rem 1.2rem;
+  }
+}

@@ -4,7 +4,6 @@ import type { Place } from "@/data";
 import { photoCredit, photoCreditOf } from "@/data/photos";
 import { pickPhoto } from "@/components/map/explorerData";
 import type { AreaOption, BoardRow, CardPlace } from "./types";
-import { condsOf } from "./barrierConds";
 
 const labelOf = (p: Place) => areas.find((a) => a.key === areaOf(p))?.label ?? "";
 
@@ -12,6 +11,7 @@ const labelOf = (p: Place) => areas.find((a) => a.key === areaOf(p))?.label ?? "
 const cleanHours = (h: string | null) => (h ? h.replace(/\n\s*\n/g, "\n").trim() : null);
 
 export function toCard(p: Place): CardPlace {
+  const photo = pickPhoto(p.id);
   return {
     id: p.id,
     name: p.name,
@@ -20,9 +20,9 @@ export function toCard(p: Place): CardPlace {
     dong: p.dong,
     address: p.address,
     hours: cleanHours(p.hours),
-    photo: pickPhoto(p.id),
+    photo,
     registered: p.registered,
-    conds: condsOf(p),
+    credit: photo ? photoCreditOf(photo) : null,
   };
 }
 

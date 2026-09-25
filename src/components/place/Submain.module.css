@@ -112,6 +112,53 @@
   text-underline-offset: 0.4rem;
 }
 
+/* ── 관람 도우미 칸에 값 보이기(무장애 시안 bf-draft) ──
+ * 궁능 sub_quick(나무/submain_1440.txt): 아이콘 50×50(안 여백 8), 아래 18px 500 이름, 칸 사이 약 169.
+ * 이름 아래에 자료 값(15px, 궁능 표 글자 크기)을 세 줄까지 더하고, 칸은 4개씩 두 줄로 놓는다. */
+.quickGrid {
+  flex: 1 1 auto;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 3rem 2rem;
+  min-width: 0;
+}
+.quickGrid a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+  height: 100%;
+  padding: 0 0.4rem;
+  color: var(--rc-text);
+  text-align: center;
+}
+.quickGrid .quickIco {
+  margin-bottom: 0.7rem;
+}
+.quickLabel {
+  font-size: 1.8rem;
+  font-weight: 500;
+  line-height: 2.34rem;
+  word-break: keep-all;
+}
+.quickVal {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+  font-size: 1.5rem;
+  line-height: 1.5;
+  color: var(--rc-text-sub);
+  white-space: pre-line;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+.quickGrid a:hover .quickLabel {
+  text-decoration: underline;
+  text-underline-offset: 0.4rem;
+}
+
 /* ── 사진 띠 4개(회색 판, 위아래 70) ── */
 .menu {
   margin-top: 7rem;
@@ -332,6 +379,13 @@
     white-space: normal;
     word-break: keep-all;
   }
+  .quickGrid {
+    gap: 2.5rem 1.2rem;
+    margin-top: 3rem;
+  }
+  .quickLabel {
+    font-size: 1.6rem;
+  }
   .menu {
     margin-top: 5rem;
     padding: 6rem 0;
@@ -418,5 +472,12 @@
   }
   .right {
     margin-top: 2rem;
+  }
+}
+
+/* 관람 도우미 칸: 좁은 화면(본문 767 이하)은 두 칸씩 */
+@container rc-main (max-width: 767px) {
+  .quickGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
