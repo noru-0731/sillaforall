@@ -1,0 +1,47 @@
+/*
+ * 관광지 소개 쪽 본문 옆 사진(궁능 "궁궐의 역사" story_history 치수, 레퍼런스/궁능_포맷/나무/history_1440.txt·history_390.txt).
+ * PC: 본문 폭 1030 = 사진 칸 309(30%) + 글 칸(왼쪽 30 띄움). 사진 309×213, 세로 사이 20.
+ * 휴대전화(본문 767 이하): 사진 3칸 격자(115×79, 가로 사이 3.5, 세로 사이 21) → 20 띄우고 글.
+ */
+.story {
+  display: flex;
+  align-items: flex-start;
+  margin-top: 3rem;
+}
+.pics {
+  flex: 0 0 30%;
+  min-width: 0;
+}
+.picList {
+  display: grid;
+  gap: 2rem;
+}
+.picCredit {
+  margin-top: 1rem;
+  font-size: 1.4rem;
+  line-height: 1.5;
+  color: var(--rc-text-faint);
+  word-break: keep-all;
+}
+.picCredit + .picCredit {
+  margin-top: 0.2rem;
+}
+.story .body {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin-top: 0;
+  padding-left: 3rem;
+}
+@container rc-main (max-width: 767px) {
+  .story {
+    display: block;
+  }
+  .picList {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2.1rem 0.35rem;
+  }
+  .story .body {
+    margin-top: 2rem;
+    padding-left: 0;
+  }
+}

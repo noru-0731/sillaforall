@@ -499,7 +499,45 @@
    "url": null,
    "type": null
   },
-  "gallery": []
+  "gallery": [],
+  "photoGallery": [
+   {
+    "url": "https://tong.visitkorea.or.kr/cms2/website/83/623783.jpg",
+    "small": "https://tong.visitkorea.or.kr/cms/resource_photo/83/623783_image2_1.jpg",
+    "name": "천룡사지 삼층석탑",
+    "type": "Type1",
+    "w": 1280,
+    "h": 853,
+    "by": "한국관광공사, 전형준",
+    "month": "2008-05",
+    "galleryId": "623783",
+    "conlabId": "SHRa3a"
+   },
+   {
+    "url": "https://tong.visitkorea.or.kr/cms2/website/02/623802.jpg",
+    "small": "https://tong.visitkorea.or.kr/cms/resource_photo/02/623802_image2_1.jpg",
+    "name": "천룡사지 삼층석탑",
+    "type": "Type1",
+    "w": 853,
+    "h": 1280,
+    "by": "한국관광공사, 전형준",
+    "month": "2008-05",
+    "galleryId": "623802",
+    "conlabId": "SHRama"
+   },
+   {
+    "url": "https://tong.visitkorea.or.kr/cms2/website/05/623805.jpg",
+    "small": "https://tong.visitkorea.or.kr/cms/resource_photo/05/623805_image2_1.jpg",
+    "name": "천룡사지 삼층석탑",
+    "type": "Type1",
+    "w": 853,
+    "h": 1280,
+    "by": "한국관광공사, 전형준",
+    "month": "2008-05",
+    "galleryId": "623805",
+    "conlabId": "SHRapa"
+   }
+  ]
  },
  "p08": {
   "contentId": "126167",
@@ -2737,6 +2775,56 @@
     "type": "Type3",
     "w": 940,
     "h": 705
+   }
+  ],
+  "photoGallery": [
+   {
+    "url": "https://tong.visitkorea.or.kr/cms2/website/56/621156.jpg",
+    "small": "https://tong.visitkorea.or.kr/cms/resource_photo/56/621156_image2_1.jpg",
+    "name": "황룡사지",
+    "type": "Type1",
+    "w": 1280,
+    "h": 853,
+    "by": "한국관광공사, 전형준",
+    "month": "2008-05",
+    "galleryId": "621156",
+    "conlabId": "gvIF0a"
+   },
+   {
+    "url": "https://tong.visitkorea.or.kr/cms2/website/60/621160.jpg",
+    "small": "https://tong.visitkorea.or.kr/cms/resource_photo/60/621160_image2_1.jpg",
+    "name": "황룡사지",
+    "type": "Type1",
+    "w": 1280,
+    "h": 853,
+    "by": "한국관광공사, 전형준",
+    "month": "2008-05",
+    "galleryId": "621160",
+    "conlabId": "gvIF4a"
+   },
+   {
+    "url": "https://tong.visitkorea.or.kr/cms2/website/62/621162.jpg",
+    "small": "https://tong.visitkorea.or.kr/cms/resource_photo/62/621162_image2_1.jpg",
+    "name": "황룡사지",
+    "type": "Type1",
+    "w": 1280,
+    "h": 853,
+    "by": "한국관광공사, 전형준",
+    "month": "2008-05",
+    "galleryId": "621162",
+    "conlabId": "gvIF6a"
+   },
+   {
+    "url": "https://tong.visitkorea.or.kr/cms2/website/74/621174.jpg",
+    "small": "https://tong.visitkorea.or.kr/cms/resource_photo/74/621174_image2_1.jpg",
+    "name": "황룡사지",
+    "type": "Type1",
+    "w": 853,
+    "h": 1280,
+    "by": "한국관광공사, 전형준",
+    "month": "2008-05",
+    "galleryId": "621174",
+    "conlabId": "gvIFga"
    }
   ]
  },
