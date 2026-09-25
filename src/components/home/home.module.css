@@ -1,0 +1,1011 @@
+/*
+ * 첫 쪽(궁능유적본부 누리집 첫 쪽 main_s0~s2 모양). 궁능 CSS·그림은 가져오지 않고 우리 CSS로 새로 씀.
+ * 치수·색은 레퍼런스/궁능_포맷/나무/main_1440.txt, main_390.txt와 스크린샷에서 읽었다. 1rem = 10px.
+ * 궁능은 휠 한 번에 한 칸씩 넘어가지만(fullpage) 여기서는 보통 스크롤로 두고 칸 모양만 따른다.
+ */
+.home {
+  /* 첫 쪽에만 쓰는 색(공통 --rc-*에 없는 것). 선명한 화면 모드 값은 아래에서 다시 정한다. */
+  --home-coral: #fa7070; /* 가운데 띠: 궁능 rgb(250,112,112)(main_d1440.png 화소에서 읽음) */
+  --home-pale: #eff5ff; /* 칸 2 바탕 rgb(239,245,255) */
+  --home-ghost: #e6eefb; /* 흐린 큰 영문 GYEONGJU */
+  --home-blue: #1d56bc; /* 가운데 카드 테두리·+ 무늬·"있음" 탭 rgb(29,86,188) */
+  --home-blue-light: #a1b7df; /* + 무늬 연한 쪽 rgb(161,183,223) */
+  --home-band-1: #1d56bc; /* 칸 3 아래 파란 띠 왼쪽 rgb(29,86,188) */
+  --home-band-2: #163f8c; /* 칸 3 아래 파란 띠 오른쪽 rgb(22,63,140) */
+  --home-tab-on: #16408d; /* 알약 고른 칸 rgb(22,64,141) */
+  --home-tab-on-text: #ffffff;
+  --home-tab-off: #eeeeee; /* 알약 안 고른 칸 rgb(238,238,238) */
+  --home-card-shadow: #b3c2db; /* 가운데 카드 그림자 rgb(179,194,219) */
+  --home-date: #555555; /* 목록 오른쪽 글(궁능 날짜 자리) rgb(85,85,85) */
+  --home-shadow: rgba(0, 0, 0, 0.15);
+  --home-map-h: 34rem; /* 칸 3 지도 판 안 지도 높이 */
+
+  color: var(--rc-text);
+  overflow-x: clip;
+}
+:global([data-krds-mode="high-contrast"]) .home {
+  --home-coral: #9e2a2a;
+  --home-pale: var(--rc-bg-bar);
+  --home-ghost: #1c1c1c;
+  --home-blue: #9db8ff;
+  --home-blue-light: #56709f;
+  --home-band-1: #0e2b5e;
+  --home-band-2: #0a1f45;
+  --home-tab-on: #9db8ff;
+  --home-tab-on-text: #000000;
+  --home-tab-off: #2e2e2e;
+  --home-card-shadow: #3a4a66;
+  --home-date: #d6d6d6;
+  --home-shadow: rgba(255, 255, 255, 0.12);
+}
+
+.inner {
+  position: relative;
+  max-width: 136rem;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* 두 색 + 무늬 "더 보기"(궁능 e_btn_more·b_btn_more 30×30) */
+.more {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  z-index: 2;
+}
+.more:hover {
+  background: color-mix(in srgb, var(--home-blue) 10%, transparent);
+  border-radius: 0.6rem;
+}
+.moreDark {
+  fill: var(--home-blue);
+}
+.moreLight {
+  fill: var(--home-blue-light);
+}
+
+/* ───────────── 칸 1: 넘기기 배너(궁능 1360×620, 가운데 띠 70 포함) ───────────── */
+.hero {
+  position: relative;
+}
+.visual {
+  position: relative;
+  height: 55rem;
+  overflow: hidden;
+  background: var(--rc-photo-dark);
+}
+.visualTrack {
+  display: flex;
+  height: 100%;
+  transition: transform 0.6s ease;
+}
+.visualSlide {
+  position: relative;
+  flex: 0 0 100%;
+  min-width: 0;
+  height: 100%;
+}
+/* 사진 위 글자는 반투명 검정 판 위에(사진에 바로 얹지 않음). 판 모양은 궁능 넘기기 조작 판(검정 60%, 둥글기 15). */
+.visualPanel {
+  position: absolute;
+  left: 4rem;
+  bottom: 3rem;
+  max-width: 56rem;
+  padding: 2.4rem 3rem 2rem;
+  border-radius: 1.5rem;
+  background: rgba(0, 0, 0, 0.6);
+  color: #ffffff;
+}
+.visualKicker {
+  font-size: 1.8rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+.visualName {
+  margin-top: 0.2rem;
+  font-size: 4.2rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.visualName a {
+  color: #ffffff;
+}
+.visualName a:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.5rem;
+}
+.visualMeta {
+  margin-top: 0.6rem;
+  font-size: 1.8rem;
+  line-height: 1.4;
+}
+.visualCredit {
+  margin-top: 1.2rem;
+  font-size: 1.4rem;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+/* 오른쪽 아래 둥근 검정 판(궁능 198×58, 검정 60%, 둥글기 15, 안쪽 5/20, 오른쪽 20·아래 30)
+   안: ‹(7×21) 3 | 4(각 38, 안쪽 0 15) ›(7×21) 사이 3, › 뒤 13, 멈춤 원 48×48 */
+.visualCtrl {
+  position: absolute;
+  right: 2rem;
+  bottom: 3rem;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  height: 5.8rem;
+  padding: 0.5rem 2rem;
+  border-radius: 1.5rem;
+  background: rgba(0, 0, 0, 0.6);
+  color: #ffffff;
+}
+.visualBtn,
+.visualPause {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 0.7rem; /* 궁능 swiper-button 7×21 */
+  height: 2.1rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+.visualBtn {
+  border-radius: 0;
+}
+.visualBtn:hover {
+  opacity: 0.75;
+}
+.visualCount {
+  display: inline-flex;
+  align-items: center;
+  font-size: 1.6rem;
+  line-height: 1.3;
+  font-variant-numeric: tabular-nums;
+}
+.visualNum {
+  padding: 0 1.5rem; /* 궁능 pagination 숫자 칸 38(안쪽 0 15) */
+}
+.visualDiv {
+  width: 0.1rem;
+  height: 1.2rem;
+  background: rgba(255, 255, 255, 0.6);
+}
+.visualPause {
+  position: relative;
+  width: 4.8rem; /* 궁능 autoplay-progress 48×48 */
+  height: 4.8rem;
+  margin-left: 1rem; /* › 뒤 13 = 사이 3 + 10 */
+}
+.ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+.ringTrack {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.3);
+  stroke-width: 2;
+}
+.ringProg {
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 2;
+  animation-name: ringFill;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+@keyframes ringFill {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* 산호색 가운데 띠(궁능 높이 70, rgb(250,112,112)) */
+.band {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 7rem;
+  padding: 0.5rem 2rem;
+  background: var(--home-coral);
+}
+.bandList {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+.bandList li {
+  display: flex;
+  align-items: center;
+}
+.bandList li + li::before {
+  content: "";
+  display: block;
+  width: 0.1rem;
+  height: 2rem;
+  margin: 0 1.4rem;
+  background: rgba(255, 255, 255, 0.6);
+}
+.bandLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 4.4rem;
+  font-size: 2.4rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #ffffff;
+}
+.bandLink:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.4rem;
+}
+
+/* 바로가기 줄(궁능 m_link: 높이 180, 위아래 40, 5칸 266, 칸 안 좌우 25, 링크 216×100 둥글기 15, 글자 20) */
+.quick {
+  position: relative;
+  padding: 4rem 1.5rem;
+  background: var(--rc-bg);
+}
+.quickList {
+  display: flex;
+}
+.quickItem {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 0 2.5rem;
+}
+.quickItem + .quickItem::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 2rem;
+  bottom: 2rem;
+  width: 0.1rem;
+  background: var(--rc-line);
+}
+.quickLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.4rem;
+  width: 100%;
+  height: 10rem;
+  padding: 0 1rem;
+  border: 0;
+  border-radius: 1.5rem;
+  background: none;
+  font: inherit;
+  font-size: 2rem;
+  font-weight: 400;
+  line-height: 1.3;
+  color: var(--rc-text);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.quickLink:hover {
+  background: var(--rc-bg-bar);
+}
+.quickLink[aria-expanded="true"] {
+  background: var(--rc-bg-bar);
+  font-weight: 500;
+}
+.quickIcon {
+  flex: none;
+  color: var(--home-blue);
+}
+.quickCaret {
+  flex: none;
+  margin-left: -0.6rem;
+}
+/* ▲ 펼침판: 그 칸 바로 위로 열린다 */
+.quickPop {
+  position: absolute;
+  bottom: calc(100% - 3.4rem);
+  left: calc(1.5rem + var(--i) * (100% - 3rem) / 5 + 2.5rem);
+  width: calc((100% - 3rem) / 5 - 5rem);
+  z-index: 5;
+  padding: 1.4rem;
+  border: 0.1rem solid var(--rc-line);
+  border-radius: 1.5rem;
+  background: var(--rc-bg);
+  box-shadow: 0.3rem 0.3rem 1.5rem var(--home-shadow);
+}
+.quickPopTit {
+  padding: 0.4rem 1.2rem 1rem;
+  border-bottom: 0.1rem solid var(--rc-line-light);
+  margin-bottom: 0.6rem;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+.quickPopLink {
+  display: flex;
+  align-items: center;
+  min-height: 4.4rem;
+  padding: 0 1.2rem;
+  border-radius: 0.8rem;
+  font-size: 1.7rem;
+  color: var(--rc-text);
+}
+.quickPopLink:hover {
+  background: var(--rc-bg-bar);
+  text-decoration: underline;
+}
+
+/* ───────────── 칸 2: 카드 넘기기(궁능 event_section, 바탕 rgb(239,245,255)) ───────────── */
+.cardsSec {
+  position: relative;
+  padding: 6rem 0 7rem;
+  background: var(--home-pale);
+}
+.head {
+  position: relative;
+  padding-right: 40rem;
+}
+.secTitle {
+  font-size: 4.2rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--rc-text);
+}
+.secText {
+  margin-top: 1.9rem;
+  font-size: 1.8rem;
+  line-height: 1.3;
+  color: var(--rc-text-sub);
+}
+/* 궁능 e_btn_more: 제목 위 끝에서 2 아래, 칸 오른쪽 끝 */
+.headMore {
+  top: 0.2rem;
+  right: 0;
+}
+/* 오른쪽 넘기기 조작(궁능 control 316×21, 제목 위 끝에서 80 아래, 칸 오른쪽 끝):
+   안쪽 왼쪽 15, ‹ 8×21, 3, ── 160×2, 16, › 8×21, ‖ 25×20 — 사이마다 15 */
+.cardsCtrl {
+  position: absolute;
+  right: 0;
+  top: 8rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  height: 2.1rem;
+  padding-left: 1.5rem;
+}
+.ctrlBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 0.8rem; /* 궁능 evt_slide_prev·next 8×21 */
+  height: 2.1rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--rc-text);
+  cursor: pointer;
+}
+.ctrlStop {
+  width: 2.5rem; /* 궁능 evt_slide_stop 25×20 */
+  height: 2rem;
+}
+.ctrlBtn:hover {
+  opacity: 0.7;
+}
+.ctrlCount {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.5rem;
+  font-size: 1.6rem;
+  line-height: 1.3;
+  font-variant-numeric: tabular-nums;
+}
+.ctrlNum {
+  text-align: center;
+}
+/* 궁능 160×2, 바탕 검정 20%, 고른 칸 검정 */
+.ctrlBar {
+  position: relative;
+  width: 16rem;
+  height: 0.2rem;
+  background: color-mix(in srgb, var(--rc-text) 20%, transparent);
+}
+.ctrlBar span {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  background: var(--rc-text);
+  transition: left 0.4s ease;
+}
+.timer {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  animation-name: timerRun;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+@keyframes timerRun {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.01;
+  }
+}
+
+/* 카드 줄. 칸 위치는 가운데에서 떨어진 칸 수(--sgn, --abs)로 계산한다.
+   궁능 main_event_slide_item: 옆 카드 235×421(사진 235×320), 가운데 265×477(사진 259×370), 한 칸 265.
+   1440에서 카드 5장(x 99~1424)이 모두 온전히 보인다. 탭 안쪽 여백만 궁능 20 → 10으로 줄여
+   가장 긴 탭 두 개("서쪽·남쪽 읍면" + "무장애 정보 없음", 글자 16)가 카드 폭 가까이에 들어가게 했다. */
+.cardsView {
+  --w: 23.5rem; /* 옆 카드 폭 */
+  --wc: 26.5rem; /* 가운데 카드 폭 */
+  --gap: 3rem;
+  --ph: 32rem; /* 옆 카드 사진 높이(궁능 235×320) */
+  --phc: 37rem; /* 가운데 카드 사진 높이(궁능 259×370) */
+  --drop: 2.8rem; /* 옆 카드는 가운데보다 28 아래 */
+  --tab-pad: 1rem;
+  position: relative;
+  height: calc(3.5rem + 0.6rem + var(--phc) + 10.3rem + 1.4rem);
+  margin: 3.5rem -1.5rem 0;
+  overflow-x: clip;
+}
+.cardTrack {
+  position: relative;
+  height: 100%;
+}
+.cardItem {
+  position: absolute;
+  top: var(--drop);
+  left: 50%;
+  width: var(--w);
+  padding-top: 3.5rem;
+  transform: translateX(
+    calc(-50% + var(--sgn) * (var(--wc) / 2 + var(--gap) + var(--w) / 2 + (var(--abs) - 1) * (var(--w) + var(--gap))))
+  );
+  transition:
+    transform 0.5s ease,
+    width 0.5s ease,
+    top 0.5s ease;
+}
+.cardItem.isCenter {
+  top: 0;
+  width: var(--wc);
+  z-index: 2;
+}
+.cardItem.isFar {
+  visibility: hidden;
+}
+/* 카드 위 탭(궁능 높이 55, 둥글기 15 15 0 0, 안쪽 0 20 20, 글자 16 500 — 아래 20은 카드 뒤로 숨는다) */
+.cardTabs {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  z-index: 0;
+}
+.cardTab {
+  height: 5.5rem;
+  padding: 0 var(--tab-pad) 2rem;
+  border: 0.1rem solid var(--tc);
+  border-radius: 1.5rem 1.5rem 0 0;
+  background: var(--rc-bg);
+  font-size: 1.6rem;
+  font-weight: 500;
+  line-height: 3.3rem;
+  color: var(--tc);
+  white-space: nowrap;
+}
+.cardTabArea {
+  --tc: var(--c);
+}
+.cardTabOn {
+  --tc: var(--home-blue);
+}
+.cardTabOff {
+  --tc: var(--rc-text-faint);
+}
+.isCenter .cardTabArea {
+  background: var(--c);
+  color: var(--rc-on-area);
+}
+/* 카드(궁능 둥글기 15, 그림자 3 3 15 검정 15%; 가운데는 3px 파랑 테두리 + 그림자 10 10 0 rgb(179,194,219)) */
+.card {
+  position: relative;
+  z-index: 1;
+  display: block;
+  overflow: hidden;
+  border: 0.3rem solid transparent;
+  border-radius: 1.5rem;
+  background: var(--rc-bg);
+  box-shadow: 0.3rem 0.3rem 1.5rem var(--home-shadow);
+  color: var(--rc-text);
+  transition: box-shadow 0.3s ease;
+}
+.isCenter .card {
+  border-color: var(--home-blue);
+  box-shadow: 1rem 1rem 0 0 var(--home-card-shadow);
+}
+.cardPhoto {
+  display: block;
+  height: var(--ph);
+  overflow: hidden;
+  border-radius: 1.2rem;
+  transition: height 0.5s ease;
+}
+.isCenter .cardPhoto {
+  height: var(--phc);
+}
+.cardTxt {
+  display: block;
+  padding: 2rem 2.2rem;
+  background: var(--rc-bg);
+}
+.cardName {
+  display: block;
+  overflow: hidden;
+  font-size: 1.8rem;
+  font-weight: 600;
+  line-height: 1.3;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.card:hover .cardName {
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+}
+.cardAddr {
+  display: block;
+  overflow: hidden;
+  margin-top: 1.5rem;
+  font-size: 1.6rem;
+  line-height: 1.3;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.cardAddrKey {
+  font-weight: 500;
+}
+.cardsCredit {
+  margin-top: 1.2rem;
+  font-size: 1.4rem;
+  line-height: 1.4;
+  color: var(--rc-text-faint);
+  text-align: right;
+}
+
+/* ───────────── 칸 3: 목록 + 지도 판(궁능 notice_section) ───────────── */
+.boardSec {
+  position: relative;
+  padding: 3.6rem 0;
+  background: var(--rc-bg);
+  overflow: hidden;
+}
+/* 아래쪽 파란 띠(궁능 바탕 그림 대신 단색 흐름) */
+.boardSec::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 12rem;
+  background: linear-gradient(to right, var(--home-band-1), var(--home-band-2));
+}
+/* 흐린 큰 영문(궁능 "ROYAL PALACES") */
+.ghost {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 11rem;
+  z-index: 0;
+  font-size: 15rem;
+  font-weight: 800;
+  line-height: 0.8;
+  letter-spacing: 0.02em;
+  text-align: center;
+  white-space: nowrap;
+  color: var(--home-ghost);
+  pointer-events: none;
+  user-select: none;
+}
+.board {
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 65fr 63fr;
+  column-gap: 5rem;
+}
+.boardLeft {
+  position: relative;
+  min-width: 0;
+}
+/* 알약 탭(궁능 125×45, 둥글기 23, 16 500, 고른 칸 rgb(22,64,141) 흰 글자, 안 고른 칸 #eee) */
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1.9rem;
+}
+.pill {
+  min-width: 12.5rem;
+  height: 4.5rem;
+  padding: 0.5rem 1.8rem;
+  border: 0;
+  border-radius: 2.3rem;
+  background: var(--home-tab-off);
+  font: inherit;
+  font-size: 1.6rem;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--rc-text);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.pill:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+}
+.pill[aria-pressed="true"] {
+  background: var(--home-tab-on);
+  color: var(--home-tab-on-text);
+}
+/* 궁능 b_btn_more: 제목 위 끝에서 84 아래(알약 줄 높이), 왼쪽 칸 오른쪽 끝 */
+.boardMore {
+  top: 8.4rem;
+  right: 0;
+}
+/* 흰 카드 안 목록(궁능 안쪽 30/40, 둥글기 15, 그림자 3 3 10 검정 15%, 줄 50 + 점선 #dfdfdf) */
+.boardList {
+  margin-top: 4rem;
+  padding: 3rem 4rem;
+  border-radius: 1.5rem;
+  background: var(--rc-bg);
+  box-shadow: 0.3rem 0.3rem 1rem var(--home-shadow);
+}
+.boardRow + .boardRow {
+  border-top: 0.1rem dashed var(--rc-line-footer);
+}
+.boardLink {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  min-height: 5rem;
+  color: var(--rc-text);
+}
+.boardLink:hover .boardName {
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+}
+/* [권역] 딱지(궁능 "공지" 딱지: 연한 바탕 + 진한 글자). 색은 권역 색을 섞어 만든다. */
+.badge {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  height: 2.8rem;
+  padding: 0 0.8rem;
+  border-radius: 0.3rem;
+  background: color-mix(in srgb, var(--c) 10%, var(--rc-bg));
+  font-size: 1.6rem;
+  font-weight: 500;
+  line-height: 1;
+  color: color-mix(in srgb, var(--c) 80%, var(--rc-text));
+}
+.badgeHub {
+  --c: var(--home-blue);
+}
+.boardName {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font-size: 1.72rem;
+  font-weight: 500;
+  line-height: 1.3;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.boardDong {
+  flex: none;
+  font-size: 1.6rem;
+  font-weight: 500;
+  color: var(--home-date);
+}
+/* 오른쪽 흰 카드 = 지도 판(궁능 알림판 630×566, 위 여백 162) */
+.boardRight {
+  min-width: 0;
+  padding-top: 16.2rem;
+}
+.mapCard {
+  display: flex;
+  flex-direction: column;
+  height: 56.6rem;
+  overflow: hidden;
+  border-radius: 1.5rem;
+  background: var(--rc-bg);
+  box-shadow: 0.3rem 0.3rem 1rem var(--home-shadow);
+  color: var(--rc-text);
+}
+.mapBox {
+  flex: 1;
+  min-height: 0;
+  padding: 2rem 2rem 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.mapBar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  height: 8rem;
+  font-size: 1.8rem;
+  font-weight: 500;
+}
+.mapCard:hover .mapBar {
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .visualTrack,
+  .cardItem,
+  .cardPhoto,
+  .ctrlBar span {
+    transition: none;
+  }
+}
+
+/* ───────────── 좁은 PC(≤1239): 바로가기 칸 안 여백·글자를 줄여 한 줄에 ───────────── */
+@media (max-width: 1239px) {
+  .quickItem {
+    padding: 0 1rem;
+  }
+  .quickLink {
+    gap: 0.8rem;
+    padding: 0 0.4rem;
+    font-size: 1.8rem;
+  }
+  .quickIcon {
+    width: 3rem;
+    height: 3rem;
+  }
+  .quickPop {
+    left: calc(1.5rem + var(--i) * (100% - 3rem) / 5 + 1rem);
+    width: calc((100% - 3rem) / 5 - 2rem);
+    min-width: 20rem;
+  }
+}
+
+/* ───────────── 좁은 PC·태블릿(≤1023): 휴대전화 머리 틀과 같은 너비부터 ───────────── */
+@container rc-main (max-width: 1119px) {
+  /* 바로가기 줄: 가로로 밀어 보는 칸(궁능 138×100, 글자 16) */
+  .quick {
+    padding: 1rem 0;
+  }
+  .quickList {
+    overflow-x: auto;
+    padding: 0 1.5rem;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+  }
+  .quickList::-webkit-scrollbar {
+    display: none;
+  }
+  .quickItem {
+    flex: 0 0 auto;
+    padding: 0;
+    scroll-snap-align: start;
+  }
+  .quickItem + .quickItem::before {
+    top: 2.5rem;
+    bottom: 2.5rem;
+  }
+  .quickLink {
+    gap: 0.8rem;
+    height: 10rem;
+    padding: 0 1.4rem;
+    font-size: 1.6rem;
+  }
+  .quickIcon {
+    width: 2.8rem;
+    height: 2.8rem;
+  }
+  .quickPop {
+    left: 1.5rem;
+    right: 1.5rem;
+    width: auto;
+    bottom: calc(100% - 1rem);
+  }
+
+  .head {
+    padding-right: 0;
+    text-align: center;
+  }
+  .secTitle {
+    font-size: 3rem;
+  }
+  .secText {
+    margin-top: 2rem;
+  }
+  .secText br {
+    display: none;
+  }
+  .headMore {
+    top: 0.2rem; /* 궁능 390 e_btn_more */
+    right: 0;
+  }
+  .cardsCtrl {
+    position: static;
+    justify-content: center;
+    margin-top: 3rem;
+  }
+  .cardsView {
+    margin-top: 2rem;
+  }
+  .cardsCredit {
+    text-align: center;
+  }
+
+  .boardSec {
+    padding: 7rem 0;
+  }
+  .boardSec::after {
+    top: 38.5rem;
+    height: auto;
+  }
+  .ghost {
+    top: -0.8rem;
+    bottom: auto;
+    left: 0.4rem;
+    font-size: 7.4rem;
+    text-align: left;
+  }
+  .board {
+    display: block;
+    padding: 0 2rem;
+  }
+  .boardLeft .secTitle {
+    text-align: center;
+  }
+  .pills {
+    justify-content: center;
+  }
+  .boardMore {
+    top: 0.4rem; /* 궁능 390 b_btn_more */
+    right: 0;
+  }
+  .boardList {
+    margin-top: 2rem;
+  }
+  .boardRight {
+    padding-top: 2rem;
+  }
+  .home {
+    --home-map-h: 36rem;
+  }
+  .mapCard {
+    height: auto;
+  }
+}
+
+/* ───────────── 휴대전화(≤767, 궁능 main_m390) ───────────── */
+@container rc-main (max-width: 767px) {
+  /* 넘기기 배너 390×390(가운데 띠 45 포함) */
+  .visual {
+    height: 34.5rem;
+  }
+  .visualPanel {
+    left: 1.5rem;
+    right: auto;
+    top: 1.5rem;
+    bottom: auto;
+    max-width: calc(100% - 3rem);
+    padding: 1.2rem 1.6rem;
+    border-radius: 1rem;
+  }
+  .visualKicker {
+    display: none;
+  }
+  .visualName {
+    margin-top: 0;
+    font-size: 2.6rem;
+  }
+  .visualMeta {
+    margin-top: 0.2rem;
+    font-size: 1.6rem;
+  }
+  .visualCredit {
+    margin-top: 0.4rem;
+    font-size: 1.2rem;
+  }
+  .visualCtrl {
+    right: 50%;
+    bottom: 1.2rem;
+    transform: translateX(50%);
+    padding: 0.5rem 1.5rem; /* 궁능 390 185×58, 안쪽 5 15 */
+  }
+  /* 가운데 띠: 궁능 390처럼 한 줄(사진 345 + 띠 45 = 390). 글자는 16 아래로 줄이지 않고,
+     큰 글자 설정 등으로 넘치면 띠 안에서 옆으로 밀어 본다. */
+  .band {
+    display: block;
+    min-height: 4.5rem;
+    padding: 0 0.6rem;
+  }
+  .bandList {
+    flex-wrap: nowrap;
+    justify-content: safe center;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .bandList::-webkit-scrollbar {
+    display: none;
+  }
+  .bandList li {
+    flex: 0 0 auto;
+  }
+  .bandList li + li::before {
+    height: 1.4rem;
+    margin: 0 0.6rem;
+  }
+  .bandLink {
+    min-height: 4.5rem;
+    font-size: 1.6rem;
+    white-space: nowrap;
+  }
+
+  /* 칸 2(궁능 위아래 70, 제목 30 가운데) */
+  .cardsSec {
+    padding: 7rem 0;
+  }
+  .cardsView {
+    --w: 24.5rem;
+    --wc: 25.5rem;
+    --gap: 2rem;
+    --ph: 30rem;
+    --phc: 32rem;
+    --drop: 1.4rem;
+    --tab-pad: 1rem;
+  }
+  .cardTxt {
+    padding: 1.6rem 1.8rem;
+  }
+
+  /* 칸 3(궁능 안쪽 70/20, 목록 안쪽 20/25) */
+  .boardList {
+    padding: 2rem 2.5rem;
+  }
+  .boardLink {
+    gap: 0.8rem;
+  }
+  .boardName {
+    font-size: 1.6rem;
+  }
+  .pills {
+    gap: 0.8rem;
+  }
+  .pill {
+    min-width: 0;
+    padding: 0.5rem 1.6rem;
+  }
+  .home {
+    --home-map-h: 30rem;
+  }
+  .mapBox {
+    padding: 1.2rem 1.2rem 0;
+  }
+  .mapBar {
+    height: 6.4rem;
+  }
+}

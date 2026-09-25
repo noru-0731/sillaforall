@@ -1,0 +1,367 @@
+/*
+ * 관광지 서브 쪽 네 개(소개·사진·무장애 정보·오시는 길)의 내용 모양.
+ * 궁능 누리집 gbg_intro · gbg_story · hours · directions의 치수(나무 파일)를 rem으로 옮겼다(1rem = 10px). 본문 폭 1030.
+ */
+
+/* ───────── 소개(gbg_intro) ───────── */
+.photoCredit {
+  margin-top: 1rem;
+  font-size: 1.4rem;
+  line-height: 1.5;
+  color: var(--rc-text-faint);
+  text-align: right;
+}
+.introTit {
+  margin-top: 5rem;
+  font-size: 2.4rem;
+  font-weight: 700;
+  line-height: 3.6rem;
+  color: var(--rc-text-sub);
+  text-align: center;
+  word-break: keep-all;
+}
+.introBody {
+  margin-top: 3rem;
+}
+.introBody p {
+  font-size: 1.6rem; /* 궁능 intro txt_wrap 16px, 줄 27.2 */
+  line-height: 1.7;
+  color: var(--rc-text-sub);
+  word-break: keep-all;
+}
+.introBody p + p {
+  margin-top: 2.7rem;
+}
+.pre {
+  white-space: pre-line;
+}
+.cellLink {
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+}
+
+/* ───────── 사진(gbg_story) ───────── */
+/* 위 칸 격자: 5칸, 칸 206×60, 1px 검정 선. 윗선 바로 아래에 붙인다(궁능 pt0). */
+.tabGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  margin-top: -5.5rem;
+  border-top: 0.1rem solid var(--rc-text);
+  border-left: 0.1rem solid var(--rc-text);
+}
+.tabGrid li {
+  border-right: 0.1rem solid var(--rc-text);
+  border-bottom: 0.1rem solid var(--rc-text);
+}
+.tabGrid a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  height: 100%;
+  min-height: 6rem;
+  padding: 0.6rem 1.5rem;
+  font-size: 1.7rem;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--rc-text);
+  word-break: keep-all;
+}
+.tabGrid a::after {
+  content: "";
+  flex: 0 0 auto;
+  width: 1.1rem;
+  height: 0.1rem;
+  background: currentColor;
+}
+.tabGrid a:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+}
+.tabGrid a[aria-current="page"] {
+  background: var(--rc-ink);
+  color: var(--rc-on-ink);
+}
+.tabGrid a[aria-current="page"]::after {
+  display: none;
+}
+.tabCaret {
+  flex: 0 0 auto;
+  display: inline-flex;
+}
+/* 휴대전화: 격자 대신 펼침 상자(궁능 390: 현재 이름 + ▼) */
+.tabDrop {
+  display: none;
+}
+.photoTit {
+  margin-top: 6rem;
+  font-size: 2.6rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--rc-text);
+}
+
+/* ───────── 무장애 정보(hours) ───────── */
+/* 궁능 정기휴일 두 상자: 폭 500, 사이 30, 윗선 2px 검정, 나머지 1px 선, 높이 183 */
+.boxes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(26rem, 1fr));
+  gap: 3rem;
+}
+.box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+  min-height: 18.3rem;
+  padding: 3rem 2.5rem;
+  border: 0.1rem solid var(--rc-line);
+  border-top: 0.2rem solid var(--rc-line-strong);
+  text-align: center;
+}
+.boxIco {
+  display: inline-flex;
+  color: var(--rc-text);
+}
+.boxTit {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--rc-text);
+}
+.boxTxt {
+  font-size: 1.6rem;
+  line-height: 1.6;
+  color: var(--rc-text-sub);
+  word-break: keep-all;
+}
+.boxTxt a {
+  font-weight: 700;
+  color: var(--rc-text);
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+}
+.tipsAfterBoxes {
+  margin-top: 1.5rem;
+}
+.tipsAfterBoxes li {
+  font-weight: 700;
+}
+
+/* ───────── 오시는 길(directions) ───────── */
+.mapBox {
+  /* 테두리 상자는 지도 부품(MapView)이 그린다 */
+  min-width: 0;
+}
+.mapTxt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 4rem 0 4rem 2rem;
+  border-bottom: 0.2rem solid var(--rc-text);
+}
+.mapCons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem 8rem;
+  min-width: 0;
+}
+.mapCon {
+  position: relative;
+  padding-left: 2.5rem;
+}
+.mapCon > svg {
+  position: absolute;
+  left: 0;
+  top: 0.3rem;
+}
+.mapConTit {
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 2.6rem;
+  color: var(--rc-text);
+}
+.mapConTxt {
+  margin-top: 1rem;
+  font-size: 1.6rem;
+  line-height: 2.08rem;
+  color: var(--rc-text);
+  word-break: keep-all;
+}
+.mapConTxt a {
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+}
+.btnMap {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 9rem;
+  min-height: 6.5rem;
+  padding: 0 1.6rem;
+  background: var(--rc-ink);
+  font-size: 1.6rem;
+  color: var(--rc-on-ink);
+}
+.btnMap:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+}
+.approx {
+  margin-top: 1.5rem;
+  font-size: 1.6rem;
+  line-height: 1.6;
+  color: var(--rc-text-sub);
+}
+.trans {
+  padding-top: 6rem;
+}
+.transCon + .transCon {
+  margin-top: 5rem;
+}
+.transUnit {
+  margin-top: 3rem;
+}
+.transUnitTit {
+  font-size: 1.8rem;
+  font-weight: 700;
+  line-height: 2.34rem;
+  color: var(--rc-text);
+}
+.transUnitTxt {
+  margin-top: 1rem;
+  font-size: 1.6rem;
+  line-height: 2.4rem;
+  color: var(--rc-text-sub);
+  white-space: pre-line;
+  word-break: keep-all;
+}
+.infoWrap {
+  padding-top: 5.5rem;
+}
+.infoWrap + .infoWrap {
+  padding-top: 4rem;
+}
+.infoTit {
+  margin-bottom: 3rem;
+}
+/* 궁능 주차장 안내 상자: 윗선 2px, 나머지 1px #eaeaea, 안 여백 30 */
+.bdBox {
+  padding: 3rem;
+  border: 0.1rem solid var(--rc-line-light);
+  border-top: 0.2rem solid var(--rc-text);
+}
+.dotList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.dotList li {
+  position: relative;
+  padding-left: 2.1rem;
+  font-size: 1.6rem;
+  font-weight: 500;
+  line-height: 2.4rem;
+  color: var(--rc-text-sub);
+  white-space: pre-line;
+  word-break: keep-all;
+}
+.dotList li::before {
+  content: "";
+  position: absolute;
+  left: 0.4rem;
+  top: 1rem;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: currentColor;
+}
+.dotLabel {
+  display: block;
+  font-weight: 700;
+  color: var(--rc-text);
+}
+
+/* ───────── 휴대전화 ───────── */
+@container rc-main (max-width: 1119px) {
+  .introTit {
+    margin-top: 4rem;
+    font-size: 1.9rem;
+    line-height: 1.5;
+  }
+  .tabGrid {
+    display: none;
+  }
+  .tabDrop {
+    display: block;
+    margin-top: -3rem;
+    border: 0.2rem solid var(--rc-text);
+  }
+  .tabDrop summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 5.6rem;
+    padding: 1rem 1.8rem;
+    font-size: 1.8rem;
+    font-weight: 500;
+    color: var(--rc-text);
+    cursor: pointer;
+    list-style: none;
+  }
+  .tabDrop summary::-webkit-details-marker {
+    display: none;
+  }
+  .tabDrop[open] summary svg {
+    transform: rotate(180deg);
+  }
+  .tabDrop ul {
+    border-top: 0.1rem solid var(--rc-text);
+  }
+  .tabDrop a {
+    display: flex;
+    align-items: center;
+    min-height: 4.8rem;
+    padding: 0.6rem 1.8rem;
+    font-size: 1.7rem;
+    color: var(--rc-text);
+  }
+  .tabDrop a[aria-current="page"] {
+    background: var(--rc-ink);
+    color: var(--rc-on-ink);
+    font-weight: 700;
+  }
+  .photoTit {
+    margin-top: 4rem;
+    font-size: 2.4rem;
+  }
+  .boxes {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .box {
+    min-height: 0;
+    padding: 2.5rem 2rem;
+  }
+  .mapTxt {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 3rem 0;
+  }
+  .mapCons {
+    flex-direction: column;
+    gap: 2rem;
+  }
+  .btnMap {
+    min-height: 5rem;
+  }
+  .trans {
+    padding-top: 4rem;
+  }
+  .bdBox {
+    padding: 2rem;
+  }
+}

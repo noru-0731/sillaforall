@@ -1,0 +1,53 @@
+/* 안내 상자: KRDS 키트에 따로 없어서 KRDS 정보(information) 색 토큰으로 만든다 */
+.box {
+  --info-surface: var(--krds-light-color-surface-information-subtler);
+  --info-border: var(--krds-light-color-border-information-light);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--krds-gap-4);
+  padding: var(--krds-padding-8);
+  border: var(--krds-light-border-width-variable-regular) solid var(--info-border);
+  border-radius: var(--krds-radius-large1);
+  background-color: var(--info-surface);
+  color: var(--site-text);
+}
+:global([data-krds-mode="high-contrast"]) .box {
+  --info-surface: var(--krds-high-contrast-color-surface-information-subtler);
+  --info-border: var(--krds-high-contrast-color-border-information-light);
+}
+
+.icon {
+  flex: 0 0 auto;
+  margin-top: var(--krds-number-2);
+}
+
+.body {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.title {
+  font-size: var(--krds-pc-font-size-heading-small);
+  font-weight: var(--krds-font-weight-bold);
+  line-height: 1.4;
+  color: var(--site-text-bolder);
+}
+
+.text {
+  margin-top: var(--krds-gap-2);
+  font-size: var(--krds-pc-font-size-body-medium);
+  line-height: 1.6;
+}
+
+@container rc-main (max-width: 767px) {
+  .box {
+    padding: var(--krds-padding-7);
+    gap: var(--krds-gap-3);
+  }
+  .title {
+    font-size: var(--krds-mobile-font-size-heading-small);
+  }
+  .text {
+    font-size: var(--krds-mobile-font-size-body-medium);
+  }
+}

@@ -1,0 +1,189 @@
+/*
+ * 가나다순 표. 궁능 공지사항(notice_1440 나무 파일) 치수를 rem으로 옮김.
+ * 윗줄: "전체: 785건" 16px 500 #444 / 검색 입력 320×50 바탕 #eaeaea 둥글기 25 + 검색 단추 120×50 #131313 둥글기 25.
+ * 윗줄 아래 60 → 표: 위 2px 검정, 아래 1px #aeaeae, 머리 #f8f8f8 55 높이, 줄 아래 1px #dfdfdf, 세로선 없음.
+ * 칸 폭 82 / 155 / 나머지 / 155 / 103 / 103 (1030 기준). 글자 15px(공통 .rc-board).
+ */
+.condition {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.6rem 2rem;
+  margin-bottom: 6rem;
+}
+.count {
+  font-size: 1.6rem;
+  font-weight: 500;
+  color: var(--rc-text-sub);
+}
+.search {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+.input {
+  width: 32rem;
+  height: 5rem;
+  padding: 0 2.5rem;
+  border: 0.1rem solid transparent;
+  border-radius: 2.5rem;
+  background: var(--rc-line-light);
+  font-size: 1.6rem;
+  color: var(--rc-text);
+}
+.input::placeholder {
+  color: var(--rc-text-faint);
+}
+:global([data-krds-mode="high-contrast"]) .input {
+  background: var(--rc-bg-bar);
+  border-color: var(--rc-line);
+}
+.submit {
+  flex: 0 0 auto;
+  min-width: 12rem;
+  height: 5rem;
+  padding: 0 2rem;
+  border: 0;
+  border-radius: 2.5rem;
+  background: var(--rc-ink);
+  font-size: 1.6rem;
+  font-weight: 500;
+  color: var(--rc-on-ink);
+  cursor: pointer;
+}
+.submit:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+}
+
+.tableWrap {
+  width: 100%;
+}
+.cNum {
+  width: 8%;
+}
+.cArea {
+  width: 15%;
+}
+.cDong {
+  width: 15%;
+}
+.cFlag {
+  width: 10%;
+}
+.tableWrap .board th,
+.tableWrap .board td {
+  border-left: 0;
+}
+.tableWrap .board th {
+  padding: 0.5rem 1rem;
+}
+.tableWrap .board td {
+  height: 5.5rem;
+  padding: 0.5rem 1rem;
+  border-bottom: 0.1rem solid var(--rc-line-footer);
+}
+.area {
+  font-weight: 600;
+}
+.tableWrap .board .tit {
+  text-align: left;
+}
+.tit a {
+  color: var(--rc-text-sub);
+}
+.tit a:hover {
+  color: var(--rc-text);
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+}
+.flag svg {
+  display: inline-block;
+  vertical-align: middle;
+  color: var(--rc-seg);
+}
+.mOnly {
+  display: none;
+}
+.tableWrap .board .empty {
+  height: 12rem;
+  text-align: center;
+  color: var(--rc-text-sub);
+}
+
+@container rc-main (max-width: 767px) {
+  .condition {
+    flex-direction: column;
+    align-items: stretch;
+    margin-bottom: 3rem;
+  }
+  .search {
+    gap: 0.8rem;
+  }
+  .input {
+    flex: 1 1 0;
+    width: 0; /* 좁은 폭(글자 크게)에서도 칸이 줄어들게: 입력 칸 본래 폭이 줄을 밀어내지 않도록 */
+    min-width: 0;
+  }
+  .submit {
+    min-width: 8rem;
+  }
+  /* 휴대전화: 궁능처럼 표를 줄 단위 상자로 */
+  .tableWrap .board,
+  .tableWrap .board tbody,
+  .tableWrap .board tr,
+  .tableWrap .board td {
+    display: block;
+    width: 100%;
+  }
+  .tableWrap .board colgroup,
+  .tableWrap .board thead,
+  .tableWrap .board td.mNone {
+    display: none;
+  }
+  .tableWrap .board tr {
+    box-sizing: border-box;
+    padding: 2rem 1.5rem;
+    border-bottom: 0.1rem solid var(--rc-line-footer);
+  }
+  .tableWrap .board tbody tr:last-child {
+    border-bottom: 0;
+  }
+  .tableWrap .board td,
+  .tableWrap .board tbody tr:last-child td {
+    height: auto;
+    padding: 0;
+    border: 0;
+    text-align: left;
+  }
+  .tableWrap .board .area {
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+  .tableWrap .board .tit {
+    margin: 0.6rem 0;
+    font-size: 1.8rem;
+  }
+  .tit a {
+    color: var(--rc-text);
+  }
+  .tableWrap .board .dong,
+  .tableWrap .board .flag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    width: auto;
+    margin-right: 1.6rem;
+    font-size: 1.5rem;
+    color: var(--rc-text-sub);
+  }
+  .mOnly {
+    display: inline;
+  }
+  .tableWrap .board .empty {
+    height: auto;
+    padding: 4rem 0;
+    text-align: center;
+  }
+}

@@ -1,0 +1,507 @@
+/*
+ * 사이트 소개 쪽들: 만든 까닭(궁능 인사말 greeting), 자료 출처와 저작권(저작권정책 copyright), 이용 안내(자주 묻는 질문 faq).
+ * 치수는 레퍼런스 스크린샷(PC 1440)에서 잰 px를 rem으로(1rem = 10px). 색은 모두 var(--rc-*).
+ */
+
+/* ───────────────── 만든 까닭(greeting) ───────────────── */
+
+/* 사진: 본문 폭 1030 × 398, 아래쪽이 바탕색으로 흐려짐(제1유형 사진이라 덧씌움 가능) */
+.gPhoto {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1030 / 398;
+  overflow: hidden;
+  background: var(--rc-bg-bar);
+}
+.gPhoto img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.gPhoto::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 62%, var(--rc-bg) 100%);
+  pointer-events: none;
+}
+.gCredit {
+  margin-top: 0.4rem;
+  font-size: 1.5rem;
+  line-height: 1.4;
+  color: var(--rc-text-faint);
+  text-align: right;
+}
+.gCredit.gCredit {
+  font-size: 1.5rem;
+  color: var(--rc-text-faint);
+}
+
+/* 사진 아래: 왼쪽 표장 칸 337 + 오른쪽 글 칸 */
+.gBody {
+  display: grid;
+  grid-template-columns: 32.7% minmax(0, 1fr);
+  margin-top: 2.6rem;
+}
+.gMark {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+/* 궁능 인사말의 둥근 표장(지름 약 200, 바탕 없음) 자리: 흰 원 안에 우리 아이콘 */
+.gSeal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20rem;
+  height: 20rem;
+  border: 0.1rem solid var(--rc-line);
+  border-radius: 50%;
+  background: var(--rc-bg);
+}
+.gMark img {
+  display: block;
+  width: 11rem;
+  height: 11rem;
+}
+.gText {
+  padding-top: 4.4rem;
+}
+.gTit {
+  font-size: 4rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--rc-text);
+  word-break: keep-all;
+}
+.gText p.gWelcome {
+  margin-top: 2rem;
+  font-size: 2.4rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--rc-welcome);
+  word-break: keep-all;
+}
+.gProse {
+  margin-top: 4.6rem;
+}
+.gProse p,
+.gProse li {
+  font-size: 1.8rem;
+  line-height: 2.7rem;
+  color: var(--rc-text-sub);
+  word-break: keep-all;
+}
+.gProse p + p,
+.gProse p + ul,
+.gProse ul + p {
+  margin-top: 2.7rem;
+}
+.gProse ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.gProse li {
+  position: relative;
+  padding-left: 1.6rem;
+}
+.gProse li::before {
+  content: "-";
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.gProse a {
+  color: var(--rc-text);
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+}
+
+/* ───────────────── 자료 출처와 저작권(copyright) ───────────────── */
+
+/* 맨 위 안내 글: 윗선 2px #0a134f, 아랫선 1px #aeaeae, 가운데 16px 줄 27(궁능 copyright 캡처에서 잼) */
+.stmt {
+  padding: 2.9rem 2rem 3.2rem;
+  border-top: 0.2rem solid var(--rc-sitemap-line);
+  border-bottom: 0.1rem solid var(--rc-line-table);
+  text-align: center;
+}
+.stmt p {
+  font-size: 1.6rem;
+  line-height: 2.7rem;
+  color: var(--rc-text);
+  word-break: keep-all;
+}
+
+/* 공공누리 유형 카드: 3칸, 사이 17, 테두리 1px #ddd, 둥글기 6, 머리 46 바탕 rgb(244,245,246) 16px 700, 본문 16px 줄 26 */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.7rem;
+}
+.card {
+  display: flex;
+  flex-direction: column;
+  border: 0.1rem solid var(--rc-line);
+  border-radius: 0.6rem;
+  overflow: hidden;
+  background: var(--rc-bg);
+}
+.cardHead {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 4.6rem;
+  padding: 0.8rem 1.6rem;
+  background: var(--rc-bg-card-head);
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--rc-text);
+  text-align: center;
+}
+.cardBody {
+  flex: 1 1 auto;
+  padding: 2.2rem 1.8rem 2.6rem;
+}
+/* 공공누리 표시 그림 대신 글자로 만든 상자 */
+.kogl {
+  display: flex;
+  width: fit-content;
+  margin: 0 auto 2.4rem;
+  border: 0.2rem solid var(--rc-ink);
+  border-radius: 0.3rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--rc-text);
+}
+.kogl > span {
+  display: flex;
+  align-items: center;
+  padding: 0.8rem 1.2rem;
+  font-size: 1.6rem;
+}
+.kogl > span + span {
+  border-left: 0.2rem solid var(--rc-ink);
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+.cardBody p {
+  font-size: 1.6rem;
+  line-height: 2.6rem;
+  color: var(--rc-text);
+  word-break: keep-all;
+}
+.cardBody p + p {
+  margin-top: 1.2rem;
+}
+.cardUse {
+  padding-top: 1.2rem;
+  border-top: 0.1rem dashed var(--rc-line);
+}
+
+/* • 줄(궁능 copyright 16px) */
+.bullets {
+  display: flex;
+  flex-direction: column;
+  gap: 2.4rem;
+  margin-top: 2rem;
+}
+.bullets > li {
+  position: relative;
+  padding-left: 2rem;
+  font-size: 1.6rem;
+  line-height: 1.55;
+  color: var(--rc-text);
+  word-break: keep-all;
+}
+.bullets > li::before {
+  content: "•";
+  position: absolute;
+  left: 0.2rem;
+  top: 0;
+}
+.bulletsTight {
+  gap: 0.8rem;
+}
+.bullets + p {
+  margin-top: 1.6rem;
+}
+.bullets a,
+.inlineLink {
+  color: var(--rc-text);
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+/* (예시) 회색 상자(궁능 16px 줄 25) */
+.example {
+  margin-top: 1.2rem;
+  padding: 1.6rem 1.6rem 1.8rem;
+  border: 0.1rem solid var(--rc-line);
+  border-radius: 0.4rem;
+  background: var(--rc-bg-table);
+  font-size: 1.6rem;
+  line-height: 1.55;
+  color: var(--rc-text);
+}
+.example strong {
+  display: block;
+  font-weight: 700;
+}
+.sourceText {
+  word-break: keep-all;
+}
+.sourceText.sourceText {
+  font-size: 1.6rem;
+  line-height: 1.7;
+  color: var(--rc-text);
+}
+.outLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  max-width: 100%;
+  overflow-wrap: anywhere; /* 긴 주소가 좁은 화면에서 칸 밖으로 나가지 않게 */
+  min-height: 4.4rem;
+  color: var(--rc-text);
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+}
+
+/* 맨 아래 문의 상자: 1px #eaeaea, 바탕 #f8f8f8 */
+.contact {
+  margin-top: 8rem;
+  padding: 3.6rem 3rem;
+  border: 0.1rem solid var(--rc-line-light);
+  background: var(--rc-bg-table);
+}
+.contact p {
+  font-size: 1.8rem;
+  line-height: 3rem;
+  color: var(--rc-text);
+}
+.contact strong {
+  font-weight: 700;
+}
+
+/* ───────────────── 이용 안내(faq) ───────────────── */
+
+/* 묻고 답하기: 윗선 2px #0a134f, 줄마다 아래 2px #eaeaea, 줄 높이 75 */
+.qa {
+  border-top: 0.2rem solid var(--rc-sitemap-line);
+}
+.qaItem {
+  border-bottom: 0.2rem solid var(--rc-line-light);
+}
+.qaQ {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 2.1rem;
+  min-height: 7.5rem;
+  padding: 1.2rem 2rem;
+  font-size: 1.8rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--rc-text);
+  cursor: pointer;
+  list-style: none;
+}
+.qaQ::-webkit-details-marker {
+  display: none;
+}
+.qaQ::marker {
+  content: "";
+}
+.qaQ:hover .qaText {
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+}
+.qaText {
+  flex: 1 1 auto;
+  min-width: 0;
+  word-break: keep-all;
+}
+/* Q·A 동그라미 35 */
+.qaBadge {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  background: var(--rc-text-faint);
+  color: var(--rc-bg);
+  font-size: 1.7rem;
+  font-weight: 700;
+  line-height: 1;
+}
+.qaBadgeA {
+  background: var(--rc-ink);
+  color: var(--rc-on-ink);
+}
+:global([data-krds-mode="high-contrast"]) .qaBadge {
+  background: var(--rc-ink);
+  color: var(--rc-on-ink);
+}
+.qaChev {
+  flex: 0 0 auto;
+  color: var(--rc-text);
+  transition: transform 0.2s ease;
+}
+.qaItem[open] .qaChev {
+  transform: rotate(180deg);
+}
+@media (prefers-reduced-motion: reduce) {
+  .qaChev {
+    transition: none;
+  }
+}
+.qaA {
+  display: flex;
+  gap: 2.1rem;
+  padding: 2.6rem 2rem 3rem;
+  border-top: 0.1rem solid var(--rc-line-light);
+  background: var(--rc-bg-table);
+}
+.qaABody {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding-top: 0.4rem;
+}
+.qaABody p,
+.qaABody li {
+  font-size: 1.7rem;
+  line-height: 1.6;
+  color: var(--rc-text-sub);
+  word-break: keep-all;
+}
+.qaABody ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.qaABody li {
+  position: relative;
+  padding-left: 1.6rem;
+}
+.qaABody li::before {
+  content: "-";
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.qaABody p + ul,
+.qaABody ul + p {
+  margin-top: 1.2rem;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+/* 검정 둥근 단추(궁능 "검색" 단추 모양: 높이 50, 둥글기 25) */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  min-height: 5rem;
+  padding: 0 2.6rem;
+  border: 0.1rem solid var(--rc-ink);
+  border-radius: 2.5rem;
+  background: var(--rc-ink);
+  color: var(--rc-on-ink);
+  font: inherit;
+  font-size: 1.6rem; /* 궁능 "검색" 단추 16px */
+  font-weight: 500;
+  cursor: pointer;
+}
+.btnLine {
+  background: var(--rc-bg);
+  color: var(--rc-text);
+}
+.btn:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+}
+
+/* ───────────────── 좁은 화면 ───────────────── */
+@container rc-main (max-width: 1119px) {
+  .gBody {
+    grid-template-columns: 1fr;
+    margin-top: 2rem;
+  }
+  .gMark {
+    justify-content: flex-start;
+  }
+  .gSeal {
+    width: 12rem;
+    height: 12rem;
+  }
+  .gMark img {
+    width: 6.6rem;
+    height: 6.6rem;
+  }
+  .gText {
+    padding-top: 2.4rem;
+  }
+  .gTit {
+    font-size: 3.2rem;
+  }
+  .gText p.gWelcome {
+    margin-top: 1.6rem;
+    font-size: 2.2rem;
+  }
+  .gProse {
+    margin-top: 3.2rem;
+  }
+  .gProse p,
+  .gProse li {
+    font-size: 1.7rem;
+    line-height: 1.6;
+  }
+  .gProse p + p,
+  .gProse p + ul,
+  .gProse ul + p {
+    margin-top: 2.2rem;
+  }
+  .cards {
+    grid-template-columns: 1fr;
+  }
+}
+@container rc-main (max-width: 767px) {
+  .gPhoto {
+    aspect-ratio: 4 / 3;
+  }
+  .stmt {
+    padding: 2.4rem 0.4rem 2.6rem;
+    text-align: left;
+  }
+  .contact {
+    margin-top: 5rem;
+    padding: 2.4rem 2rem;
+  }
+  .contact p {
+    font-size: 1.7rem;
+    line-height: 1.6;
+  }
+  .qaQ {
+    gap: 1.4rem;
+    padding: 1.4rem 1.2rem 1.4rem 1.6rem;
+    font-size: 1.7rem;
+  }
+  .qaA {
+    gap: 1.4rem;
+    padding: 2rem 1.2rem 2.4rem 1.6rem;
+  }
+  .btn {
+    flex: 1 1 100%;
+    justify-content: center;
+  }
+}

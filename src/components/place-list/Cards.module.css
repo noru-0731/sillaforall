@@ -1,0 +1,152 @@
+/*
+ * 관광지 카드 줄. 궁능 문화행사(events_1440 나무 파일) 카드 치수를 rem으로 옮김.
+ * 줄: 위 2px rgb(10,19,79)(= --rc-sitemap-line), 아래 1px #aeaeae. 카드: 안쪽 34/30, 아래 1px #f0f0f0.
+ * 사진 165×215, 사진과 글 사이 35. 배지 75×25 둥글기 13 12px 400. 제목 20px 600. 정보 14px 줄 21.7(색은 --rc-text-sub).
+ * 단추 120×35 1px 검정 14px.
+ */
+.list {
+  border-top: 0.2rem solid var(--rc-sitemap-line);
+  border-bottom: 0.1rem solid var(--rc-line-table);
+}
+.card {
+  display: flex;
+  align-items: flex-start;
+  gap: 3.5rem;
+  padding: 3.4rem 3rem;
+  border-bottom: 0.1rem solid var(--rc-line-lighter);
+}
+.card:last-child {
+  border-bottom: 0;
+}
+.img {
+  flex: 0 0 16.5rem;
+  width: 16.5rem;
+}
+.txt {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 0.8rem 0;
+}
+.ctg {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.5rem;
+  padding: 0 1.2rem;
+  border-radius: 1.3rem;
+  background: var(--c, var(--rc-ink));
+  font-size: 1.2rem;
+  font-weight: 400;
+  line-height: 1.86rem;
+  color: var(--rc-on-area);
+}
+.tit {
+  margin-top: 1.6rem;
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--rc-text);
+  word-break: keep-all;
+}
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-top: 2.4rem;
+  font-size: 1.4rem;
+  line-height: 1.55;
+  color: var(--rc-text-sub);
+}
+.info > div {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+}
+.info dt {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 2.17rem;
+  white-space: nowrap;
+}
+.info dd {
+  min-width: 0;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+.hours {
+  white-space: pre-line;
+}
+.btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-top: 1.7rem;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 12rem;
+  min-height: 3.5rem;
+  padding: 0 1.6rem;
+  border: 0.1rem solid var(--rc-text);
+  background: var(--rc-bg);
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: var(--rc-text);
+}
+.btn:hover {
+  background: var(--rc-ink);
+  color: var(--rc-on-ink);
+}
+
+.credit {
+  margin-top: 2rem;
+  font-size: 1.5rem;
+  line-height: 1.6;
+  color: var(--rc-text-faint);
+}
+
+@container rc-main (max-width: 767px) {
+  .card {
+    gap: 2rem;
+    padding: 3rem 1rem;
+  }
+  .img {
+    flex-basis: 13rem;
+    width: 13rem;
+  }
+  .txt {
+    padding: 0;
+  }
+  .tit {
+    margin-top: 1.2rem;
+  }
+  .info {
+    margin-top: 1.2rem;
+  }
+  .info > div {
+    flex-wrap: wrap;
+    gap: 0 0.6rem;
+  }
+  .btns {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .btn {
+    width: 100%;
+    min-width: 0;
+  }
+}
+/* 아주 좁을 때(휴대전화 + 글자 가장 크게): 사진을 위에, 글을 아래에 */
+@container rc-main (max-width: 359px) {
+  .card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .img {
+    flex-basis: auto;
+    width: 16.5rem;
+  }
+}

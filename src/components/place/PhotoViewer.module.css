@@ -1,0 +1,126 @@
+/* 사진 넘기기(궁능 gbg_story: 쪽 수 18px, 검정 80% 단추 50×50, 큰 사진 1030×489, 단추 줄 위 20, 작은 사진 202×99 테두리 3px) */
+.root {
+  margin-top: 0;
+}
+.empty {
+  margin-top: 2.8rem;
+}
+.head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  min-height: 6rem;
+  padding: 0 0 1rem 1.5rem;
+}
+.count {
+  font-size: 1.8rem;
+  line-height: 2.34rem;
+  color: var(--rc-text-faint);
+  font-variant-numeric: tabular-nums;
+}
+.count b {
+  font-weight: 500;
+  color: var(--rc-text);
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+}
+.arrows {
+  display: flex;
+}
+.arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 5rem;
+  height: 5rem;
+  border: 0;
+  background: var(--rc-ink);
+  color: var(--rc-on-ink);
+  cursor: pointer;
+}
+.arrow:hover {
+  opacity: 0.85;
+}
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+.name {
+  min-width: 0;
+  font-size: 1.8rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--rc-text);
+  word-break: keep-all;
+}
+.orig {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 5rem;
+  padding: 0 2rem;
+  border: 0.1rem solid var(--rc-ink);
+  background: var(--rc-ink);
+  font-size: 1.6rem;
+  font-weight: 500;
+  color: var(--rc-on-ink);
+}
+.orig:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+}
+/* 작은 사진 줄: 궁능 swiper_thumb01처럼 한 줄에 5칸, 나머지는 옆으로 넘긴다(높이 99 안팎) */
+.thumbs {
+  position: relative; /* 안쪽 sr-only(absolute) 글이 넘김 칸 밖으로 새어 쪽 가로 넘침을 만들지 않게 */
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: calc((100% - 2rem) / 5);
+  gap: 0.5rem;
+  margin-top: 2rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+}
+.thumbs > li {
+  scroll-snap-align: start;
+}
+.thumb {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0.3rem solid transparent;
+  background: none;
+  cursor: pointer;
+}
+.thumbOn {
+  border-color: var(--rc-line-strong);
+}
+.thumb:hover {
+  border-color: var(--rc-line);
+}
+.thumbOn:hover {
+  border-color: var(--rc-line-strong);
+}
+.kogl {
+  margin-top: 3rem;
+}
+@container rc-main (max-width: 1119px) {
+  .head {
+    padding-left: 1.5rem;
+  }
+  .bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.2rem;
+  }
+  .orig {
+    justify-content: center;
+  }
+  .thumbs {
+    grid-auto-columns: calc((100% - 1rem) / 3);
+  }
+}

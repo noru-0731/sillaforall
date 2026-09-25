@@ -1,0 +1,422 @@
+/*
+ * 관광지 서브메인(/places/[id]). 궁능 누리집 gbg_submain의 배치를 나무 파일 치수대로 옮겼다(1rem = 10px).
+ * 큰 사진 1360×606 → 관람 도우미(위 70) → 회색 판 사진 띠 4개(135 높이, 사이 50, 위아래 70) → 주변 관광지 상자(798) + 넘기기 판(532).
+ */
+
+.inner {
+  max-width: 136rem;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* ── 맨 위 큰 사진. 궁능 sub_main_visual은 0에서 1360×606으로 시작해 고정 머리(100) 밑으로 들어가
+   보이는 높이가 506이다. 제3유형 사진은 머리 밑에 가리면 안 되므로, 머리 아래에서 시작하고 높이만 506으로 줄였다. ── */
+.visual {
+  position: relative;
+  height: 50.6rem;
+  overflow: hidden;
+  background: var(--rc-bg);
+}
+.visual > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* 아래로 흰색 흐려짐: 제1유형 사진에만(제3유형은 덧씌우지 않는다) */
+.fade::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 52%, var(--rc-bg) 100%);
+  pointer-events: none;
+}
+:global([data-krds-mode="high-contrast"]) .fade::after {
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 52%, var(--rc-bg) 100%);
+}
+/* 제3유형뿐인 곳: 자르지 않고(contain) 단색 바탕 */
+.visualContain {
+  background: var(--rc-photo-dark);
+}
+.credit {
+  margin-top: 0.6rem;
+  font-size: 1.4rem;
+  line-height: 1.5;
+  color: var(--rc-text-faint);
+  text-align: right;
+}
+
+/* ── 관람 도우미(위 여백 70, 제목 칸 219 + 아이콘 6칸) ── */
+.quick {
+  padding-top: 7rem;
+}
+/* 사진 아래 출처 줄(0.6 + 2.1)이 있으면 그만큼 도우미 위 여백에서 뺀다(제목 y: 사진 끝 + 70) */
+.credit + .quick {
+  padding-top: 4.3rem;
+}
+.quickInner {
+  display: flex;
+  align-items: flex-start;
+  gap: 2rem;
+}
+.quickTit {
+  flex: 0 0 24rem;
+}
+.quickTit h2 {
+  font-size: 2.8rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--rc-text);
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+.quickTit p {
+  margin-top: 1.5rem;
+  font-size: 1.6rem;
+  line-height: 2.4rem;
+  color: var(--rc-text-sub);
+  word-break: keep-all;
+}
+.quickList {
+  flex: 1 1 auto;
+  display: flex;
+  justify-content: space-around;
+  gap: 1rem;
+  min-width: 0;
+}
+.quickList a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  min-width: 6.6rem;
+  min-height: 8.8rem;
+  color: var(--rc-text);
+  text-align: center;
+}
+.quickIco {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 5rem;
+  height: 5rem;
+}
+.quickList a span:last-child {
+  font-size: 1.8rem;
+  font-weight: 500;
+  line-height: 2.34rem;
+  white-space: nowrap;
+}
+.quickList a:hover span:last-child {
+  text-decoration: underline;
+  text-underline-offset: 0.4rem;
+}
+
+/* ── 사진 띠 4개(회색 판, 위아래 70) ── */
+.menu {
+  margin-top: 7rem;
+  padding: 7rem 0;
+  background: var(--rc-bg-bar);
+}
+.stripList {
+  display: flex;
+  flex-direction: column;
+  gap: 5rem;
+}
+.strip {
+  display: flex;
+  height: 13.5rem;
+  color: var(--rc-text);
+}
+.stripEven {
+  flex-direction: row-reverse;
+}
+.stripImg {
+  position: relative;
+  flex: 0 0 71.43%; /* 950 / 1330 */
+  overflow: hidden;
+}
+/* 제1유형 한 장: 칸에 맞춰 자른다(마우스를 올리면 조금 커짐) */
+.stripImg > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+.strip:hover .stripImg > img {
+  transform: scale(1.04);
+}
+@media (prefers-reduced-motion: reduce) {
+  .stripImg > img {
+    transition: none;
+  }
+  .strip:hover .stripImg > img {
+    transform: none;
+  }
+}
+/* 제1유형이 모자란 띠: 제3유형 사진 여러 장을 자르지 않고(contain) 띠 높이에 맞춰 나란히(필름 줄).
+   칸이 모자라면 사진이 통째로 작아진다(잘리지 않음). 남는 곳은 옅은 단색. 겹침 글자·흐림·색 덧씌움 없음. */
+.film {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  width: 100%;
+  height: 100%;
+  background: var(--rc-photo-empty);
+}
+.film img {
+  display: block;
+  flex: 0 1 auto;
+  min-width: 0;
+  width: auto;
+  height: 100%;
+  object-fit: contain;
+}
+/* 사진이 한 장도 없는 곳: 옅은 단색 판 */
+.plate {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--rc-photo-empty);
+}
+.stripTxt {
+  flex: 1 1 auto;
+  align-self: flex-end;
+  min-width: 0;
+  padding: 1rem 2rem;
+}
+.stripEven .stripTxt {
+  text-align: right;
+}
+.stripSmall {
+  display: block;
+  font-size: 1.6rem;
+  line-height: 2.08rem;
+  color: var(--rc-text-sub);
+  word-break: keep-all;
+}
+.stripBig {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 3.6rem;
+  font-weight: 700;
+  line-height: 4.68rem;
+  color: var(--rc-text);
+  word-break: keep-all;
+}
+.strip:hover .stripBig {
+  text-decoration: underline;
+  text-underline-offset: 0.6rem;
+}
+.menuCredit {
+  margin-top: 2rem;
+  font-size: 1.4rem;
+  line-height: 1.5;
+  color: var(--rc-text-faint);
+  text-align: right;
+}
+
+/* ── 주변 관광지 상자 + 넘기기 판(위 70, 아래 70) ── */
+.bd {
+  padding: 7rem 0;
+}
+.bdInner {
+  display: flex;
+  align-items: stretch;
+}
+.left {
+  flex: 0 0 60%; /* 798 / 1330 */
+  min-width: 0;
+  padding: 2rem 3rem;
+  background: var(--rc-bg-bar);
+}
+.leftHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 0.1rem solid var(--rc-text);
+}
+.leftHead h2 {
+  font-size: 2.8rem;
+  font-weight: 700;
+  line-height: 3.64rem;
+  color: var(--rc-text);
+}
+.nearList {
+  margin-top: 1rem;
+}
+/* 궁능 sub_main_bd 줄: 738×36, 안쪽 4 0, 제목 18px 500, 날짜 자리 14.8px #131313 */
+.nearList a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  min-height: 3.6rem;
+  padding: 0.4rem 0;
+  color: var(--rc-text);
+}
+.nearName {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  font-size: 1.8rem;
+  font-weight: 500;
+  line-height: 2.34rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.nearList a:hover .nearName {
+  text-decoration: underline;
+  text-underline-offset: 0.4rem;
+}
+.nearDong {
+  flex: 0 0 auto;
+  font-size: 1.48rem;
+  line-height: 1.924rem;
+  color: var(--rc-text);
+}
+.right {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── 휴대전화(≤1023): 궁능 390 치수 ── */
+@container rc-main (max-width: 1119px) {
+  .visual {
+    height: 40rem;
+  }
+  .credit {
+    padding: 0 1.5rem;
+  }
+  /* 궁능 390: 도우미 칸 위아래 60, 다음 회색 판까지 50 */
+  .quick {
+    padding: 6rem 0;
+  }
+  .credit + .quick {
+    padding-top: 3.3rem;
+  }
+  .quickInner {
+    display: block;
+  }
+  .quickTit {
+    text-align: center;
+  }
+  .quickTit h2 {
+    font-size: 2.45rem;
+  }
+  .quickTit p {
+    margin-top: 1.5rem;
+  }
+  .quickTit p br {
+    display: none;
+  }
+  .quickList {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+    margin-top: 2rem;
+  }
+  .quickList li {
+    display: flex;
+    justify-content: center;
+    padding: 1.5rem 0.4rem;
+  }
+  .quickList a span:last-child {
+    font-size: 1.6rem;
+    white-space: normal;
+    word-break: keep-all;
+  }
+  .menu {
+    margin-top: 5rem;
+    padding: 6rem 0;
+  }
+  .stripList {
+    gap: 3rem;
+  }
+  .strip,
+  .stripEven {
+    position: relative;
+    display: block;
+    height: 17rem;
+  }
+  .stripImg {
+    position: absolute;
+    inset: 0;
+  }
+  .stripTxt {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 1rem 3rem;
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 80%);
+  }
+  .stripEven .stripTxt {
+    text-align: left;
+  }
+  .stripSmall,
+  .stripBig {
+    color: #ffffff;
+  }
+  .stripSmall {
+    font-size: 1.6rem;
+  }
+  .stripBig {
+    font-size: 2.8rem;
+    line-height: 3.64rem;
+  }
+  /* 제3유형 띠: 글자를 사진 위에 얹지 않고 띠 위에 둔다(사진은 아래 17rem 칸에 자르지 않고) */
+  .stripFilm {
+    display: flex;
+    flex-direction: column-reverse;
+    height: auto;
+  }
+  .stripFilm .stripImg {
+    position: relative;
+    inset: auto;
+    height: 17rem;
+  }
+  .stripFilm .stripTxt {
+    position: static;
+    align-self: stretch;
+    padding: 0 0 1.2rem;
+    background: none;
+  }
+  .film img:nth-child(n + 3) {
+    display: none;
+  }
+  /* 사진 없는 띠: 옅은 판 위에 진한 글자(덧씌움 없음) */
+  .stripPlain .stripTxt {
+    background: none;
+  }
+  .stripFilm .stripSmall,
+  .stripPlain .stripSmall {
+    color: var(--rc-text-sub);
+  }
+  .stripFilm .stripBig,
+  .stripPlain .stripBig {
+    color: var(--rc-text);
+  }
+  .bd {
+    padding: 3rem 0 6rem;
+  }
+  .bdInner {
+    display: block;
+  }
+  .left {
+    padding: 2rem;
+  }
+  .leftHead h2 {
+    font-size: 2.45rem;
+  }
+  .right {
+    margin-top: 2rem;
+  }
+}

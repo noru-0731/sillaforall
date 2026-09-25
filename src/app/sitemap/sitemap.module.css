@@ -1,0 +1,100 @@
+/* 사이트맵(궁능 나무 sitemap_1440): 위아래 2px #0a134f, 1차 칸 폭 140 #f8f8f8 18px 700,
+   2차 목록 칸 여백 40, 한 칸 폭 173 사이 40, 2차 18px 500(줄 23.4), 2차 아래 18에서 3차 시작,
+   3차 16px #333 줄 20.8, 한 줄 간격 29(사이 8), "- " 앞 글자 */
+.wrap {
+  border-top: 0.2rem solid var(--rc-sitemap-line);
+  border-bottom: 0.2rem solid var(--rc-sitemap-line);
+}
+.group {
+  display: flex;
+}
+.group + .group {
+  border-top: 0.2rem solid var(--rc-line-light);
+}
+.d1 {
+  flex: 0 0 14rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  background: var(--rc-bg-table);
+  font-size: 1.8rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--rc-text);
+  text-align: center;
+}
+.cols {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 4rem 4rem;
+  padding: 4rem;
+}
+.d2 {
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  font-size: 1.8rem;
+  font-weight: 500;
+  line-height: 2.34rem;
+  color: var(--rc-text);
+}
+.d3 {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-top: 1.8rem;
+}
+.d3 a {
+  display: flex; /* 궁능 depth3__a: 칸 폭 전체(173), 높이 21 */
+  align-items: center;
+  font-size: 1.6rem;
+  line-height: 2.08rem;
+  color: var(--rc-text-sub);
+  max-width: 100%;
+  overflow-wrap: anywhere; /* 글자를 크게 해도 긴 이름이 칸 밖으로 나가지 않게 */
+}
+.d3 a::before {
+  content: "-";
+  line-height: inherit; /* 전역 ::before 줄 높이(24)가 줄을 키우지 않게 */
+  margin-right: 0.6rem;
+}
+.d2:hover,
+.d3 a:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+}
+
+@container rc-main (max-width: 1119px) {
+  .group {
+    flex-direction: column;
+  }
+  .d1 {
+    flex: 0 0 auto;
+    min-height: 7rem;
+  }
+  .cols {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2.4rem 2rem;
+    padding: 2.4rem 2rem 3rem;
+  }
+}
+
+/* 관광지 목록의 권역 칸: 한 줄을 다 쓰고 관광지 이름을 4칸으로 흘린다 */
+.wide {
+  grid-column: 1 / -1;
+}
+.wide .d3 {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: 4rem;
+  row-gap: 0.8rem;
+}
+@container rc-main (max-width: 1119px) {
+  .wide .d3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 2rem;
+  }
+}

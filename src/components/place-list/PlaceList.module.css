@@ -1,0 +1,77 @@
+/*
+ * 관광지 목록 한 줄과 목록 쪽 부품.
+ * 바탕은 KRDS 구조화 목록(type-full). 여기서는 사진 칸과 좁은 화면의 배치만 더한다.
+ * 값은 모두 KRDS 토큰(--krds-*)과 사이트 변수(--site-*).
+ */
+
+/* 목록 한 줄: 사진 칸 + 글 칸. KRDS 규칙보다 앞서도록 클래스를 겹쳐 쓴다. */
+.list .item.item {
+  align-items: flex-start;
+}
+.list .item .body {
+  flex: 1 1 0;
+  min-width: 0;
+  width: auto;
+}
+
+/* 이름 아래 덧붙임 */
+.extra {
+  font-size: var(--krds-pc-font-size-body-medium);
+  line-height: 1.6;
+  color: var(--site-text);
+}
+
+/* 쪽 안 바로가기 줄 */
+.jump {
+  margin-bottom: var(--krds-gap-9);
+}
+
+/* 초성 바로가기: 글자 하나라 칸을 넓히고 글자를 키운다 */
+.jump .letter.letter.letter {
+  justify-content: center;
+  min-width: var(--krds-size-height-6);
+  font-size: var(--krds-pc-font-size-heading-small);
+}
+
+/* 묶음 제목 옆 곳 수 */
+.count {
+  margin-left: var(--krds-gap-3);
+  font-weight: var(--krds-font-weight-regular);
+  color: var(--site-text-subtle);
+}
+
+/* 사진 출처 */
+.credit {
+  margin-top: var(--krds-gap-9);
+  font-size: var(--krds-pc-font-size-body-small);
+  color: var(--site-text-subtle);
+}
+
+/* 명부 글: 줄바꿈을 그대로 */
+.regText {
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+@container rc-main (max-width: 767px) {
+  .list .item.item {
+    flex-wrap: nowrap;
+    column-gap: var(--krds-gap-5);
+  }
+  .thumb {
+    width: var(--krds-number-21);
+  }
+  .extra {
+    font-size: var(--krds-mobile-font-size-body-medium);
+  }
+  .jump {
+    margin-bottom: var(--krds-gap-7);
+  }
+  .jump .letter.letter.letter {
+    font-size: var(--krds-mobile-font-size-heading-small);
+  }
+  .credit {
+    margin-top: var(--krds-gap-7);
+    font-size: var(--krds-mobile-font-size-body-small);
+  }
+}

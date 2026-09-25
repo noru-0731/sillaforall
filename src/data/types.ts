@@ -36,3 +36,10 @@ export type Place = {
 
 export type Box = { lon0: number; lon1: number; lat0: number; lat1: number };
 export type Region = { name: string; lon: number; lat: number; n: number; kind: "읍면" | "동" };
+
+/** 읍면동 경계선(boundary.json). 만드는 곳: 05_사이트/도구/02_경계.py */
+export type Unit = { name: string; rings: [number, number][][] };
+
+/** 권역(지도 탭 하나). 이름과 나눔은 임시 */
+export type AreaKey = "city" | "bomun" | "east" | "southwest" | "north";
+export type Area = { key: AreaKey; label: string; dongs: string[]; placeIds: string[]; box: Box };

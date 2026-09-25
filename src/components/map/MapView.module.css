@@ -1,0 +1,586 @@
+/*
+ * 지도 부품 모양: 궁능유적본부 누리집 관람코스 지도 틀(course_1440 나무 파일)을 보고 우리 CSS로 새로 씀.
+ * - 지도 상자: 1px 테두리 rgb(218,218,218)→--rc-line, 둥글기 20, PC 넓은 칸 1030×693
+ * - 오른쪽 위 세로 단추: 궁능 32×32 #222, 위·오른쪽 16
+ * - 범례 줄: 궁능 amenities 줄 24 높이, 사이 3, 글자 14.4px, 색 칸 24×24
+ * - 왼쪽 범례: 궁능은 지도 안 왼쪽(왼쪽 20, 아래 20) 세로 줄. 좁은 칸(휴대전화)에서는 지도 아래 둥근 상자
+ * 색은 --rc-* 변수만(선명한 화면 모드에서 바뀜). 점 크기(rem)는 MapView.tsx의 R_* 값(px)과 짝이다.
+ */
+.root {
+  /* 권역 다섯 곳의 옅은 칠: 권역 색(알약과 같은 색)을 바탕색에 섞는다 */
+  --map-city: color-mix(in srgb, var(--rc-area-city) 20%, var(--rc-bg));
+  --map-bomun: color-mix(in srgb, var(--rc-area-bomun) 20%, var(--rc-bg));
+  --map-east: color-mix(in srgb, var(--rc-area-east) 20%, var(--rc-bg));
+  --map-southwest: color-mix(in srgb, var(--rc-area-southwest) 20%, var(--rc-bg));
+  --map-north: color-mix(in srgb, var(--rc-area-north) 20%, var(--rc-bg));
+  --map-outside: var(--rc-bg-bar);
+  --map-line: var(--rc-line-table);
+  --map-halo: var(--rc-bg);
+  --map-on: var(--rc-seg); /* 무장애 정보가 적힌 곳 점(궁능 행사 점 색 rgb(23,16,110)) */
+  --map-hl: var(--rc-pink);
+
+  position: relative;
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+  min-width: 0;
+}
+
+.probe {
+  position: absolute;
+  visibility: hidden;
+  pointer-events: none;
+  height: 0;
+  overflow: hidden;
+}
+.areaProbe {
+  font-size: 1.7rem;
+}
+.unitProbe {
+  font-size: 1.5rem;
+}
+
+/* 지도 틀 */
+.frame {
+  position: relative;
+  width: 100%;
+  min-height: 28rem;
+  overflow: hidden;
+  background: var(--map-outside);
+  border: 0.1rem solid var(--rc-line);
+  border-radius: 2rem;
+  touch-action: pan-y pinch-zoom;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.frameAspect {
+  aspect-ratio: var(--map-ar, 1 / 1);
+  width: min(100%, calc(min(72vh, 80rem) * var(--map-arn, 1)));
+  max-height: min(72vh, 80rem);
+  margin-inline: auto;
+}
+.frameFixed {
+  /* 높이는 height 속성(인라인)이 정한다 */
+  max-height: none;
+}
+.plain {
+  border: 0;
+  border-radius: 0;
+  background: var(--rc-bg);
+}
+.frame:focus {
+  outline: none;
+  box-shadow: none;
+}
+.zoomed {
+  touch-action: pinch-zoom;
+  cursor: grab;
+}
+.dragging {
+  cursor: grabbing;
+}
+.svg {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+.overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* 넓은 칸(궁능 관람코스 1030 폭): 폭 100%, 높이 693, 범례는 지도 안 왼쪽 아래 */
+@container (min-width: 80rem) {
+  .big .frameAspect {
+    aspect-ratio: auto;
+    width: 100%;
+    height: 69.3rem;
+    max-height: none;
+  }
+  .big .legend {
+    position: absolute;
+    left: 2rem;
+    bottom: 2rem;
+    z-index: 2;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: 0.3rem;
+    width: 22rem;
+    padding: 1.2rem 1.4rem;
+    border: 0.1rem solid var(--rc-line-light);
+    border-radius: 1rem;
+    background: color-mix(in srgb, var(--rc-bg) 92%, transparent);
+  }
+}
+
+/* 오른쪽 위 세로 단추(+ − ↻) */
+.controls {
+  position: absolute;
+  top: 1.6rem;
+  right: 1.6rem;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 0.4rem;
+}
+.ctrl {
+  display: grid;
+  place-items: center;
+  width: 3.2rem;
+  height: 3.2rem;
+  padding: 0;
+  border: 0;
+  background: var(--rc-ink);
+  color: var(--rc-on-ink);
+  cursor: pointer;
+}
+.ctrl + .ctrl {
+  border-top: 0.1rem solid color-mix(in srgb, var(--rc-on-ink) 25%, var(--rc-ink));
+}
+.ctrl:hover {
+  background: color-mix(in srgb, var(--rc-ink) 80%, var(--rc-on-ink));
+}
+.ctrl[aria-disabled="true"] {
+  cursor: default;
+  color: color-mix(in srgb, var(--rc-on-ink) 45%, var(--rc-ink));
+  background: var(--rc-ink);
+}
+
+/* 읍면동 경계 */
+.unit {
+  fill: var(--rc-bg);
+  stroke: var(--map-line);
+  stroke-width: 1;
+}
+.unitHere {
+  stroke: var(--rc-text-faint);
+}
+.unitLine {
+  fill: none;
+  stroke: var(--map-line);
+  stroke-width: 1;
+  pointer-events: none;
+}
+.fill_city {
+  fill: var(--map-city);
+}
+.fill_bomun {
+  fill: var(--map-bomun);
+}
+.fill_east {
+  fill: var(--map-east);
+}
+.fill_southwest {
+  fill: var(--map-southwest);
+}
+.fill_north {
+  fill: var(--map-north);
+}
+
+/* 권역 링크(경주 전체) 또는 거르기 단추(목록 쪽) */
+.areaLink {
+  cursor: pointer;
+}
+.areaLink:focus {
+  outline: none;
+  box-shadow: none;
+}
+.areaShape {
+  stroke: none;
+  transition: opacity 0.15s;
+}
+.areaLink:hover .areaShape {
+  filter: brightness(0.94);
+}
+.areaLink:focus-visible .areaShape,
+.areaShapeOn {
+  stroke: var(--rc-text);
+  stroke-width: 3;
+}
+.areaLink:focus-visible .areaShape {
+  stroke: var(--rc-focus);
+  stroke-width: 4;
+}
+.areaDim {
+  opacity: 0.35;
+}
+.areaTag {
+  pointer-events: none;
+}
+.areaTag rect {
+  fill: var(--rc-bg);
+  stroke: var(--c, var(--rc-line));
+  stroke-width: 1;
+}
+.areaTag text {
+  font-size: 1.7rem;
+  font-weight: 700;
+  fill: var(--c, var(--rc-text));
+}
+.areaTagOn rect {
+  stroke-width: 3;
+}
+
+/* 읍면동 이름(권역 지도) */
+.unitLabel {
+  font-size: 1.5rem;
+  fill: var(--rc-text-faint);
+  paint-order: stroke;
+  stroke: var(--map-halo);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+/* 점: 누름 영역 4.4rem, 보이는 점은 그보다 작다 */
+.hit,
+.pin {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 4.4rem;
+  height: 4.4rem;
+  margin: -2.2rem 0 0 -2.2rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+}
+.hit {
+  pointer-events: auto;
+  cursor: pointer;
+}
+.hitOther {
+  z-index: 0;
+}
+.hit:not(.hitOther) {
+  z-index: 1;
+}
+.hitEmph {
+  z-index: 2;
+}
+.hitHl {
+  z-index: 3;
+}
+.faint {
+  opacity: 0.55;
+}
+.dim {
+  opacity: 0.35;
+}
+
+.dotWrap {
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+}
+.dot {
+  display: block;
+  box-sizing: border-box;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
+}
+.dotOn {
+  background: var(--map-on);
+  border: 0.2rem solid var(--rc-bg);
+  box-shadow: 0 0 0 0.1rem var(--map-on);
+}
+.dotOff {
+  background: var(--rc-bg);
+  border: 0.3rem solid var(--map-on);
+}
+.dotOther {
+  width: 1.2rem;
+  height: 1.2rem;
+  background: var(--rc-text-faint);
+  border: 0.2rem solid var(--rc-bg);
+}
+.dotHl {
+  width: 2.4rem;
+  height: 2.4rem;
+  background: var(--map-hl);
+  border: 0.3rem solid var(--rc-bg);
+  box-shadow: 0 0 0 0.2rem var(--map-hl);
+}
+/* 거점 관광지: 점 둘레에 분홍 고리 */
+.emph {
+  padding: 0.3rem;
+  background: var(--rc-bg);
+  box-shadow: 0 0 0 0.3rem var(--map-hl);
+}
+.selected .dot {
+  box-shadow: 0 0 0 0.2rem var(--rc-bg), 0 0 0 0.35rem var(--rc-text);
+}
+.hit:hover .dot {
+  transform: scale(1.2);
+}
+
+/* 묶음 점: 숫자 = 모인 곳 수 */
+.bubble {
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  min-width: 3.4rem;
+  height: 3.4rem;
+  padding: 0 0.8rem;
+  border-radius: 99rem;
+  background: var(--rc-ink);
+  border: 0.2rem solid var(--rc-bg);
+  color: var(--rc-on-ink);
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1;
+}
+.bubbleOther {
+  background: var(--rc-text-faint);
+}
+.bubbleEmph {
+  box-shadow: 0 0 0 0.3rem var(--map-hl);
+}
+/* 고른 곳이 묶음 안에 있을 때: 분홍 바탕 */
+.bubbleHl {
+  background: var(--map-hl);
+}
+.hit:hover .bubble {
+  background: var(--map-on);
+}
+.bubbleSwatch {
+  min-width: 2.4rem;
+  height: 2.4rem;
+}
+
+/* 이름표 */
+.label {
+  position: absolute;
+  padding: 0 0.3rem;
+  white-space: nowrap;
+  font-size: 1.6rem;
+  font-weight: 500;
+  color: var(--rc-text);
+  text-shadow:
+    0 0 0.2rem var(--map-halo),
+    0.1rem 0.1rem 0 var(--map-halo),
+    -0.1rem -0.1rem 0 var(--map-halo),
+    0.1rem -0.1rem 0 var(--map-halo),
+    -0.1rem 0.1rem 0 var(--map-halo),
+    0 0 0.3rem var(--map-halo);
+  pointer-events: none;
+}
+.labelOther {
+  font-weight: 400;
+  color: var(--rc-text-faint);
+}
+.labelEmph {
+  font-weight: 700;
+}
+.labelHl {
+  font-weight: 700;
+  color: var(--rc-text);
+}
+
+/* 모서리(왼쪽 위): 방위표와 축척. 궁능은 왼쪽 위에 방위표가 있다 */
+.corner {
+  position: absolute;
+  left: 1.6rem;
+  top: 1.6rem;
+  display: flex;
+  align-items: flex-end;
+  gap: 1.6rem;
+  font-size: 1.5rem;
+  color: var(--rc-text);
+  text-shadow: 0 0 0.3rem var(--map-halo);
+  pointer-events: none;
+}
+.north {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  line-height: 1;
+}
+.north svg {
+  fill: var(--rc-text);
+}
+.scale {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  line-height: 1;
+}
+.scaleBar {
+  display: block;
+  height: 0.6rem;
+  border: 0.2rem solid var(--rc-text);
+  border-top: 0;
+}
+
+/* 정보 창: 오른쪽 위(단추 칸 왼쪽) */
+.panel {
+  position: absolute;
+  top: 1.6rem;
+  right: 6.4rem;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  width: min(34rem, calc(100% - 8rem));
+  padding: 2.4rem;
+  background: var(--rc-bg);
+  border: 0.1rem solid var(--rc-text);
+  box-shadow: 0 0.4rem 1.2rem rgba(0, 0, 0, 0.12);
+}
+.panelTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--rc-text);
+}
+.panelMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1rem;
+  font-size: 1.6rem;
+  color: var(--rc-text-sub);
+}
+.panelArea {
+  font-weight: 600;
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.8rem;
+  padding: 0 1.2rem;
+  border-radius: 1.4rem;
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+.badgeOn {
+  background: var(--map-on);
+  color: var(--rc-bg);
+}
+.badgeOff {
+  background: var(--rc-bg-bar);
+  color: var(--rc-text-sub);
+  border: 0.1rem solid var(--rc-line);
+}
+.panelActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-top: 0.8rem;
+}
+.btnInk,
+.btnLine {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 10rem;
+  min-height: 4.4rem;
+  padding: 0 1.6rem;
+  border: 0.1rem solid var(--rc-ink);
+  font-size: 1.6rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+.btnInk {
+  background: var(--rc-ink);
+  color: var(--rc-on-ink);
+}
+.btnLine {
+  background: var(--rc-bg);
+  color: var(--rc-text);
+}
+.btnInk:hover,
+.btnLine:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+}
+.panelList {
+  display: flex;
+  flex-direction: column;
+  border-top: 0.1rem solid var(--rc-line-light);
+}
+.panelList button {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 4.4rem;
+  padding: 0 0.4rem;
+  border: 0;
+  border-bottom: 0.1rem solid var(--rc-line-light);
+  background: none;
+  font-size: 1.7rem;
+  color: var(--rc-text);
+  text-align: left;
+  cursor: pointer;
+}
+.panelList button:hover {
+  text-decoration: underline;
+}
+
+/* 범례: 좁은 칸에서는 지도 아래 둥근 상자(궁능 휴대전화 모양) */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 2.4rem;
+  padding: 1.6rem 2rem;
+  border: 0.1rem solid var(--rc-line);
+  border-radius: 2rem;
+  font-size: 1.44rem;
+  line-height: 2.4rem;
+  color: var(--rc-text-sub);
+}
+.legend li {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+.swatch {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 2.4rem;
+  height: 2.4rem;
+}
+.swatchArea {
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 0.4rem;
+  background: linear-gradient(
+    90deg,
+    var(--map-city) 0 20%,
+    var(--map-bomun) 20% 40%,
+    var(--map-east) 40% 60%,
+    var(--map-southwest) 60% 80%,
+    var(--map-north) 80% 100%
+  );
+  border: 0.1rem solid var(--map-line);
+}
+
+@container rc-main (max-width: 767px) {
+  .frame {
+    border-radius: 1.6rem;
+  }
+  .label {
+    font-size: 1.5rem;
+  }
+  .panel {
+    position: static;
+    width: auto;
+    padding: 2rem;
+  }
+  .legend {
+    padding: 1.4rem 1.6rem;
+    border-radius: 1.6rem;
+  }
+}
+
+/* 권역 칸(SVG)은 모양 둘레에 초점 선을 그리므로 틀의 네모 초점 선은 끈다 */
+:global(#wrap) .areaLink:focus-visible {
+  outline: none;
+}

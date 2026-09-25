@@ -1,0 +1,544 @@
+/*
+ * 무장애 정보 쪽들(보는 법, 정보가 적힌 곳, 정보가 없는 곳).
+ * 궁능 누리집 관람규칙(rules)·한복 가이드라인(hanbok)·공지사항(notice) 쪽의 배치·크기를 보고 새로 썼다.
+ * 치수는 레퍼런스 스크린샷(PC 1440)에서 잰 px를 rem으로(1rem = 10px). 색은 모두 var(--rc-*).
+ */
+
+/* ───────── 보는 법: 맨 위 회색 안내 상자(rules 571~777, 1px #eaeaea, 바탕 #f8f8f8, 안쪽 30) ───────── */
+.intro {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  padding: 4.3rem 3rem 4.2rem;
+  border: 0.1rem solid var(--rc-line-light);
+  background: var(--rc-bg-table);
+}
+.introBody {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.introTit {
+  margin-bottom: 3.2rem;
+  font-size: 2.6rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--rc-text);
+}
+.intro p.introTxt {
+  font-size: 1.8rem;
+  line-height: 2.8rem;
+  color: var(--rc-text);
+  word-break: keep-all;
+}
+/* 오른쪽 그림 자리(궁능은 확성기 그림, 우리는 직접 그린 선 아이콘) */
+.introIcon {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 15rem;
+  height: 15rem;
+  margin-right: 1.5rem;
+  border-radius: 50%;
+  background: var(--rc-bg);
+  border: 0.1rem solid var(--rc-line-light);
+  color: var(--rc-text);
+}
+
+/* ───────── 장 바로가기 격자(rules 808~955: 4칸, 칸 250×68, 사이 10, 1px #131313, 둥글기 8, "제1장" 14px + 장 이름 16px) ───────── */
+.chapters {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 3rem;
+}
+.chapter {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  min-height: 6.8rem;
+  height: 100%;
+  padding: 1rem 1.2rem;
+  border: 0.1rem solid var(--rc-ink);
+  border-radius: 0.8rem;
+  background: var(--rc-bg);
+  text-align: center;
+  color: var(--rc-text);
+}
+.chapter:hover {
+  background: var(--rc-bg-table);
+}
+.chapter:hover .chapterName {
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+}
+.chapterNo {
+  font-size: 1.4rem;
+  line-height: 1.3;
+  color: var(--rc-text-faint);
+}
+.chapterName {
+  font-size: 1.6rem;
+  font-weight: 500;
+  line-height: 1.35;
+  word-break: keep-all;
+}
+
+/* 장 제목(h2)은 공통 Section(26px 700). 쪽 안 이동 때 고정 머리에 가리지 않게 */
+.anchor {
+  scroll-margin-top: calc(var(--rc-header-h) + 2rem);
+}
+
+/* ───────── 조(h3) + 검정 윗선 상자(rules: h3 20px 700, 상자 윗선 2px #131313, 둘레 1px #eaeaea, 안쪽 30, 본문 16px 줄 24) ───────── */
+.article + .article {
+  margin-top: 3.2rem;
+}
+.artTit {
+  margin-bottom: 2.6rem;
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--rc-text);
+}
+.artBox {
+  padding: 3rem 3rem 3.2rem;
+  border: 0.1rem solid var(--rc-line-light);
+  border-top: 0.2rem solid var(--rc-ink);
+}
+.artBox p {
+  font-size: 1.6rem;
+  line-height: 2.4rem;
+  color: var(--rc-text-sub);
+  word-break: keep-all;
+}
+.artBox p + p,
+.artBox p + .numList,
+.artBox .numList + p {
+  margin-top: 1.4rem;
+}
+.artBox :global(.rc-tips) {
+  margin-top: 1.8rem;
+}
+
+/* 번호 목록(rules 제2조: 1. 2. … 안으로 36 들임, 15px) */
+.numList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding-left: 3.6rem;
+  counter-reset: num;
+}
+.numList > li {
+  position: relative;
+  padding-left: 2rem;
+  font-size: 1.5rem;
+  line-height: 1.5;
+  color: var(--rc-text-sub);
+  counter-increment: num;
+  word-break: keep-all;
+}
+.numList > li::before {
+  content: counter(num) ".";
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+/* ───────── 제1장 표(hanbok: 구분 26% / 세부내용, 칸 글 15px) ───────── */
+.kind {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+  font-weight: 500;
+  color: var(--rc-text);
+}
+.kind svg {
+  color: var(--rc-text);
+}
+.detail {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.6rem 0;
+  font-size: 1.5rem;
+  line-height: 1.5;
+  color: var(--rc-text-sub);
+  text-align: left;
+  word-break: keep-all;
+}
+.detail .sample {
+  display: inline-block;
+  margin-top: 0.4rem;
+  padding: 0.6rem 1.2rem;
+  background: var(--rc-bg-table);
+  border: 0.1rem solid var(--rc-line-light);
+  color: var(--rc-text);
+}
+.detailTip {
+  padding-left: 1.6rem;
+}
+.detailTip::before {
+  content: "※ ";
+  margin-left: -1.6rem;
+}
+/* 표 아래 * 줄(hanbok 416) */
+.footnote {
+  margin-top: 2.2rem;
+  font-size: 1.6rem;
+  line-height: 1.5;
+  color: var(--rc-text);
+}
+/* 이 쪽 표: 세부내용 칸 위아래 여백을 조금 더 */
+.guideTable :global(.rc-board) td {
+  padding-top: 1.2rem;
+  padding-bottom: 1.2rem;
+}
+/* 가이드라인 표의 "구분" 칸은 흰 바탕(궁능 hanbok) */
+.guideTable :global(.rc-board) tbody th {
+  background: none;
+  border-bottom: 0.1rem solid var(--rc-line-light);
+}
+/* 줄 머리 칸 아랫선이 표 아랫선(#aeaeae)을 덮지 않게 */
+.guideTable :global(.rc-board) tbody tr:last-child th,
+.summary :global(.rc-board) tbody tr:last-child th {
+  border-bottom: 0;
+}
+
+/* ───────── 제4장 숫자 표 + 두 쪽으로 가는 단추 ───────── */
+.summary {
+  max-width: 64rem;
+}
+.summary :global(.rc-board) td:last-child {
+  font-variant-numeric: tabular-nums;
+}
+.moreLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 3rem;
+}
+/* 궁능 공지사항 "검색" 단추 모양(검정, 높이 50, 둥글기 25) */
+.moreLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  min-height: 5rem;
+  padding: 0 2.6rem 0 3rem;
+  border-radius: 2.5rem;
+  background: var(--rc-ink);
+  color: var(--rc-on-ink);
+  font-size: 1.6rem; /* 궁능 "검색" 단추 16px */
+  font-weight: 500;
+}
+.moreLink:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+}
+
+/* ───────── 게시판(notice): 곳 수 + 검색 줄 ───────── */
+/* 궁능: 줄 높이 50, 왼쪽 "전체: 785건" 16px 500, 오른쪽 [선택 130][입력 320] 사이 15 [검색 120] */
+.cond {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+}
+.count {
+  font-size: 1.6rem; /* 궁능 "전체: 785건" 16px 500 */
+  font-weight: 500;
+  color: var(--rc-text-sub);
+}
+.count strong {
+  font-weight: 700;
+  color: var(--rc-text);
+}
+.search {
+  display: flex;
+  align-items: stretch;
+  gap: 1.5rem;
+}
+.searchBox {
+  display: flex;
+  align-items: stretch;
+  height: 5rem;
+  border-radius: 2.5rem;
+  background: var(--rc-line-light);
+}
+.select {
+  width: 13rem;
+  height: 5rem;
+  padding: 0 3rem 0 2rem;
+  border: 0;
+  border-radius: 2.5rem 0 0 2.5rem;
+  background: transparent;
+  font: inherit;
+  font-size: 1.6rem;
+  color: var(--rc-text);
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.selectWrap {
+  position: relative;
+  display: flex;
+}
+.selectWrap svg {
+  position: absolute;
+  right: 1.2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--rc-text);
+}
+.input {
+  width: 32rem;
+  height: 5rem;
+  padding: 0 2.5rem;
+  border: 0;
+  border-radius: 0 2.5rem 2.5rem 0;
+  background: transparent;
+  font: inherit;
+  font-size: 1.6rem;
+  color: var(--rc-text);
+}
+.input::placeholder {
+  color: var(--rc-text-faint);
+  opacity: 1;
+}
+.submit {
+  flex: 0 0 auto;
+  width: 12rem;
+  height: 5rem;
+  border: 0;
+  border-radius: 2.5rem;
+  background: var(--rc-ink);
+  color: var(--rc-on-ink);
+  font: inherit;
+  font-size: 1.6rem; /* 궁능 "검색" 단추 120×50 16px */
+  font-weight: 500;
+  cursor: pointer;
+}
+.submit:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+}
+:global([data-krds-mode="high-contrast"]) .searchBox {
+  background: var(--rc-bg-table);
+  box-shadow: inset 0 0 0 0.1rem var(--rc-line);
+}
+
+/* ───────── 게시판 표(notice: 검색 줄 아래 60, 윗선 2px, 칸 55) ───────── */
+.boardWrap {
+  margin-top: 6rem;
+}
+.board th[scope="col"] {
+  white-space: nowrap;
+}
+/* 관광지 칸은 줄 머리(th)지만 궁능 제목 칸처럼 흰 바탕·보통 굵기·왼쪽 정렬 */
+.board tbody th {
+  background: none;
+  font-weight: 500;
+  text-align: left;
+  border-bottom: 0.1rem solid var(--rc-line-light);
+  border-left: 0.1rem solid var(--rc-line-light);
+  padding: 0.5rem 2rem;
+}
+/* 줄 높이 55(궁능 notice 칸 55, 제목 링크는 글자 줄 높이) */
+.board tbody td {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+.board tbody tr:last-child th {
+  border-bottom: 0;
+}
+.board tbody th a {
+  display: inline-flex;
+  align-items: center;
+  color: var(--rc-text);
+}
+.board tbody th a:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+}
+.num {
+  font-variant-numeric: tabular-nums;
+}
+/* 권역: 궁능 "담당부서" 칸처럼 궁(권역) 색 굵은 글자 */
+.area {
+  font-weight: 700;
+  color: var(--c, var(--rc-text));
+  white-space: nowrap;
+}
+/* ○ / − 표시 */
+.mark {
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--rc-text);
+}
+.markOff {
+  color: var(--rc-text-faint);
+}
+.board td.near {
+  text-align: left;
+}
+.empty {
+  padding: 4rem 2rem !important;
+  text-align: center;
+  color: var(--rc-text-sub);
+}
+.tips {
+  margin-top: 3rem;
+}
+
+/* 좁은 화면 목록(notice 390: 권역 작은 굵은 글자 → 이름 → 표시 줄) */
+.mList {
+  display: none;
+}
+
+@container rc-main (max-width: 1119px) {
+  .intro {
+    padding: 3rem 2.4rem;
+  }
+  .introIcon {
+    width: 11rem;
+    height: 11rem;
+    margin-right: 0;
+  }
+  .introIcon svg {
+    width: 7rem;
+    height: 7rem;
+  }
+  .chapters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .cond {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2rem;
+  }
+  .search {
+    gap: 1rem;
+  }
+  .searchBox {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .select {
+    width: 9.6rem;
+    padding-left: 1.6rem;
+    padding-right: 2.8rem;
+  }
+  .selectWrap svg {
+    right: 1rem;
+  }
+  .input {
+    flex: 1 1 0;
+    width: 0; /* 글자 크게에서도 입력 칸이 줄을 밀어내지 않게 */
+    min-width: 0;
+    padding: 0 1.4rem 0 0.6rem;
+  }
+  .submit {
+    width: 7.2rem;
+  }
+  .boardWrap {
+    margin-top: 3.4rem;
+  }
+}
+
+@container rc-main (max-width: 767px) {
+  .intro {
+    flex-direction: column-reverse;
+    align-items: flex-start;
+    gap: 2rem;
+  }
+  .introIcon {
+    width: 8rem;
+    height: 8rem;
+  }
+  .introIcon svg {
+    width: 5rem;
+    height: 5rem;
+  }
+  .introTit {
+    margin-bottom: 1.6rem;
+    font-size: 2.2rem;
+  }
+  .intro p.introTxt {
+    font-size: 1.7rem;
+    line-height: 1.6;
+  }
+  .chapterName {
+    font-size: 1.6rem;
+  }
+  .artTit {
+    margin-bottom: 1.6rem;
+    font-size: 2rem;
+  }
+  .artBox {
+    padding: 2rem 1.8rem 2.2rem;
+  }
+  .numList {
+    padding-left: 0.4rem;
+  }
+  .moreLink {
+    flex: 1 1 100%;
+    justify-content: center;
+  }
+
+  /* 표 대신 목록 */
+  .boardTable {
+    display: none;
+  }
+  .mList {
+    display: block;
+    border-top: 0.2rem solid var(--rc-line-strong);
+    border-bottom: 0.1rem solid var(--rc-line-table);
+  }
+  .mItem {
+    padding: 1.5rem 1.5rem 1.6rem;
+    border-bottom: 0.1rem solid var(--rc-line-light);
+  }
+  .mItem:last-child {
+    border-bottom: 0;
+  }
+  .mItem .area {
+    display: block;
+    font-size: 1.5rem;
+    line-height: 1.4;
+  }
+  .mName {
+    display: inline-flex;
+    align-items: center;
+    min-height: 4.4rem;
+    font-size: 1.8rem;
+    font-weight: 500;
+    line-height: 1.35;
+    color: var(--rc-text);
+  }
+  .mName:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.3rem;
+  }
+  .mMeta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.6rem;
+    font-size: 1.6rem;
+    line-height: 1.5;
+    color: var(--rc-text-sub);
+  }
+  .mMeta .mark {
+    margin-left: 0.4rem;
+    font-size: 1.7rem;
+  }
+  .mEmpty {
+    padding: 3rem 1.5rem;
+    text-align: center;
+    font-size: 1.6rem;
+    color: var(--rc-text-sub);
+  }
+}

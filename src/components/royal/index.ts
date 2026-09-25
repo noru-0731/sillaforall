@@ -1,0 +1,8 @@
+// 공통 부품 모음. import { PillTabs, Photo, ... } from "@/components/royal";
+export { default as PillTabs, SegTabs } from "./PillTabs";
+export type { PillItem } from "./PillTabs";
+export { default as BoardTable } from "./BoardTable";
+export { BlackBar, IconHeading, OffsetPhoto, InfoBox, CircleButton, TipList } from "./Bits";
+export { default as Photo } from "./Photo";
+export { default as KoglBox } from "./KoglBox";
+export { default as Slider } from "./Slider";

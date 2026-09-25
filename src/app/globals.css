@@ -1,23 +1,1750 @@
-@import "tailwindcss";
+/*
+ * 이 사이트의 공통 틀 CSS.
+ * 화면 모양은 국가유산청 궁능유적본부 누리집(royal.khs.go.kr)의 배치·크기·색을 보고 새로 썼다(그 사이트의 CSS·그림은 쓰지 않음).
+ * 치수는 레퍼런스 나무 파일(05_사이트/레퍼런스/궁능_포맷/나무)의 px 값을 rem으로 옮겼다(html 62.5%, 1rem = 10px).
+ * 공통 틀 클래스는 모두 rc- 로 시작한다. 쪽마다의 모양은 각 쪽의 CSS Module에 둔다.
+ */
 
-@theme inline {
-  --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+/* Pretendard GOV: KRDS 키트에 든 글꼴(부분 글꼴) */
+@font-face {
+  font-family: "Pretendard GOV";
+  font-weight: 400;
+  font-display: swap;
+  src: url("/krds/fonts/PretendardGOV-Regular.subset.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Pretendard GOV";
+  font-weight: 500;
+  font-display: swap;
+  src: url("/krds/fonts/PretendardGOV-Medium.subset.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Pretendard GOV";
+  font-weight: 700;
+  font-display: swap;
+  src: url("/krds/fonts/PretendardGOV-Bold.subset.woff2") format("woff2");
 }
 
-html {
-  font-size: 100%;
-  -webkit-text-size-adjust: 100%;
+/* ───────────────────────── 색 변수 ───────────────────────── */
+
+/* KRDS 토큰을 한 번 더 묶은 것(예전 쪽들이 씀). 선명한 화면 모드에서도 바뀐다. */
+:root {
+  --site-text: var(--krds-light-color-text-basic);
+  --site-text-bolder: var(--krds-light-color-text-bolder);
+  --site-text-subtle: var(--krds-light-color-text-subtle);
+  --site-text-primary: var(--krds-light-color-text-primary);
+  --site-text-point: var(--krds-light-color-text-point);
+  --site-border: var(--krds-light-color-border-gray-light);
+  --site-border-strong: var(--krds-light-color-border-gray);
+  --site-divider: var(--krds-light-color-divider-gray-light);
+  --site-surface: var(--krds-light-color-surface-white);
+  --site-surface-subtle: var(--krds-light-color-surface-gray-subtler);
+  --site-surface-primary: var(--krds-light-color-surface-primary-subtler);
+  --site-surface-point: var(--krds-light-color-surface-point-subtler);
+  --site-primary: var(--krds-light-color-element-primary);
+  --site-point: var(--krds-light-color-element-point);
+  --site-secondary: var(--krds-light-color-element-secondary, var(--krds-light-color-border-secondary));
+  --site-gray: var(--krds-light-color-border-gray-dark);
+}
+[data-krds-mode="high-contrast"] {
+  --site-text: var(--krds-high-contrast-color-text-basic);
+  --site-text-bolder: var(--krds-high-contrast-color-text-bolder);
+  --site-text-subtle: var(--krds-high-contrast-color-text-subtle);
+  --site-text-primary: var(--krds-high-contrast-color-text-primary);
+  --site-text-point: var(--krds-high-contrast-color-text-point);
+  --site-border: var(--krds-high-contrast-color-border-gray-light);
+  --site-border-strong: var(--krds-high-contrast-color-border-gray);
+  --site-divider: var(--krds-high-contrast-color-divider-gray-light);
+  --site-surface: var(--krds-high-contrast-color-surface-white);
+  --site-surface-subtle: var(--krds-high-contrast-color-surface-gray-subtler);
+  --site-surface-primary: var(--krds-high-contrast-color-surface-primary-subtler);
+  --site-surface-point: var(--krds-high-contrast-color-surface-point-subtler);
+  --site-primary: var(--krds-high-contrast-color-element-primary);
+  --site-point: var(--krds-high-contrast-color-element-point);
+  --site-secondary: var(--krds-high-contrast-color-border-secondary);
+  --site-gray: var(--krds-high-contrast-color-border-gray-dark);
+}
+
+/* 궁능 누리집에서 읽은 색(--rc-*). 선명한 화면 모드(어두운 바탕)에서는 아래에서 다시 정한다. */
+:root {
+  --rc-text: #131313; /* 글자 rgb(19,19,19) */
+  --rc-text-sub: #333333; /* 본문 보조 */
+  --rc-text-muted: #555555; /* 왼쪽 메뉴 3단 글자 */
+  --rc-text-faint: #666666; /* 빵부스러기, 푸터 글 */
+  --rc-bg: #ffffff;
+  --rc-bg-bar: #f7f7f7; /* 왼쪽 막대, 알약 묶음 바탕 */
+  --rc-bg-table: #f8f8f8; /* 표 머리, 3단 메뉴 바탕, 푸터 아래 */
+  --rc-bg-card-head: #f4f5f6; /* 저작권 쪽 공공누리 유형 카드 머리 rgb(244,245,246) */
+  --rc-bg-active: #eeeeee; /* 휴대전화 전체메뉴 1차 고른 칸 */
+  --rc-line: #dddddd; /* 왼쪽 메뉴·동그라미 단추 테두리 */
+  --rc-line-footer: #dfdfdf;
+  --rc-line-light: #eaeaea; /* 제목 아래 선, 표 칸 선 */
+  --rc-line-lighter: #f0f0f0; /* 왼쪽 막대 칸 선 */
+  --rc-line-table: #aeaeae; /* 표 아랫선 */
+  --rc-line-strong: #000000; /* 표 윗선 2px, 3단 메뉴 아랫선 */
+  --rc-ink: #131313; /* 검정 상자 바탕(왼쪽 메뉴 머리, 검정 띠, 동그라미 단추) */
+  --rc-on-ink: #ffffff; /* 검정 상자 위 글자 */
+  --rc-navy: #0e2b5e; /* 머리의 남색 둥근 띠 rgb(14,43,94) */
+  --rc-pink: #d44177; /* 분홍 동그라미 rgb(212,65,119) */
+  --rc-blue: #1344cf; /* 푸터 첫 링크 rgb(19,68,207) */
+  --rc-welcome: #1344cf; /* 인사말의 파란 문장 */
+  --rc-sitemap-line: #0a134f; /* 사이트맵 윗선·아랫선 rgb(10,19,79) */
+  --rc-seg: #17106e; /* 오른쪽 작은 탭(전체/둘러보기) 고른 칸 rgb(23,16,110) */
+  --rc-seg-off: #949494; /* 고르지 않은 칸 글자·테두리(궁능 rgb(148,148,148)) */
+  --rc-grad: linear-gradient(to right, #d44177 0%, #0c68be 100%); /* "전체" 알약 */
+  --rc-dim: rgba(0, 0, 0, 0.55); /* 펼침판 뒤를 어둡게 */
+  --rc-photo-dark: #131313; /* 제3유형 사진 남는 곳 바탕(어두움) */
+  --rc-photo-light: #f7f7f7; /* 제3유형 사진 남는 곳 바탕(밝음) */
+  --rc-photo-empty: #e9e9e9; /* 서브메인 사진 띠: 제3유형 필름 줄의 남는 곳, 사진 없는 판 */
+  --rc-focus: #1344cf;
+
+  /* 권역 색(궁별 알약 색을 차례로): 시내=경복궁, 보문·불국사=창덕궁, 동해안=덕수궁, 서쪽·남쪽 읍면=창경궁, 북쪽 읍면=종묘 */
+  --rc-area-city: #604206;
+  --rc-area-bomun: #a2383d;
+  --rc-area-east: #286d79;
+  --rc-area-southwest: #14489c;
+  --rc-area-north: #c14b35;
+  --rc-on-area: #ffffff; /* 권역 색을 채운 바탕 위 글자 */
+
+  /* 틀 치수 */
+  --rc-header-h: 10rem;
+  --rc-bar-w: 8rem;
+}
+[data-krds-mode="high-contrast"] {
+  --rc-text: #ffffff;
+  --rc-text-sub: #f2f2f2;
+  --rc-text-muted: #e0e0e0;
+  --rc-text-faint: #d6d6d6;
+  --rc-bg: #000000;
+  --rc-bg-bar: #141414;
+  --rc-bg-table: #1c1c1c;
+  --rc-bg-card-head: #1c1c1c;
+  --rc-bg-active: #2e2e2e;
+  --rc-line: #a0a0a0;
+  --rc-line-footer: #a0a0a0;
+  --rc-line-light: #8c8c8c;
+  --rc-line-lighter: #6e6e6e;
+  --rc-line-table: #c8c8c8;
+  --rc-line-strong: #ffffff;
+  --rc-ink: #ffffff;
+  --rc-on-ink: #000000;
+  --rc-blue: #9db8ff;
+  --rc-welcome: #9db8ff;
+  --rc-sitemap-line: #ffffff;
+  --rc-seg: #ffffff;
+  --rc-seg-off: #d6d6d6;
+  --rc-dim: rgba(0, 0, 0, 0.75);
+  --rc-photo-dark: #000000;
+  --rc-photo-light: #1c1c1c;
+  --rc-photo-empty: #262626;
+  --rc-focus: #ffd400;
+  --rc-area-city: #e0bf7e;
+  --rc-area-bomun: #ff9ea2;
+  --rc-area-east: #86d6e3;
+  --rc-area-southwest: #9fc0ff;
+  --rc-area-north: #ffab96;
+  --rc-on-area: #000000;
 }
 
 body {
-  font-family: var(--font-sans);
-  word-break: keep-all;
+  background: var(--rc-bg);
+  color: var(--rc-text);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+/* 마우스로 누를 때는 KRDS의 초점 테두리를 끄고, 키보드로 옮길 때만 굵은 테두리(어르신이 잘 보이도록) */
+#wrap :focus:not(:focus-visible),
+.rc-mnav :focus:not(:focus-visible) {
+  outline: none;
+  box-shadow: none;
+}
+#wrap :focus-visible,
+.rc-mnav :focus-visible {
+  outline: 0.3rem solid var(--rc-focus);
+  outline-offset: 0.2rem;
+  box-shadow: none;
+}
+
+/* ───────────────────────── 쪽 전체 틀 ───────────────────────── */
+/* 머리(100)가 고정이라 본문을 그만큼 내리고, PC에서는 왼쪽 막대(80)만큼 민다. */
+#wrap {
+  padding-top: var(--rc-header-h);
+  padding-left: var(--rc-bar-w);
+}
+
+/* ───────────────────────── 왼쪽 고정 막대(PC) ───────────────────────── */
+.rc-leftbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 950;
+  width: var(--rc-bar-w);
+  height: 100vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  background: var(--rc-bg-bar);
+  border-left: 0.2rem solid var(--rc-line-strong);
+}
+.rc-leftbar__box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  width: 100%;
+  height: 8rem;
+  background: var(--rc-ink);
+  color: var(--rc-on-ink);
+  border: 0;
+  border-bottom: 0.1rem solid var(--rc-bg-bar);
+  cursor: pointer;
+}
+.rc-leftbar__ga {
+  font-size: 2.4rem;
+  font-weight: 700;
+  line-height: 1;
+}
+.rc-leftbar__boxlabel {
+  font-size: 1.2rem; /* 궁능 txt_wrap 12px 500 */
+  font-weight: 500;
+  line-height: 1.2;
+}
+.rc-leftbar__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  height: 8.1rem;
+  padding: 0 0.2rem;
+  border-bottom: 0.1rem solid var(--rc-line-lighter);
+  color: var(--rc-text);
+  text-align: center;
+}
+.rc-leftbar__item span {
+  font-size: 1.2rem; /* 궁능 12px 500 */
+  font-weight: 500;
+  line-height: 1.2;
+  word-break: keep-all;
+}
+.rc-leftbar__item[aria-current="page"],
+.rc-leftbar__item:hover {
+  background: var(--rc-bg);
+}
+.rc-leftbar__item[aria-current="page"] span {
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+}
+
+/* ───────────────────────── 머리(PC) ───────────────────────── */
+.rc-hd {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 900;
+  height: var(--rc-header-h);
+  padding-left: var(--rc-bar-w);
+  background: var(--rc-bg); /* 궁능 header_wrap처럼 아래 선 없음 */
+}
+.rc-hd__inner {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 2rem;
+  /* 글자·화면 설정은 body zoom이라 @media 폭은 그대로다. 머리 안 배치는 실제로 남은 폭(컨테이너)으로 정한다. */
+  container: rc-hd / inline-size;
+}
+.rc-logo {
+  flex: 0 0 auto;
+  margin: 0;
+}
+.rc-logo a {
+  display: flex;
+  align-items: center;
+  height: var(--rc-header-h);
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--rc-text);
+  white-space: nowrap;
+}
+.rc-gnb {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
+}
+.rc-gnb__list {
+  display: flex;
+  height: 100%;
+  padding: 0 2rem;
+}
+.rc-gnb__btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: var(--rc-header-h);
+  padding: 0 1rem;
+  background: none;
+  border: 0;
+  font-size: 2rem;
+  font-weight: 500;
+  color: var(--rc-text);
+  white-space: nowrap;
+  cursor: pointer;
+}
+/* 열린 메뉴만 아래 2px 검정 선(궁능 펼침 모양). 서브 쪽의 지금 메뉴에는 선을 긋지 않는다. */
+.rc-gnb__btn[aria-expanded="true"]::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.1rem;
+  height: 0.2rem;
+  background: var(--rc-line-strong);
+}
+.rc-gnb__btn[aria-expanded="true"] {
+  font-weight: 700;
+}
+/* 펼침판: 폭 전체 흰 판(머리 아래, 왼쪽 막대 오른쪽) */
+.rc-gnb__panel {
+  position: absolute;
+  top: 100%;
+  left: var(--rc-bar-w);
+  right: 0;
+  display: flex;
+  min-height: 25.7rem;
+  background: var(--rc-bg);
+  border-top: 0.1rem solid var(--rc-line-light);
+  box-shadow: 0 0.6rem 1.2rem rgba(0, 0, 0, 0.08);
+}
+.rc-gnb__panel[hidden] {
+  display: none;
+}
+.rc-gnb__intro {
+  flex: 0 0 32rem;
+  margin-left: 2rem;
+  padding: 3.5rem 3.5rem;
+  background: var(--rc-bg-bar);
+}
+.rc-gnb__intro-tit {
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--rc-text);
+}
+.rc-gnb__intro-desc {
+  margin-top: 1.2rem;
+  font-size: 1.6rem;
+  line-height: 1.5;
+  color: var(--rc-text-sub);
+}
+.rc-gnb__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 24rem);
+  align-content: start;
+  gap: 1rem 7rem;
+  margin-left: 7rem;
+  padding: 2.1rem 0 3.5rem;
+}
+.rc-gnb__link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 4.3rem; /* 궁능 main_gnbhover 상자 240×43 */
+  padding: 0 2rem;
+  border: 0.1rem solid var(--rc-line);
+  font-size: 1.6rem; /* 궁능 캡처에서 잰 값(약 16px 굵게) */
+  font-weight: 700;
+  color: var(--rc-text);
+}
+.rc-gnb__link:hover,
+.rc-gnb__link[aria-current="page"] {
+  border-color: var(--rc-line-strong);
+}
+.rc-gnb__link[aria-current="page"] {
+  background: var(--rc-bg-table);
+}
+.rc-gnb-dim {
+  position: fixed;
+  inset: var(--rc-header-h) 0 0 var(--rc-bar-w);
+  z-index: 890;
+  background: var(--rc-dim);
+}
+
+/* 남색 둥근 띠: 권역 5개 */
+.rc-areaband {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  height: 6rem;
+  margin-left: 1rem;
+  padding: 0 2.2rem;
+  border-radius: 3rem;
+  background: var(--rc-navy);
+}
+[data-krds-mode="high-contrast"] .rc-areaband {
+  border: 0.1rem solid #ffffff;
+}
+.rc-areaband li {
+  display: flex;
+  align-items: center;
+}
+.rc-areaband li + li::before {
+  content: "";
+  width: 0.1rem;
+  height: 1.4rem;
+  margin: 0 1rem;
+  background: rgba(255, 255, 255, 0.45);
+}
+.rc-areaband a {
+  display: flex;
+  align-items: center;
+  line-height: 2.08rem; /* 궁능 링크 높이 21(글자 줄 높이) */
+  font-size: 1.6rem;
+  color: #ffffff;
+  white-space: nowrap;
+}
+.rc-areaband a[aria-current="page"] {
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.4rem;
+}
+
+/* 동그라미 단추(분홍: 글자·화면 설정, 검정: 전체메뉴) */
+.rc-circle {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 6rem;
+  height: 6rem;
+  border-radius: 50%;
+  border: 0.1rem solid var(--rc-line-footer);
+  color: #ffffff;
+  cursor: pointer;
+}
+.rc-circle--pink {
+  margin-left: 3rem;
+  background: var(--rc-pink);
+}
+.rc-circle--ink {
+  margin-left: 1rem;
+  background: #131313;
+  border-color: #131313;
+}
+[data-krds-mode="high-contrast"] .rc-circle--ink {
+  border-color: #ffffff;
+}
+.rc-circle__ga {
+  font-size: 2.4rem;
+  font-weight: 700;
+  line-height: 1;
+}
+.rc-only-mobile {
+  display: none !important;
+}
+
+/* 좁은 PC(1024~1359): 남색 띠가 메뉴와 겹치지 않도록 줄인다.
+   머리 안 폭 = 화면 폭 - 왼쪽 막대 80. 글자·화면 설정(zoom)을 크게 하면 남는 폭이 줄어 같은 규칙이 먼저 걸린다. */
+@container rc-hd (max-width: 1279px) {
+  .rc-gnb__btn {
+    padding: 0 0.6rem;
+    font-size: 1.8rem;
   }
+  .rc-areaband {
+    padding: 0 1.6rem;
+  }
+  .rc-areaband li + li::before {
+    margin: 0 0.6rem;
+  }
+  .rc-areaband a {
+    font-size: 1.5rem;
+  }
+}
+@container rc-hd (max-width: 1159px) {
+  .rc-areaband {
+    display: none;
+  }
+}
+@container rc-hd (max-width: 859px) {
+  .rc-logo a {
+    font-size: 1.9rem;
+  }
+  .rc-gnb__btn {
+    padding: 0 0.4rem;
+    font-size: 1.6rem;
+  }
+}
+@media (max-width: 1359px) {
+  .rc-gnb__grid {
+    grid-template-columns: repeat(2, 24rem);
+    gap: 1rem 3rem;
+    margin-left: 4rem;
+  }
+}
+
+/* ───────────────────────── 휴대전화 전체메뉴 ───────────────────────── */
+.rc-mnav {
+  position: fixed;
+  inset: 0;
+  z-index: 990;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--rc-bg);
+  padding: 8rem 2rem 4rem;
+  animation: rc-slide-in 0.3s ease-out;
+}
+@keyframes rc-slide-in {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rc-mnav {
+    animation: none;
+  }
+}
+.rc-mnav__close {
+  position: absolute;
+  top: 0;
+  right: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem; /* 궁능 h_close 40×80 */
+  height: 8rem;
+  background: none;
+  border: 0;
+  color: var(--rc-text);
+  cursor: pointer;
+}
+.rc-mnav__areas {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  margin: 0 -2rem;
+  padding: 0 2rem 2.5rem;
+  scroll-padding-inline: 2rem;
+  scroll-snap-type: x proximity;
+}
+.rc-mnav__areas li {
+  flex: 0 0 9.3rem; /* 궁능 palace_item_mo 93×93 */
+  scroll-snap-align: start;
+}
+.rc-mnav__area {
+  position: relative;
+  display: block;
+  width: 9.3rem;
+  height: 9.3rem;
+  overflow: hidden;
+  border-radius: 1rem;
+  background: var(--rc-bg-bar);
+}
+.rc-mnav__area img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.rc-mnav__area span {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 2rem 0.6rem 0.8rem;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #ffffff;
+  text-align: center;
+}
+.rc-mnav__gap {
+  height: 1rem;
+  margin: 0 -2rem;
+  background: var(--rc-line-lighter);
+}
+.rc-mnav__menu {
+  display: flex;
+  margin: 2rem -2rem 0;
+}
+.rc-mnav__d1 {
+  flex: 0 0 13rem;
+}
+.rc-mnav__d1 button {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 5rem;
+  padding: 1.2rem 1rem 1.2rem 3.6rem; /* 궁능 1차 글자 x≈36 */
+  background: var(--rc-bg);
+  border: 0;
+  font-size: 1.575rem; /* 궁능 390 depth1 15.75px */
+  color: var(--rc-text);
+  text-align: left;
+  cursor: pointer;
+}
+.rc-mnav__d1 button[aria-current="true"] {
+  background: var(--rc-bg-active);
+  font-weight: 400; /* 궁능: 고른 칸도 보통 굵기, 회색 바탕으로만 구분 */
+  text-decoration: underline;
+  text-underline-offset: 0.4rem;
+}
+/* 오른쪽 칸: 고른 1차 메뉴 하나만 보인다(잘린 다음 묶음 제목이 보이지 않게) */
+.rc-mnav__subs {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 0 2rem 2rem 1.5rem;
+}
+.rc-mnav__sec[hidden] {
+  display: none;
+}
+.rc-mnav__sec h2 {
+  padding: 1.4rem 0;
+  border-bottom: 0.1rem solid var(--rc-line-strong);
+  font-size: 1.575rem; /* 궁능 15.75px 700 */
+  font-weight: 700;
+  color: var(--rc-text);
+}
+.rc-mnav__sec a {
+  display: flex;
+  align-items: center;
+  min-height: 5.1rem;
+  padding: 1.2rem 1rem;
+  border-bottom: 0.1rem solid var(--rc-line-light);
+  font-size: 1.575rem; /* 궁능 depth2 15.75px, 칸 51 */
+  color: var(--rc-text);
+}
+.rc-mnav__sec a[aria-current="page"] {
+  font-weight: 700;
+}
+.rc-mnav__quick {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  padding-top: 3rem;
+}
+.rc-mnav__quick a,
+.rc-mnav__quick button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  width: 100%;
+  min-height: 8rem;
+  padding: 0.8rem 0.4rem;
+  border: 0;
+  border-radius: 2rem;
+  background: var(--rc-bg-table);
+  font-size: 1.6rem;
+  font-weight: 500;
+  color: var(--rc-text);
+  text-align: center;
+  cursor: pointer;
+}
+
+/* ───────────────────────── 서브 쪽 ───────────────────────── */
+/* 배너(높이 185, 사진 위 흰 글자 36px 700) */
+.rc-sub-visual {
+  position: relative;
+  height: 18.5rem;
+  overflow: hidden;
+  background: #2a2a2a;
+}
+.rc-sub-visual img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.rc-sub-visual::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+}
+.rc-sub-visual__tit {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3.6rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #ffffff;
+  text-shadow: 0 0.2rem 0.6rem rgba(0, 0, 0, 0.35);
+}
+.rc-sub-visual__credit {
+  position: absolute;
+  right: 1rem;
+  bottom: 0.8rem;
+  z-index: 1;
+  padding: 0.2rem 0.8rem;
+  background: rgba(0, 0, 0, 0.6);
+  font-size: 1.3rem;
+  line-height: 1.5;
+  color: #ffffff;
+}
+
+.rc-sub-inner {
+  display: flex;
+  align-items: flex-start;
+  gap: 5rem;
+  max-width: 136rem;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+.rc-contents {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 8rem 0 12rem;
+}
+
+/* 왼쪽 메뉴(폭 250) */
+.rc-lnb {
+  flex: 0 0 25rem;
+  margin-top: 8rem;
+}
+.rc-lnb__tit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 8.5rem;
+  padding: 1rem 1.5rem;
+  background: var(--rc-ink);
+  font-size: 2.4rem;
+  font-weight: 400; /* 궁능 lnb_tit 24px 400 */
+  line-height: 1.3;
+  color: var(--rc-on-ink);
+  text-align: center;
+}
+.rc-lnb__list {
+  padding: 2rem;
+  border: 0.1rem solid var(--rc-line);
+}
+.rc-lnb__item {
+  border-bottom: 0.1rem solid var(--rc-line);
+}
+.rc-lnb__item:last-child,
+.rc-lnb__item.is-open {
+  border-bottom: 0;
+}
+.rc-lnb__link,
+.rc-lnb__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  min-height: 5.3rem;
+  padding: 1.5rem 0;
+  background: none;
+  border: 0;
+  font-size: 1.8rem;
+  line-height: 1.3;
+  color: var(--rc-text);
+  text-align: left;
+  cursor: pointer;
+}
+/* 궁능 lnb_depth2_trigger: 안쪽 15 40 15 0, ⊙∨는 오른쪽(x≈299) */
+.rc-lnb__toggle {
+  padding-right: 0.5rem;
+}
+.rc-lnb__link.is-current,
+.rc-lnb__toggle.is-current {
+  font-weight: 600;
+}
+.rc-lnb__chev {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: 0.1rem solid currentColor;
+  border-radius: 50%;
+}
+.rc-lnb__toggle[aria-expanded="true"] .rc-lnb__chev svg {
+  transform: rotate(180deg);
+}
+.rc-lnb__sub {
+  padding: 1.5rem 2rem;
+  background: var(--rc-bg-table);
+  border-bottom: 0.2rem solid var(--rc-line-strong);
+}
+.rc-lnb__sub[hidden] {
+  display: none;
+}
+.rc-lnb__sub a {
+  position: relative;
+  display: block;
+  padding: 0.8rem 0 0.8rem 1.5rem; /* 궁능 lnb_depth3 a 168×37, 안쪽 8 0 8 15 */
+  font-size: 1.6rem;
+  line-height: 2.08rem;
+  color: var(--rc-text-muted);
+}
+.rc-lnb__sub a::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 1.65rem;
+  width: 0.4rem;
+  height: 0.4rem;
+  background: currentColor;
+}
+.rc-lnb__sub a[aria-current="page"] {
+  font-weight: 500; /* 궁능 현재 3단 16px 500 #131313 */
+  color: var(--rc-text);
+}
+
+/* 휴대전화 검정 드롭다운 막대(현재 쪽 이름 + ▼) */
+.rc-mbar {
+  display: none;
+  position: relative;
+  background: var(--rc-ink);
+}
+.rc-mbar__btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  min-height: 6rem;
+  padding: 1rem 1.5rem;
+  background: none;
+  border: 0;
+  font-size: 1.575rem; /* 궁능 390 depth2_list_trigger 390×60, 15.75px 400 */
+  font-weight: 400;
+  color: var(--rc-on-ink);
+  text-align: left;
+  cursor: pointer;
+}
+/* 궁능 intro_m390_lnbopen: 목록이 본문을 밀지 않고 위에 겹쳐 뜬다 */
+.rc-mbar__list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 60;
+  padding-bottom: 1rem;
+  background: var(--rc-ink);
+  box-shadow: 0 0.8rem 1.6rem rgba(0, 0, 0, 0.2);
+}
+.rc-mbar__list[hidden] {
+  display: none;
+}
+.rc-mbar__list a {
+  display: flex;
+  align-items: center;
+  min-height: 5.6rem;
+  padding: 1rem 1.5rem;
+  font-size: 1.575rem; /* 궁능 intro_m390_lnbopen: 막대와 같은 글자 크기 */
+  color: var(--rc-on-ink);
+}
+.rc-mbar__list a[aria-current="page"] {
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.4rem;
+}
+
+/* 빵부스러기(집 ▸ 작은 글자) */
+.rc-bc ol {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  min-height: 3rem;
+  font-size: 1.2rem; /* 궁능 breadcrumb 12px 500 #666, 줄 30 */
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--rc-text-faint);
+}
+.rc-bc li {
+  display: flex;
+  align-items: center;
+}
+.rc-bc li + li::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 0;
+  height: 0;
+  margin: 0 1.2rem;
+  border-left: 0.5rem solid #999999;
+  border-top: 0.35rem solid transparent;
+  border-bottom: 0.35rem solid transparent;
+}
+.rc-bc a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 3rem;
+  color: inherit;
+}
+.rc-bc a:hover {
+  text-decoration: underline;
+}
+.rc-bc .rc-bc__home {
+  color: var(--rc-text);
+}
+.rc-bc a[aria-current="page"] {
+  color: var(--rc-text-sub);
+}
+
+/* 쪽 제목 + 공유·인쇄 동그라미 */
+.rc-titlewrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  min-height: 8rem;
+  margin-top: 2rem;
+}
+.rc-titlewrap h1 {
+  font-size: 3.4rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--rc-text);
+  word-break: keep-all;
+}
+.rc-tools {
+  position: relative;
+  flex: 0 0 auto;
+  display: flex;
+  gap: 1rem;
+}
+.rc-tool {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 8rem;
+  height: 8rem;
+  border: 0.1rem solid var(--rc-line);
+  border-radius: 50%;
+  background: var(--rc-bg);
+  color: var(--rc-text-sub);
+  cursor: pointer;
+}
+.rc-tool:hover {
+  border-color: var(--rc-text);
+}
+.rc-tools__msg {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.6rem);
+  z-index: 5;
+  padding: 0.6rem 1.2rem;
+  background: var(--rc-ink);
+  color: var(--rc-on-ink);
+  font-size: 1.5rem;
+  white-space: nowrap;
+  border-radius: 0.4rem;
+}
+.rc-tools__msg:empty {
+  display: none;
+}
+/* 궁능 sub_tab: 제목칸 끝에서 20 아래(sub_txt_wrap), 안쪽 10 0 30 → 회색 윗선은 알약 아래 30 */
+.rc-subtabs {
+  margin-top: 2rem;
+  padding: 1rem 0 3rem;
+}
+/* 내용 칸: 윗선 1px #eaeaea */
+.rc-subcon {
+  overflow-wrap: break-word; /* 긴 주소(URL)가 좁은 화면·큰 글자에서 칸 밖으로 나가지 않게 */
+  margin-top: 2rem;
+  padding-top: 5.5rem;
+  border-top: 0.1rem solid var(--rc-line-light);
+}
+.rc-subtabs + .rc-subcon {
+  margin-top: 0;
+}
+.rc-subcon > .rc-section:first-child {
+  padding-top: 0;
+}
+.rc-lead {
+  margin-bottom: 1rem;
+  font-size: 1.8rem;
+  line-height: 1.7;
+  color: var(--rc-text-sub);
+}
+.rc-lead + .rc-section,
+.rc-inpage + .rc-section {
+  padding-top: 4rem;
+}
+.rc-inpage {
+  margin-top: 2rem;
+  padding: 2rem 2.5rem;
+  border: 0.1rem solid var(--rc-line);
+  background: var(--rc-bg-table);
+}
+.rc-inpage__tit {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--rc-text);
+}
+.rc-inpage ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 2.4rem;
+  margin-top: 0.4rem;
+}
+.rc-inpage a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 4.4rem;
+  font-size: 1.7rem;
+  color: var(--rc-text);
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+}
+
+/* 본문 한 칸(제목 26px 700 + 내용). 안쪽 글 기본값은 :where로 약하게 걸어 쪽 CSS가 이기게 한다. */
+.rc-section {
+  padding-top: 5.5rem;
+}
+.rc-section__tit {
+  margin-bottom: 2.8rem;
+  font-size: 2.6rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--rc-text);
+}
+:where(.rc-section, .rc-subcon) p {
+  font-size: 1.6rem; /* 궁능 본문 16px, 줄 27.2 */
+  line-height: 1.7;
+  color: var(--rc-text-sub);
+}
+
+/* ───────────────────────── 푸터 ───────────────────────── */
+.rc-footer {
+  background: var(--rc-bg-table);
+}
+.rc-ft-top {
+  background: var(--rc-bg);
+  border-top: 0.1rem solid var(--rc-line-footer);
+  border-bottom: 0.1rem solid var(--rc-line-footer);
+}
+.rc-ft-inner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 0 2rem;
+}
+.rc-ft-top .rc-ft-inner {
+  justify-content: space-between;
+  min-height: 7rem;
+}
+.rc-ft-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.rc-ft-links li {
+  display: flex;
+  align-items: center;
+}
+.rc-ft-links li + li::before {
+  content: "";
+  width: 0.1rem;
+  height: 1.6rem;
+  background: #cccccc;
+}
+.rc-ft-links a {
+  display: inline-flex;
+  align-items: center;
+  line-height: 2.08rem; /* 궁능 ft_policy 링크 높이 21 */
+  padding: 0 3.5rem;
+  font-size: 1.6rem;
+  font-weight: 500;
+  color: var(--rc-text);
+}
+.rc-ft-links li:first-child a {
+  padding-left: 0;
+  font-weight: 700;
+  color: var(--rc-blue);
+}
+.rc-ft-related {
+  position: relative;
+  align-self: stretch;
+  width: 23.5rem;
+  border-left: 0.1rem solid var(--rc-line-footer);
+  border-right: 0.1rem solid var(--rc-line-footer);
+}
+.rc-ft-related > button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  min-height: 7rem;
+  padding: 0 2rem;
+  background: var(--rc-bg);
+  border: 0;
+  font-size: 1.6rem;
+  color: var(--rc-text-sub);
+  cursor: pointer;
+}
+.rc-ft-related > button[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+.rc-ft-related ul {
+  position: absolute;
+  left: -0.1rem;
+  right: -0.1rem;
+  bottom: 100%;
+  z-index: 20;
+  padding: 0.8rem 0;
+  background: var(--rc-bg);
+  border: 0.1rem solid var(--rc-line-footer);
+  border-bottom: 0;
+}
+.rc-ft-related ul[hidden] {
+  display: none;
+}
+.rc-ft-related ul a {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 4.4rem;
+  padding: 0.6rem 2rem;
+  font-size: 1.6rem;
+  color: var(--rc-text);
+}
+.rc-ft-related ul a:hover {
+  text-decoration: underline;
+}
+.rc-ft-btm {
+  padding: 4.5rem 0 5.7rem;
+}
+.rc-ft-btm .rc-ft-inner {
+  align-items: flex-start;
+  gap: 4rem;
+}
+.rc-ft-logo {
+  flex: 0 0 20rem;
+  font-size: 2.2rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--rc-text);
+}
+.rc-ft-txt {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 1.5rem;
+  line-height: 1.6;
+  color: var(--rc-text-faint);
+}
+.rc-ft-maker {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--rc-text-sub);
+}
+.rc-ft-credit {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-top: 1rem;
+}
+.rc-ft-credit a {
+  text-decoration: underline;
+}
+
+/* ───────────────────────── 휴대전화(≤1023) ───────────────────────── */
+@media (max-width: 1023px) {
+  :root {
+    --rc-header-h: 8rem;
+    --rc-bar-w: 0rem;
+  }
+  .rc-leftbar,
+  .rc-gnb,
+  .rc-areaband {
+    display: none;
+  }
+  .rc-only-mobile {
+    display: inline-flex !important;
+  }
+  .rc-hd__inner {
+    justify-content: space-between;
+    padding: 0 2rem;
+  }
+  .rc-logo {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .rc-logo a {
+    height: 8rem;
+    font-size: 2rem;
+    white-space: normal;
+    line-height: 1.2;
+  }
+  .rc-circle {
+    width: 5rem;
+    height: 5rem;
+  }
+  .rc-circle--pink {
+    margin-left: 1rem;
+  }
+  .rc-circle__ga {
+    font-size: 2rem;
+  }
+
+  /* 궁능 390: 관련사이트 펼침이 맨 위, 그 아래 회색(#f8f8f8) 바탕 정책 링크 줄 */
+  .rc-ft-top .rc-ft-inner {
+    flex-direction: column-reverse;
+    align-items: stretch;
+    padding: 0;
+  }
+  .rc-ft-links {
+    padding: 1rem 2rem;
+    background: var(--rc-bg-table);
+  }
+  .rc-ft-links a {
+    padding: 0 1.6rem;
+  }
+  .rc-ft-related {
+    width: auto;
+    border: 0;
+    border-bottom: 0.1rem solid var(--rc-line-footer);
+  }
+  .rc-ft-related > button {
+    min-height: 5.6rem;
+  }
+  .rc-ft-btm {
+    padding: 3rem 0 4rem;
+  }
+  .rc-ft-btm .rc-ft-inner {
+    flex-direction: column;
+    gap: 1.6rem;
+  }
+  .rc-ft-logo {
+    flex: 0 0 auto;
+    font-size: 2rem;
+  }
+}
+
+/* 본문(main) 안의 휴대전화 배치는 @media 대신 main의 실제 폭으로 정한다.
+   글자·화면 설정(body zoom)을 크게 하면 PC에서도 본문 폭이 좁아지는데 @media 폭은 그대로라서다.
+   main 폭 = 화면 폭 - 왼쪽 막대 80. 1119 이하(zoom 1이면 화면 1199 이하)는 본문을 휴대전화 배치로 둔다.
+   PC 본문(왼쪽 메뉴 250 + 표·카드 줄)은 본문 폭이 1120보다 좁으면 넘치기 때문이다. 머리·왼쪽 막대는 그대로 1023 경계. */
+main {
+  container: rc-main / inline-size;
+}
+@container rc-main (max-width: 1119px) {
+  .rc-sub-visual {
+    height: 13rem;
+  }
+  .rc-sub-visual__tit {
+    font-size: 2.45rem; /* 궁능 390 sub_tit 24.5px */
+  }
+  .rc-sub-visual__credit {
+    right: 0.6rem;
+    bottom: 0.4rem;
+    font-size: 1.2rem;
+  }
+  .rc-sub-inner {
+    display: block;
+    padding: 2rem 1.5rem 0;
+  }
+  .rc-lnb {
+    display: none;
+  }
+  .rc-mbar {
+    display: block;
+  }
+  .rc-contents {
+    padding: 0 0 8rem;
+  }
+  .rc-titlewrap {
+    min-height: 4rem; /* 궁능 390 sub_tit_wrap 높이 40 */
+    margin-top: 0.6rem;
+    gap: 1rem;
+  }
+  .rc-bc ol {
+    font-size: 1.05rem; /* 궁능 390 breadcrumb 10.5px */
+  }
+  .rc-titlewrap h1 {
+    font-size: 2.6rem;
+  }
+  .rc-tool {
+    width: 4rem; /* 궁능 390 공유 단추 40×40 */
+    height: 4rem;
+  }
+  .rc-tool svg {
+    width: 2rem;
+    height: 2rem;
+  }
+  .rc-tool--print {
+    display: none;
+  }
+  .rc-subcon {
+    padding-top: 3rem;
+  }
+  .rc-section {
+    padding-top: 4rem;
+  }
+  .rc-section__tit {
+    margin-bottom: 2rem;
+    font-size: 2.2rem;
+  }
+  .rc-lead {
+    font-size: 1.7rem;
+  }
+}
+
+/* ───────────────────────── 공통 부품(src/components/royal) ───────────────────────── */
+
+/* 알약 줄(궁 선택 줄): 궁능 notice·course 알약 높이 35, 안쪽 좌우 35, 둥글기 18~25, 16px 700, 사이 10 */
+.rc-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.rc-pill {
+  --pill-color: var(--rc-ink);
+  --pill-on: var(--rc-on-ink);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 11rem;
+  min-height: 3.5rem;
+  padding: 0 3.5rem; /* 궁능 0 35 */
+  border: 0.1rem solid var(--pill-color);
+  border-radius: 2.5rem;
+  background: var(--rc-bg);
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--pill-color);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.rc-pill:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+}
+.rc-pill.is-active {
+  background: var(--pill-color);
+  color: var(--pill-on);
+}
+.rc-pill--grad.is-active {
+  background: var(--rc-grad);
+  border-color: transparent;
+  color: #ffffff;
+}
+[data-krds-mode="high-contrast"] .rc-pill--grad.is-active {
+  border-color: #ffffff;
+}
+.rc-pill--area {
+  --pill-on: var(--rc-on-area);
+}
+@container rc-main (max-width: 767px) {
+  .rc-pill {
+    min-width: 0;
+    padding: 0 2rem;
+  }
+}
+.rc-pill__count {
+  margin-left: 0.4rem;
+  font-weight: 500;
+}
+
+/* 오른쪽 작은 탭 묶음(궁능 관람코스의 전체/둘러보기/편의시설) */
+.rc-seg {
+  display: inline-flex;
+  flex-wrap: wrap;
+  border-radius: 2.2rem;
+  background: var(--rc-bg-bar);
+}
+.rc-seg__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 4.5rem;
+  padding: 0 2rem;
+  border: 0;
+  border-radius: 2.2rem;
+  background: none;
+  font-size: 1.6rem;
+  font-weight: 500;
+  color: var(--rc-seg-off);
+  cursor: pointer;
+}
+.rc-seg__btn.is-active {
+  background: var(--rc-seg);
+  color: var(--rc-bg);
+}
+
+/* 게시판 표(표 윗선 2px 검정, 머리 #f8f8f8, 칸 높이 55, 글자 15px: 궁능 notice·intro 표 15.008px) */
+.rc-board-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+.rc-board {
+  width: 100%;
+  border-collapse: collapse;
+  border-top: 0.2rem solid var(--rc-line-strong);
+  border-bottom: 0.1rem solid var(--rc-line-table);
+  font-size: 1.5rem;
+  line-height: 1.4;
+  color: var(--rc-text-sub);
+}
+.rc-board caption {
+  /* KRDS: caption은 화면에서 숨김(읽기 도구용) */
+}
+.rc-board th {
+  height: 5.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--rc-bg-table);
+  border-bottom: 0.1rem solid rgba(174, 174, 174, 0.46);
+  border-left: 0.1rem solid var(--rc-line-light);
+  font-weight: 500;
+  color: var(--rc-text);
+  text-align: center;
+  vertical-align: middle;
+}
+.rc-board td {
+  height: 5.5rem;
+  padding: 1rem 2rem;
+  border-bottom: 0.1rem solid var(--rc-line-light);
+  border-left: 0.1rem solid var(--rc-line-light);
+  text-align: center;
+  vertical-align: middle;
+}
+.rc-board tr > :first-child {
+  border-left: 0;
+}
+.rc-board tbody tr:last-child td {
+  border-bottom: 0;
+}
+.rc-board .tal,
+.rc-board--left td {
+  text-align: left;
+}
+.rc-board a {
+  color: var(--rc-text);
+}
+.rc-board a:hover {
+  text-decoration: underline;
+}
+.rc-board tbody th {
+  background: var(--rc-bg-table);
+}
+@container rc-main (max-width: 767px) {
+  .rc-board {
+    font-size: 1.5rem;
+  }
+  .rc-board th,
+  .rc-board td {
+    padding: 0.8rem 1rem;
+  }
+}
+
+/* 검정 띠 제목(궁능 오시는 길의 "주차 및 요금안내": 1030×40, 16px 400) */
+.rc-blackbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 4rem;
+  margin-bottom: 2rem;
+  padding: 0 1.5rem;
+  background: var(--rc-ink);
+  font-size: 1.6rem;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--rc-on-ink);
+  text-align: center;
+}
+a.rc-blackbar:hover {
+  text-decoration: underline;
+}
+
+/* 아이콘 + 소제목(궁능 오시는 길의 "지하철") */
+.rc-iconhead {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 0.1rem solid var(--rc-line-light);
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--rc-text);
+}
+.rc-iconhead svg {
+  flex: 0 0 auto;
+}
+.rc-iconhead--plain {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+/* 사진 오른쪽 아래로 어긋난 테두리 틀(궁능 소개 쪽 큰 사진: 틀 395~1425 안에 사진 405~1415, 아래 20) */
+.rc-offset {
+  position: relative;
+  padding: 0 1rem 2rem 1rem;
+}
+.rc-offset::before {
+  content: "";
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  right: 0;
+  bottom: 0;
+  border: 0.1rem solid var(--rc-ink);
+}
+.rc-offset > * {
+  position: relative;
+  z-index: 1;
+}
+@container rc-main (max-width: 1119px) {
+  .rc-offset {
+    padding: 0 1.6rem 1.6rem 0;
+  }
+  .rc-offset::before {
+    top: 1.6rem;
+    left: 0.8rem;
+  }
+}
+
+/* 사진 틀. Type3은 자르지 않고(contain) 남는 곳을 단색으로 */
+.rc-photo {
+  position: relative;
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  background: var(--rc-photo-light);
+}
+.rc-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.rc-photo--contain img {
+  object-fit: contain;
+}
+.rc-photo--dark {
+  background: var(--rc-photo-dark);
+}
+.rc-photo--auto img {
+  height: auto;
+}
+.rc-photo--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--rc-bg-bar);
+  color: var(--rc-text-muted);
+  font-size: 1.6rem;
+}
+
+/* 공공누리 글자 상자(궁능의 "OPEN 공공누리" 상자 자리) */
+.rc-kogl {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding: 2rem 2.5rem;
+  border: 0.1rem solid var(--rc-line);
+  background: var(--rc-bg);
+}
+.rc-kogl__mark {
+  flex: 0 0 auto;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 11rem;
+  padding: 0.8rem 1rem;
+  border: 0.2rem solid var(--rc-text);
+  border-radius: 0.6rem;
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--rc-text);
+  text-align: center;
+}
+.rc-kogl__mark b {
+  font-size: 1.8rem;
+}
+.rc-kogl__txt {
+  font-size: 1.6rem;
+  line-height: 1.6;
+  color: var(--rc-text-sub);
+}
+@container rc-main (max-width: 767px) {
+  .rc-kogl {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.2rem;
+    padding: 1.6rem;
+  }
+}
+
+/* ⓘ 회색 안내 상자 */
+.rc-infobox {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 2rem 2.5rem;
+  background: var(--rc-bg-bar);
+  border: 0.1rem solid var(--rc-line-light);
+  font-size: 1.6rem;
+  line-height: 1.6;
+  color: var(--rc-text-sub);
+}
+.rc-infobox > svg {
+  flex: 0 0 auto;
+  margin-top: 0.1rem;
+  color: var(--rc-text);
+}
+.rc-infobox__tit {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-weight: 700;
+  color: var(--rc-text);
+}
+
+/* 검정 동그라미 단추(→, 큰 + 등). 궁능 서브메인 공지사항 → 단추 45×45 */
+.rc-cbtn {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 4.5rem;
+  height: 4.5rem;
+  border: 0.1rem solid var(--rc-ink);
+  border-radius: 50%;
+  background: var(--rc-ink);
+  color: var(--rc-on-ink);
+  cursor: pointer;
+}
+.rc-cbtn--lg {
+  width: 6rem;
+  height: 6rem;
+}
+.rc-cbtn--line {
+  background: var(--rc-bg);
+  color: var(--rc-text);
+  border-color: var(--rc-line);
+}
+.rc-cbtn:hover {
+  opacity: 0.85;
+}
+
+/* ※ 줄 */
+.rc-tips {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.rc-tips li {
+  position: relative;
+  padding-left: 2.2rem;
+  font-size: 1.6rem;
+  line-height: 1.6;
+  color: var(--rc-text-sub);
+}
+.rc-tips li::before {
+  content: "※";
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+/* 넘기기(슬라이더) */
+.rc-slider {
+  position: relative;
+}
+.rc-slider__viewport {
+  overflow: hidden;
+}
+.rc-slider__track {
+  display: flex;
+  transition: transform 0.4s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rc-slider__track {
+    transition: none;
+  }
+}
+.rc-slider__slide {
+  flex: 0 0 100%;
+  min-width: 0;
+}
+.rc-slider__ctrl {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 3rem;
+  background: rgba(19, 19, 19, 0.85);
+  color: #ffffff;
+}
+.rc-slider__ctrl--light {
+  background: var(--rc-bg);
+  color: var(--rc-text);
+  border: 0.1rem solid var(--rc-line);
+}
+.rc-slider__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 4.4rem;
+  height: 4.4rem;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+.rc-slider__btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+.rc-slider__count {
+  min-width: 5.6rem;
+  font-size: 1.6rem;
+  font-weight: 500;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.rc-slider__count b {
+  font-weight: 700;
+}
+
+/* 임시 문구: 점선 밑줄(사용자 확인 전, 새로 지은 글) */
+.ph {
+  text-decoration: underline dashed;
+  text-decoration-color: var(--site-gray);
+  text-underline-offset: 0.3em;
+}
+
+/* 인쇄: 틀을 빼고 본문만 */
+@media print {
+  .rc-leftbar,
+  .rc-hd,
+  .rc-gnb-dim,
+  .rc-sub-visual,
+  .rc-lnb,
+  .rc-mbar,
+  .rc-tools,
+  .rc-footer,
+  #krds-skip-link {
+    display: none !important;
+  }
+  #wrap {
+    padding: 0;
+  }
+  .rc-contents {
+    padding: 0;
+  }
+}
+
+/* KRDS 구조화 목록은 카드 제목을 한 줄로 자른다. 관광지 이름은 끝까지 보여야 하므로 줄바꿈을 허용한다. */
+.krds-structured-list .card-body .c-text .c-tit .span {
+  display: inline;
+  -webkit-line-clamp: unset;
+  overflow: visible;
 }
