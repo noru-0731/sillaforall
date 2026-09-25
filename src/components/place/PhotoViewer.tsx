@@ -14,8 +14,8 @@ import { KoglBox, Photo } from "@/components/royal";
 import type { ViewerPhoto } from "./placeData";
 import s from "./PhotoViewer.module.css";
 
-/** large: 같은 사진의 큰 판 주소(있으면 "원본 보기"가 이것을 연다) */
-export type ViewerItem = ViewerPhoto & { large?: string };
+/** large: 같은 사진의 큰 판 주소(있으면 "원본 보기"가 이것을 연다). tall: 세로 사진(세로 > 가로) */
+export type ViewerItem = ViewerPhoto & { large?: string; tall?: boolean };
 
 export default function PhotoViewer({ photos, placeName }: { photos: ViewerItem[]; placeName: string }) {
   const [i, setI] = useState(0);
@@ -76,7 +76,16 @@ export default function PhotoViewer({ photos, placeName }: { photos: ViewerItem[
       </div>
 
       <div className={s.stage}>
-        <Photo key={cur.url} photo={{ url: cur.url, type: cur.type }} alt={cur.name} ratio="1030/489" bg="dark" loading="eager" />
+        {/* 세로 사진은 1030×489 칸에 맞춰 자르면 가운데 띠만 남아(09-26 보리사마애석불) 제1유형이라도 자르지 않고 전체를 보인다 */}
+        <Photo
+          key={cur.url}
+          photo={{ url: cur.url, type: cur.type }}
+          alt={cur.name}
+          ratio="1030/489"
+          bg="dark"
+          loading="eager"
+          fit={cur.tall ? "contain" : "cover"}
+        />
         {onPhoto && <p className={s.cap}>{nameText}</p>}
       </div>
 

@@ -198,6 +198,68 @@
     "lw": 1620,
     "lh": 1080
    }
+  ],
+  "photoGallery": [
+   {
+    "url": "https://tong.visitkorea.or.kr/cms2/website/68/624168.jpg",
+    "small": "https://tong.visitkorea.or.kr/cms/resource_photo/68/624168_image2_1.jpg",
+    "name": "보리사마애석불",
+    "type": "Type1",
+    "w": 1280,
+    "h": 853,
+    "by": "한국관광공사, 전형준",
+    "month": "2008-05",
+    "galleryId": "624168",
+    "conlabId": "trsRVa"
+   },
+   {
+    "url": "https://tong.visitkorea.or.kr/cms2/website/69/624169.jpg",
+    "small": "https://tong.visitkorea.or.kr/cms/resource_photo/69/624169_image2_1.jpg",
+    "name": "보리사마애석불",
+    "type": "Type1",
+    "w": 1280,
+    "h": 853,
+    "by": "한국관광공사, 전형준",
+    "month": "2008-05",
+    "galleryId": "624169",
+    "conlabId": "trsRWa"
+   },
+   {
+    "url": "https://tong.visitkorea.or.kr/cms2/website/70/624170.jpg",
+    "small": "https://tong.visitkorea.or.kr/cms/resource_photo/70/624170_image2_1.jpg",
+    "name": "보리사마애석불",
+    "type": "Type1",
+    "w": 853,
+    "h": 1280,
+    "by": "한국관광공사, 전형준",
+    "month": "2008-05",
+    "galleryId": "624170",
+    "conlabId": "trsRXa"
+   },
+   {
+    "url": "https://tong.visitkorea.or.kr/cms2/website/78/624178.jpg",
+    "small": "https://tong.visitkorea.or.kr/cms/resource_photo/78/624178_image2_1.jpg",
+    "name": "보리사마애석불",
+    "type": "Type1",
+    "w": 853,
+    "h": 1280,
+    "by": "한국관광공사, 전형준",
+    "month": "2008-05",
+    "galleryId": "624178",
+    "conlabId": "YbRR0a"
+   },
+   {
+    "url": "https://tong.visitkorea.or.kr/cms2/website/79/624179.jpg",
+    "small": "https://tong.visitkorea.or.kr/cms/resource_photo/79/624179_image2_1.jpg",
+    "name": "보리사마애석불",
+    "type": "Type1",
+    "w": 853,
+    "h": 1280,
+    "by": "한국관광공사, 전형준",
+    "month": "2008-05",
+    "galleryId": "624179",
+    "conlabId": "YbRR1a"
+   }
   ]
  },
  "p04": {

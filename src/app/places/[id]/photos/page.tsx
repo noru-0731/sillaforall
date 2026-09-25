@@ -37,8 +37,13 @@ export default async function PlacePhotos({ params }: Props) {
   const page = placePages(p)[2];
   const same = sameArea(p);
   // "원본 보기"가 열 주소: 같은 사진의 큰 판(가로 1,620픽셀 안팎)이 있으면 그것. viewerPhotos는 photosOf와 같은 차례다.
+  // 세로 사진(세로 > 가로)은 표시해 두었다가 큰 사진 칸(1030×489)에서 자르지 않고 전체를 보인다(PhotoViewer).
   const all = photosOf(p.id);
-  const photos: ViewerItem[] = viewerPhotos(p).map((v, i) => (all[i]?.large ? { ...v, large: all[i].large } : v));
+  const photos: ViewerItem[] = viewerPhotos(p).map((v, i) => {
+    const a = all[i];
+    const tall = !!(a?.w && a.h && a.h > a.w);
+    return { ...v, ...(a?.large ? { large: a.large } : {}), ...(tall ? { tall } : {}) };
+  });
   const gridLabel = "같은 권역 관광지 사진";
   const paras = (p.overview ?? "")
     .split(/\n+/)
