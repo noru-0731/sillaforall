@@ -8,6 +8,7 @@
   --am-toilet: #b54a00;
   --am-parking: #0e2b5e;
   --am-charger: #2d7a36;
+  --am-food: #6a3d9a;
   --am-on: #ffffff;
 }
 .info {
@@ -58,6 +59,9 @@
 }
 .k_charger {
   background: var(--am-charger);
+}
+.k_food {
+  background: var(--am-food);
 }
 .name {
   font-weight: 700 !important;

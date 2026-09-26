@@ -169,13 +169,14 @@
  * - 궁능 범례 칸: 24×24, 둥글기 3, 색 바탕에 흰 그림 18×18, 칸 사이 3(세로 27 간격). 이름표 14.4px 흰 글자, 안 여백 0 6.
  * - 지도 상자 높이: 관람코스 1030×693.
  * 점 색(흰 글자 대비 4.5:1 넘게): 장애인 화장실 파랑(휠체어 표지 색, --rc-blue와 같은 값), 화장실 짙은 주황(궁능 화장실 주황을 어둡게),
- * 공영주차장 남색(--rc-navy와 같은 값), 충전기 짙은 초록(궁능 자동심장충격기 초록을 어둡게). 지도 그림은 선명한 화면 모드에서도 밝아서 점 색은 그대로 둔다.
+ * 공영주차장 남색(--rc-navy와 같은 값), 충전기 짙은 초록(궁능 자동심장충격기 초록을 어둡게), 음식점 짙은 보라(흰 글자 대비 약 7.6:1). 지도 그림은 선명한 화면 모드에서도 밝아서 점 색은 그대로 둔다.
  */
 .withLegend {
   --am-toiletA: #1344cf;
   --am-toilet: #b54a00;
   --am-parking: #0e2b5e;
   --am-charger: #2d7a36;
+  --am-food: #6a3d9a;
   --am-rest: #555555;
   --am-on: #ffffff;
   position: relative;
@@ -211,6 +212,9 @@
 }
 .pt_charger {
   background: var(--am-charger);
+}
+.pt_food {
+  background: var(--am-food);
 }
 .pt_place {
   background: var(--rc-pink);
