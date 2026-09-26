@@ -10,3 +10,6 @@ export const placeLand = (id: string) => `/places/${id}#${SUBMAIN_TITLE_ID}`;
 
 /** 서브 쪽을 본문 시작(빵부스러기·쪽 제목) 자리로 여는 주소 */
 export const titleLand = (href: string) => `${href}#contents`;
+
+/** 위 두 도착 자리의 # 이름. 공유 단추가 주소를 건넬 때 이 # 는 뗀다(받은 사람은 쪽 맨 위에서 열리게, 09-27 점검) */
+export const LAND_HASHES = ["contents", SUBMAIN_TITLE_ID];

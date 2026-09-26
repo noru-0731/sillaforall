@@ -22,7 +22,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { placeById, places } from "@/data";
 import { GJ_CREDIT, GJ_SOURCE, gjOf } from "@/data/gj";
-import { amenitiesOf, bfCultureOf, bfFilledFieldsOf, bfGroupsOf, bfLabel, bfNeighborsOf, BF_SOURCE, NEAR_RADII, sourceLines, stdLabel, stdValue, type AmenitySrc } from "@/data/bf";
+import { amenitiesOf, bfCultureOf, bfFilledFieldsOf, bfGroupsOf, bfLabel, bfNeighborsOf, BF_CULTURE_SOURCE_LINE, BF_SOURCE, NEAR_RADII, sourceLines, stdLabel, stdValue, type AmenitySrc } from "@/data/bf";
 import { placeCrumbs, placePages, placeSideMenu, PLACE_BANNER } from "@/site/ia";
 import { InPageNav, Ph, Section, SubPage } from "@/components/layout/PageParts";
 import { DASH, DashNote } from "@/components/layout/Dash";
@@ -307,7 +307,7 @@ export default async function PlaceBarrierFree({ params }: Props) {
               ...(bfc.closed ? [["휴무일", pre(bfc.closed)]] : []),
             ]}
           />
-          <SourceLines lines={["자료: 한국문화정보원_전국 배리어프리 문화예술관광지(최종작성일 2022-11-25)"]} />
+          <SourceLines lines={[BF_CULTURE_SOURCE_LINE]} />
         </>
       ),
     });

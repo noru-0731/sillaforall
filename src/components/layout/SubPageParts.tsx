@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
 import type { SideMenu, SideMenuLink } from "@/site/ia";
 import { Caret, Icon } from "@/components/icons";
+import { LAND_HASHES } from "@/components/place/landing";
 import ReadAloud from "./ReadAloud";
 
 /** PC 왼쪽 메뉴(폭 250): 검정 머리 + 테두리 상자 목록. 3단이 있는 항목은 누르면 여닫힌다. */
@@ -123,7 +124,10 @@ export function PageTools({ title, printAlways = false }: { title: string; print
   }, []);
 
   const share = async () => {
-    const url = window.location.href;
+    // 이어 읽기·주변 관광지 링크와 건너뛰기 링크가 붙인 도착 자리(#contents, #quick-tit)는 떼고 건넨다. 쪽 안 절 # 는 그대로
+    const u = new URL(window.location.href);
+    if (LAND_HASHES.includes(decodeURIComponent(u.hash.slice(1)))) u.hash = "";
+    const url = u.href;
     const nav = navigator as Navigator & { share?: (d: ShareData) => Promise<void> };
     // 휴대전화 등 공유 창이 있는 곳은 그 창을, 없으면 주소를 복사한다
     if (nav.share && window.matchMedia("(max-width: 1023px)").matches) {

@@ -207,10 +207,24 @@ const STD_FIELD_LABEL: Record<string, string> = {
   설치장소설명: "설치 장소 설명",
   동시사용가능대수: "동시 사용 가능 대수",
   관리기관전화번호: "관리 기관 전화번호",
-  // 한국문화정보원 전국 배리어프리 문화예술관광지(띄어 쓰지 않은 셋만)
+  // 전국교통약자이동지원센터정보표준데이터(오시는 길·인쇄 쪽 교통약자이동지원센터 칸).
+  // '예약접수'는 평일·주말예약접수운영시작시각~종료시각을 한 괄호에 적을 때 앞에 붙이는 조각
+  예약접수전화번호: "예약 접수 전화번호",
+  보유차량종류: "보유 차량 종류",
+  슬로프형휠체어차량대수: "슬로프형 휠체어 차량 대수",
+  사전예약신청기간: "사전 예약 신청 기간",
+  예약접수: "예약 접수",
+  차량관내운행지역: "차량 관내 운행 지역",
+  차량관외운행지역: "차량 관외 운행 지역",
+  차량이용요금: "차량 이용 요금",
+  차량이용대상: "차량 이용 대상",
+  // 표준데이터 모두에 있는 칸(출처 줄 괄호)
+  데이터기준일자: "데이터 기준 일자",
+  // 한국문화정보원 전국 배리어프리 문화예술관광지(띄어 쓰지 않은 넷만. 최종작성일은 출처 줄 괄호)
   "무료주차 가능여부": "무료 주차 가능 여부",
   "유료주차 가능여부": "유료 주차 가능 여부",
   "대형주차장 가능여부": "대형 주차장 가능 여부",
+  최종작성일: "최종 작성일",
 };
 /** 화면에 적을 칸 이름(표에 없는 칸은 그대로) */
 export const stdLabel = (k: string) => STD_FIELD_LABEL[k] ?? k;
@@ -232,14 +246,32 @@ export function stdValue(k: string, v: string | number): string {
   return t;
 }
 
-/** 자료 이름(목록 '자료' 칸과 출처 줄). 원본 자료 이름을 줄였다 */
+// 자료 이름(공공데이터포털 표준데이터 제목)도 화면에 적을 때 칸 이름과 같은 규칙으로 낱말 사이만 띄운다(09-27 점검).
+// 낱말 나눔은 사이트에 이미 있는 꼴을 따른다: '공중화장실'·'전동휠체어 급속충전기'(KIND_LABEL), '요금 정보'처럼 '주차장 정보',
+// '이동지원센터'는 「교통약자의 이동편의 증진법」의 말 한 덩어리. 자료 출처 쪽(/about/sources) 표는 포털 제목 그대로 둔다(주소와 같이 적는 인용).
+const STD_DATASET_LABEL: Record<string, string> = {
+  전국공중화장실표준데이터: "전국 공중화장실 표준데이터",
+  전국주차장정보표준데이터: "전국 주차장 정보 표준데이터",
+  전국전동휠체어급속충전기표준데이터: "전국 전동휠체어 급속충전기 표준데이터",
+  전국교통약자이동지원센터정보표준데이터: "전국 교통약자 이동지원센터 정보 표준데이터",
+};
+/** 화면에 적을 자료 이름(표에 없는 이름은 그대로) */
+export const stdDataset = (name: string) => STD_DATASET_LABEL[name] ?? name;
+
+/** 교통약자이동지원센터 출처 줄(오시는 길·인쇄 쪽) */
+export const MOBILITY_SOURCE_LINE = `자료: ${stdDataset(AM.sources.mobilityCenter.name)}(${stdLabel("데이터기준일자")} ${MOBILITY.refDate})`;
+
+/** 배리어프리 문화예술관광지 출처 줄(무장애 정보 쪽 표 아래·편의시설 출처 줄) */
+export const BF_CULTURE_SOURCE_LINE = `자료: ${AM.sources.bfCulture.name}(${stdLabel("최종작성일")} 2022-11-25)`;
+
+/** 자료 이름(목록 '자료' 칸과 출처 줄). 원본 자료 이름을 줄였다(낱말 사이는 위 자료 이름과 같게) */
 export const SRC_LABEL: Record<AmenitySrc, string> = {
   toiletStd: "공중화장실 표준데이터",
   osm: "오픈스트리트맵",
   korwith: "한국관광공사 무장애 여행 정보",
   bfCulture: "배리어프리 문화예술관광지",
-  parking: "주차장정보 표준데이터",
-  charger: "전동휠체어급속충전기 표준데이터",
+  parking: "주차장 정보 표준데이터",
+  charger: "전동휠체어 급속충전기 표준데이터",
   korwithFood: "한국관광공사 무장애 여행 정보",
 };
 
@@ -248,13 +280,13 @@ export function sourceLines(srcs: Iterable<AmenitySrc | "osmRest">): string[] {
   const set = new Set(srcs);
   const S = AM.sources;
   const lines: string[] = [];
-  const ref = (s: Source) => (s.refDates ? `데이터기준일자 ${s.refDates[1]}` : `${s.fetched.slice(0, 10)} 받음`);
+  const ref = (s: Source) => (s.refDates ? `${stdLabel("데이터기준일자")} ${s.refDates[1]}` : `${s.fetched.slice(0, 10)} 받음`);
   // 이름 끝 괄호(KorWithService2, 내려받기 판 등)는 떼고 적는다. 같은 쪽 무장애 표 출처 줄과 같은 이름이 되게
   if (set.has("korwith")) lines.push(`자료: ${S.korwith.name.replace(/\(.*\)$/, "")}(${ref(S.korwith)})`);
-  if (set.has("toiletStd")) lines.push(`자료: ${S.toiletStd.name.replace(/\(.*\)$/, "")}(${ref(S.toiletStd)})`);
-  if (set.has("bfCulture")) lines.push(`자료: ${S.bfCulture.name}(최종작성일 2022-11-25)`);
-  if (set.has("parking")) lines.push(`자료: ${S.parking.name}(${ref(S.parking)})`);
-  if (set.has("charger")) lines.push(`자료: ${S.charger.name}(${ref(S.charger)})`);
+  if (set.has("toiletStd")) lines.push(`자료: ${stdDataset(S.toiletStd.name.replace(/\(.*\)$/, ""))}(${ref(S.toiletStd)})`);
+  if (set.has("bfCulture")) lines.push(BF_CULTURE_SOURCE_LINE);
+  if (set.has("parking")) lines.push(`자료: ${stdDataset(S.parking.name)}(${ref(S.parking)})`);
+  if (set.has("charger")) lines.push(`자료: ${stdDataset(S.charger.name)}(${ref(S.charger)})`);
   if (set.has("korwithFood")) lines.push(`자료: ${S.korwith.name.replace(/\(.*\)$/, "")} 음식점(${FOOD.meta.fetched} 받음)`);
   if (set.has("osm") || set.has("osmRest")) lines.push(`자료: © OpenStreetMap 기여자, ODbL(${S.osm.fetched.slice(0, 10)} 받음)`);
   return lines;

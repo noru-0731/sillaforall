@@ -63,12 +63,14 @@ function KoglText({ type }: { type: KoglType }) {
 // 무장애 시안(bf-draft): 가까운 편의시설·교통약자 이동지원센터·배리어프리 문화예술관광지에 쓴 공공데이터(amenities.json sources).
 // 칸 값은 도구/06_편의시설.py 가 포털 쪽과 받은 파일에서 확인해 적은 것(2026-09-25).
 const PORTAL_KEYS = ["toiletStd", "parking", "charger", "mobilityCenter", "bfCulture"] as const;
+// 기준일 칸의 칸 이름은 곳마다 쪽 출처 줄과 같게 띄어 쓴다(data/bf.ts stdLabel: 데이터기준일자 → 데이터 기준 일자, 최종작성일 → 최종 작성일).
+// '자료' 칸의 자료 이름은 포털 제목 그대로(주소와 같이 적는 인용).
 const REF_DATE: Record<(typeof PORTAL_KEYS)[number], string> = {
-  toiletStd: "데이터기준일자 2019-09-21",
-  parking: "데이터기준일자 2026-04-16",
-  charger: "데이터기준일자 2025-09-15",
-  mobilityCenter: "데이터기준일자 2025-08-20",
-  bfCulture: "최종작성일 2022-11-25",
+  toiletStd: "데이터 기준 일자 2019-09-21",
+  parking: "데이터 기준 일자 2026-04-16",
+  charger: "데이터 기준 일자 2025-09-15",
+  mobilityCenter: "데이터 기준 일자 2025-08-20",
+  bfCulture: "최종 작성일 2022-11-25",
 };
 
 export default function SourcesPage() {

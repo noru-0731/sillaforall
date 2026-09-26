@@ -34,6 +34,8 @@ import { BUS_SOURCE_LINES, KTX_NAME, busStopsOf, ktxLinesOf } from "@/data/bus";
 import { extraFeeRowsOf } from "@/data/introExtra";
 import { bfLines, hoursLines, hoursNoteLines } from "@/lib/breaks";
 import { AmenityTable, SourceLines, amenityPoints, legendOf } from "@/components/place/Amenities";
+// 교통약자이동지원센터 칸 이름·출처 줄(09-27 점검). 위 "@/data/bf" 줄과 합쳐도 된다(그 줄 바로 밑 버스 import 를 bus 갈래가 고쳐 따로 둠)
+import { MOBILITY_SOURCE_LINE, stdLabel } from "@/data/bf";
 import PageSteps from "@/components/place/PageSteps";
 import { NewWinIcon } from "@/components/layout/NewWin";
 import s from "@/components/place/Place.module.css";
@@ -208,31 +210,33 @@ export default async function PlaceDirections({ params }: Props) {
             <p className={s.transUnitTit}>{M.name}</p>
             <ul className={`${s.dotList} ${s.transDots}`}>
               <li>
-                <span className={s.dotLabel}>예약접수전화번호</span>
+                <span className={s.dotLabel}>{stdLabel("예약접수전화번호")}</span>
                 <a href={`tel:${M.phone.replace(/-/g, "")}`}>{M.phone}</a>
               </li>
               <li>
-                <span className={s.dotLabel}>보유차량종류</span>
-                {M.vehicles}(슬로프형휠체어차량대수 {M.slope})
+                <span className={s.dotLabel}>{stdLabel("보유차량종류")}</span>
+                {M.vehicles}({stdLabel("슬로프형휠체어차량대수")} {M.slope})
               </li>
               <li>
-                <span className={s.dotLabel}>사전예약신청기간</span>
-                {M.reserve}(예약접수 평일 {M.reserveHours.weekday}, 주말 {M.reserveHours.weekend})
+                <span className={s.dotLabel}>{stdLabel("사전예약신청기간")}</span>
+                {M.reserve}({stdLabel("예약접수")} 평일 {M.reserveHours.weekday}, 주말 {M.reserveHours.weekend})
               </li>
               <li>
-                <span className={s.dotLabel}>차량관내운행지역·차량관외운행지역</span>
+                <span className={s.dotLabel}>
+                  {stdLabel("차량관내운행지역")}·{stdLabel("차량관외운행지역")}
+                </span>
                 {M.area.inside} / {M.area.outside}
               </li>
               <li>
-                <span className={s.dotLabel}>차량이용요금</span>
+                <span className={s.dotLabel}>{stdLabel("차량이용요금")}</span>
                 {M.fare}
               </li>
               <li>
-                <span className={s.dotLabel}>차량이용대상</span>
+                <span className={s.dotLabel}>{stdLabel("차량이용대상")}</span>
                 {M.target.join("\n")}
               </li>
             </ul>
-            <SourceLines lines={[`자료: 전국교통약자이동지원센터정보표준데이터(데이터기준일자 ${M.refDate})`]} />
+            <SourceLines lines={[MOBILITY_SOURCE_LINE]} />
           </div>
         </div>
 

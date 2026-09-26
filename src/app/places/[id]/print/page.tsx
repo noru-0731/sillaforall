@@ -14,7 +14,7 @@ import { notFound } from "next/navigation";
 import { areaLabelOf, nearestRegistered, phoneOf } from "@/components/place/placeData";
 import { placeById, places, zipOf } from "@/data";
 import type { Place } from "@/data";
-import { bfGroupsOf, bfLabel, BF_SOURCE, MOBILITY } from "@/data/bf";
+import { bfGroupsOf, bfLabel, BF_SOURCE, MOBILITY, MOBILITY_SOURCE_LINE, stdLabel } from "@/data/bf";
 import { extraFeeRowsOf, extraRowsOf } from "@/data/introExtra";
 import { GJ_CREDIT, GJ_SOURCE, gjOf } from "@/data/gj";
 import { BUS_SOURCE_LINES, KTX_NAME, busStopsOf, ktxLinesOf } from "@/data/bus";
@@ -207,11 +207,11 @@ export default async function PlacePrint({ params }: Props) {
             <p className={s.transUnitTit}>{MOBILITY.name}</p>
             <ul className={`${s.dotList} ${s.transDots}`}>
               <li>
-                <span className={s.dotLabel}>예약접수전화번호</span>
+                <span className={s.dotLabel}>{stdLabel("예약접수전화번호")}</span>
                 <a href={`tel:${MOBILITY.phone.replace(/-/g, "")}`}>{MOBILITY.phone}</a>
               </li>
             </ul>
-            <SourceLines lines={[`자료: 전국교통약자이동지원센터정보표준데이터(데이터기준일자 ${MOBILITY.refDate})`]} />
+            <SourceLines lines={[MOBILITY_SOURCE_LINE]} />
           </div>
           {endDashed && <DashNote className={s.tipsAfterTable} />}
         </Section>
