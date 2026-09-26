@@ -59,9 +59,20 @@ export function bfFilledFieldsOf(id: string): string[] {
 
 // 관광공사 콘텐츠 유형: 12 관광지, 14 문화시설 (숙박 32·음식점 39 후보는 싣지 않는다)
 const TYPE_LABEL: Record<string, string> = { "12": "관광지", "14": "문화시설" };
-export type BfNeighbor = { title: string; contentId: string; typeLabel: string; distanceM: number; coordsBorrowed: boolean; groups: BfGroup[] };
+/**
+ * placeId: 그 후보가 61곳 안 관광지의 무장애 기록이면 그 곳 id(barrierfree.json places 의 contentId 로 찾음). 표 위 이름을 그 곳 무장애 정보 쪽으로 잇는다(가 99번).
+ */
+export type BfNeighbor = { title: string; contentId: string; typeLabel: string; distanceM: number; coordsBorrowed: boolean; groups: BfGroup[]; placeId: string | null };
 
-/** 명부에 없는 곳: 300m 안(좌표를 빌린 곳은 빌린 좌표 기준) 관광공사 무장애 여행 정보에 오른 관광지·문화시설과 그 칸 */
+/** 관광공사 무장애 콘텐츠 번호 → 61곳 id(명부에 오른 곳) */
+const PLACE_BY_CID: Record<string, string> = Object.fromEntries(
+  Object.entries(BF.places).flatMap(([pid, r]) => (r.contentId ? [[r.contentId, pid]] : [])),
+);
+
+/**
+ * 명부에 없는 곳: 300m 안 관광공사 무장애 여행 정보에 오른 관광지·문화시설과 그 칸.
+ * 좌표를 빌린 곳(서악서원)과 넓은 구역 기록(경주시 관광특구)은 도구(06_편의시설.py)가 후보에서 뺐다(가 101번).
+ */
 export function bfNeighborsOf(id: string): BfNeighbor[] {
   if (BF.places[id]?.fields) return [];
   return (BF.candidates[id]?.candidates ?? [])
@@ -73,6 +84,7 @@ export function bfNeighborsOf(id: string): BfNeighbor[] {
       distanceM: c.distanceM,
       coordsBorrowed: c.coordsBorrowed,
       groups: groupsOf(c.fields),
+      placeId: PLACE_BY_CID[c.contentId] ?? null,
     }))
     .filter((c) => c.groups.length > 0)
     .sort((a, b) => a.distanceM - b.distanceM);
