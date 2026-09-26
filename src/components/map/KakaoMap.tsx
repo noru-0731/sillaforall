@@ -46,9 +46,25 @@ function relRect(el: HTMLElement, root: HTMLElement, pad: number): Rect | null {
   return { l: (r.left - rr.left) * z - pad, t: (r.top - rr.top) * z - pad, r: (r.right - rr.left) * z + pad, b: (r.bottom - rr.top) * z + pad };
 }
 
-/** 카카오가 왼쪽 아래에 그리는 로고·축척 줄. 이름표가 없어 로고 링크(map.kakao.com)를 싼 상자를 찾는다 */
+/** 로고·축척 줄로 볼 상자의 가장 큰 높이(px). 카카오 줄은 한 줄(약 20px)이다 */
+const FOOT_MAX_H = 48;
+
+/**
+ * 카카오가 왼쪽 아래에 그리는 로고·축척 줄. 이름표가 없어 로고 링크(map.kakao.com)에서 위로 올라가며
+ * 한 줄 크기(높이 48px 이하, 지도 폭의 80% 이하)인 가장 바깥 상자를 고른다.
+ * - 로고와 축척이 따로 싸여 있어도(카카오 setCopyrightPosition 의 좌우 바꾸기) 둘을 함께 싼 상자까지 올라가 축척도 장애물에 넣는다.
+ *   로고 상자만 잡으면 비킨 번호 네모가 축척 위로 옮겨질 수 있다(흉내 SDK, 경주읍성 무장애 휴대전화 20번).
+ * - 지도 전체 크기의 겹이나 폭 전체의 띠까지는 올라가지 않는다(한 줄이 아닌 것).
+ */
 function kakaoFoot(root: HTMLElement) {
-  return root.querySelector<HTMLElement>('a[href*="map.kakao.com"]')?.parentElement ?? null;
+  let cur = root.querySelector<HTMLElement>('a[href*="map.kakao.com"]');
+  if (!cur) return null;
+  const maxW = root.clientWidth * 0.8;
+  for (let p = cur.parentElement; p && p !== root; p = p.parentElement) {
+    if (p.offsetHeight > FOOT_MAX_H || p.offsetWidth > maxW) break;
+    cur = p;
+  }
+  return cur;
 }
 
 export default function KakaoMap({ lat, lon, name, label, zoom = 16, points, legend, tall }: MapProps) {
