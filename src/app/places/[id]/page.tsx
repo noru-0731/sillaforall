@@ -43,6 +43,7 @@ import { parseOpenRule, ruleShowsAnything } from "@/lib/openNow";
 import OpenNow from "@/components/place/OpenNow";
 import { anyPhoto, areaLabelOf, coverPhoto, fmtDist, nearby, nearbySlides, phoneOf, stripCredit, stripSlots } from "@/components/place/placeData";
 import NearbySlider from "@/components/place/NearbySlider";
+import PageSteps from "@/components/place/PageSteps";
 import s from "@/components/place/Submain.module.css";
 
 type Props = { params: Promise<{ id: string }> };
@@ -297,6 +298,9 @@ export default async function PlaceSubmain({ params }: Props) {
           </div>
         </div>
       </section>
+
+      {/* deck 갈래: 쪽 끝 이어 읽기(다음: 소개) */}
+      <PageSteps place={p} at={0} className={s.inner} />
     </div>
   );
 }

@@ -13,6 +13,7 @@ import { groupByArea, menuPage } from "@/components/place-list/helpers";
 import { THREE_TEXT } from "@/components/place-list/Parts";
 import { BoardList, BoardPills, BoardState, type BoardRow } from "../_parts/Board";
 import s from "../bf.module.css";
+import MenuSteps from "@/components/place/MenuSteps";
 
 const HREF = "/barrier-free/listed";
 const page = menuPage(HREF);
@@ -54,6 +55,8 @@ export default function ListedPage() {
             <Ph key="b">관광지 이름을 누르면 무장애 정보 쪽에서 적힌 글을 볼 수 있습니다.</Ph>,
           ]}
         />
+        {/* 쪽 끝 이어 읽기(무장애 정보 메뉴 차례) */}
+        <MenuSteps section={page.section} current={HREF} />
       </SubPage>
     </BoardState>
   );

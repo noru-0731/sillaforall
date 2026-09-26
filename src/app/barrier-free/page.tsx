@@ -10,7 +10,9 @@ import { BoardTable } from "@/components/royal";
 import { Icon, type IconName } from "@/components/icons";
 import { THREE_KEYS, menuPage, type ThreeKey } from "@/components/place-list/helpers";
 import { THREE_TEXT } from "@/components/place-list/Parts";
+import { STEPFREE_HREF, STEPFREE_PLACES } from "@/data/stepfree";
 import s from "./bf.module.css";
+import MenuSteps from "@/components/place/MenuSteps";
 
 const HREF = "/barrier-free";
 const page = menuPage(HREF);
@@ -42,6 +44,7 @@ export default function BarrierFreeGuidePage() {
   const subCount: Record<string, number> = {
     "/barrier-free/listed": registered.length,
     "/barrier-free/unlisted": unregistered.length,
+    [STEPFREE_HREF]: STEPFREE_PLACES.length,
   };
 
   return (
@@ -188,6 +191,8 @@ export default function BarrierFreeGuidePage() {
           ))}
         </div>
       </Section>
+      {/* 쪽 끝 이어 읽기(무장애 정보 메뉴 차례) */}
+      <MenuSteps section={page.section} current={HREF} />
     </SubPage>
   );
 }

@@ -43,6 +43,7 @@ import {
   type MapProps,
 } from "./mapParts";
 import s from "./RealMap.module.css";
+import { NewWinIcon } from "@/components/layout/NewWin";
 
 export type { LegendItem, MapPoint } from "./mapParts";
 
@@ -226,6 +227,7 @@ export default function RealMap({ lat, lon, name, label, zoom = 16, points, lege
           ©{" "}
           <a href={OSM_COPYRIGHT} target="_blank" rel="noopener noreferrer" title="새 창 열림">
             OpenStreetMap
+            <NewWinIcon />
           </a>{" "}
           기여자
         </p>

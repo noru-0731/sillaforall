@@ -43,6 +43,7 @@ export const MENU: NavItem[] = [
       { label: "무장애 정보 보는 법", href: "/barrier-free" },
       { label: "무장애 정보가 있는 곳", href: "/barrier-free/listed" },
       { label: "무장애 정보가 없는 곳", href: "/barrier-free/unlisted" },
+      { label: "계단 없는 길", href: "/barrier-free/step-free" },
     ],
   },
   {

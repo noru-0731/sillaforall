@@ -8,6 +8,7 @@ import { groupByArea, menuPage } from "@/components/place-list/helpers";
 import { THREE_TEXT } from "@/components/place-list/Parts";
 import { BoardList, BoardPills, BoardState, type BoardRow } from "../_parts/Board";
 import s from "../bf.module.css";
+import MenuSteps from "@/components/place/MenuSteps";
 
 const HREF = "/barrier-free/unlisted";
 const page = menuPage(HREF);
@@ -48,6 +49,8 @@ export default function UnlistedPage() {
             <Ph key="b">물어볼 곳: 가기 전에 확인할 수 있는 곳을 적을 자리</Ph>,
           ]}
         />
+        {/* 쪽 끝 이어 읽기(무장애 정보 메뉴 차례) */}
+        <MenuSteps section={page.section} current={HREF} />
       </SubPage>
     </BoardState>
   );

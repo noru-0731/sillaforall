@@ -23,6 +23,7 @@ import { extraFeeRowsOf, extraRowsOf } from "@/data/introExtra";
 import { gluedLines, hoursLines, hoursNoteLines } from "@/lib/breaks";
 import { anyPhoto, areaLabelOf, cleanPhotoName, coverPhoto, phoneOf, photosOf, splitParas } from "@/components/place/placeData";
 import IntroMark from "@/components/place/IntroMark";
+import PageSteps from "@/components/place/PageSteps";
 import s from "@/components/place/Place.module.css";
 import st from "./intro.module.css";
 
@@ -168,6 +169,8 @@ export default async function PlaceIntro({ params }: Props) {
         {/* "-" 칸이 있으면 표 바로 아래 뜻풀이 한 줄 */}
         {rows.some(([, v]) => v === EMPTY) && <DashNote className={s.tipsAfterTable} />}
       </Section>
+      {/* deck 갈래: 쪽 끝 이어 읽기 */}
+      <PageSteps place={p} at={1} />
     </SubPage>
   );
 }

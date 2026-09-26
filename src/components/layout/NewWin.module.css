@@ -1,0 +1,10 @@
+/* KRDS .svg-icon(24×24, 바탕색 = 기본 글자색)을 곁 글자에 맞춘다: 크기 1em, 색 = 글자색. .svg-icon 보다 앞서게 두 겹 선택자 */
+.icon:global(.svg-icon) {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  margin-left: 0.35em;
+  vertical-align: -0.12em;
+  background-color: currentColor;
+  flex: 0 0 auto;
+}
