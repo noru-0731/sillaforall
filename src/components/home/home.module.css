@@ -565,11 +565,22 @@
   box-shadow: 1rem 1rem 0 0 var(--home-card-shadow);
 }
 .cardPhoto {
-  display: block;
+  display: flex;
+  flex-direction: column;
   height: var(--ph);
   overflow: hidden;
   border-radius: 1.2rem;
   transition: height 0.5s ease;
+}
+/* 제3유형 사진의 출처 줄(사진 아래)이 사진 칸 높이 안에 들도록 사진 틀이 남는 높이를 채운다(카드 높이는 그대로) */
+.cardPhoto > :global(.rc-photo) {
+  flex: 1 1 0;
+  min-height: 0;
+}
+.cardPhoto > :global(.rc-pcredit-below) {
+  flex: 0 0 auto;
+  margin-top: 0.2rem;
+  padding: 0 0.4rem;
 }
 .isCenter .cardPhoto {
   height: var(--phc);
@@ -603,13 +614,6 @@
 }
 .cardAddrKey {
   font-weight: 500;
-}
-.cardsCredit {
-  margin-top: 1.2rem;
-  font-size: 1.4rem;
-  line-height: 1.4;
-  color: var(--rc-text-faint);
-  text-align: right;
 }
 
 /* ───────────── 칸 3: 목록 + 지도 판(궁능 notice_section) ───────────── */
@@ -878,9 +882,6 @@
   }
   .cardsView {
     margin-top: 2rem;
-  }
-  .cardsCredit {
-    text-align: center;
   }
 
   .boardSec {

@@ -2,7 +2,7 @@
 import type { Metadata } from "next";
 import { SubPage } from "@/components/layout/PageParts";
 import { menuPage } from "@/components/place-list/helpers";
-import { areaOptions, cardsByArea, creditsFor } from "@/components/place-list/cardData";
+import { areaOptions, cardsByArea } from "@/components/place-list/cardData";
 import AreaListView from "@/components/place-list/AreaListView";
 
 const HREF = "/list";
@@ -19,7 +19,7 @@ export default function ListByAreaPage() {
       side={page.section}
       current={HREF}
     >
-      <AreaListView cards={cards} options={areaOptions()} credits={creditsFor(cards)} />
+      <AreaListView cards={cards} options={areaOptions()} />
     </SubPage>
   );
 }

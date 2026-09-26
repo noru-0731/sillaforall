@@ -2,6 +2,7 @@
 // 지도 쪽 본문(궁능유적본부 누리집 관람코스 쪽 모양, 나무 파일 course_1440):
 // 거점 단추 줄 + 오른쪽 전체/정보가 적힌 곳/정보가 없는 곳 → 지도 상자 → ⓘ 안내 → 이름 격자(5칸)
 // → 고른 관광지(이름 제목, 사진, 개요, "관광지 자세히 보기", 공공누리 글자 상자).
+// 사진 곁 출처(짧은 꼴 "ⓒ한국관광공사" 등): 제1유형은 사진 오른쪽 아래에 얹고, 제3유형은 사진 아래 한 줄. 공공누리 글자 상자는 궁능 모양 그대로 둔다.
 // ?place=id 가 있으면 그 곳을 고른 채로 연다(정적 쪽이라 브라우저에서 읽는다).
 // (무장애 시안 bf-draft: 무장애 조건 거르기 줄과 ?조건= 읽기를 뺐다. 전체/정보가 적힌 곳/정보가 없는 곳 나눔은 그대로.)
 import { useId, useMemo, useState, useSyncExternalStore } from "react";
@@ -12,6 +13,7 @@ import { cn } from "@/lib/cn";
 import { Icon } from "@/components/icons";
 import { Ph } from "@/components/layout/Ph";
 import Photo from "@/components/royal/Photo";
+import { photoCreditOf } from "@/data/credit";
 import { SegTabs } from "@/components/royal/PillTabs";
 import { InfoBox } from "@/components/royal/Bits";
 import MapView from "./MapView";
@@ -147,7 +149,16 @@ export default function MapExplorer({
           <h2 id={detailTitleId} className={s.detailTit}>
             {sel.name}
           </h2>
-          <Photo key={sel.id} photo={photo} alt={sel.name} ratio="1030/551" bg="light" loading="eager" className={s.photo} />
+          <Photo
+            key={sel.id}
+            photo={photo}
+            alt={sel.name}
+            ratio="1030/551"
+            bg="light"
+            loading="eager"
+            className={s.photo}
+            credit={photo ? photoCreditOf(photo) : null}
+          />
           <div className={s.txt}>
             {ov ? (
               <p>

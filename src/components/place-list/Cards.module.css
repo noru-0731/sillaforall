@@ -119,13 +119,6 @@
   color: var(--rc-on-ink);
 }
 
-.credit {
-  margin-top: 2rem;
-  font-size: 1.5rem;
-  line-height: 1.6;
-  color: var(--rc-text-faint);
-}
-
 @container rc-main (max-width: 767px) {
   .card {
     gap: 2rem;

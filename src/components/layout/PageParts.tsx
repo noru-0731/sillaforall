@@ -4,7 +4,7 @@
 import Link from "next/link";
 import { MENU, SITE_NAME, sectionOf, sideMenuOf } from "@/site/ia";
 import type { NavItem, SideMenu, SideMenuLink } from "@/site/ia";
-import { bannerPhoto as pickBanner, photoCredit } from "@/data/photos";
+import { bannerPhoto as pickBanner, photoCreditOf, TOURAPI_CREDIT } from "@/data/photos";
 import { Icon } from "@/components/icons";
 import { MobileMenuBar, PageTools, SideMenuNav } from "./SubPageParts";
 import { Ph } from "./Ph";
@@ -113,13 +113,14 @@ export function SubPage({
     const firstHref = crumbs[0]?.href ?? section.href;
     const b = pickBanner(firstHref.startsWith("/places") || firstHref === "/sitemap" ? firstHref : section.href);
     photoUrl = b.url;
-    photoCaption = `${b.placeName} · ${photoCredit("Type1")}`;
+    // 딴 곳 사진이라 곳 이름을 앞에 둔다("월정교 · ⓒ한국관광공사")
+    photoCaption = `${b.placeName} · ${photoCreditOf(b)}`;
   } else if (typeof bannerPhoto === "string") {
     photoUrl = bannerPhoto;
-    photoCaption = photoCredit("Type1");
+    photoCaption = TOURAPI_CREDIT;
   } else if (bannerPhoto) {
     photoUrl = bannerPhoto.url;
-    photoCaption = bannerPhoto.caption ?? photoCredit("Type1");
+    photoCaption = bannerPhoto.caption ?? TOURAPI_CREDIT;
   }
 
   // PC 왼쪽 메뉴

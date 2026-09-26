@@ -26,16 +26,9 @@
   background: linear-gradient(to bottom, transparent 62%, var(--rc-bg) 100%);
   pointer-events: none;
 }
-.gCredit {
-  margin-top: 0.4rem;
-  font-size: 1.5rem;
-  line-height: 1.4;
-  color: var(--rc-text-faint);
-  text-align: right;
-}
-.gCredit.gCredit {
-  font-size: 1.5rem;
-  color: var(--rc-text-faint);
+/* 사진 출처 딱지(.rc-pcredit)를 사진 오른쪽 아래에 얹으려고 figure를 기준 틀로 */
+.gFigure {
+  position: relative;
 }
 
 /* 사진 아래: 왼쪽 표장 칸 337 + 오른쪽 글 칸 */

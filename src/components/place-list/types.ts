@@ -24,7 +24,7 @@ export type CardPlace = {
   registered: boolean;
   /** 글이 적힌 칸이 있는 무장애 묶음 이름(지체장애, 시각장애, 청각장애, 영유아 가족 차례). 보이기만 한다 */
   bfGroups: string[];
-  /** 카드 사진의 출처 한 줄(photoCreditOf). 사진이 없으면 null. 보이는 카드만으로 출처 줄을 적는 데 쓴다 */
+  /** 카드 사진의 출처(짧은 꼴, photoCreditOf). 사진이 없으면 null. 사진 곁에 적는다 */
   credit: string | null;
 };
 

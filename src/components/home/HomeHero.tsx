@@ -20,7 +20,7 @@ export type HeroSlide = {
   /** "권역 · 읍면동" */
   meta: string;
   photo: { url: string; type: "Type1"; w?: number; large?: string; lw?: number };
-  /** 사진 출처 한 줄("사진: 한국관광공사 관광정보, 공공누리 제1유형" 등. 서버에서 photoCreditOf로 만듦) */
+  /** 사진 출처(짧은 꼴 "ⓒ한국관광공사" 등. 서버에서 photoCreditOf로 만듦). 글 상자 안 이름·권역 아래에 둔다 */
   credit: string;
 };
 export type QuickItem = {

@@ -7,15 +7,16 @@
 // 본문은 궁능 "궁궐의 역사"(story_history) 모양: 왼쪽에 사진을 세로로 쌓고(309×213, 사이 20) 오른쪽에 글(왼쪽 30 띄움).
 //   사진은 큰 사진과 다른 장, 제1유형 먼저. 장 수는 본문 높이에 맞춘다(sideCount). 휴대전화는 사진 3칸 격자 뒤에 글.
 //   궁능은 사진마다 아래에 이름 띠를 얹지만, 우리 사진 이름은 대부분 관광지 이름이나 파일 이름이라 띠를 넣지 않았다.
+// 사진 출처(짧은 꼴 "ⓒ한국관광공사" 등)는 사진마다 곁에: 제1유형은 사진 오른쪽 아래에 얹고, 제3유형은 사진 틀 바로 아래 오른쪽 한 줄.
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { placeById, places } from "@/data";
 import type { Place } from "@/data";
-import { creditLines, photoCreditOf } from "@/data/photos";
+import { photoCreditOf } from "@/data/photos";
 import type { Photo as PhotoData } from "@/data/photos";
 import { placeCrumbs, placePages, placeSideMenu, PLACE_BANNER } from "@/site/ia";
 import { Ph, Section, SubPage } from "@/components/layout/PageParts";
-import { BoardTable, OffsetPhoto, Photo } from "@/components/royal";
+import { BoardTable, CreditBelow, OffsetPhoto, Photo } from "@/components/royal";
 import { overviewParas } from "@/data/overview";
 import { extraFeeRowsOf, extraRowsOf } from "@/data/introExtra";
 import { gluedLines, hoursLines } from "@/lib/breaks";
@@ -105,9 +106,17 @@ export default async function PlaceIntro({ params }: Props) {
     <SubPage crumbs={placeCrumbs(p, page)} title={page.label} banner={PLACE_BANNER} sideMenu={placeSideMenu(p)} current={page.href}>
       <div>
         <OffsetPhoto>
-          <Photo photo={photo} alt={`${p.name} 사진`} ratio="101/50" bg="light" loading="eager" />
+          <Photo
+            photo={photo}
+            alt={`${p.name} 사진`}
+            ratio="101/50"
+            bg="light"
+            loading="eager"
+            credit={photo?.type === "Type1" ? photoCreditOf(photo) : null}
+          />
         </OffsetPhoto>
-        {photo && <p className={s.photoCredit}>{photoCreditOf(photo)}</p>}
+        {/* 제3유형: 사진 위에 얹지 않고 사진(어긋난 테두리 틀) 아래 오른쪽 한 줄 */}
+        {photo && photo.type !== "Type1" && <CreditBelow text={photoCreditOf(photo)} className={s.photoCredit} />}
         <IntroMark className={s.introMark} />
 
         {ov ? (
@@ -120,15 +129,18 @@ export default async function PlaceIntro({ params }: Props) {
                     <ul className={st.picList}>
                       {side.map((ph) => (
                         <li key={ph.url}>
-                          <Photo photo={ph} alt={cleanPhotoName(ph.name) ?? `${p.name} 사진`} ratio="309/213" bg="light" />
+                          <Photo
+                            photo={ph}
+                            alt={cleanPhotoName(ph.name) ?? `${p.name} 사진`}
+                            ratio="309/213"
+                            bg="light"
+                            credit={ph.type === "Type1" ? photoCreditOf(ph) : null}
+                          />
+                          {/* 사진 아래 한 줄 출처: 제3유형은 늘, 제1유형은 휴대전화 3칸 격자(칸 가로 115 안팎)에서만. PC 제1유형은 사진 위 딱지 */}
+                          <CreditBelow text={photoCreditOf(ph)} className={ph.type === "Type1" ? st.picCreditM : undefined} />
                         </li>
                       ))}
                     </ul>
-                    {creditLines(side).map((line) => (
-                      <p key={line} className={st.picCredit}>
-                        {line}
-                      </p>
-                    ))}
                   </div>
                   <div className={`${s.introBody} ${st.body}`}>{body}</div>
                 </div>

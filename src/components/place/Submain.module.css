@@ -38,13 +38,6 @@
 .visualContain {
   background: var(--rc-photo-dark);
 }
-.credit {
-  margin-top: 0.6rem;
-  font-size: 1.4rem;
-  line-height: 1.5;
-  color: var(--rc-text-faint);
-  text-align: right;
-}
 
 /* ── 가15 큰 사진 아래 작은 사진 석 장 + 나머지 장수 칸(대한민국 구석구석 상세의 작은 사진 줄). 네 칸 한 줄.
    제1유형은 칸에 맞춰 자르고 제3유형은 자르지 않는다(Photo가 contain + 옅은 바탕). 장수는 사진 위가 아니라 네 번째 칸에 둔다. ── */
@@ -59,6 +52,10 @@
   aspect-ratio: 5 / 2;
   overflow: hidden;
   color: var(--rc-text);
+}
+/* 제1유형 작은 사진의 사진 아래 출처 줄은 휴대전화에서만(PC는 사진 위 딱지) */
+.thumbCreditM {
+  display: none;
 }
 /* 올렸을 때 선은 칸 바깥(사이 틈)에 그린다. 안쪽에 그리면 사진 가장자리 위에 선이 얹힌다(제3유형은 사진 위에 아무것도 얹지 않음) */
 .thumb:hover {
@@ -96,10 +93,6 @@
 /* ── 관람 도우미(위 여백 70, 제목 칸 219 + 아이콘 6칸) ── */
 .quick {
   padding-top: 7rem;
-}
-/* 사진 아래 출처 줄(0.6 + 2.1)이 있으면 그만큼 도우미 위 여백에서 뺀다(제목 y: 사진 끝 + 70) */
-.credit + .quick {
-  padding-top: 4.3rem;
 }
 .quickInner {
   display: flex;
@@ -242,6 +235,20 @@
   flex: 0 0 71.43%; /* 950 / 1330 */
   overflow: hidden;
 }
+/* 제3유형 필름 줄 칸: 필름 줄 아래에 출처 한 줄(사진 위에 얹지 않음). 필름 줄이 남는 높이를 채운다(띠 높이는 그대로) */
+.stripFilm .stripImg {
+  display: flex;
+  flex-direction: column;
+}
+.stripFilm .film {
+  flex: 1 1 0;
+  min-height: 0;
+  height: auto;
+}
+.stripFilm .stripImg > :global(.rc-pcredit-below) {
+  flex: 0 0 auto;
+  margin-top: 0.2rem;
+}
 /* 제1유형 한 장: 칸에 맞춰 자른다(마우스를 올리면 조금 커짐) */
 .stripImg > img {
   display: block;
@@ -315,13 +322,6 @@
 .strip:hover .stripBig {
   text-decoration: underline;
   text-underline-offset: 0.6rem;
-}
-.menuCredit {
-  margin-top: 2rem;
-  font-size: 1.4rem;
-  line-height: 1.5;
-  color: var(--rc-text-faint);
-  text-align: right;
 }
 
 /* ── 주변 관광지 상자 + 넘기기 판(위 70, 아래 70) ── */
@@ -403,15 +403,9 @@
   .visual {
     height: 40rem;
   }
-  .credit {
-    padding: 0 1.5rem;
-  }
   /* 궁능 390: 도우미 칸 위아래 60, 다음 회색 판까지 50 */
   .quick {
     padding: 6rem 0;
-  }
-  .credit + .quick {
-    padding-top: 3.3rem;
   }
   .thumbs {
     gap: 0.6rem;
@@ -419,6 +413,13 @@
   }
   .thumb {
     aspect-ratio: 4 / 3;
+  }
+  /* 휴대전화 작은 사진(가로 85 안팎)은 출처 딱지가 사진을 덮으므로(촬영자 이름이 붙으면 서너 줄) 얹지 않고 사진 아래 한 줄로 */
+  .thumb :global(.rc-pcredit) {
+    display: none;
+  }
+  .thumbCreditM {
+    display: block;
   }
   .thumbMore b {
     font-size: 2rem;

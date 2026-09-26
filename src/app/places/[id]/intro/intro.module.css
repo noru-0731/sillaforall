@@ -16,15 +16,9 @@
   display: grid;
   gap: 2rem;
 }
-.picCredit {
-  margin-top: 1rem;
-  font-size: 1.4rem;
-  line-height: 1.5;
-  color: var(--rc-text-faint);
-  word-break: keep-all;
-}
-.picCredit + .picCredit {
-  margin-top: 0.2rem;
+/* 제1유형 사진의 사진 아래 출처 줄은 휴대전화 3칸 격자에서만(PC는 사진 위 딱지) */
+.picCreditM {
+  display: none;
 }
 .story .body {
   flex: 1 1 auto;
@@ -39,6 +33,13 @@
   .picList {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 2.1rem 0.35rem;
+  }
+  /* 칸이 좁아(가로 115 안팎, 글자 가장 크게면 75) 출처 딱지가 사진을 덮으므로 얹지 않고 사진 아래 한 줄로 */
+  .picList :global(.rc-pcredit) {
+    display: none;
+  }
+  .picCreditM {
+    display: block;
   }
   .story .body {
     margin-top: 2rem;

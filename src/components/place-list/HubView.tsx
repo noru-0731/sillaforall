@@ -4,11 +4,11 @@
 import { useId, useState } from "react";
 import { cn } from "@/lib/cn";
 import { Caret, Icon } from "@/components/icons";
-import { CreditLines, PlaceCardList } from "./PlaceCards";
+import { PlaceCardList } from "./PlaceCards";
 import type { CardPlace } from "./types";
 import s from "./Hub.module.css";
 
-export default function HubView({ groups, credits }: { groups: { hub: string; cards: CardPlace[] }[]; credits: string[] }) {
+export default function HubView({ groups }: { groups: { hub: string; cards: CardPlace[] }[] }) {
   const uid = useId();
   const [i, setI] = useState(0);
   const g = groups[i];
@@ -35,7 +35,6 @@ export default function HubView({ groups, credits }: { groups: { hub: string; ca
             <span className={s.count}>{g.cards.length}곳</span>
           </h2>
           <PlaceCardList items={g.cards} />
-          <CreditLines lines={credits} />
         </section>
       )}
     </div>

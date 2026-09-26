@@ -40,13 +40,6 @@
   color: var(--site-text-subtle);
 }
 
-/* 사진 출처 */
-.credit {
-  margin-top: var(--krds-gap-9);
-  font-size: var(--krds-pc-font-size-body-small);
-  color: var(--site-text-subtle);
-}
-
 /* 명부 글: 줄바꿈을 그대로 */
 .regText {
   white-space: pre-line;
@@ -69,9 +62,5 @@
   }
   .jump .letter.letter.letter {
     font-size: var(--krds-mobile-font-size-heading-small);
-  }
-  .credit {
-    margin-top: var(--krds-gap-7);
-    font-size: var(--krds-mobile-font-size-body-small);
   }
 }

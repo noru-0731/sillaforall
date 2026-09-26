@@ -5,7 +5,7 @@
 // 사진 고르기·목록 만들기는 여기(서버)에서 하고, 결과만 부품으로 넘긴다(photos.json을 브라우저로 보내지 않으려고).
 import { areaOf, areas, byName, HUBS, places } from "@/data";
 import type { Place } from "@/data";
-import { anyPhoto, coverPhoto, creditLines, photoCreditOf } from "@/data/photos";
+import { anyPhoto, coverPhoto, photoCreditOf } from "@/data/photos";
 import { MENU, SITE_NAME } from "@/site/ia";
 import { withJosa } from "@/lib/josa";
 import HomeHero, { type HeroSlide, type QuickItem } from "@/components/home/HomeHero";
@@ -72,12 +72,9 @@ function cardItems(): CardItem[] {
         registered: p.registered,
         address: shortAddress(p),
         photo: ph ? { url: ph.url, type: ph.type } : null,
+        credit: ph ? photoCreditOf(ph) : null,
       };
     });
-}
-/** 칸 2 카드에 쓴 사진의 출처 줄 */
-function cardCredits(): string[] {
-  return creditLines(places.filter((p) => p.side === "old").map((p) => coverPhoto(p.id) ?? anyPhoto(p.id)));
 }
 
 // ── 칸 3: 목록 10줄씩. 정보가 적힌 곳 / 정보가 없는 곳은 가나다순, 거점별은 거점 차례 → 가나다순.
@@ -106,7 +103,6 @@ export default function Home() {
         }
         moreHref="/list"
         items={cardItems()}
-        credits={cardCredits()}
       />
       <HomeBoard title="무장애 정보" lists={boardLists()} />
     </div>

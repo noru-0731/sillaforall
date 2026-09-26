@@ -1,7 +1,7 @@
 // 관광지 쪽(61곳 × 5쪽)이 함께 쓰는 자료 도우미. 서버 컴포넌트에서만 부른다(photos.json을 클라이언트로 보내지 않으려고).
 import { areaOf, areas, byName, places } from "@/data";
 import type { Place } from "@/data";
-import { anyPhoto, coverPhoto, creditLines, photoCreditOf, photosOf, type1List } from "@/data/photos";
+import { anyPhoto, coverPhoto, photoCreditOf, photosOf, type1List } from "@/data/photos";
 import type { Photo } from "@/data/photos";
 
 export type { Place, Photo };
@@ -48,7 +48,7 @@ export function fmtDist(m: number): string {
   return m < 1000 ? `${m.toLocaleString("ko-KR")}m` : `${(m / 1000).toFixed(1)}km`;
 }
 
-/** credit: 그 사진의 출처 한 줄(관광정보 / 관광사진 정보 촬영자) */
+/** credit: 그 사진의 출처(짧은 꼴: "ⓒ한국관광공사" / "ⓒ한국관광콘텐츠랩-촬영자") */
 export type NearbySlide = { id: string; name: string; dong: string; url: string; credit: string };
 
 /**
@@ -138,14 +138,9 @@ export function stripSlots(id: string, heroUrl: string | null): StripSlot[] {
   });
 }
 
-/**
- * 띠에 실제로 쓴 사진대로 출처 줄: "사진: 한국관광공사 관광정보, 공공누리 제1유형·제3유형",
- * 관광사진 정보 사진이 있으면 " / 사진: ⓒ한국관광콘텐츠랩-촬영자, 공공누리 제1유형"을 잇는다. 사진이 없으면 null
- */
-export function stripCredit(slots: StripSlot[]): string | null {
-  const used = slots.flatMap((x) => (x.kind === "type1" ? [x.photo] : x.kind === "film" ? x.photos : []));
-  const lines = creditLines(used);
-  return lines.length ? lines.join(" / ") : null;
+/** 제3유형 필름 줄 한 칸의 출처(짧은 꼴). 같은 출처는 한 번만 적는다(제3유형은 모두 관광정보 사진이라 보통 "ⓒ한국관광공사" 하나) */
+export function stripCredit(slot: { photos: Photo[] }): string {
+  return [...new Set(slot.photos.map((ph) => photoCreditOf(ph)))].join(", ");
 }
 
 /** 사진 이름이 파일 이름("경북_경주_…_외부_06.jpg", "경주_보리사(경주) (2)")이면 쓰지 않는다. */
@@ -157,8 +152,9 @@ export function cleanPhotoName(name?: string | null): string | null {
   return t;
 }
 
-/** made: 관광공사 사진 이름이 없어 새로 지은 이름("{관광지} 사진 {n}", 궁능에 짝 없음 → 화면에서 <Ph>). by: 관광사진 정보 사진의 촬영자 */
-export type ViewerPhoto = { url: string; small: string; type: Photo["type"]; name: string; made?: boolean; by?: string };
+/** made: 관광공사 사진 이름이 없어 새로 지은 이름("{관광지} 사진 {n}", 궁능에 짝 없음 → 화면에서 <Ph>). by: 관광사진 정보 사진의 촬영자.
+ *  credit: 사진 곁 출처(짧은 꼴) */
+export type ViewerPhoto = { url: string; small: string; type: Photo["type"]; name: string; made?: boolean; by?: string; credit: string };
 
 /** 사진 쪽 넘기기에 넘길 사진 목록(보일 이름 포함). 이름이 없으면 "{관광지} {n}"(열린관광 사진 이름 꼴). */
 export function viewerPhotos(p: Place): ViewerPhoto[] {
@@ -170,6 +166,7 @@ export function viewerPhotos(p: Place): ViewerPhoto[] {
       type: ph.type,
       name: clean ?? `${p.name} ${i + 1}`,
       made: !clean,
+      credit: photoCreditOf(ph),
       ...(ph.from === "gallery" ? { by: ph.by ?? "" } : {}),
     };
   });

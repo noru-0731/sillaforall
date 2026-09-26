@@ -2,8 +2,8 @@
 // 문장은 궁능 문장을 바꿔 쓴 것(명세 5절)이라 <Ph> 없이 쓴다.
 // by(촬영자)를 주면 관광사진 정보(한국관광콘텐츠랩) 사진으로 보고, 한국관광콘텐츠랩이 정한 출처 꼴("출처 : ⓒ한국관광콘텐츠랩-촬영자")을 한 줄 더 적는다.
 // 이 줄은 한국관광콘텐츠랩 출처표기 방법을 따른 글이라 <Ph> 없이 쓴다.
-import type { KoglType } from "@/data/photos";
-import { galleryCredit, koglCondition } from "@/data/photos";
+import type { KoglType } from "@/data/credit";
+import { galleryCredit, koglCondition } from "@/data/credit";
 
 export default function KoglBox({ type, by, className }: { type: KoglType; by?: string; className?: string }) {
   const n = type === "Type1" ? "1" : "3";

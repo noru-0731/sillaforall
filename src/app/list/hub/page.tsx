@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { HUBS, places } from "@/data";
 import { SubPage } from "@/components/layout/PageParts";
 import { menuPage } from "@/components/place-list/helpers";
-import { cardsOf, creditsFor } from "@/components/place-list/cardData";
+import { cardsOf } from "@/components/place-list/cardData";
 import HubView from "@/components/place-list/HubView";
 
 const HREF = "/list/hub";
@@ -21,7 +21,7 @@ export default function ListHubPage() {
       side={page.section}
       current={HREF}
     >
-      <HubView groups={groups} credits={creditsFor(groups.flatMap((g) => g.cards))} />
+      <HubView groups={groups} />
     </SubPage>
   );
 }

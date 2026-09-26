@@ -2,28 +2,26 @@
 // 관광지 목록 > 지역별(궁능유적본부 누리집 문화행사 쪽 모양, 나무 파일 events_1440).
 // 왼쪽(357) = 달력 자리에 경주 권역 작은 지도: 머리(지금 권역 이름 28px + ‹ › 검정 단추), 지도, 권역 색 범례.
 // 오른쪽(623) = 알약(전체 + 권역) + "전체 61곳" + 카드 줄. 지도·범례·알약 어느 것을 눌러도 같은 권역으로 거른다.
-// (무장애 시안 bf-draft: 무장애 조건 거르기 줄과 ?조건= 읽기를 뺐다. 사진 출처 줄은 보이는 카드의 사진만으로 적는다.)
+// (무장애 시안 bf-draft: 무장애 조건 거르기 줄과 ?조건= 읽기를 뺐다. 사진 출처는 카드 사진마다 곁에 적는다(PlaceCard).)
 import { useState } from "react";
 import type { AreaKey } from "@/data/types";
 import { cn } from "@/lib/cn";
 import { Icon } from "@/components/icons";
 import PillTabs from "@/components/royal/PillTabs";
 import MapView from "@/components/map/MapView";
-import { CreditLines, PlaceCardList } from "./PlaceCards";
+import { PlaceCardList } from "./PlaceCards";
 import type { AreaOption, CardPlace } from "./types";
 import s from "./AreaList.module.css";
 
 type Pick = "all" | AreaKey;
 
-export default function AreaListView({ cards, options, credits }: { cards: CardPlace[]; options: AreaOption[]; credits: string[] }) {
+export default function AreaListView({ cards, options }: { cards: CardPlace[]; options: AreaOption[] }) {
   const [cur, setCur] = useState<Pick>("all");
   const order: Pick[] = ["all", ...options.map((o) => o.key)];
   const idx = order.indexOf(cur);
   const go = (d: number) => setCur(order[(idx + d + order.length) % order.length]);
   const curLabel = cur === "all" ? "경주 전체" : (options.find((o) => o.key === cur)?.label ?? "");
   const shown = cur === "all" ? cards : cards.filter((c) => c.area === cur);
-  // 사진 출처 줄: 보이는 카드에 쓴 사진의 출처만(차례는 전체 목록 credits 차례)
-  const shownCredits = credits.filter((l) => shown.some((c) => c.credit === l));
   const toggle = (k: AreaKey) => setCur(cur === k ? "all" : k);
 
   return (
@@ -92,7 +90,6 @@ export default function AreaListView({ cards, options, credits }: { cards: CardP
           </p>
         </div>
         <PlaceCardList items={shown} />
-        <CreditLines lines={shownCredits} />
       </div>
     </div>
   );

@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Ph, SubPage } from "@/components/layout/PageParts";
 import { MENU, SITE_NAME } from "@/site/ia";
 import { places, placeById } from "@/data";
-import { coverPhoto, photoCredit, type1List } from "@/data/photos";
+import { coverPhoto, photoCreditOf, type1List } from "@/data/photos";
 import s from "./about.module.css";
 
 const SECTION = MENU[3];
@@ -16,6 +16,7 @@ const SOURCES = SECTION.children![1];
 export const metadata: Metadata = { title: PAGE.label };
 
 // 사진: 동궁과 월지(궁능 인사말의 부용정 사진 자리 — 물에 비친 전각). 제1유형 사진만 쓴다.
+// 출처는 사진 오른쪽 아래에 작은 딱지로 얹는다(곳 이름 · 짧은 꼴, 예: "동궁과 월지 · ⓒ한국관광공사").
 const PHOTO_PLACE = "p47";
 const PHOTO_URL_HINT = "3029037";
 
@@ -35,13 +36,13 @@ export default function AboutPage() {
       current={PAGE.href}
     >
       {photo && (
-        <figure>
+        <figure className={s.gFigure}>
           <div className={s.gPhoto}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={photo.url} alt={`${photoPlace} 풍경`} loading="eager" decoding="async" />
           </div>
-          <figcaption className={s.gCredit}>
-            {photoPlace} · {photoCredit("Type1")}
+          <figcaption className="rc-pcredit rc-pcredit--br">
+            {photoPlace} · {photoCreditOf(photo)}
           </figcaption>
         </figure>
       )}

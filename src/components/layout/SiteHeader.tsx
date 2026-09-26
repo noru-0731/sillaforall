@@ -10,11 +10,12 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { AREA_LINKS, LEFT_BAR, MENU, SITE_NAME, depth3Of, sectionOf } from "@/site/ia";
 import { Icon } from "@/components/icons";
+import { CreditTag } from "@/components/royal/Photo";
 import { useDisplaySettings } from "./DisplaySettings";
 import d3 from "./HeaderParts.module.css";
 
-/** 휴대전화 전체메뉴 맨 위 권역 사진 카드(서버에서 골라 넘긴다: layout.tsx) */
-export type AreaCard = { key: string; label: string; href: string; photo: string | null };
+/** 휴대전화 전체메뉴 맨 위 권역 사진 카드(서버에서 골라 넘긴다: layout.tsx). credit: 사진 출처(짧은 꼴), 사진이 없으면 null */
+export type AreaCard = { key: string; label: string; href: string; photo: string | null; credit: string | null };
 
 const isHere = (pathname: string, href: string) => pathname === href;
 
@@ -314,6 +315,8 @@ function MobileNav({
               {/* eslint-disable-next-line @next/next/no-img-element */}
               {a.photo && <img src={a.photo} alt="" loading="lazy" decoding="async" />}
               <span>{a.label}</span>
+              {/* 사진 출처(제1유형). 오른쪽 아래는 권역 이름 판이 차지해 오른쪽 위에 얹는다 */}
+              {a.photo && a.credit && <CreditTag text={a.credit} at="tr" />}
             </Link>
           </li>
         ))}
