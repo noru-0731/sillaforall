@@ -2,8 +2,8 @@
 // 제목 아래 알약 줄(같은 권역 관광지의 오시는 길, 지금 곳 채움, 한 줄 + ‹ ›) → "{이름} 오시는 길" → 지도(테두리 상자)
 // → 주소(앞에 우편번호, 궁능 "(03045) 서울 …")·연락처 줄 + 길찾기 → 검정 띠 "주차 및 이용안내"
 // → 대중교통·자가용(아이콘 소제목) → 주차 안내 상자 → 이용요금 표.
-// 지도: 궁능처럼 도로가 보이는 진짜 지도(RealMap, 오픈스트리트맵). 좌표를 이웃 곳에서 빌린 두 곳(approx: 서악서원, 블루원워터파크)은
-// 진짜 지도에 핀을 꽂지 않고 우리 그린 지도(MapView)를 그대로 쓴다.
+// 지도: 궁능처럼 도로가 보이는 진짜 지도(PlaceMap: 카카오 지도, 카카오 SDK 가 뜨지 않으면 오픈스트리트맵 RealMap).
+// 좌표를 이웃 곳에서 빌린 두 곳(approx: 서악서원, 블루원워터파크)은 진짜 지도에 핀을 꽂지 않고 우리 그린 지도(MapView)를 그대로 쓴다.
 //
 // 무장애 시안(bf-draft)에서 더한 것:
 // - 지도 위에 500m 안 공영주차장(장애인전용주차구역이 있는 곳은 1km 안까지) 번호 네모, 주차 안내 아래에 같은 번호의 표.
@@ -23,7 +23,7 @@ import { Ph, Section, SubPage } from "@/components/layout/PageParts";
 import { Icon } from "@/components/icons";
 import { BlackBar, BoardTable, IconHeading, PillTabs, TipList } from "@/components/royal";
 import MapView from "@/components/map/MapView";
-import RealMap from "@/components/map/RealMap";
+import PlaceMap from "@/components/map/PlaceMap";
 import { kakaoTo, phoneOf, sameArea } from "@/components/place/placeData";
 import { amenitiesOf, MOBILITY, NEAR_RADII, sourceLines } from "@/data/bf";
 import { BUS_SOURCE_LINES, KTX_NAME, busStopsOf, ktxLinesOf } from "@/data/bus";
@@ -106,7 +106,7 @@ export default async function PlaceDirections({ params }: Props) {
               ariaLabel={`${p.name} 위치 지도`}
             />
           ) : (
-            <RealMap
+            <PlaceMap
               lat={p.lat}
               lon={p.lon}
               name={p.name}

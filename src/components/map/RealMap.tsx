@@ -8,7 +8,8 @@
 // - 확대·축소·처음 크기 단추: 우리 그린 지도(MapView)와 같은 자리·모양(오른쪽 위 세로, 32×32)과 같은 이름.
 // - 마우스 휠 확대는 끈다(쪽 내리기가 먼저). 휴대전화·태블릿에서는 한 손가락 끌기도 꺼서 지도 위에서도 쪽이 내려가게 둔다(두 손가락 벌리기 확대는 된다).
 // - Leaflet은 불러오는 순간 window·document를 만지므로 브라우저에서만(useEffect 안의 import()) 불러온다. 서버는 빈 상자만 그린다.
-// 나중에 카카오맵으로 바꿀 때는 이 파일과 RealMap.module.css만 바꾸면 된다(props: lat, lon, name, label, zoom, points, legend, tall).
+// 09-26 카카오 지도 판(KakaoMap.tsx)을 더했다. 쪽은 PlaceMap.tsx 를 쓰고, 이 파일은 카카오 SDK 가 뜨지 않을 때의 돌아가기 판이다.
+// 두 판이 같이 쓰는 것(props 형, 핀·번호 네모 HTML, 범례, 번호 네모 비키기 셈)은 mapParts.tsx 로 옮겼다(이 판의 결과는 그대로).
 //
 // 편의시설 표시(무장애 시안 bf-draft에서 더함): 궁능 관람코스 편의시설 지도(레퍼런스/궁능_포맷/course*.png, 나무/course_1440.txt)를 재서 따름.
 // - 점: 궁능 범례 칸과 같은 24×24 둥글기 3 네모에 흰 번호(아래 목록의 번호). 같은 자리의 점은 번호를 이어 한 네모로.
@@ -26,44 +27,24 @@
 import { useEffect, useRef, useState } from "react";
 import type { Map as LeafletMap, Marker } from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { Icon } from "@/components/icons";
+import {
+  ANCHOR_R,
+  FIT_MAX_ZOOM,
+  FIT_PAD,
+  MapControls,
+  MapFrame,
+  boxOf,
+  nudgeAll,
+  pinHtml,
+  pinRects,
+  pointIcon,
+  pointsKey,
+  type MapPoint,
+  type MapProps,
+} from "./mapParts";
 import s from "./RealMap.module.css";
 
-type Props = {
-  /** 핀 자리(위도) */
-  lat: number;
-  /** 핀 자리(경도) */
-  lon: number;
-  /** 핀 아래에 적는 관광지 이름 */
-  name: string;
-  /** 읽기 도구용 지도 이름. 기본 "{name} 위치 지도" */
-  label?: string;
-  /** 처음 확대 단계(오픈스트리트맵 0~19). 16이면 동네 길이 보인다 */
-  zoom?: number;
-  /** 편의시설 점(번호 네모, 벤치·쉼터 작은 점) */
-  points?: MapPoint[];
-  /** 범례(지도 안 왼쪽, 좁으면 지도 아래) */
-  legend?: LegendItem[];
-  /** 궁능 관람코스 지도 높이(693) */
-  tall?: boolean;
-};
-
-/** 지도 위 편의시설 점 하나. kind는 RealMap.module.css 의 pt_{kind} / dot_{kind} 색 */
-export type MapPoint = {
-  key: string;
-  kind: "toiletA" | "toilet" | "parking" | "charger" | "food" | "bench" | "shelter";
-  lat: number;
-  lon: number;
-  /** 네모 안 글자(번호). 없으면 작은 점 */
-  label?: string;
-  /** 마우스를 올리면 보이는 글 */
-  title?: string;
-  /** 누르면 옮겨 갈 쪽 안 자리(id, # 없이) */
-  href?: string;
-  /** 처음 화면 맞추기에 넣는지(반경 안) */
-  near?: boolean;
-};
-export type LegendItem = { kind: MapPoint["kind"] | "place"; label: string };
+export type { LegendItem, MapPoint } from "./mapParts";
 
 const TILE_URL = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
 const OSM_COPYRIGHT = "https://www.openstreetmap.org/copyright";
@@ -73,26 +54,8 @@ const MAX_ZOOM = 19;
 const SCALE_MAX_PX = 80;
 /** 지구 둘레(m, 웹 메르카토르) */
 const EARTH = 40075016.686;
-/** 번호 네모를 옮겨 볼 자리(네모 가운데가 제자리에서 몇 px). 6px 격자, 반지름 132 안, 가까운 차례 */
-const NUDGE: [number, number][] = (() => {
-  const out: [number, number][] = [];
-  for (let dx = -132; dx <= 132; dx += 6) for (let dy = -132; dy <= 132; dy += 6) if (Math.hypot(dx, dy) <= 132) out.push([dx, dy]);
-  return out.sort((a, b) => Math.hypot(a[0], a[1]) - Math.hypot(b[0], b[1]));
-})();
-/** 네모 사이 띄움(px) */
-const GAP = 2;
-/** 네모가 지도 상자 가장자리에서 떨어질 거리(px) */
-const EDGE = 4;
-/** 제자리 점 반지름(px). 벤치·쉼터 점(12)보다 작게 */
-const ANCHOR_R = 4;
 /** 선 그리는 겹(표시 겹 600 아래, 그림자 겹 500 위) */
 const LEADER_PANE = "rcLeaders";
-
-type Rect = { l: number; t: number; r: number; b: number };
-/** 두 네모가 겹치는 넓이(px²) */
-function overlap(a: Rect, b: Rect) {
-  return Math.max(0, Math.min(a.r, b.r) - Math.max(a.l, b.l)) * Math.max(0, Math.min(a.b, b.b) - Math.max(a.t, b.t));
-}
 
 /** 확대 단계와 위도에서 축척 막대 길이(px)와 글자("500m", "1km") */
 function scaleOf(lat: number, zoom: number) {
@@ -104,55 +67,7 @@ function scaleOf(lat: number, zoom: number) {
   return { px: Math.round(m / mPerPx), text: m >= 1000 ? `${m / 1000}km` : `${m}m` };
 }
 
-/** divIcon 안에 넣는 글자(관광지 이름)를 HTML로 안전하게 */
-function esc(t: string) {
-  return t.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
-}
-
-/** 핀(직접 그린 물방울 모양, 29×42 = 궁능 지도 표시 크기) + 이름 상자 */
-function pinHtml(name: string) {
-  return (
-    `<svg class="${s.pin}" viewBox="0 0 29 42" width="29" height="42" aria-hidden="true" focusable="false">` +
-    `<path class="${s.pinBody}" d="M14.5 1C7.04 1 1 7.04 1 14.5c0 9.3 11.2 24.2 12.4 25.8a1.4 1.4 0 0 0 2.2 0C16.8 38.7 28 23.8 28 14.5 28 7.04 21.96 1 14.5 1Z"/>` +
-    `<circle class="${s.pinDot}" cx="14.5" cy="14.5" r="5"/>` +
-    `</svg>` +
-    `<span class="${s.pinName}">${esc(name)}</span>`
-  );
-}
-
-/** 편의시설 점 HTML(번호 네모 또는 작은 점)과 크기 */
-function pointIcon(p: MapPoint) {
-  if (!p.label) return { html: `<span class="${s.dot} ${s[`dot_${p.kind}`] ?? ""}"></span>`, w: 12, h: 12 };
-  const w = Math.max(24, 10 + p.label.length * 8);
-  return { html: `<span class="${s.pt} ${s[`pt_${p.kind}`] ?? ""}" style="width:${w}px">${esc(p.label)}</span>`, w, h: 24 };
-}
-
-/** 범례 네모 안 선 그림(궁능 범례 칸의 흰 그림 자리. 직접 그림) */
-function LegendGlyph({ kind }: { kind: LegendItem["kind"] }) {
-  const svg = (d: React.ReactNode) => (
-    <svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
-      {d}
-    </svg>
-  );
-  switch (kind) {
-    case "toiletA":
-      return <Icon name="wheelchair" size={18} strokeWidth={2} />;
-    case "toilet":
-      return <Icon name="toilet" size={18} strokeWidth={2} />;
-    case "parking":
-      return svg(<path d="M9 18V6h4.5a3.5 3.5 0 0 1 0 7H9" />);
-    case "charger":
-      return svg(<path d="M13 3 6.5 13H12l-1 8 6.5-10H12z" />);
-    case "food":
-      return svg(<path d="M7 3v18M4 3v5a3 3 0 0 0 6 0V3M17 21V3c-2.2 1.2-3.5 3.8-3.5 7v3H17" />);
-    case "place":
-      return <Icon name="pin" size={18} strokeWidth={2} />;
-    default:
-      return null;
-  }
-}
-
-export default function RealMap({ lat, lon, name, label, zoom = 16, points, legend, tall }: Props) {
+export default function RealMap({ lat, lon, name, label, zoom = 16, points, legend, tall }: MapProps) {
   const mapEl = useRef<HTMLDivElement>(null);
   const mapRef = useRef<LeafletMap | null>(null);
   // 처음 화면(맞추기 결과). 처음 크기 단추가 이리로 돌아온다
@@ -160,7 +75,7 @@ export default function RealMap({ lat, lon, name, label, zoom = 16, points, lege
   const legRef = useRef<HTMLUListElement>(null);
   const ctrlRef = useRef<HTMLDivElement>(null);
   const footRef = useRef<HTMLDivElement>(null);
-  const ptsKey = points?.map((p) => `${p.key}:${p.lat},${p.lon}:${p.label ?? ""}`).join("|") ?? "";
+  const ptsKey = pointsKey(points);
   const [view, setView] = useState({ zoom, lat });
   const [ready, setReady] = useState(false);
 
@@ -216,60 +131,23 @@ export default function RealMap({ lat, lon, name, label, zoom = 16, points, lege
         leaders.clearLayers();
         if (!nums.length) return;
         const { x: W, y: H } = map.getSize();
-        const inside: Rect = { l: EDGE, t: EDGE, r: W - EDGE, b: H - EDGE };
-        const hard: Rect[] = [];
-        const boxOf = (el: HTMLElement | null, pad = 0): Rect | null =>
-          el && el.offsetWidth
-            ? { l: el.offsetLeft - pad, t: el.offsetTop - pad, r: el.offsetLeft + el.offsetWidth + pad, b: el.offsetTop + el.offsetHeight + pad }
-            : null;
-        // 관광지 핀(29×42, 끝이 제자리)과 그 아래 이름 상자(RealMap.module.css .pinName: 핀 끝 4px 아래 가운데)
+        // 관광지 핀과 이름 상자, + − ↻ 단추, 축척 줄, 지도 안 범례(좁은 화면에서는 지도 아래라 빼고)
         const c = map.latLngToContainerPoint([lat, lon]);
-        hard.push({ l: c.x - 14.5 - GAP, t: c.y - 42 - GAP, r: c.x + 14.5 + GAP, b: c.y + GAP });
-        const nm = pinMk.getElement()?.querySelector("span");
-        if (nm) hard.push({ l: c.x - nm.offsetWidth / 2 - GAP, t: c.y + 4 - GAP, r: c.x + nm.offsetWidth / 2 + GAP, b: c.y + 4 + nm.offsetHeight + GAP });
-        // + − ↻ 단추, 축척 줄, 지도 안 범례(좁은 화면에서는 지도 아래라 빼고)
+        const hard = pinRects(c.x, c.y, pinMk.getElement()?.querySelector("span"));
         const leg = legRef.current;
         for (const el of [ctrlRef.current, footRef.current, leg && getComputedStyle(leg).position === "absolute" ? leg : null]) {
           const r = boxOf(el, 4);
           if (r) hard.push(r);
         }
-        // 네모마다 제자리(px)와, 다른 네모가 덮지 말아야 할 제자리 점 자리
+        // 네모마다 제자리(px). 비키기 셈은 mapParts.nudgeAll(카카오 판과 같은 셈)
         const at = nums.map((n) => map.latLngToContainerPoint([n.p.lat, n.p.lon]));
-        const R = ANCHOR_R + GAP;
-        const dots = at.map((a) => ({ l: a.x - R, t: a.y - R, r: a.x + R, b: a.y + R }));
-        const inView = (i: number) => at[i].x >= 0 && at[i].x <= W && at[i].y >= 0 && at[i].y <= H;
-        // 제자리가 상자 밖인 네모는 옮기지 않고 제자리에 둔다. 가장자리에 걸쳐 보이는 것은 다른 네모가 비켜 가게 먼저 넣는다
-        const placed: Rect[] = nums.flatMap((n, i) =>
-          inView(i) ? [] : [{ l: at[i].x - n.w / 2 - GAP, t: at[i].y - n.h / 2 - GAP, r: at[i].x + n.w / 2 + GAP, b: at[i].y + n.h / 2 + GAP }],
-        );
+        const moves = nudgeAll(W, H, hard, nums.map((n, i) => ({ x: at[i].x, y: at[i].y, w: n.w, h: n.h })));
         nums.forEach((n, i) => {
           const a = at[i];
+          const { dx, dy, lead } = moves[i];
           const sq = n.mk.getElement()?.firstElementChild as HTMLElement | null | undefined;
-          let best: [number, number] = [0, 0];
-          if (inView(i)) {
-            let bestCost = Infinity;
-            for (const [dx, dy] of NUDGE) {
-              const r = { l: a.x + dx - n.w / 2, t: a.y + dy - n.h / 2, r: a.x + dx + n.w / 2, b: a.y + dy + n.h / 2 };
-              let cost = n.w * n.h - overlap(r, inside); // 지도 상자 밖으로 나간 넓이
-              for (const o of hard) cost += overlap(r, o);
-              for (const o of placed) cost += overlap(r, o);
-              dots.forEach((o, j) => j !== i && (cost += overlap(r, o)));
-              if (cost === 0) {
-                best = [dx, dy];
-                break;
-              }
-              cost += Math.hypot(dx, dy) * 0.5; // 다 겹치면 덜 겹치고 가까운 자리
-              if (cost < bestCost) {
-                bestCost = cost;
-                best = [dx, dy];
-              }
-            }
-          }
-          const [dx, dy] = best;
-          if (inView(i)) placed.push({ l: a.x + dx - n.w / 2 - GAP, t: a.y + dy - n.h / 2 - GAP, r: a.x + dx + n.w / 2 + GAP, b: a.y + dy + n.h / 2 + GAP });
           if (sq) sq.style.transform = dx || dy ? `translate(${dx}px, ${dy}px)` : "";
-          // 네모가 제자리 점을 다 덮지 못할 만큼 비켜나면 제자리 점과 선
-          if (Math.abs(dx) > n.w / 2 - ANCHOR_R || Math.abs(dy) > n.h / 2 - ANCHOR_R) {
+          if (lead) {
             const k = s[`k_${n.p.kind}`] ?? "";
             const opt = { pane: LEADER_PANE, interactive: false };
             L.polyline([[n.p.lat, n.p.lon], map.containerPointToLatLng([a.x + dx, a.y + dy])], { ...opt, className: `${s.leader} ${k}` }).addTo(leaders);
@@ -284,9 +162,9 @@ export default function RealMap({ lat, lon, name, label, zoom = 16, points, lege
         const leg = legRef.current;
         const legIn = leg && getComputedStyle(leg).position === "absolute";
         map.fitBounds(L.latLngBounds([[lat, lon], ...fit.map((p) => [p.lat, p.lon] as [number, number])]), {
-          paddingTopLeft: [legIn ? leg.offsetWidth + 40 : 36, 40],
-          paddingBottomRight: [60, 40],
-          maxZoom: 17,
+          paddingTopLeft: [legIn ? leg.offsetWidth + FIT_PAD.legend : FIT_PAD.left, FIT_PAD.top],
+          paddingBottomRight: [FIT_PAD.right, FIT_PAD.bottom],
+          maxZoom: FIT_MAX_ZOOM,
           animate: false,
         });
       }
@@ -323,47 +201,19 @@ export default function RealMap({ lat, lon, name, label, zoom = 16, points, lege
   const canOut = ready && view.zoom > MIN_ZOOM;
   const scale = scaleOf(view.lat, view.zoom);
 
-  const legendEl = legend?.length ? (
-    <ul ref={legRef} className={s.legend} aria-label="지도 범례">
-      {legend.map((g) => (
-        <li key={g.kind}>
-          {g.kind === "bench" || g.kind === "shelter" ? (
-            <span className={`${s.legSw} ${s.legDot}`} aria-hidden="true">
-              <span className={`${s.dot} ${s[`dot_${g.kind}`] ?? ""}`} />
-            </span>
-          ) : (
-            <span className={`${s.legSw} ${s[`pt_${g.kind}`] ?? ""}`} aria-hidden="true">
-              <LegendGlyph kind={g.kind} />
-            </span>
-          )}
-          <span>{g.label}</span>
-        </li>
-      ))}
-    </ul>
-  ) : null;
-
-  const box = (
-    <div className={`${s.box}${tall ? " " + s.tall : ""}`}>
+  return (
+    <MapFrame tall={tall} legend={legend} legRef={legRef}>
       <div ref={mapEl} className={s.map} role="region" aria-label={label ?? `${name} 위치 지도`} />
 
-      <div ref={ctrlRef} className={s.controls}>
-        <button type="button" className={s.ctrl} aria-label="확대" title="확대" aria-disabled={!canIn} onClick={() => canIn && mapRef.current?.zoomIn()}>
-          <Icon name="plus" size={18} strokeWidth={2} />
-        </button>
-        <button type="button" className={s.ctrl} aria-label="축소" title="축소" aria-disabled={!canOut} onClick={() => canOut && mapRef.current?.zoomOut()}>
-          <Icon name="minus" size={18} strokeWidth={2} />
-        </button>
-        <button
-          type="button"
-          className={s.ctrl}
-          aria-label="처음 크기"
-          title="처음 크기"
-          aria-disabled={!ready}
-          onClick={() => ready && mapRef.current?.setView(homeRef.current.center, homeRef.current.zoom)}
-        >
-          <Icon name="reset" size={18} strokeWidth={2} />
-        </button>
-      </div>
+      <MapControls
+        ref={ctrlRef}
+        canIn={canIn}
+        canOut={canOut}
+        ready={ready}
+        onIn={() => mapRef.current?.zoomIn()}
+        onOut={() => mapRef.current?.zoomOut()}
+        onHome={() => mapRef.current?.setView(homeRef.current.center, homeRef.current.zoom)}
+      />
 
       <div ref={footRef} className={s.foot}>
         {ready && (
@@ -380,14 +230,6 @@ export default function RealMap({ lat, lon, name, label, zoom = 16, points, lege
           기여자
         </p>
       </div>
-    </div>
-  );
-
-  if (!legendEl) return box;
-  return (
-    <div className={s.withLegend}>
-      {box}
-      {legendEl}
-    </div>
+    </MapFrame>
   );
 }
