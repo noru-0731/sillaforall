@@ -11,6 +11,8 @@ import PillTabs from "@/components/royal/PillTabs";
 import { Icon } from "@/components/icons";
 import type { AreaKey } from "@/data/types";
 import s from "../bf.module.css";
+import { FillText } from "@/components/place/FillText";
+import type { Fill } from "@/data/fill";
 
 export type BoardArea = { key: AreaKey; label: string };
 export type BoardRow = {
@@ -21,6 +23,8 @@ export type BoardRow = {
   areaLabel: string;
   /** 무장애 정보가 있는 곳: 세 항목의 무장애 여행 정보 글(붙은 줄은 나눔). 없으면 null */
   three?: { parking: string | null; walk: string | null; toilet: string | null };
+  /** 세 항목 글이 없는 칸을 채울 값(data/fill.ts, 관람 도우미·무장애 정보 쪽과 같은 규칙). 없으면 빈칸 */
+  fill?: { parking: Fill | null; walk: Fill | null; toilet: Fill | null };
   /** 무장애 정보가 있는 곳: 글이 있는 칸이 있는 무장애 묶음 이름(보이기만 한다) */
   groups?: string[];
   /** 무장애 정보가 없는 곳: 가까운 등록 관광지(없으면 null) */
@@ -64,9 +68,14 @@ export function BoardPills({ areas }: { areas: BoardArea[] }) {
 
 const colorOf = (k: AreaKey) => ({ "--c": `var(--rc-area-${k})` }) as React.CSSProperties;
 
-/** 무장애 여행 정보 글 그대로. 비어 있으면 빈칸(09-27 사용자: 표시 없이 비움) */
-function ThreeText({ text }: { text: string | null }) {
-  return text ? <span className={s.threeTxt}>{text}</span> : null;
+/** 무장애 여행 정보 글 그대로. 비어 있으면 채운 값과 자료 꼬리, 그것도 없으면 빈칸(09-27 사용자: 채울 수 있는 대로 채우고 나머지는 비움) */
+function ThreeText({ text, fill }: { text: string | null; fill?: Fill | null }) {
+  if (text) return <span className={s.threeTxt}>{text}</span>;
+  return fill ? (
+    <span className={s.threeTxt}>
+      <FillText fill={fill} />
+    </span>
+  ) : null;
 }
 
 /** 무장애 묶음 이름표(열린관광 목록 카드 이름표 모양). 누르지 않는 표시 */
@@ -233,7 +242,7 @@ export function BoardList({
                   {kind === "listed" && r.three ? (
                     keys.map((k) => (
                       <td key={k} className={s.three}>
-                        <ThreeText text={r.three![k]} />
+                        <ThreeText text={r.three![k]} fill={r.fill?.[k]} />
                       </td>
                     ))
                   ) : (
@@ -268,7 +277,7 @@ export function BoardList({
                     <div key={k}>
                       <dt>{threeText[k]}</dt>
                       <dd>
-                        <ThreeText text={r.three![k]} />
+                        <ThreeText text={r.three![k]} fill={r.fill?.[k]} />
                       </dd>
                     </div>
                   ))}

@@ -14,6 +14,7 @@ import { THREE_TEXT } from "@/components/place-list/Parts";
 import { BoardList, BoardPills, BoardState, type BoardRow } from "../_parts/Board";
 import s from "../bf.module.css";
 import MenuSteps from "@/components/place/MenuSteps";
+import { parkingFill, toiletFill, walkFill } from "@/data/fill";
 
 const HREF = "/barrier-free/listed";
 const page = menuPage(HREF);
@@ -30,6 +31,11 @@ export default function ListedPage() {
     area: areaOf(p),
     areaLabel: label(areaOf(p)),
     three: { parking: bfLines(p.three.parking), walk: bfLines(p.three.walk), toilet: bfLines(p.three.toilet) },
+    fill: {
+      parking: bfLines(p.three.parking) ? null : parkingFill(p),
+      walk: bfLines(p.three.walk) ? null : walkFill(p),
+      toilet: bfLines(p.three.toilet) ? null : toiletFill(p),
+    },
     groups: bfGroupNamesOf(p.id),
   }));
 
