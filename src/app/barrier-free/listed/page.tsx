@@ -1,6 +1,6 @@
 // 무장애 정보 > 무장애 정보가 있는 곳(궁능 공지사항 모양): 권역 알약, "전체: N곳", 이름 검색, 게시판 표.
 // (무장애 시안 bf-draft: 표 위 무장애 조건 거르기 줄을 뺐다.)
-// 표는 무장애 정보가 있는 관광지마다 주차·접근로·화장실 칸의 한국관광공사 무장애 여행 정보 글을 한 줄에(가7, 붙은 줄은 나눔, 없으면 -),
+// 표는 무장애 정보가 있는 관광지마다 주차·접근로·화장실 칸의 한국관광공사 무장애 여행 정보 글을 한 줄에(가7, 붙은 줄은 나눔, 없으면 빈칸),
 // 관광지 이름 아래에 글이 적힌 칸이 있는 무장애 묶음 이름표(가8)를 보인다. 칸마다 온 글은 관광지의 무장애 정보 쪽에 있다.
 import type { Metadata } from "next";
 import { pageMetadata } from "@/site/og";
@@ -8,7 +8,6 @@ import { areaOf, areas, places } from "@/data";
 import { bfGroupNamesOf } from "@/data/bf";
 import { bfLines } from "@/lib/breaks";
 import { Ph, SubPage } from "@/components/layout/PageParts";
-import { DASH_NOTE_TEXT } from "@/components/layout/Dash";
 import { TipList } from "@/components/royal";
 import { groupByArea, menuPage } from "@/components/place-list/helpers";
 import { THREE_TEXT } from "@/components/place-list/Parts";
@@ -51,10 +50,7 @@ export default function ListedPage() {
         />
         <TipList
           className={s.tips}
-          items={[
-            <Ph key="a">{DASH_NOTE_TEXT}</Ph>,
-            <Ph key="b">관광지 이름을 누르면 무장애 정보 쪽에서 적힌 글을 볼 수 있습니다.</Ph>,
-          ]}
+          items={[<Ph key="b">관광지 이름을 누르면 무장애 정보 쪽에서 적힌 글을 볼 수 있습니다.</Ph>]}
         />
         {/* 쪽 끝 이어 읽기(무장애 정보 메뉴 차례) */}
         <MenuSteps section={page.section} current={HREF} />

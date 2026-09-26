@@ -18,14 +18,13 @@
 // - 그 아래 경주역(KTX) 칸: 경주역(KTX) 정류장에서 이 곳 정류장 쪽으로 가는 노선 번호(국립경주박물관 교통안내 "철도" 칸 자리).
 // - 이용시간·쉬는 날·무장애 글은 붙은 줄을 나눠 보인다(lib/breaks.ts, 글자는 그대로).
 //
-// 빈 칸은 "-"(09-26 저녁). "-"가 쪽 여러 곳(정류장 노선, 무장애 대중교통, 주차 안내, 이용안내 표)에 흩어질 수 있어 뜻풀이 한 줄은 쪽 끝(이용안내 표 아래)에 한 번.
+// 빈 칸은 표시 없이 비운다(09-27 사용자). 무장애 여행 정보 대중교통 글이 없으면 그 칸(이름 줄)을 두지 않는다.
 import type { Metadata } from "next";
 import { placeMetadata } from "@/site/og";
 import { notFound } from "next/navigation";
 import { areaOf, placeById, places, zipOf } from "@/data";
 import { placeCrumbs, placePages, placeSideMenu, PLACE_BANNER } from "@/site/ia";
 import { Ph, Section, SubPage } from "@/components/layout/PageParts";
-import { DASH, DashNote } from "@/components/layout/Dash";
 import { Icon } from "@/components/icons";
 import { BlackBar, BoardTable, IconHeading, PillTabs, TipList } from "@/components/royal";
 import MapView from "@/components/map/MapView";
@@ -33,7 +32,7 @@ import PlaceMap from "@/components/map/PlaceMap";
 import { kakaoTo, phoneOf, sameArea } from "@/components/place/placeData";
 import { amenitiesOf, MOBILITY, NEAR_RADII, sourceLines } from "@/data/bf";
 import { KTX_NAME, busSourceLines, busStopsOf, ktxLinesOf } from "@/data/bus";
-import { BusStopUnits, busHasDash, stopTitle } from "@/components/place/BusStops";
+import { BusStopUnits, stopTitle } from "@/components/place/BusStops";
 import { extraFeeRowsOf } from "@/data/introExtra";
 import { bfLines, hoursLines, hoursNoteLines } from "@/lib/breaks";
 import { AmenityTable, SourceLines, amenityPoints, legendOf } from "@/components/place/Amenities";
@@ -56,8 +55,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const p = placeById(id);
   return p ? placeMetadata(p.id, `${p.name} 오시는 길`, `/places/${p.id}/directions`) : { title: "오시는 길" };
 }
-
-const EMPTY = DASH;
 
 /** 원(돈) 선 아이콘: 공통 아이콘에 없어 여기서 직접 그렸다(궁능 "주차요금" 아이콘 자리) */
 function WonIcon() {
@@ -102,10 +99,8 @@ export default async function PlaceDirections({ params }: Props) {
   const stops = busStopsOf(p.id);
   const ktx = ktxLinesOf(p.id);
 
-  // 무장애 여행 정보 대중교통 글(없으면 "-")
+  // 무장애 여행 정보 대중교통 글(없으면 그 칸을 두지 않는다)
   const bfBus = bfLines((reg && p.move["대중교통"]) || null);
-  // 이 쪽에 "-"가 하나라도 있으면 쪽 끝에 뜻풀이 한 줄
-  const dashed = busHasDash(stops) || !bfBus || !parking.length || !p.fee || !p.hours || !p.closed;
 
   return (
     <SubPage crumbs={placeCrumbs(p, page)} title={page.label} banner={PLACE_BANNER} sideMenu={placeSideMenu(p)} current={page.href} tabs={pills}>
@@ -195,10 +190,12 @@ export default async function PlaceDirections({ params }: Props) {
               <SourceLines lines={busSourceLines(p.id)} />
             </div>
           )}
-          <div className={s.transUnit}>
-            <p className={s.transUnitTit}>한국관광공사 무장애 여행 정보</p>
-            <p className={s.transUnitTxt}>{bfBus || EMPTY}</p>
-          </div>
+          {bfBus && (
+            <div className={s.transUnit}>
+              <p className={s.transUnitTit}>한국관광공사 무장애 여행 정보</p>
+              <p className={s.transUnitTxt}>{bfBus}</p>
+            </div>
+          )}
           <div className={s.transUnit}>
             <p className={s.transUnitTit}>{M.name}</p>
             <ul className={`${s.dotList} ${s.transDots}`}>
@@ -261,7 +258,7 @@ export default async function PlaceDirections({ params }: Props) {
               ))}
             </ul>
           ) : (
-            <p className={s.transUnitTxt}>{EMPTY}</p>
+            <p className={`${s.transUnitTxt} ${s.blankLine}`} />
           )}
         </div>
         {pk.length > 0 && (
@@ -295,13 +292,12 @@ export default async function PlaceDirections({ params }: Props) {
           align={["c", "l"]}
           rowHeader
           rows={[
-            ["이용요금", p.fee ? <span className={s.pre}>{hoursLines(p.fee.trim())}</span> : EMPTY],
+            ["이용요금", p.fee ? <span className={s.pre}>{hoursLines(p.fee.trim())}</span> : null],
             ...extraFeeRowsOf(p.id).map(([k, v]) => [k, <span key={k} className={s.pre}>{hoursLines(v)}</span>]),
-            ["이용시간", p.hours ? <span className={s.pre}>{hoursNoteLines(p.hours.trim())}</span> : EMPTY],
-            ["쉬는 날", p.closed ? <span className={s.pre}>{hoursLines(p.closed.trim())}</span> : EMPTY],
+            ["이용시간", p.hours ? <span className={s.pre}>{hoursNoteLines(p.hours.trim())}</span> : null],
+            ["쉬는 날", p.closed ? <span className={s.pre}>{hoursLines(p.closed.trim())}</span> : null],
           ]}
         />
-        {dashed && <DashNote className={s.tipsAfterTable} />}
       </div>
       {/* deck 갈래: 쪽 끝 이어 읽기(다음: 주변 관광지 세 곳) */}
       <PageSteps place={p} at={4} />

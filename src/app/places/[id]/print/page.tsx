@@ -6,7 +6,7 @@
 //   그 뒤에 경주시 무장애 여행정보 표(짝지은 12곳, 무장애 정보 쪽과 같은 표, data/gj.ts).
 // - 오시는 길: 가까운 정류장 셋(오시는 길 쪽과 같은 제목·직선거리, 노선은 펼침 없이 노선번호·첫차시간·막차시간 표)·경주역(KTX) 노선(오시는 길 쪽과 같은 글),
 //   무장애 여행 정보 대중교통 글(있을 때만), 교통약자이동지원센터 예약 전화.
-// - 빈 칸은 "-". 뜻풀이 한 줄은 기본 정보 표에 "-"가 있으면 그 표 아래, 없고 정류장 노선만 "-"이면 쪽 끝에 한 번.
+// - 빈 칸은 표시 없이 비운다(09-27 사용자).
 // 글은 모두 이미 다른 쪽에 있는 이름표와 자료 값이다. 단추는 서브 쪽 인쇄 단추 그대로(휴대전화에서도 보인다).
 // 들어오는 곳: 관광지 서브메인 관람 도우미 제목 아래 인쇄 단추. 메뉴·사이트맵에는 싣지 않는다.
 import type { Metadata } from "next";
@@ -20,10 +20,9 @@ import { bfGroupsOf, bfLabel, BF_SOURCE, MOBILITY, MOBILITY_SOURCE_LINE, stdLabe
 import { extraFeeRowsOf, extraRowsOf } from "@/data/introExtra";
 import { GJ_CREDIT, GJ_SOURCE, gjOf } from "@/data/gj";
 import { KTX_NAME, busSourceLines, busStopsOf, ktxLinesOf } from "@/data/bus";
-import { BusStopUnitsPrint, busHasDash, stopTitle } from "@/components/place/BusStops";
+import { BusStopUnitsPrint, stopTitle } from "@/components/place/BusStops";
 import { placeCrumbs, placeSideMenu, PLACE_BANNER } from "@/site/ia";
 import { Ph, Section, SubPage } from "@/components/layout/PageParts";
-import { DASH, DashNote } from "@/components/layout/Dash";
 import { BoardTable, IconHeading, TipList } from "@/components/royal";
 import { SourceLines } from "@/components/place/Amenities";
 import { bfLines, gluedLines, hoursLines, hoursNoteLines } from "@/lib/breaks";
@@ -44,14 +43,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return p ? placeMetadata(p.id, `${p.name} 인쇄`, `/places/${p.id}/print`) : { title: "인쇄" };
 }
 
-const EMPTY = DASH;
 const pre = (t: string) => <span className={s.pre}>{t}</span>;
-const cell = (v: string | null) => (v ? pre(v.trim()) : EMPTY);
+const cell = (v: string | null) => (v ? pre(v.trim()) : null);
 const BF_CREDIT = `자료: ${BF_SOURCE.name}(${BF_SOURCE.fetched} 받음)`;
 
 /** 문의 글 그대로, 번호만 전화 걸기 링크(소개 쪽 기본 정보 표와 같음) */
 function contactCell(p: Place) {
-  if (!p.contact) return EMPTY;
+  if (!p.contact) return null;
   const tel = phoneOf(p.contact);
   if (!tel) return cell(p.contact);
   const at = p.contact.indexOf(tel);
@@ -80,7 +78,7 @@ export default async function PlacePrint({ params }: Props) {
   const ktx = ktxLinesOf(p.id);
   const bfBus = p.registered ? bfLines(p.move["대중교통"]) : null;
   const basicRows: React.ReactNode[][] = [
-    ["주소", p.address ? `${zip ? `(${zip}) ` : ""}${p.address}` : EMPTY],
+    ["주소", p.address ? `${zip ? `(${zip}) ` : ""}${p.address}` : null],
     ["읍면동·권역", `${p.dong} · ${areaLabelOf(p)}`],
     ["이용시간", cell(hoursNoteLines(p.hours))],
     ["쉬는 날", cell(hoursLines(p.closed))],
@@ -90,9 +88,6 @@ export default async function PlacePrint({ params }: Props) {
     ["문의", contactCell(p)],
     ...extraRowsOf(p.id).map(([k, v]) => [k, cell(gluedLines(v))]),
   ];
-  // "-" 뜻풀이 자리: 기본 정보 표에 "-"가 있으면 그 아래, 아니면 정류장 노선에 "-"가 있을 때 쪽 끝
-  const basicDashed = basicRows.some(([, v]) => v === EMPTY);
-  const endDashed = !basicDashed && busHasDash(stops, true);
 
   return (
     <SubPage
@@ -113,7 +108,6 @@ export default async function PlacePrint({ params }: Props) {
             rowHeader
             rows={basicRows}
           />
-          {basicDashed && <DashNote className={s.tipsAfterTable} />}
         </Section>
 
         <Section id="bf" title="무장애 정보">
@@ -206,7 +200,6 @@ export default async function PlacePrint({ params }: Props) {
             </ul>
             <SourceLines lines={[MOBILITY_SOURCE_LINE]} />
           </div>
-          {endDashed && <DashNote className={s.tipsAfterTable} />}
         </Section>
       </div>
     </SubPage>

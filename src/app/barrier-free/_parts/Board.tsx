@@ -9,7 +9,6 @@ import { createContext, useContext, useId, useMemo, useState } from "react";
 import Link from "next/link";
 import PillTabs from "@/components/royal/PillTabs";
 import { Ph } from "@/components/layout/Ph";
-import { DASH } from "@/components/layout/Dash";
 import { Icon } from "@/components/icons";
 import type { AreaKey } from "@/data/types";
 import s from "../bf.module.css";
@@ -66,10 +65,9 @@ export function BoardPills({ areas }: { areas: BoardArea[] }) {
 
 const colorOf = (k: AreaKey) => ({ "--c": `var(--rc-area-${k})` }) as React.CSSProperties;
 
-/** 무장애 여행 정보 글 그대로. 비어 있으면 "-"(components/layout/Dash.tsx, 뜻풀이는 표 아래 ※ 줄) */
+/** 무장애 여행 정보 글 그대로. 비어 있으면 빈칸(09-27 사용자: 표시 없이 비움) */
 function ThreeText({ text }: { text: string | null }) {
-  if (text) return <span className={s.threeTxt}>{text}</span>;
-  return <span className={`${s.mark} ${s.markOff}`}>{DASH}</span>;
+  return text ? <span className={s.threeTxt}>{text}</span> : null;
 }
 
 /** 무장애 묶음 이름표(열린관광 목록 카드 이름표 모양). 누르지 않는 표시 */
@@ -90,7 +88,7 @@ function GroupTags({ groups }: { groups?: string[] }) {
 /**
  * 곳 수 + 검색 줄 + 표(넓은 화면) / 목록(좁은 화면).
  * (무장애 시안 bf-draft: 무장애 조건 거르기 줄과 주소 뒤 ?조건= 읽기를 뺐다. FilterPills·barrierConds·useConds 파일은 그대로 둔다.)
- * kind="listed": 번호 / 권역 / 관광지(+ 무장애 묶음 이름표) / 주차 / 접근로 / 화장실(무장애 여행 정보 글 한 줄, 없으면 -)
+ * kind="listed": 번호 / 권역 / 관광지(+ 무장애 묶음 이름표) / 주차 / 접근로 / 화장실(무장애 여행 정보 글 한 줄, 없으면 빈칸)
  * kind="unlisted": 번호 / 권역 / 관광지 / 읍면동 / 가까운 등록 관광지
  */
 export function BoardList({
@@ -243,12 +241,7 @@ export function BoardList({
                     <>
                       <td>{r.dong}</td>
                       <td className={s.near}>
-                        {r.nearest ?? (
-                          <>
-                            <span aria-hidden="true">−</span>
-                            <span className="sr-only">없음</span>
-                          </>
-                        )}
+                        {r.nearest ?? <span className="sr-only">없음</span>}
                       </td>
                     </>
                   )}

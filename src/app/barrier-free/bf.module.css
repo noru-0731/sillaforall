@@ -48,7 +48,8 @@
 /* ───────── 장 바로가기 격자(rules 808~955: 4칸, 칸 250×68, 사이 10, 1px #131313, 둥글기 8, 장 이름 16px. 궁능의 "제1장" 14px 줄은 09-26 저녁에 뗐다) ───────── */
 .chapters {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  /* 장 셋(09-27 '‘-’ 표시' 장을 뺌) */
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1rem;
   margin-top: 3rem;
 }
@@ -88,7 +89,8 @@
 }
 
 /* ───────── 조(h3) + 검정 윗선 상자(rules: h3 20px 700, 상자 윗선 2px #131313, 둘레 1px #eaeaea, 안쪽 30, 본문 16px 줄 24) ───────── */
-.article + .article {
+.article + .article,
+.article + .summary {
   margin-top: 3.2rem;
 }
 .artTit {

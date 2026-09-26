@@ -2,18 +2,14 @@
 // 사진(165×215) 왼쪽 · 권역 배지 · 이름 · 주소 · 이용시간 · [자세히보기] [지도에서 보기].
 // 페르소나 장점 취합: 이용시간 아래에 쉬는 날·분류(가6, 경주문화관광 요약정보 줄), 무장애 묶음 이름표(가8, 열린관광 목록 카드 이름표).
 // 이름표는 그 묶음에 글이 적힌 칸이 있다는 표시이고 누르는 거르기가 아니다. 무장애 정보가 없는 곳은 줄을 두지 않는다.
-// 글이 없는 칸은 "-"(components/layout/Dash.tsx). "-" 칸이 있는 카드가 보이면 카드 줄 바로 아래에 뜻풀이 한 줄(DashNote, 쓰는 쪽에서 cardHasDash로 판단).
+// 글이 없는 칸은 칸 이름만 두고 값은 비운다(09-27 사용자).
 // 훅이 없어 서버·클라이언트 어디서나 쓴다. @/data를 부르지 않는다(클라이언트로 places.json을 보내지 않게).
 // 사진 출처(짧은 꼴)는 카드 사진마다 곁에: 제1유형은 사진 오른쪽 아래에 얹고, 제3유형은 사진 아래 한 줄.
 import Link from "next/link";
 import Photo from "@/components/royal/Photo";
 import { Icon } from "@/components/icons";
-import { DASH } from "@/components/layout/Dash";
 import type { CardPlace } from "./types";
 import s from "./Cards.module.css";
-
-/** 카드에 "-" 칸(주소·이용시간·쉬는 날·분류 가운데 글이 없는 칸)이 있는지 */
-export const cardHasDash = (c: CardPlace) => c.address == null || c.hours == null || c.closed == null || c.category == null;
 
 export function PlaceCard({ c, headingLevel = 3 }: { c: CardPlace; headingLevel?: 2 | 3 }) {
   const H = headingLevel === 2 ? "h2" : "h3";
@@ -33,28 +29,28 @@ export function PlaceCard({ c, headingLevel = 3 }: { c: CardPlace; headingLevel?
               <Icon name="pin" size={13} strokeWidth={1.8} />
               주소 :
             </dt>
-            <dd>{c.address ?? DASH}</dd>
+            <dd>{c.address}</dd>
           </div>
           <div>
             <dt>
               <Icon name="clock" size={13} strokeWidth={1.8} />
               이용시간 :
             </dt>
-            <dd className={s.hours}>{c.hours ?? DASH}</dd>
+            <dd className={s.hours}>{c.hours}</dd>
           </div>
           <div>
             <dt>
               <Icon name="calendar" size={13} strokeWidth={1.8} />
               쉬는 날 :
             </dt>
-            <dd className={s.hours}>{c.closed ?? DASH}</dd>
+            <dd className={s.hours}>{c.closed}</dd>
           </div>
           <div>
             <dt>
               <Icon name="list" size={13} strokeWidth={1.8} />
               분류 :
             </dt>
-            <dd>{c.category ?? DASH}</dd>
+            <dd>{c.category}</dd>
           </div>
           {c.bfGroups.length > 0 && (
             <div>

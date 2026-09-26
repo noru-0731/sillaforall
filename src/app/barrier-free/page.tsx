@@ -2,6 +2,8 @@
 // 장 바로가기 격자 → 세 항목 표(가이드라인 표) → 둘째·셋째 장 조 상자(관람규칙) → 숫자 표. 맨 위 회색 안내 상자는 문구 대조 E01로 뺐다.
 // 장·조 번호("제1장", 조 제목 앞 "1.")는 09-26 저녁 사용자 결정으로 뗐다. 장·조 이름만 둔다.
 // 숫자는 모두 places.json에서 센다. 새로 지은 문장은 <Ph>.
+// 09-27 사용자 결정(빈 칸은 '-' 없이 비움)으로 '‘-’ 표시' 장을 뺐다: '-' 문장은 지우고, 시설 이야기 문단은 '무장애 정보가 있어도 비어 있는 칸' 조로,
+// '무장애 정보가 없는 곳' 조는 '무장애 정보가 있는 곳·없는 곳' 장 첫머리로 옮겼다(글은 그대로, 점선 그대로).
 import type { Metadata } from "next";
 import { pageMetadata } from "@/site/og";
 import Link from "next/link";
@@ -26,7 +28,6 @@ const THREE_ICON: Record<ThreeKey, IconName> = { parking: "parking", walk: "walk
 const CHAPTERS: { id: string; name: string; ph: boolean }[] = [
   { id: "ch1", name: "세 가지 항목", ph: true },
   { id: "ch2", name: "무장애 정보가 있는 곳", ph: false },
-  { id: "ch3", name: "‘-’ 표시", ph: true },
   { id: "ch4", name: "무장애 정보가 있는 곳·없는 곳", ph: false },
 ];
 const chapterName = (i: number) => (CHAPTERS[i].ph ? <Ph>{CHAPTERS[i].name}</Ph> : CHAPTERS[i].name);
@@ -136,25 +137,15 @@ export default function BarrierFreeGuidePage() {
                 뜻은 아닙니다.
               </Ph>
             </p>
-          </div>
-        </div>
-      </Section>
-
-      {/* ‘-’ 표시(빈 칸 표시, components/layout/Dash.tsx) */}
-      <Section id="ch3" className={s.anchor} title={chapterName(2)}>
-        <div className={s.article}>
-          <h3 className={s.artTit}>
-            <Ph>‘-’ 표시의 뜻</Ph>
-          </h3>
-          <div className={s.artBox}>
-            <p>
-              <Ph>‘-’ 표시는 한국관광공사 무장애 여행 정보의 그 칸에 글이 없다는 뜻입니다.</Ph>
-            </p>
             <p>
               <Ph>시설이 없다는 뜻은 아닙니다. 시설이 있어도 한국관광공사 무장애 여행 정보에 적히지 않았을 수 있습니다.</Ph>
             </p>
           </div>
         </div>
+      </Section>
+
+      {/* 무장애 정보가 있는 곳·없는 곳: '무장애 정보가 없는 곳' 조 + 숫자 표 + 두 목록 쪽으로 */}
+      <Section id="ch4" className={s.anchor} title={chapterName(2)}>
         <div className={s.article}>
           <h3 className={s.artTit}>무장애 정보가 없는 곳</h3>
           <div className={s.artBox}>
@@ -163,10 +154,6 @@ export default function BarrierFreeGuidePage() {
             </p>
           </div>
         </div>
-      </Section>
-
-      {/* 무장애 정보가 있는 곳·없는 곳: 숫자 표 + 두 목록 쪽으로 */}
-      <Section id="ch4" className={s.anchor} title={chapterName(3)}>
         <div className={s.summary}>
           <BoardTable
             caption={`관광지 ${total}곳의 무장애 정보 요약: 구분과 곳 수`}

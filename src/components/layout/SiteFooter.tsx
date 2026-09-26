@@ -70,7 +70,7 @@ function TelTable() {
               <th scope="row">{p.name}</th>
               <td>
                 {zip && <>[{zip}] </>}
-                {p.address ?? "-"}
+                {p.address}
               </td>
               <td>
                 <Contact text={p.contact!} />
