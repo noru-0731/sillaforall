@@ -21,7 +21,9 @@ export type KMap = {
   getProjection(): KProjection;
   relayout(): void;
 };
-export type KCustomOverlay = { setMap(map: KMap | null): void };
+export type KCustomOverlay = { setMap(map: KMap | null): void; setZIndex(z: number): void };
+/** 다각형(권역 세부 지도의 읍면동 경계선, 09-27) */
+export type KPolygon = { setMap(map: KMap | null): void };
 export type KakaoMaps = {
   load(cb: () => void): void;
   Map: new (
@@ -38,6 +40,16 @@ export type KakaoMaps = {
     zIndex?: number;
     clickable?: boolean;
   }) => KCustomOverlay;
+  Polygon: new (opt: {
+    path: KLatLng[];
+    strokeWeight?: number;
+    strokeColor?: string;
+    strokeOpacity?: number;
+    strokeStyle?: string;
+    fillColor?: string;
+    fillOpacity?: number;
+    zIndex?: number;
+  }) => KPolygon;
   event: {
     addListener(target: object, type: string, handler: () => void): void;
     removeListener(target: object, type: string, handler: () => void): void;

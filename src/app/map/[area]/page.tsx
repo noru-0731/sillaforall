@@ -10,6 +10,7 @@ import { KoglBox } from "@/components/royal";
 import AreaPills from "@/components/map/AreaPills";
 import MapExplorer from "@/components/map/MapExplorer";
 import { explorerHubs, explorerIds, explorerPhotos, koglKeys } from "@/components/map/explorerData";
+import { STEPFREE_HREF, STEPFREE_PLACES } from "@/data/stepfree";
 
 type Props = { params: Promise<{ area: string }> };
 
@@ -51,6 +52,8 @@ export default async function AreaMapPage({ params }: Props) {
         ids={ids}
         hubs={explorerHubs(ids)}
         photos={photos}
+        // 계단 없는 길 표시(09-27): 곳 id 와 그 쪽 주소만 넘긴다
+        stepFree={{ ids: STEPFREE_PLACES.map((q) => q.id), href: STEPFREE_HREF }}
         kogl={{
           Type1: <KoglBox type="Type1" />,
           Type3: <KoglBox type="Type3" />,

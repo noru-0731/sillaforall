@@ -1,0 +1,93 @@
+/*
+ * 권역 세부 지도(AreaKakaoMap.tsx, 09-27 map2)에만 필요한 것. 상자·범례·단추·선 모양은 RealMap.module.css,
+ * 카카오 겹 가두기·손가락 고침은 KakaoMap.module.css, 정보 창은 MapView.module.css 를 같이 쓴다.
+ * 번호 네모 색: 지도 그림(카카오 타일)은 선명한 화면 모드에서도 밝아서, 관광지 쪽 편의시설 번호 네모(RealMap.module.css --am-*)처럼 고정 색으로 둔다.
+ * - 무장애 정보가 있는 곳: 남색 채움 #17106e(궁능 작은 탭 고른 칸 색, 도식 지도의 점 --map-on 과 같은 값) + 흰 번호(대비 15.7:1)
+ * - 무장애 정보가 없는 곳: 흰 바탕 + 남색 테두리·번호(도식 지도의 빈 점과 같은 뜻)
+ * - 고른 곳: 검정 채움 #131313 + 분홍 고리 #d44177(도식 지도의 고른 점 분홍. 분홍 바탕 흰 글자는 4.36:1 이라 채움은 검정)
+ * - 거점 단추를 누르면 그 거점 곳은 분홍 고리, 나머지는 흐리게(도식 지도와 같음)
+ */
+.root {
+  --ak-on: #17106e;
+  --ak-paper: #ffffff;
+  --ak-hl: #131313;
+  --ak-ring: #d44177;
+}
+
+/* 지도 상자 높이: 칸 폭의 0.67(PC 1440 은 본문 칸 1030 이라 690, 더 넓은 칸에서 궁능 관람코스 지도 693 이 상한),
+ * 좁은 화면은 최소 360. 그리고 늘 떠 있는 머리(--rc-header-h) 밑 화면 높이에서 위아래 여백 2rem 씩을 뺀 것을 넘지 않게
+ * (09-27 점검: PC 글자 가장 크게에서 상자 852 가 머리 150 밑 화면 750 보다 커서 한 번에 다 안 보이고 위쪽 번호가 머리에 가렸다).
+ * 글자·화면 설정은 body zoom 이라 svh 도 zoom 배가 되므로 --rc-zoom 으로 나눈다(HeaderParts.module.css 와 같은 셈). */
+.box {
+  height: clamp(36rem, min(67cqi, calc(100svh / var(--rc-zoom, 1) - var(--rc-header-h) - 4rem)), 69.3rem);
+}
+
+/* 번호 네모(단추). 크기·글자·그림자는 RealMap.module.css .pt 그대로 */
+.sq {
+  gap: 2px;
+  margin: 0;
+  font-family: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.sq svg {
+  flex: none;
+}
+.sqOn {
+  background: var(--ak-on);
+  color: var(--ak-paper);
+}
+.sqOff {
+  background: var(--ak-paper);
+  color: var(--ak-on);
+  border: 2px solid var(--ak-on);
+}
+.sqHl {
+  background: var(--ak-hl);
+  color: var(--ak-paper);
+  border: 1px solid var(--ak-paper);
+  box-shadow:
+    0 0 0 1px var(--ak-paper),
+    0 0 0 4px var(--ak-ring);
+}
+.sqEmph {
+  box-shadow:
+    0 0 0 1px var(--ak-paper),
+    0 0 0 4px var(--ak-ring);
+}
+.sqDim {
+  opacity: 0.35;
+}
+.sq:hover {
+  outline: 2px solid var(--ak-hl);
+  outline-offset: 1px;
+}
+.sq:focus-visible {
+  outline: 3px solid var(--rc-focus);
+  outline-offset: 2px;
+}
+
+/* 비킨 번호 네모의 제자리 점과 선(RealMap.module.css .anchor/.leader 의 --k) */
+.k {
+  --k: var(--ak-on);
+}
+
+/* 범례 네모(RealMap.module.css .legSw 크기·테두리) */
+.swOn {
+  background: var(--ak-on);
+  color: var(--ak-paper);
+}
+.swOff {
+  background: var(--ak-paper);
+  box-shadow: inset 0 0 0 2px var(--ak-on);
+}
+.swEmph {
+  box-shadow:
+    0 0 0 1px var(--ak-paper),
+    0 0 0 4px var(--ak-ring);
+}
+.legLink {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+}

@@ -7,6 +7,10 @@
 //   (onAreaSelect를 주면 링크 대신 거르기 단추).
 // - 점·이름표·묶음 점: HTML(단추라서 키보드 초점과 누름 영역 44px).
 // - 확대·축소·처음 크기 단추와 끌기. 마우스 휠 확대는 일부러 넣지 않았다(쪽 내리기가 먼저).
+// - 계단 없는 길 표시(09-27, stepFree 를 줄 때만: 지도 쪽): 그 곳 점 옆 빈자리(대각선 넷부터, 자리 차례는 layout 안 설명)에
+//   작은 걷는 사람 표시. 묶음 점은 그 곳이 들었을 때. 권역 이름·이름표를 다 놓은 뒤에 놓아서 이름표 자리는 표시 전과 같고,
+//   표시가 이름표·다른 점을 피하며, 다른 점에 붙은 것처럼 보이는 자리(제 점보다 다른 점이 더 가깝거나 비슷한 자리)도 피한다.
+//   표시는 이름표 밑에 그린다.
 import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { KeyboardEvent as ReactKeyboardEvent, MouseEvent as ReactMouseEvent, PointerEvent as ReactPointerEvent } from "react";
 import Link from "next/link";
@@ -49,6 +53,8 @@ const R_OTHER = 6; // .dotOther 1.2rem
 const R_HL = 12; // .dotHl 2.4rem
 const R_EMPH = 14; // .emph 고리 포함
 const R_BUBBLE = 20; // .bubble 4rem
+const R_SF = 8; // .sfMark 1.6rem(계단 없는 길 표시)
+const SF_APART = 10; // 계단 없는 길 표시에서 다른 점 가장자리는 제 점 가장자리보다 이만큼(px) 넘게 멀어야 한다(어느 점 표시인지 헷갈리지 않게)
 const MERGE = 44; // 화면에서 이 거리(px) 안의 점은 묶음 점 하나로(누름 영역 44px가 겹치지 않게)
 const STEP = 1.6; // 확대 단추 한 번의 배율
 const LEGEND_GAP = 20; // 안쪽 범례와 지도 사이
@@ -65,6 +71,7 @@ type Marker = Single | Group;
 type Label = Rect & { key: string; text: string; tone: "own" | "other" | "hl" | "emph"; dim: boolean };
 type AreaTag = Rect & { key: AreaKey; label: string };
 type UnitTag = Rect & { key: string; text: string };
+type SfMark = Rect & { key: string; dim: boolean };
 
 /** 상자를 왼쪽·오른쪽 여백을 뺀 자리에 맞춘다(안쪽 범례·단추 자리) */
 function fitInset(box: Box, w: number, h: number, insetL: number, insetR: number): Fit {
@@ -87,6 +94,7 @@ export default function MapView({
   selectedArea,
   legend = true,
   plain = false,
+  stepFree,
 }: MapViewProps) {
   const router = useRouter();
   const uid = useId();
@@ -197,6 +205,7 @@ export default function MapView({
   const idsKey = placeIds?.join(",") ?? "";
   const emphKey = emphasisIds?.join(",") ?? "";
   const emphOn = emphKey !== "";
+  const sfKey = stepFree?.ids.join(",") ?? "";
   const pts = useMemo(() => {
     if (!fit) return [];
     const ids = idsKey ? new Set(idsKey.split(",")) : null;
@@ -269,6 +278,7 @@ export default function MapView({
     taken.push({ x: 0, y: 0, w: Math.max(sc.px, 40) + 70, h: 64 });
     if (interactive) taken.push({ x: w - CTRL.right - CTRL.w - 4, y: 0, w: CTRL.right + CTRL.w + 4, h: CTRL.top + CTRL.h + 4 });
     if (size.legend) taken.push({ x: size.legend.x - 4, y: size.legend.y - 4, w: size.legend.w + 8, h: size.legend.h + 8 });
+    const nHard = taken.length; // 여기까지(점·묶음 점·모서리·단추·범례)는 계단 없는 길 표시가 가장 피할 자리
 
     // 권역 이름(경주 전체): 권역 안의 빈자리 가운데 무게중심에 가장 가까운 곳. 자리가 없으면 숨긴다(위 알약으로도 갈 수 있다).
     const areaTags: AreaTag[] = [];
@@ -313,6 +323,63 @@ export default function MapView({
       singles.filter((m) => !m.own).forEach((m) => tryLabel(m, false));
     }
 
+    // 계단 없는 길 표시(09-27 점검 고침: 전에는 이름표보다 먼저 놓아 고른 곳 이름표가 밀려나 옆 묶음 점에 붙었다).
+    // 권역 이름·이름표를 다 놓은 뒤라 이름표 자리는 표시가 없던 때와 같다. 점(묶음 점) 둘레 자리를 차례로 보고 값이 0인 첫 자리,
+    // 없으면 값이 가장 작은 자리에 둔다. 자리 차례: 대각선 넷(오른쪽 위 → 왼쪽 위 → 오른쪽 아래 → 왼쪽 아래) → 위·아래·오른쪽·왼쪽
+    // → 한 칸(8px) 더 먼 대각선 넷 → 한 칸 더 먼 위·아래·오른쪽·왼쪽.
+    // 값: 틀 밖 1e6 / 겹친 넓이 × 10(다른 점·묶음 점·모서리·단추·범례·다른 표시) 또는 × 4(권역 이름·이름표) /
+    // 다른 점 가장자리가 제 점 가장자리보다 SF_APART 넘게 멀지 않으면 모자란 px × 40(어느 점 표시인지 헷갈리는 자리).
+    // 제 점의 네모는 겹침 셈에서 뺀다(표시 원은 점 원과 1px 떨어져 닿지 않는다).
+    const sfMarks: SfMark[] = [];
+    if (sfKey) {
+      const sf = new Set(sfKey.split(","));
+      const nSoft = taken.length; // nHard..nSoft-1: 권역 이름·이름표, nSoft 부터: 먼저 놓은 표시
+      const overlapArea = (a: Rect, b: Rect) =>
+        Math.max(0, Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x)) * Math.max(0, Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y));
+      markers.forEach((m, i) => {
+        if (!(m.kind === "single" ? sf.has(m.p.id) : m.items.some((p) => sf.has(p.id)))) return;
+        const rm = radiusOf(m);
+        const d = rm + R_SF + 1;
+        const o = d / Math.SQRT2;
+        const d2 = d + 8;
+        const o2 = d2 / Math.SQRT2;
+        const spots: [number, number][] = [
+          [o, -o], [-o, -o], [o, o], [-o, o],
+          [0, -d], [0, d], [d, 0], [-d, 0],
+          [o2, -o2], [-o2, -o2], [o2, o2], [-o2, o2],
+          [0, -d2], [0, d2], [d2, 0], [-d2, 0],
+        ];
+        let best: Rect | null = null;
+        let bestCost = Infinity;
+        for (const [dx, dy] of spots) {
+          const cx = m.x + dx;
+          const cy = m.y + dy;
+          const r = { x: cx - R_SF, y: cy - R_SF, w: R_SF * 2, h: R_SF * 2 };
+          let cost = insideFrame(r, w, h, 0) ? 0 : 1e6;
+          taken.forEach((t, j) => {
+            if (j === i) return;
+            const a = overlapArea(t, r);
+            if (a) cost += a * (j >= nHard && j < nSoft ? 4 : 10);
+          });
+          const own = Math.hypot(dx, dy) - rm;
+          markers.forEach((q, j) => {
+            if (j === i) return;
+            const gap = Math.hypot(cx - q.x, cy - q.y) - radiusOf(q);
+            if (gap < own + SF_APART) cost += (own + SF_APART - gap) * 40;
+          });
+          if (cost < bestCost) {
+            bestCost = cost;
+            best = r;
+          }
+          if (cost === 0) break;
+        }
+        if (!best) return;
+        const mk: SfMark = { ...best, key: m.key, dim: emphOn && m.own && !m.emph && !m.hl };
+        sfMarks.push(mk);
+        taken.push(mk);
+      });
+    }
+
     // 읍면동 이름(권역 지도에서만): 가장 뒤, 빈자리가 있을 때만
     const unitTags: UnitTag[] = [];
     if (!areaMode) {
@@ -328,8 +395,8 @@ export default function MapView({
       }
     }
 
-    return { markers, labelList, areaTags, unitTags, sc, lh };
-  }, [size, fit, shapes, pts, vw, basePxKm, areaMode, labels, interactive, emphOn]);
+    return { markers, labelList, areaTags, unitTags, sfMarks, sc, lh };
+  }, [size, fit, shapes, pts, vw, basePxKm, areaMode, labels, interactive, emphOn, sfKey]);
 
   // ── 정보 창 ─────────────────────────────────────────────
   const [sel, setSel] = useState<Sel>(null);
@@ -603,7 +670,7 @@ export default function MapView({
                     type="button"
                     className={cn(s.hit, !m.own && s.hitOther, m.emph && s.hitEmph, m.hl && s.hitHl, selected && s.selected, dim && s.dim)}
                     style={pos}
-                    aria-label={m.p.name}
+                    aria-label={sfKey && stepFree?.ids.includes(m.p.id) ? `${m.p.name}, 계단 없는 길` : m.p.name}
                     aria-expanded={selected}
                     aria-controls={selected ? panelId : undefined}
                     onClick={(e) => onPlace(m.p, e.currentTarget)}
@@ -616,6 +683,11 @@ export default function MapView({
                   </span>
                 );
               })}
+              {layout.sfMarks.map((b) => (
+                <span key={b.key} className={cn(s.sfMark, b.dim && s.dim)} style={{ left: b.x + b.w / 2, top: b.y + b.h / 2 }} aria-hidden="true">
+                  <Icon name="walk" size={12} strokeWidth={2.4} />
+                </span>
+              ))}
               {layout.labelList.map((l) => (
                 <span
                   key={l.key}
@@ -749,6 +821,18 @@ export default function MapView({
             </span>
             <Ph>가까이 모인 곳</Ph>
           </li>
+          {stepFree && (
+            <li>
+              <span className={s.swatch} aria-hidden="true">
+                <span className={cn(s.sfMark, s.sfSwatch)}>
+                  <Icon name="walk" size={12} strokeWidth={2.4} />
+                </span>
+              </span>
+              <Link href={stepFree.href} className={s.legendLink}>
+                계단 없는 길
+              </Link>
+            </li>
+          )}
           {areaMode && (
             <li>
               <span className={cn(s.swatch, s.swatchArea)} aria-hidden="true" />

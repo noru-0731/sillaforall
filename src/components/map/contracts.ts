@@ -34,4 +34,6 @@ export type MapViewProps = {
   legend?: boolean;
   /** 둥근 테두리 없이(다른 틀 안에 넣는 작은 지도) */
   plain?: boolean;
+  /** 계단 없는 길 곳(09-27 지도 쪽). 주면 그 곳 점(묶음 점은 그 곳이 들었을 때) 옆에 작은 걷는 사람 표시와, 범례에 그 쪽(href)으로 가는 한 줄 */
+  stepFree?: { ids: string[]; href: string };
 };
