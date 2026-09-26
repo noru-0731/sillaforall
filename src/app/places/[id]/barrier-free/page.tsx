@@ -26,7 +26,8 @@ import { GJ_CREDIT, GJ_SOURCE, gjOf } from "@/data/gj";
 import { amenitiesOf, bfCultureOf, bfFilledFieldsOf, bfGroupsOf, bfLabel, bfNeighborsOf, BF_CULTURE_SOURCE_LINE, BF_SOURCE, NEAR_RADII, sourceLines, stdLabel, stdValue, type AmenitySrc } from "@/data/bf";
 import { placeCrumbs, placePages, placeSideMenu, PLACE_BANNER } from "@/site/ia";
 import { InPageNav, Ph, Section, SubPage } from "@/components/layout/PageParts";
-import { DASH, DashNote } from "@/components/layout/Dash";
+import { parkingFill, toiletFill, walkFill } from "@/data/fill";
+import { FillText } from "@/components/place/FillText";
 import { Icon, type IconName } from "@/components/icons";
 import { BoardTable, TipList } from "@/components/royal";
 import { withJosa } from "@/lib/josa";
@@ -55,7 +56,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return p ? placeMetadata(p.id, `${p.name} 무장애 정보`, `/places/${p.id}/barrier-free`) : { title: "무장애 정보" };
 }
 
-const EMPTY = DASH;
 const fmtM = (m: number) => `${m.toLocaleString("ko-KR")}m`;
 const pre = (t: string) => <span className={s.pre}>{t}</span>;
 const BF_CREDIT = `자료: ${BF_SOURCE.name}(${BF_SOURCE.fetched} 받음)`;
@@ -155,18 +155,17 @@ export default async function PlaceBarrierFree({ params }: Props) {
     body: p.registered ? (
       <>
         <ul className={s.boxes}>
+          {/* 무장애 여행 정보 글이 없는 상자는 경주시·관광정보·가까운 편의시설로 채우고 자료 꼬리를 붙인다(data/fill.ts). 그래도 없으면 비워 둔다 */}
           <Box icon="parking" title="주차">
-            {bfLines(p.three.parking) ?? EMPTY}
+            {bfLines(p.three.parking) ?? <FillText fill={parkingFill(p)} />}
           </Box>
           <Box icon="walk" title="접근로">
-            {bfLines(p.three.walk) ?? EMPTY}
+            {bfLines(p.three.walk) ?? <FillText fill={walkFill(p)} />}
           </Box>
           <Box icon="toilet" title="화장실">
-            {bfLines(p.three.toilet) ?? EMPTY}
+            {bfLines(p.three.toilet) ?? <FillText fill={toiletFill(p)} />}
           </Box>
         </ul>
-        {/* "-" 상자가 있으면 세 상자 바로 아래 뜻풀이 한 줄(이 쪽의 "-"는 세 상자뿐) */}
-        {[p.three.parking, p.three.walk, p.three.toilet].some((v) => !bfLines(v)) && <DashNote facility className={s.tipsAfterTable} />}
         {groups.length === 0 && <SourceLines lines={[BF_CREDIT]} />}
       </>
     ) : (

@@ -5,7 +5,9 @@
 //
 // 무장애 시안(bf-draft): 관람 도우미 칸에 바로가기 이름만이 아니라 이 곳의 자료 값을 함께 보인다(궁능은 아이콘 + 이름 바로가기 줄).
 // 칸: 이용시간, 쉬는 날, 주차, 접근로(값은 접근로 글, 비면 출입통로 글), 화장실, 가까운 장애인 화장실, 문의 전화, 지도에서 보기. 값은 관광공사 관광정보·무장애 여행 정보 글 그대로,
-// 가까운 장애인 화장실은 도구/10_편의시설_지도.py 의 가장 가까운 한 곳(이름과 직선거리). 글이 없는 칸은 "-"이고, 그런 칸이 있으면 칸 묶음 아래에 뜻풀이 한 줄(components/layout/Dash.tsx).
+// 가까운 장애인 화장실은 도구/10_편의시설_지도.py 의 가장 가까운 한 곳(이름과 직선거리).
+// 빈 칸(09-27 사용자 "채울 수 있는 대로 채우고 나머지는 그냥 비워요"): 주차·접근로·화장실은 무장애 여행 정보 글이 없으면
+// 경주시 무장애 여행정보·관광정보 주차 글·가까운 편의시설로 채우고 자료 꼬리를 붙인다(data/fill.ts, components/place/FillText.tsx). 그래도 없는 칸은 값 없이 둔다.
 // 칸을 누르면 그 값이 자세히 있는 쪽으로 간다. 긴 값은 세 줄까지 보이고 나머지는 줄임표(읽기 도구는 끝까지 읽는다).
 // 이용시간·쉬는 날·무장애 글은 붙은 줄을 나눠 보인다(lib/breaks.ts, 글자는 그대로).
 //
@@ -37,7 +39,8 @@ import { bfLines, hoursLines, hoursNoteLines } from "@/lib/breaks";
 import { Icon, type IconName } from "@/components/icons";
 import { CircleButton, CreditBelow, CreditTag, Photo } from "@/components/royal";
 import { Ph } from "@/components/layout/Ph";
-import { DASH, DashNote } from "@/components/layout/Dash";
+import { parkingFill, toiletFill, walkFill, type Fill } from "@/data/fill";
+import { FillText } from "@/components/place/FillText";
 import ReadAloud from "@/components/layout/ReadAloud";
 import { nearestAccessibleToilet } from "@/data/bf";
 import { parseOpenRule, ruleShowsAnything } from "@/lib/openNow";
@@ -89,9 +92,16 @@ export default async function PlaceSubmain({ params }: Props) {
   // 가4 지금 운영 상태: 셈 규칙은 서버에서 만들어 넘긴다
   const openRule = parseOpenRule(p.hours, p.closed);
 
-  // 관람 도우미 칸(값을 함께). 값이 없으면 null → "-"
+  // 관람 도우미 칸(값을 함께). 값이 없으면 null → 값 없이 이름만
   const tel = phoneOf(p.contact);
   const clean = (v: string | null | undefined) => (v ? v.replace(/\s*\n\s*/g, "\n").replace(/[ \t]{2,}/g, " ").trim() || null : null);
+  // 무장애 여행 정보 글(그대로), 없으면 채운 값 + 자료 꼬리(data/fill.ts)
+  const bfOr = (v: string | null, fill: Fill | null): React.ReactNode | null => {
+    const own = clean(bfLines(v));
+    if (own) return own;
+    const text = fill && clean(bfLines(fill.text));
+    return fill && text ? <FillText fill={{ ...fill, text }} /> : null;
+  };
   const toiletA = nearestAccessibleToilet(p.id);
   const quick: {
     label: React.ReactNode;
@@ -104,15 +114,15 @@ export default async function PlaceSubmain({ params }: Props) {
   }[] = [
     { key: "hours", label: "이용시간", value: clean(hoursNoteLines(p.hours)), href: `${intro.href}#basic`, icon: "clock", now: ruleShowsAnything(openRule) },
     { key: "closed", label: "쉬는 날", value: clean(hoursLines(p.closed)), href: `${intro.href}#basic`, icon: "calendar" },
-    { key: "parking", label: "주차", value: clean(bfLines((p.registered && p.move["주차"]) || p.parkingInfo)), href: `${dir.href}#parking`, icon: "parking" },
-    { key: "walk", label: "접근로", value: clean(bfLines(p.three.walk)), href: bf.href, icon: "walk" },
-    { key: "toilet", label: "화장실", value: clean(bfLines(p.three.toilet)), href: bf.href, icon: "toilet" },
+    { key: "parking", label: "주차", value: bfOr(p.three.parking, parkingFill(p)), href: `${dir.href}#parking`, icon: "parking" },
+    { key: "walk", label: "접근로", value: bfOr(p.three.walk, walkFill(p)), href: bf.href, icon: "walk" },
+    { key: "toilet", label: "화장실", value: bfOr(p.three.toilet, toiletFill(p)), href: bf.href, icon: "toilet" },
   ];
   if (!p.approx)
     quick.push({
       key: "toiletA",
       label: <Ph>가까운 장애인 화장실</Ph>,
-      value: toiletA ? `${toiletA.name ?? "−"} · 직선거리 ${toiletA.distanceM.toLocaleString("ko-KR")}m` : null,
+      value: toiletA ? `${toiletA.name ? `${toiletA.name} · ` : ""}직선거리 ${toiletA.distanceM.toLocaleString("ko-KR")}m` : null,
       href: `${bf.href}#near`,
       icon: "wheelchair",
     });
@@ -208,7 +218,7 @@ export default async function PlaceSubmain({ params }: Props) {
                     </span>
                     <span className={s.quickLabel}>{q.label}</span>
                     {q.now && <OpenNow rule={openRule} className={s.quickNow} />}
-                    <span className={s.quickVal}>{q.value ?? DASH}</span>
+                    {q.value != null && <span className={s.quickVal}>{q.value}</span>}
                   </>
                 );
                 return (
@@ -218,7 +228,6 @@ export default async function PlaceSubmain({ params }: Props) {
                 );
               })}
             </ul>
-            {quick.some((q) => q.value == null) && <DashNote facility className={s.quickNote} />}
           </div>
         </div>
       </section>

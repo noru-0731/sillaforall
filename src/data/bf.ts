@@ -172,6 +172,12 @@ export function nearestAccessibleToilet(id: string): AmenityItem | null {
   return NEAR.places[id]?.items.find((i) => i.kind === "toiletA") ?? null;
 }
 
+/** 이 거리(m) 안에서 가장 가까운 한 곳(종류별, 빈 칸 채우기 data/fill.ts). 찾는 거리 밖이라 가장 가까운 한 곳으로 실린 것(far)은 뺀다 */
+export function nearestWithin(id: string, kind: AmenityKind, maxM: number): AmenityItem | null {
+  const xs = (NEAR.places[id]?.items ?? []).filter((i) => i.kind === kind && !i.far && i.distanceM <= maxM);
+  return xs.reduce<AmenityItem | null>((m, i) => (!m || i.distanceM < m.distanceM ? i : m), null);
+}
+
 /** 표시 이름(범례·목록 '구분' 칸) */
 export const KIND_LABEL: Record<AmenityKind | "bench" | "shelter", string> = {
   toiletA: "장애인 화장실",
