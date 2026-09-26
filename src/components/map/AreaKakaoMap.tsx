@@ -377,7 +377,7 @@ export default function AreaKakaoMap({
           {hubLegend && (
             <li>
               <span className={cn(rs.legSw, a.swOn, a.swEmph)} aria-hidden="true" />
-              <Ph>거점 관광지</Ph>
+              <Ph>덩어리 관광지</Ph>
             </li>
           )}
           {sfHere && stepFree && (

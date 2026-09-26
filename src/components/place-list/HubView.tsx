@@ -15,7 +15,7 @@ export default function HubView({ groups }: { groups: { hub: string; cards: Card
   const g = groups[i];
   return (
     <div className={s.wrap}>
-      <ul className={s.grid} aria-label="거점 고르기">
+      <ul className={s.grid} aria-label="덩어리 고르기">
         {groups.map((it, k) => {
           const on = k === i;
           return (

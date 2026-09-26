@@ -812,7 +812,7 @@ export default function MapView({
                   <span className={cn(s.dot, s.dotOn)} />
                 </span>
               </span>
-              <Ph>거점 관광지</Ph>
+              <Ph>덩어리 관광지</Ph>
             </li>
           )}
           <li>

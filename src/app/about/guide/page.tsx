@@ -69,7 +69,7 @@ export default function GuidePage() {
       a: (
         <>
           <p>
-            <Ph>관광지를 지역별, 가나다순, 거점별로 나눠 볼 수 있습니다.</Ph>
+            <Ph>관광지를 지역별, 가나다순, 덩어리별로 나눠 볼 수 있습니다.</Ph>
           </p>
           <div className={s.actions}>
             {LIST.children?.map((c) => (

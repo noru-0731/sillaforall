@@ -113,7 +113,7 @@ export default function MapExplorer({
           <div className={s.hubWrap} role="group" aria-labelledby={hubLabelId}>
             <span className={s.hubTit} id={hubLabelId}>
               <Icon name="pin" size={20} strokeWidth={2} />
-              거점안내
+              덩어리안내
             </span>
             <ul className={s.hubList}>
               {hubs.map((h) => (
