@@ -6,10 +6,14 @@
 // Type3 = 공공누리 제3유형(출처표시, 변경 금지): 자르지 않는다. <Photo>가 알아서 contain + 단색 바탕으로 보인다.
 // 큰 판(large): 같은 사진을 관광공사 서버가 가로 1,600픽셀 안팎으로도 두고 있으면 그 주소. 큰 자리(첫 화면, 배너, 관광지 맨 위)에 쓴다.
 // 서버 컴포넌트에서 부른다(photos.json이 수백 KB라 클라이언트로 보내지 않는다). 클라이언트에는 결과만 props로 넘긴다.
+// 사진 파일은 관광공사 서버 주소를 그대로 쓴다. 다만 p47 첫 화면 사진만 public/photos 에 줄여 둔 판을 쓴다(09-26 사용자 허락, 아래 heroPhoto).
+// 출처 글(짧은 꼴 "ⓒ한국관광공사" 등)과 공공누리 이름은 credit.ts에 있다(photos.json 없이 클라이언트 부품도 부르려고). 여기서 다시 내보낸다.
 import raw from "./photos.json";
 import type { AreaKey } from "./types";
+import type { KoglType } from "./credit";
 
-export type KoglType = "Type1" | "Type3";
+export type { KoglType } from "./credit";
+export { galleryCredit, koglCondition, koglLabel, photoCreditOf, TOURAPI_CREDIT } from "./credit";
 export type Photo = {
   url: string;
   type: KoglType;
@@ -100,6 +104,30 @@ export function anyPhoto(id: string): Photo | null {
 /** 사진이 한 장이라도 있는지 */
 export const hasPhoto = (id: string) => photosOf(id).length > 0;
 
+// ─── 줄여 둔 판(public/photos) ───
+// p47 첫 화면 사진만 public/photos 에 줄여 둔 판을 쓴다(09-26 사용자 허락: "고화질 다운받아서 알아서 하세요").
+// 관광정보 3422660 '동궁과 월지 (2)'(제1유형, 관광공사 서버의 큰 판은 1619×1080 PNG 약 3.2MB)를 JPEG(품질 82, 진행형)로
+// 1619·960 폭 두 판으로 줄였다(PIL). 제1유형이라 형식 바꾸기·줄이기가 된다. 받아 둔 원본: 05_사이트/레퍼런스/출처_표기/동궁과월지_3422660_원본.png
+// (p47은 대표사진이 제3유형이라 coverPhoto 는 목록 첫 장 3029037(가로 940, 큰 판 없음)을 고르고, 첫 화면에서는 늘려 보였다.)
+const LOCAL: Record<string, Photo> = {
+  p47: {
+    url: "/photos/p47-3422660-960.jpg",
+    w: 960,
+    h: 640,
+    large: "/photos/p47-3422660-1619.jpg",
+    lw: 1619,
+    lh: 1080,
+    type: "Type1",
+    name: "동궁과 월지 (2)",
+    from: "tourapi",
+  },
+};
+
+/** 첫 화면 넘기기 판·사이트 소개 쪽 사진: 줄여 둔 판이 있으면 그것(지금은 p47만), 없으면 coverPhoto(잘라 써도 되는 제1유형) */
+export function heroPhoto(id: string): Photo | null {
+  return LOCAL[id] ?? coverPhoto(id);
+}
+
 // ─── 큰 자리 ───
 /** 이 사진을 가장 크게 받을 수 있는 가로 픽셀(모르면 0) */
 export const widthOf = (p: Pick<Photo, "w" | "lw">) => Math.max(p.w ?? 0, p.lw ?? 0);
@@ -173,39 +201,4 @@ export function areaPhoto(key: AreaKey): (Photo & { placeId: string }) | null {
   const id = AREA_PHOTO_PLACE[key];
   const p = coverPhoto(id);
   return p ? { ...p, placeId: id } : null;
-}
-
-// ─── 공공누리 표시 ───
-/** "공공누리 제1유형" / "공공누리 제3유형" */
-export const koglLabel = (type: KoglType) => (type === "Type1" ? "공공누리 제1유형" : "공공누리 제3유형");
-/** 유형 조건 풀이: "출처표시" / "출처표시, 변경금지" */
-export const koglCondition = (type: KoglType) => (type === "Type1" ? "출처표시" : "출처표시, 변경금지");
-/** 사진 아래 한 줄 출처: "사진: 한국관광공사 관광정보, 공공누리 제1유형" */
-export const photoCredit = (type: KoglType) => `사진: 한국관광공사 관광정보, ${koglLabel(type)}`;
-/** 관광사진 정보 사진의 출처(한국관광콘텐츠랩이 정한 꼴 "ⓒ한국관광콘텐츠랩-촬영자"). 촬영자가 없으면 "ⓒ한국관광콘텐츠랩" */
-export const galleryCredit = (by?: string) => (by ? `ⓒ한국관광콘텐츠랩-${by}` : "ⓒ한국관광콘텐츠랩");
-/**
- * 사진 한 장의 출처 한 줄. 관광정보 사진은 photoCredit(type)과 같고,
- * 관광사진 정보 사진은 "사진: ⓒ한국관광콘텐츠랩-촬영자, 공공누리 제1유형".
- */
-export function photoCreditOf(p: Pick<Photo, "type" | "from" | "by">): string {
-  return p.from === "gallery" ? `사진: ${galleryCredit(p.by)}, ${koglLabel(p.type)}` : photoCredit(p.type);
-}
-
-/**
- * 여러 사진의 출처 줄(카드 줄·사진 띠·넘기기 판 아래 한곳에 적을 때).
- * 관광정보 사진은 쓴 유형을 모아 한 줄("사진: 한국관광공사 관광정보, 공공누리 제1유형·제3유형"),
- * 관광사진 정보 사진은 촬영자마다 한 줄("사진: ⓒ한국관광콘텐츠랩-촬영자, 공공누리 제1유형"). 사진이 없으면 빈 목록.
- */
-export function creditLines(list: (Pick<Photo, "type" | "from" | "by"> | null | undefined)[]): string[] {
-  const ps = list.filter((p): p is Pick<Photo, "type" | "from" | "by"> => !!p);
-  const types = new Set(ps.filter((p) => p.from !== "gallery").map((p) => p.type));
-  const out: string[] = [];
-  if (types.size) {
-    const kinds = (["Type1", "Type3"] as const).filter((t) => types.has(t)).map((t) => (t === "Type1" ? "제1유형" : "제3유형"));
-    out.push(`사진: 한국관광공사 관광정보, 공공누리 ${kinds.join("·")}`);
-  }
-  const bys = [...new Set(ps.filter((p) => p.from === "gallery").map((p) => p.by ?? ""))];
-  for (const by of bys) out.push(photoCreditOf({ type: "Type1", from: "gallery", by: by || undefined }));
-  return out;
 }

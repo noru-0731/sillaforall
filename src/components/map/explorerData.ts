@@ -4,7 +4,7 @@ import { areaOf, byName, HUBS, places } from "@/data";
 import type { AreaKey } from "@/data";
 import { anyPhoto, coverPhoto, type KoglType } from "@/data/photos";
 
-/** from·by: 관광사진 정보(한국관광콘텐츠랩) 사진이면 "gallery"와 촬영자(출처 줄·공공누리 상자에 쓴다) */
+/** from·by: 관광사진 정보(한국관광콘텐츠랩) 사진이면 "gallery"와 촬영자(사진 곁 출처·공공누리 상자에 쓴다) */
 export type ExplorerPhoto = { url: string; type: KoglType; from?: "tourapi" | "gallery"; by?: string } | null;
 
 /** 지도 쪽에 보일 관광지 id(가나다순). view가 권역이면 그 권역만 */

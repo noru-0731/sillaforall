@@ -5,7 +5,7 @@
 // 사진 고르기·목록 만들기는 여기(서버)에서 하고, 결과만 부품으로 넘긴다(photos.json을 브라우저로 보내지 않으려고).
 import { areaOf, areas, byName, HUBS, places } from "@/data";
 import type { Place } from "@/data";
-import { anyPhoto, coverPhoto, creditLines, photoCreditOf } from "@/data/photos";
+import { anyPhoto, coverPhoto, heroPhoto, photoCreditOf } from "@/data/photos";
 import { MENU, SITE_NAME } from "@/site/ia";
 import { withJosa } from "@/lib/josa";
 import HomeHero, { type HeroSlide, type QuickItem } from "@/components/home/HomeHero";
@@ -18,13 +18,14 @@ const areaLabel = (p: Place) => areas.find((a) => a.key === areaOf(p))!.label;
 const shortAddress = (p: Place) => (p.address ?? "").replace(/^경상북도\s*경주시\s*/, "") || p.dong;
 
 // ── 칸 1: 넘기기 배너. 이름난 관광지 다섯 곳의 제1유형 사진(잘라 써도 되는 사진)만 쓴다. 차례는 사용자가 바꿀 수 있다.
+// 동궁과 월지(p47)는 public/photos 에 줄여 둔 판(960·1619 폭)을 쓴다(photos.ts heroPhoto, 09-26 사용자 허락).
 const HERO_IDS = ["p34", "p39", "p47", "p51", "p28"]; // 불국사, 첨성대, 동궁과 월지, 대릉원, 석굴암
 
 function heroSlides(): HeroSlide[] {
   const out: HeroSlide[] = [];
   for (const id of HERO_IDS) {
     const p = places.find((q) => q.id === id);
-    const ph = coverPhoto(id);
+    const ph = heroPhoto(id);
     if (!p || !ph || ph.type !== "Type1") continue;
     // 큰 판(가로 1,620 안팎)이 있으면 <Photo>가 srcset으로 함께 준다(넓은 화면·고해상도 화면에서 큰 판)
     out.push({
@@ -72,12 +73,9 @@ function cardItems(): CardItem[] {
         registered: p.registered,
         address: shortAddress(p),
         photo: ph ? { url: ph.url, type: ph.type } : null,
+        credit: ph ? photoCreditOf(ph) : null,
       };
     });
-}
-/** 칸 2 카드에 쓴 사진의 출처 줄 */
-function cardCredits(): string[] {
-  return creditLines(places.filter((p) => p.side === "old").map((p) => coverPhoto(p.id) ?? anyPhoto(p.id)));
 }
 
 // ── 칸 3: 목록 10줄씩. 정보가 적힌 곳 / 정보가 없는 곳은 가나다순, 거점별은 거점 차례 → 가나다순.
@@ -106,7 +104,6 @@ export default function Home() {
         }
         moreHref="/list"
         items={cardItems()}
-        credits={cardCredits()}
       />
       <HomeBoard title="무장애 정보" lists={boardLists()} />
     </div>

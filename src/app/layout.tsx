@@ -6,7 +6,7 @@ import SiteHeader, { type AreaCard } from "@/components/layout/SiteHeader";
 import SiteFooter from "@/components/layout/SiteFooter";
 import { DisplaySettingsProvider } from "@/components/layout/DisplaySettings";
 import { AREA_LINKS, SITE_NAME } from "@/site/ia";
-import { areaPhoto } from "@/data/photos";
+import { areaPhoto, photoCreditOf } from "@/data/photos";
 
 export const metadata: Metadata = {
   title: { default: SITE_NAME, template: `%s | ${SITE_NAME}` },
@@ -15,8 +15,11 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = { width: "device-width", initialScale: 1 };
 
-// 휴대전화 전체메뉴 맨 위 권역 사진 카드(제1유형 사진). photos.json을 클라이언트로 보내지 않으려고 여기서 고른다.
-const areaCards: AreaCard[] = AREA_LINKS.map((a) => ({ key: a.key, label: a.label, href: a.href, photo: areaPhoto(a.key)?.url ?? null }));
+// 휴대전화 전체메뉴 맨 위 권역 사진 카드(제1유형 사진)와 그 출처(짧은 꼴). photos.json을 클라이언트로 보내지 않으려고 여기서 고른다.
+const areaCards: AreaCard[] = AREA_LINKS.map((a) => {
+  const ph = areaPhoto(a.key);
+  return { key: a.key, label: a.label, href: a.href, photo: ph?.url ?? null, credit: ph ? photoCreditOf(ph) : null };
+});
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (

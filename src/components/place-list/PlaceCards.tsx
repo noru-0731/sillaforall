@@ -3,6 +3,7 @@
 // 페르소나 장점 취합: 이용시간 아래에 쉬는 날·분류(가6, 경주문화관광 요약정보 줄), 무장애 묶음 이름표(가8, 열린관광 목록 카드 이름표).
 // 이름표는 그 묶음에 글이 적힌 칸이 있다는 표시이고 누르는 거르기가 아니다. 명부에 없는 곳은 줄을 두지 않는다.
 // 훅이 없어 서버·클라이언트 어디서나 쓴다. @/data를 부르지 않는다(클라이언트로 places.json을 보내지 않게).
+// 사진 출처(짧은 꼴)는 카드 사진마다 곁에: 제1유형은 사진 오른쪽 아래에 얹고, 제3유형은 사진 아래 한 줄.
 import Link from "next/link";
 import Photo from "@/components/royal/Photo";
 import { Icon } from "@/components/icons";
@@ -14,7 +15,7 @@ export function PlaceCard({ c, headingLevel = 3 }: { c: CardPlace; headingLevel?
   return (
     <li className={s.card}>
       <div className={s.img}>
-        <Photo photo={c.photo} alt="" ratio="165/215" bg="light" />
+        <Photo photo={c.photo} alt="" ratio="165/215" bg="light" credit={c.credit} />
       </div>
       <div className={s.txt}>
         <span className={s.ctg} style={{ "--c": `var(--rc-area-${c.area})` } as React.CSSProperties}>
@@ -89,17 +90,5 @@ export function PlaceCardList({ items, headingLevel = 3, className }: { items: C
         <PlaceCard key={c.id} c={c} headingLevel={headingLevel} />
       ))}
     </ul>
-  );
-}
-
-/** 사진 출처 줄(카드 줄 아래) */
-export function CreditLines({ lines }: { lines: string[] }) {
-  if (!lines.length) return null;
-  return (
-    <div className={s.credit}>
-      {lines.map((l) => (
-        <p key={l}>{l}</p>
-      ))}
-    </div>
   );
 }

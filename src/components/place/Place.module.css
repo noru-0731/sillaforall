@@ -4,12 +4,9 @@
  */
 
 /* ───────── 소개(gbg_intro) ───────── */
+/* 제3유형 큰 사진의 출처 한 줄(.rc-pcredit-below): 어긋난 테두리 틀 바로 아래 */
 .photoCredit {
-  margin-top: 1rem;
-  font-size: 1.4rem;
-  line-height: 1.5;
-  color: var(--rc-text-faint);
-  text-align: right;
+  margin-top: 0.6rem;
 }
 /* 궁능 gbg_intro ic_wrap: 사진 아래 50, 높이 78, 가운데 110×69 그림, 아래 30 띄우고 굵은 첫 문장 */
 .introMark {

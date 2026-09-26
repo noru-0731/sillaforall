@@ -2,7 +2,7 @@
 // 페르소나 장점 취합: 카드·가나다순 표에 분류와 쉬는 날(가6), 카드에 무장애 묶음 이름표(가8). 모두 자료 글 그대로이고 보이기만 한다.
 import { areaOf, areas, byName, places } from "@/data";
 import type { Place } from "@/data";
-import { photoCredit, photoCreditOf } from "@/data/photos";
+import { photoCreditOf } from "@/data/photos";
 import { pickPhoto } from "@/components/map/explorerData";
 import { hoursLines, hoursNoteLines } from "@/lib/breaks";
 import { bfGroupNamesOf } from "@/data/bf";
@@ -61,12 +61,4 @@ export function boardRows(): BoardRow[] {
 
 export function areaOptions(): AreaOption[] {
   return areas.map((a) => ({ key: a.key, label: a.label, count: a.placeIds.length }));
-}
-
-/** 카드에 쓴 사진의 출처 줄(관광정보 사진은 쓴 유형만, 관광사진 정보 사진은 촬영자마다 한 줄) */
-export function creditsFor(cards: CardPlace[]): string[] {
-  const tour = cards.filter((c) => c.photo && c.photo.from !== "gallery");
-  const types = new Set(tour.map((c) => c.photo!.type));
-  const gallery = [...new Set(cards.filter((c) => c.photo?.from === "gallery").map((c) => photoCreditOf(c.photo!)))];
-  return [...(["Type1", "Type3"] as const).filter((t) => types.has(t)).map(photoCredit), ...gallery];
 }

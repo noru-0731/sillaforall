@@ -4,10 +4,12 @@
 // 사진은 제1유형만. 관광지 이름은 사진 왼쪽 아래 반투명 판, 오른쪽 아래에 "2/8 ‹ ‖ ›" 조작 상자(궁능 190×50)를 겹친다.
 // 자동 넘김(궁능 알림판처럼): 6초마다 넘어가고 ‖ 단추로 멈춘다. 마우스를 올리거나 초점이 안에 있으면 잠시 멈추고,
 // 움직임 줄이기 설정이면 켜지지 않는다(멈춤 단추도 숨김). 자동 넘김 중에는 이름을 소리 내어 읽지 않는다(aria-live off).
-// 판 아래에 지금 사진의 출처 한 줄(creditClassName).
+// 지금 사진의 출처(짧은 꼴 "ⓒ한국관광공사" 등)는 사진 오른쪽 위에 작은 딱지로 얹는다(아래 두 구석은 이름 판·조작 상자 자리).
+// 사진 링크는 읽기 도구에서 숨기므로(aria-hidden) 딱지는 그 밖(판 안)에 둔다.
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Icon } from "@/components/icons";
+import { CreditTag } from "@/components/royal/Photo";
 import { useReducedMotion } from "@/components/home/bits";
 import s from "./NearbySlider.module.css";
 
@@ -24,11 +26,9 @@ const AUTO_MS = 6000;
 export default function NearbySlider({
   slides,
   label,
-  creditClassName,
 }: {
   slides: Slide[];
   label: string;
-  creditClassName?: string;
 }) {
   const [i, setI] = useState(0);
   const [playing, setPlaying] = useState(true);
@@ -121,8 +121,8 @@ export default function NearbySlider({
             </div>
           )}
         </div>
+        <CreditTag text={cur.credit} at="tr" />
       </div>
-      {creditClassName && <p className={creditClassName}>{cur.credit}</p>}
     </>
   );
 }

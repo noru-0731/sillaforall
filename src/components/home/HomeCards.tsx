@@ -3,6 +3,7 @@
 // 세로로 긴 사진 카드 가로 넘기기(가운데 카드를 크게·파란 테두리로). 끝에서 처음으로 이어진다.
 // - 카드 위 탭 두 개: {권역} / 무장애 정보 있음·없음(명부 등록 여부). 카드 글: 이름, "주소 : …".
 // - 사진: 제1유형은 잘라 채우고, 제3유형은 <Photo>가 자르지 않고 담는다(남는 곳 단색). 없으면 빈 판.
+// - 사진 출처(짧은 꼴): 제1유형은 사진 오른쪽 아래에 얹고, 제3유형은 카드 안 사진 아래 한 줄(사진 칸 높이 안에서 사진이 그만큼 줄어든다).
 // - 자동 넘김은 멈출 수 있고, 마우스를 올리거나 초점이 안에 있으면 잠시 멈추고, 움직임 줄이기 설정이면 켜지지 않는다.
 // - 키보드: 카드에 초점이 오면 그 카드가 가운데로 온다(가려진 카드로 Tab이 들어가도 보이게).
 import { useCallback, useId, useRef, useState } from "react";
@@ -23,6 +24,8 @@ export type CardItem = {
   registered: boolean;
   address: string;
   photo: { url: string; type: KoglType } | null;
+  /** 사진 출처(짧은 꼴, 서버에서 photoCreditOf로 만듦). 사진이 없으면 null */
+  credit: string | null;
 };
 
 const AUTO_MS = 5000;
@@ -34,14 +37,11 @@ export default function HomeCards({
   desc,
   moreHref,
   items,
-  credits,
 }: {
   title: string;
   desc: React.ReactNode;
   moreHref: string;
   items: CardItem[];
-  /** 카드 사진 출처 줄(서버에서 creditLines로 만듦). 없으면 유형만 보고 관광정보 한 줄 */
-  credits?: string[];
 }) {
   const n = items.length;
   // 처음 가운데 카드는 셋째(궁능 첫 화면처럼 "3"). 왼쪽 두 칸도 사진 있는 카드가 오게.
@@ -60,8 +60,6 @@ export default function HomeCards({
     if (d > n / 2) d -= n;
     return d;
   };
-
-  const hasType3 = items.some((it) => it.photo?.type === "Type3");
 
   return (
     <section className={s.cardsSec} aria-labelledby="home-cards-title">
@@ -147,7 +145,7 @@ export default function HomeCards({
                   </div>
                   <Link href={`/places/${it.id}`} className={s.card} onFocus={() => d !== 0 && setIdx(i)}>
                     <span className={s.cardPhoto}>
-                      <Photo photo={it.photo} alt="" height="100%" bg="light" />
+                      <Photo photo={it.photo} alt="" height="100%" bg="light" credit={it.credit} />
                     </span>
                     <span className={s.cardTxt}>
                       <span className={s.cardName}>{it.name}</span>
@@ -161,16 +159,6 @@ export default function HomeCards({
             })}
           </ul>
         </div>
-        <p className={s.cardsCredit}>
-          {credits?.length
-            ? credits.map((c, i) => (
-                <span key={c}>
-                  {i > 0 && <br />}
-                  {c}
-                </span>
-              ))
-            : `사진: 한국관광공사 관광정보, 공공누리 제1유형${hasType3 ? "·제3유형" : ""}`}
-        </p>
       </div>
     </section>
   );

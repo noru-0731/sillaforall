@@ -19,17 +19,22 @@
 // - 가14 한 곳 모아 인쇄 쪽(/places/아이디/print)으로 가는 인쇄 단추(서브 쪽 인쇄 단추 모양).
 // - 가15 맨 위 큰 사진 아래에 작은 사진 석 장과 나머지 장수("+ 18", 사진 보기)(대한민국 구석구석 상세의 작은 사진 줄).
 //   작은 사진은 큰 사진과 아래 사진 띠에 쓰지 않은 사진 가운데 앞 차례의 석 장이고, 누르면 사진 쪽에서 그 사진이 먼저 보인다(#photo-번호).
-//   제1유형은 칸에 맞춰 자르고, 제3유형은 자르지 않는다(Photo). 사진 위에 글이나 장수를 얹지 않는다(장수는 따로 한 칸).
+//   제1유형은 칸에 맞춰 자르고, 제3유형은 자르지 않는다(Photo). 사진 위에 장수를 얹지 않는다(장수는 따로 한 칸).
+//
+// 사진 출처(사용자 09-26 출처 표기 줄이기): 사진마다 곁에 짧은 꼴("ⓒ한국관광공사", "ⓒ한국관광콘텐츠랩-촬영자").
+// 제1유형은 사진 구석에 작은 딱지로 얹고(큰 사진·작은 사진은 오른쪽 아래, 띠는 PC 오른쪽 아래·휴대전화는 띠 이름이 사진 위에 얹혀 오른쪽 위,
+// 넘기기 판은 이름 판·조작 상자가 아래를 차지해 오른쪽 위),
+// 제3유형은 사진 위에 얹지 않고 사진 틀 바로 아래 오른쪽 한 줄. 여러 사진 출처를 한곳에 모아 적지 않는다.
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { areaOf, placeById, places } from "@/data";
-import { creditLines, largeUrl, photosOf } from "@/data/photos";
+import { largeUrl, photoCreditOf, photosOf } from "@/data/photos";
 import { placePages } from "@/site/ia";
 import { withJosa } from "@/lib/josa";
 import { bfLines, hoursLines, hoursNoteLines } from "@/lib/breaks";
 import { Icon, type IconName } from "@/components/icons";
-import { CircleButton, Photo } from "@/components/royal";
+import { CircleButton, CreditBelow, CreditTag, Photo } from "@/components/royal";
 import { Ph } from "@/components/layout/Ph";
 import ReadAloud from "@/components/layout/ReadAloud";
 import { nearestAccessibleToilet } from "@/data/bf";
@@ -67,7 +72,6 @@ export default async function PlaceSubmain({ params }: Props) {
 
   // 사진 띠 4개에 쓸 사진(아래 사진 띠)
   const slots = stripSlots(p.id, hero?.url ?? null);
-  const slotCredit = stripCredit(slots);
 
   // 가15 작은 사진 석 장과 나머지 장수. 큰 사진은 빼고, 아래 사진 띠에 쓰지 않은 사진부터(차례 유지), 모자라면 띠 사진도.
   const allPhotos = photosOf(p.id);
@@ -76,7 +80,6 @@ export default async function PlaceSubmain({ params }: Props) {
   const rest = allPhotos.map((ph, i) => ({ ph, i })).filter((x) => x.i !== heroIdx);
   const thumbs = [...rest.filter((x) => !inStrips.has(x.ph.url)), ...rest.filter((x) => inStrips.has(x.ph.url))].slice(0, 3);
   const moreCount = allPhotos.length - (heroIdx >= 0 ? 1 : 0) - thumbs.length;
-  const heroCredit = creditLines([hero, ...thumbs.map((x) => x.ph)]).join(" / ");
 
   // 가4 지금 운영 상태: 셈 규칙은 서버에서 만들어 넘긴다
   const openRule = parseOpenRule(p.hours, p.closed);
@@ -128,23 +131,40 @@ export default async function PlaceSubmain({ params }: Props) {
       {/* 맨 위 큰 사진 */}
       <div className={`${s.visual}${cover ? " " + s.fade : hero ? " " + s.visualContain : ""}`}>
         {cover ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={largeUrl(cover)} alt={`${p.name} 사진`} decoding="async" fetchPriority="high" />
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={largeUrl(cover)} alt={`${p.name} 사진`} decoding="async" fetchPriority="high" />
+            <CreditTag text={photoCreditOf(cover)} />
+          </>
         ) : (
           <Photo photo={hero} alt={`${p.name} 사진`} height="100%" bg="dark" loading="eager" />
         )}
       </div>
+      {/* 제3유형뿐인 곳: 출처를 사진 위에 얹지 않고 큰 사진 틀 바로 아래 오른쪽 한 줄 */}
+      {!cover && hero && (
+        <div className={s.inner}>
+          <CreditBelow text={photoCreditOf(hero)} />
+        </div>
+      )}
       {/* 가15 작은 사진 석 장 + 나머지 장수. 소리로 듣기는 건너뛴다(사진 쪽으로 가는 링크 줄) */}
       {thumbs.length > 0 && (
         <ul className={`${s.inner} ${s.thumbs}`} aria-label={`${p.name} 사진`} data-read-skip="">
           {thumbs.map(({ ph, i }) => (
             <li key={ph.url}>
               <Link href={`${photos.href}#photo-${i + 1}`} className={s.thumb}>
-                <Photo photo={{ url: ph.small ?? ph.url, type: ph.type }} alt="" height="100%" bg="light" />
+                <Photo
+                  photo={{ url: ph.small ?? ph.url, type: ph.type }}
+                  alt=""
+                  height="100%"
+                  bg="light"
+                  credit={ph.type === "Type1" ? photoCreditOf(ph) : null}
+                />
                 <span className="sr-only">
                   {i + 1}번째 사진 보기
                 </span>
               </Link>
+              {/* 사진 아래 한 줄 출처: 제3유형은 늘, 제1유형은 휴대전화(칸 가로 85 안팎이라 딱지가 사진을 덮음)에서만. PC 제1유형은 사진 위 딱지 */}
+              <CreditBelow text={photoCreditOf(ph)} className={ph.type === "Type1" ? s.thumbCreditM : undefined} />
             </li>
           ))}
           <li>
@@ -154,11 +174,6 @@ export default async function PlaceSubmain({ params }: Props) {
             </Link>
           </li>
         </ul>
-      )}
-      {hero && (
-        <p className={`${s.inner} ${s.credit}`}>
-          {p.name} · {heroCredit}
-        </p>
       )}
 
       {/* 관람 도우미 */}
@@ -213,15 +228,22 @@ export default async function PlaceSubmain({ params }: Props) {
                   <Link href={st.href} className={cls}>
                     <span className={s.stripImg}>
                       {slot.kind === "type1" ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={slot.photo.url} alt="" loading="lazy" decoding="async" data-kogl="Type1" />
+                        <>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={slot.photo.url} alt="" loading="lazy" decoding="async" data-kogl="Type1" />
+                          <CreditTag text={photoCreditOf(slot.photo)} />
+                        </>
                       ) : slot.kind === "film" ? (
-                        <span className={s.film}>
-                          {slot.photos.map((ph) => (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img key={ph.url} src={ph.url} alt="" loading="lazy" decoding="async" data-kogl="Type3" />
-                          ))}
-                        </span>
+                        <>
+                          <span className={s.film}>
+                            {slot.photos.map((ph) => (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img key={ph.url} src={ph.url} alt="" loading="lazy" decoding="async" data-kogl="Type3" />
+                            ))}
+                          </span>
+                          {/* 제3유형 필름 줄: 사진 위에 얹지 않고 줄 바로 아래 오른쪽 한 줄(같은 출처는 한 번) */}
+                          <CreditBelow text={stripCredit(slot)} />
+                        </>
                       ) : (
                         <span className={s.plate} />
                       )}
@@ -235,7 +257,6 @@ export default async function PlaceSubmain({ params }: Props) {
               );
             })}
           </ul>
-          {slotCredit && <p className={s.menuCredit}>{slotCredit}</p>}
         </div>
       </section>
 
@@ -264,7 +285,7 @@ export default async function PlaceSubmain({ params }: Props) {
           <div className={s.right}>
             {slides.length ? (
               <>
-                <NearbySlider slides={slides} label={`${areaLabel} 관광지 사진`} creditClassName={s.credit} />
+                <NearbySlider slides={slides} label={`${areaLabel} 관광지 사진`} />
               </>
             ) : (
               <Photo photo={null} alt="" height="100%" />

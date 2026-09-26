@@ -39,15 +39,6 @@ export function Count({ n }: { n: number }) {
   );
 }
 
-/** 사진을 보여 준 쪽 끝에 한 번 */
-export function PhotoCredit() {
-  return (
-    <p className={s.credit}>
-      <Ph>사진: 한국관광공사</Ph>
-    </p>
-  );
-}
-
 /** 무장애 세 항목의 이름. 문구는 사용자 확인 전이라 한곳에 모아 둔다. */
 export const THREE_TEXT: Record<ThreeKey, string> = { parking: "주차", walk: "접근로", toilet: "화장실" };
 

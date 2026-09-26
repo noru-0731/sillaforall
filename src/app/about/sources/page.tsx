@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 import { Ph, Section, SubPage } from "@/components/layout/PageParts";
 import { Icon } from "@/components/icons";
 import { MENU } from "@/site/ia";
-import { koglCondition, photoCredit, type KoglType } from "@/data/photos";
+import { koglCondition, koglLabel, type KoglType } from "@/data/photos";
 import { SOURCES } from "@/data/bf";
 import { BUS_META } from "@/data/bus";
 import { GJ_SOURCE } from "@/data/gj";
@@ -120,7 +120,8 @@ export default function SourcesPage() {
             공공누리 제1유형부터 제4유형은 출처를 반드시 표시하여야 합니다.
             <div className={s.example}>
               <strong>(예시)</strong>
-              {photoCredit("Type1")}
+              {/* 출처 표시 예(유형까지 적은 긴 꼴). 사진 곁에는 짧은 꼴("ⓒ한국관광공사")만 적는다 */}
+              사진: 한국관광공사 관광정보, {koglLabel("Type1")}
             </div>
           </li>
         </ul>
