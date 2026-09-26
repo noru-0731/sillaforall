@@ -4,7 +4,8 @@
 import { useId, useState } from "react";
 import { cn } from "@/lib/cn";
 import { Caret, Icon } from "@/components/icons";
-import { CreditLines, PlaceCardList } from "./PlaceCards";
+import { DashNote } from "@/components/layout/Dash";
+import { CreditLines, PlaceCardList, cardHasDash } from "./PlaceCards";
 import type { CardPlace } from "./types";
 import s from "./Hub.module.css";
 
@@ -35,6 +36,8 @@ export default function HubView({ groups, credits }: { groups: { hub: string; ca
             <span className={s.count}>{g.cards.length}곳</span>
           </h2>
           <PlaceCardList items={g.cards} />
+          {/* 고른 거점 카드에 "-" 칸이 있으면 카드 줄 바로 아래 뜻풀이 한 줄 */}
+          {g.cards.some(cardHasDash) && <DashNote className={s.dashNote} />}
           <CreditLines lines={credits} />
         </section>
       )}
