@@ -3,8 +3,10 @@ import regionsRaw from "./regions.json";
 import boundaryRaw from "./boundary.json";
 import zipRaw from "./zipcodes.json";
 import type { Area, AreaKey, Box, Place, Region, Unit } from "./types";
+import { extraFeeOf } from "./introExtra";
 
-export const places = raw.places as Place[];
+// 이용요금: places.json fee(관광정보 usefee, 문화시설 3곳)가 비면 관광공사 관광정보 반복 정보의 입장료 글(introExtra.ts)을 쓴다.
+export const places = (raw.places as Place[]).map((p) => (p.fee ? p : { ...p, fee: extraFeeOf(p.id) }));
 export const CITY_BOX = raw.city as Box;
 export const regions = regionsRaw as Region[];
 export const units = boundaryRaw.units as Unit[];

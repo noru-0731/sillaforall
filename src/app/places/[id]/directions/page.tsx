@@ -27,6 +27,7 @@ import RealMap from "@/components/map/RealMap";
 import { kakaoTo, phoneOf, sameArea } from "@/components/place/placeData";
 import { amenitiesOf, MOBILITY, NEAR_RADII, sourceLines } from "@/data/bf";
 import { BUS_SOURCE_LINES, KTX_NAME, busStopsOf, ktxLinesOf } from "@/data/bus";
+import { extraFeeRowsOf } from "@/data/introExtra";
 import { bfLines, hoursLines } from "@/lib/breaks";
 import { AmenityTable, SourceLines, amenityPoints, legendOf } from "@/components/place/Amenities";
 import s from "@/components/place/Place.module.css";
@@ -285,7 +286,8 @@ export default async function PlaceDirections({ params }: Props) {
           align={["c", "l"]}
           rowHeader
           rows={[
-            ["이용요금", p.fee ? <span className={s.pre}>{p.fee.trim()}</span> : EMPTY],
+            ["이용요금", p.fee ? <span className={s.pre}>{hoursLines(p.fee.trim())}</span> : EMPTY],
+            ...extraFeeRowsOf(p.id).map(([k, v]) => [k, <span key={k} className={s.pre}>{hoursLines(v)}</span>]),
             ["이용시간", p.hours ? <span className={s.pre}>{hoursLines(p.hours.trim())}</span> : EMPTY],
             ["휴무일", p.closed ? <span className={s.pre}>{hoursLines(p.closed.trim())}</span> : EMPTY],
           ]}

@@ -1,5 +1,8 @@
 // 관광지 소개(61곳). 궁능 누리집 "경복궁 소개·역사"(gbg_intro) 모양:
 // 어긋난 테두리 큰 사진 → 작은 건물 그림(궁능 ic_wrap 자리, 직접 그린 선 그림) → 굵은 첫 문장(가운데) → 본문 → "기본 정보" 표(궁능 "역사" 표 자리).
+// "기본 정보" 표의 요금 칸(시설이용료·주차요금)과 문의 아래 줄(관람 소요시간·유모차 대여·체험 안내·화장실 …)은
+// 관광정보 소개·반복 정보(data/introExtra.ts, 도구/13_소개정보.py). 칸 이름은 관광공사 이름, 글이 있는 칸만 줄을 둔다.
+// 요금 글은 붙은 "- "·"[" 앞에서 줄을 나눠 보인다(hoursLines, 글자는 그대로).
 // 본문은 관광공사 개요를 문단으로 나눈 것(data/overview.json, 도구/12_버스_문단_사이트.py). 글자는 원문 그대로, 나누기만 했다.
 // 본문은 궁능 "궁궐의 역사"(story_history) 모양: 왼쪽에 사진을 세로로 쌓고(309×213, 사이 20) 오른쪽에 글(왼쪽 30 띄움).
 //   사진은 큰 사진과 다른 장, 제1유형 먼저. 장 수는 본문 높이에 맞춘다(sideCount). 휴대전화는 사진 3칸 격자 뒤에 글.
@@ -14,7 +17,8 @@ import { placeCrumbs, placePages, placeSideMenu, PLACE_BANNER } from "@/site/ia"
 import { Ph, Section, SubPage } from "@/components/layout/PageParts";
 import { BoardTable, OffsetPhoto, Photo } from "@/components/royal";
 import { overviewParas } from "@/data/overview";
-import { hoursLines } from "@/lib/breaks";
+import { extraFeeRowsOf, extraRowsOf } from "@/data/introExtra";
+import { gluedLines, hoursLines } from "@/lib/breaks";
 import { anyPhoto, areaLabelOf, cleanPhotoName, coverPhoto, phoneOf, photosOf, splitParas } from "@/components/place/placeData";
 import IntroMark from "@/components/place/IntroMark";
 import s from "@/components/place/Place.module.css";
@@ -90,9 +94,11 @@ export default async function PlaceIntro({ params }: Props) {
     ["읍면동·권역", `${p.dong} · ${areaLabelOf(p)}`],
     ["이용시간", cell(hoursLines(p.hours))],
     ["휴무일", cell(hoursLines(p.closed))],
-    ["이용요금", cell(p.fee)],
+    ["이용요금", cell(hoursLines(p.fee))],
+    ...extraFeeRowsOf(p.id).map(([k, v]) => [k, cell(hoursLines(v))]),
     ["주차", cell(p.parkingInfo)],
     ["문의", contactCell(p)],
+    ...extraRowsOf(p.id).map(([k, v]) => [k, cell(gluedLines(v))]),
   ];
 
   return (

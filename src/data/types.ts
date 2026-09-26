@@ -27,7 +27,7 @@ export type Place = {
   hours: string | null;
   closed: string | null;
   parkingInfo: string | null; // 관광정보의 일반 주차 안내(무장애 주차와 다름)
-  fee: string | null;
+  fee: string | null; // 이용요금. places.json에서 비면 관광정보 반복 정보의 입장료 글로 채운다(data/index.ts, introExtra.ts)
   contact: string | null;
   overview: string | null;
   photo: string | null; // 한국관광공사 대표사진(https://tong.visitkorea.or.kr)

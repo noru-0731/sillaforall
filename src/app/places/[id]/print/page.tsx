@@ -13,12 +13,13 @@ import { areaLabelOf, nearestRegistered, phoneOf } from "@/components/place/plac
 import { placeById, places, zipOf } from "@/data";
 import type { Place } from "@/data";
 import { bfGroupsOf, bfLabel, BF_SOURCE, MOBILITY } from "@/data/bf";
+import { extraFeeRowsOf, extraRowsOf } from "@/data/introExtra";
 import { BUS_SOURCE_LINES, KTX_NAME, busStopsOf, ktxLinesOf } from "@/data/bus";
 import { placeCrumbs, placeSideMenu, PLACE_BANNER } from "@/site/ia";
 import { Ph, Section, SubPage } from "@/components/layout/PageParts";
 import { BoardTable, IconHeading, TipList } from "@/components/royal";
 import { SourceLines } from "@/components/place/Amenities";
-import { bfLines, hoursLines } from "@/lib/breaks";
+import { bfLines, gluedLines, hoursLines } from "@/lib/breaks";
 import s from "@/components/place/Place.module.css";
 import pr from "./print.module.css";
 
@@ -95,9 +96,11 @@ export default async function PlacePrint({ params }: Props) {
               ["읍면동·권역", `${p.dong} · ${areaLabelOf(p)}`],
               ["이용시간", cell(hoursLines(p.hours))],
               ["휴무일", cell(hoursLines(p.closed))],
-              ["이용요금", cell(p.fee)],
+              ["이용요금", cell(hoursLines(p.fee))],
+              ...extraFeeRowsOf(p.id).map(([k, v]) => [k, cell(hoursLines(v))]),
               ["주차", cell(p.parkingInfo)],
               ["문의", contactCell(p)],
+              ...extraRowsOf(p.id).map(([k, v]) => [k, cell(gluedLines(v))]),
             ]}
           />
         </Section>

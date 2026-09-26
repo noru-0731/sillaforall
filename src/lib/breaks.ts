@@ -13,6 +13,17 @@ export function hoursLines(t: string | null): string | null {
   if (!t) return t;
   return t.replace(/(\S)([ \t]*)(- |\[)/g, "$1$2\n$3");
 }
+// (요금 칸: 이용요금·시설이용료·주차요금 글에도 쓴다. 예: 동궁원 "[식물원 (개인)]- 경주시민 2,000원- 어른 …")
+
+/**
+ * 관광정보 소개·반복 정보의 그 밖의 칸(introExtra.ts rows): 앞 글자에 빈칸 없이 바로 붙은 "- "·"[" 앞에서만 줄을 나눈다.
+ * 예: 화랑마을 내국인 예약안내 "… 홈페이지에서 가능- 화랑마을 대관예약 …" → 두 줄.
+ * hoursLines보다 좁게 잡은 것은 등산로 글("경비실 - 빌라동")처럼 빈칸을 둔 "- "가 줄 머리가 아닌 글이 있어서다.
+ * (요금 칸은 hoursLines를 쓴다.)
+ */
+export function gluedLines(t: string): string {
+  return t.replace(/(\S)(- |\[)/g, "$1\n$2");
+}
 
 /**
  * 무장애 여행 정보 글: 붙은 자리를 나눈다. 글이 곳마다 달라 규칙 대신 붙은 자리를 하나씩 적었다(앞 글자 | 뒤 글자).
