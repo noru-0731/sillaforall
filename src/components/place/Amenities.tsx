@@ -10,6 +10,16 @@ import s from "./Amenities.module.css";
 
 const fmtM = (m: number) => `${m.toLocaleString("ko-KR")}m`;
 
+/** 좌표 넷째 자리가 달라도 이만큼(m) 안이면 같은 자리로 본다(한국대중음악박물관 두 줄 1.8m가 칸 경계에 걸려 두 네모로 나뉘었다) */
+const SAME_SPOT_M = 5;
+
+/** 가까운 두 점 사이 거리(m, 평면 셈) */
+function metersBetween(a: { lat: number; lon: number }, b: { lat: number; lon: number }) {
+  const dy = (a.lat - b.lat) * 111320;
+  const dx = (a.lon - b.lon) * 111320 * Math.cos((a.lat * Math.PI) / 180);
+  return Math.hypot(dx, dy);
+}
+
 /** 같은 자리(약 10m 안)의 점은 번호를 이어 한 네모로: "1·2", 셋 넘게 이어지면 "1~4" */
 function mergeLabel(nos: number[]) {
   const run = nos.every((n, i) => i === 0 || n === nos[i - 1] + 1);
@@ -22,7 +32,15 @@ export function amenityPoints(items: (AmenityItem & { show: number })[], idPrefi
     const k = `${it.lat.toFixed(4)},${it.lon.toFixed(4)}`;
     groups.set(k, [...(groups.get(k) ?? []), it]);
   }
-  const pts: MapPoint[] = [...groups.values()].map((g) => {
+  // 칸 경계에 걸린 같은 자리 묶음을 합친다(번호 차례로)
+  const merged: (AmenityItem & { show: number })[][] = [];
+  for (const g of groups.values()) {
+    const m = merged.find((h) => metersBetween(h[0], g[0]) <= SAME_SPOT_M);
+    if (m) m.push(...g);
+    else merged.push(g);
+  }
+  for (const g of merged) g.sort((a, b) => a.show - b.show);
+  const pts: MapPoint[] = merged.map((g) => {
     const first = g[0];
     const nos = g.map((i) => i.show);
     return {
