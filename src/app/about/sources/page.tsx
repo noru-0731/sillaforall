@@ -2,6 +2,7 @@
 // 맨 위 안내 글(윗선 남색) → 공공누리 유형 카드(사진이 쓰는 두 유형) → • 줄과 (예시) 상자 → 출처별 칸 → 문의 상자.
 // KRDS 출처 문장은 행정안전부가 정한 그대로 둔다.
 import type { Metadata } from "next";
+import { pageMetadata } from "@/site/og";
 import { Ph, Section, SubPage } from "@/components/layout/PageParts";
 import { Icon } from "@/components/icons";
 import { MENU } from "@/site/ia";
@@ -21,7 +22,7 @@ const AREAS6_URL: string = (areas6 as { areas: { gjUrl: string }[] }).areas[0].g
 const SECTION = MENU[3];
 const PAGE = SECTION.children![1];
 
-export const metadata: Metadata = { title: PAGE.label };
+export const metadata: Metadata = pageMetadata(PAGE.label, PAGE.href);
 
 
 /** 새 창으로 여는 바깥 링크 */

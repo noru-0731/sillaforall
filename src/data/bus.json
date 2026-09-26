@@ -11,7 +11,7 @@
    "stops[].src": "tago = 국토교통부 TAGO 정류소와 짝지어 노선을 TAGO 에서 받음, osm = 짝을 못 찾아 오픈스트리트맵 노선을 그대로 둠",
    "stops[].lines": "src tago 일 때 경유 노선 줄 번호(routes 의 열쇠). 화면에 보이는 값이 같은 routeid 는 한 줄로 묶었다. 차례: 노선 번호, 기점, 종점",
    "stops[].osm": "오픈스트리트맵 노선 번호와 fromKtx(12_버스_문단_사이트.py 값, 대조·다시 돌리기용)",
-   "routes": "노선 줄마다 no 노선번호(TAGO routeno 그대로, 다른 도시 노선은 '포항 800'처럼 도시 이름을 앞에), start 기점, end 종점, first 첫차시간, last 막차시간(HH:MM, TAGO 값 HHMM 을 나눔), int 배차간격(평일), sat 배차간격(토요일), sun 배차간격(일요일)(분, TAGO 값 0 은 값 없음으로 봄), ids 그 줄로 묶인 routeid. TAGO 노선정보항목(getRouteInfoIem)",
+   "routes": "노선 줄마다 no 노선번호(TAGO routeno 그대로, 다른 도시 노선은 '포항 800'처럼 도시 이름을 앞에), start 기점, end 종점, first 첫차시간, last 막차시간(HH:MM, TAGO 값 HHMM 을 나눔), int 배차간격(평일), sat 배차간격(토요일), sun 배차간격(일요일)(분, TAGO 값 그대로. 0 도 그대로 싣고 칸이 없으면 null), ids 그 줄로 묶인 routeid. TAGO 노선정보항목(getRouteInfoIem)",
    "stops[].posSrc": "osm = 정류장 이름·번호·좌표(직선거리)를 오픈스트리트맵에서 얻은 정류장(국토부 파일에 없음, 07_버스.py src osm)"
   },
   "molit": {
@@ -7483,7 +7483,7 @@
    "end": "산내정류소",
    "first": null,
    "last": null,
-   "int": null,
+   "int": 0,
    "sat": null,
    "sun": null,
    "ids": [
@@ -7496,7 +7496,7 @@
    "end": "점태골",
    "first": null,
    "last": null,
-   "int": null,
+   "int": 0,
    "sat": null,
    "sun": null,
    "ids": [
@@ -7562,7 +7562,7 @@
    "end": "불국사",
    "first": "07:45",
    "last": "07:45",
-   "int": null,
+   "int": 0,
    "sat": null,
    "sun": null,
    "ids": [
@@ -7982,7 +7982,7 @@
    "end": "양남종점",
    "first": "18:05",
    "last": "18:05",
-   "int": null,
+   "int": 0,
    "sat": null,
    "sun": null,
    "ids": [
@@ -7995,7 +7995,7 @@
    "end": "터미널 종점(하차전용)",
    "first": "06:20",
    "last": "06:20",
-   "int": null,
+   "int": 0,
    "sat": null,
    "sun": null,
    "ids": [
@@ -8918,7 +8918,7 @@
    "end": "산내정류소",
    "first": null,
    "last": null,
-   "int": null,
+   "int": 0,
    "sat": null,
    "sun": null,
    "ids": [

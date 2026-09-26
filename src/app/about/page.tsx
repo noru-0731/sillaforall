@@ -2,6 +2,7 @@
 // 큰 사진(제1유형, 아래가 흐려짐) → 왼쪽 표장(우리 아이콘 src/app/icon.svg) + 오른쪽 큰 제목, 파란 환영 한 줄, 본문.
 // 본문은 예전 /about 글(모두 임시 문구)을 문단으로 옮겼다. 궁능 문장을 바꿔 쓴 줄만 <Ph> 없이 둔다.
 import type { Metadata } from "next";
+import { pageMetadata } from "@/site/og";
 import Link from "next/link";
 import { Ph, SubPage } from "@/components/layout/PageParts";
 import { MENU, SITE_NAME } from "@/site/ia";
@@ -13,7 +14,7 @@ const SECTION = MENU[3];
 const PAGE = SECTION.children![0];
 const SOURCES = SECTION.children![1];
 
-export const metadata: Metadata = { title: PAGE.label };
+export const metadata: Metadata = pageMetadata(PAGE.label, PAGE.href);
 
 // 사진: 동궁과 월지(궁능 인사말의 부용정 사진 자리 — 물에 비친 전각). 제1유형 사진만 쓴다.
 // 출처는 사진 오른쪽 아래에 작은 딱지로 얹는다(곳 이름 · 짧은 꼴, 예: "동궁과 월지 · ⓒ한국관광공사").

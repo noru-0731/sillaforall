@@ -1,6 +1,7 @@
 // 무장애 정보 > 무장애 정보가 없는 곳(궁능 공지사항 모양): 권역 알약, "전체: N곳", 이름 검색, 게시판 표.
 // 표는 무장애 정보가 없는 관광지와, 있으면 가장 가까운 등록 관광지(직선거리)를 보인다.
 import type { Metadata } from "next";
+import { pageMetadata } from "@/site/og";
 import { areaOf, areas, places } from "@/data";
 import { Ph, SubPage } from "@/components/layout/PageParts";
 import { TipList } from "@/components/royal";
@@ -13,7 +14,7 @@ import MenuSteps from "@/components/place/MenuSteps";
 const HREF = "/barrier-free/unlisted";
 const page = menuPage(HREF);
 
-export const metadata: Metadata = { title: page.title };
+export const metadata: Metadata = pageMetadata(page.title, HREF);
 
 export default function UnlistedPage() {
   const unlisted = groupByArea(places.filter((p) => !p.registered)).flatMap((g) => g.places);

@@ -9,7 +9,7 @@ import { AREA_LINKS, SITE_NAME } from "@/site/ia";
 import { areaPhoto, photoCreditOf } from "@/data/photos";
 import { SITE_DESC, SITE_OG, SITE_URL } from "@/site/og";
 
-// 링크 미리보기(site/og.ts): 사이트 기본 og 제목·설명·사진·종류·언어와 트위터 카드. og:url 은 첫 쪽과 관광지 쪽에서 둔다.
+// 링크 미리보기(site/og.ts): 사이트 기본 og 제목·설명·사진·종류·언어와 트위터 카드. og:url 은 쪽마다 그 쪽 주소로 둔다(site/og.ts).
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: { default: SITE_NAME, template: `%s | ${SITE_NAME}` },

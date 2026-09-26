@@ -3,6 +3,7 @@
 // 펼침은 <details>/<summary>라 자바스크립트 없이도 되고, 키보드(Tab으로 옮기고 Enter·Space로 여닫기)로 쓸 수 있다.
 // 물음과 답은 예전 이용 안내 글(모두 임시 문구)을 그대로 옮겼다.
 import type { Metadata } from "next";
+import { pageMetadata } from "@/site/og";
 import Link from "next/link";
 import { Ph, Section, SubPage } from "@/components/layout/PageParts";
 import { Icon } from "@/components/icons";
@@ -15,7 +16,7 @@ const PAGE = SECTION.children![2];
 const MAP = MENU[0];
 const LIST = MENU[1];
 
-export const metadata: Metadata = { title: PAGE.label };
+export const metadata: Metadata = pageMetadata(PAGE.label, PAGE.href);
 
 type QA = { id: string; q: React.ReactNode; a: React.ReactNode };
 

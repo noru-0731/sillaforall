@@ -3,6 +3,7 @@
 // 장·조 번호("제1장", 조 제목 앞 "1.")는 09-26 저녁 사용자 결정으로 뗐다. 장·조 이름만 둔다.
 // 숫자는 모두 places.json에서 센다. 새로 지은 문장은 <Ph>.
 import type { Metadata } from "next";
+import { pageMetadata } from "@/site/og";
 import Link from "next/link";
 import { byName, places } from "@/data";
 import { Ph, Section, SubPage } from "@/components/layout/PageParts";
@@ -17,7 +18,7 @@ import MenuSteps from "@/components/place/MenuSteps";
 const HREF = "/barrier-free";
 const page = menuPage(HREF);
 
-export const metadata: Metadata = { title: page.title };
+export const metadata: Metadata = pageMetadata(page.title, HREF);
 
 const THREE_ICON: Record<ThreeKey, IconName> = { parking: "parking", walk: "walk", toilet: "toilet" };
 

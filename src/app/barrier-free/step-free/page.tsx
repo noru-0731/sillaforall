@@ -4,6 +4,7 @@
 // 묶음마다 곳 덩어리(곳 이름 → 칸 표, 칸마다 출처). 쪽 맨 끝에 출처 줄(자료 이름과 본 날짜)을 한 번, 그 뒤 이어 읽기(MenuSteps, 메뉴 차례의 이전 쪽).
 // 자료: data/stepfree.json(도구/19_계단없는길.py). 사진은 넣지 않는다.
 import type { Metadata } from "next";
+import { pageMetadata } from "@/site/og";
 import { InPageNav, Ph, Section, SubPage } from "@/components/layout/PageParts";
 import { menuPage } from "@/components/place-list/helpers";
 import { SourceLines } from "@/components/place/Amenities";
@@ -15,7 +16,7 @@ import sf from "@/components/place/StepFree.module.css";
 const HREF = STEPFREE_HREF;
 const page = menuPage(HREF);
 
-export const metadata: Metadata = { title: page.title };
+export const metadata: Metadata = pageMetadata(page.title, HREF);
 
 export default function StepFreePage() {
   const groups = STEPFREE_GROUPS.map((g) => ({

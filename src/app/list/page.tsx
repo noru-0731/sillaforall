@@ -1,5 +1,6 @@
 // 관광지 목록 > 지역별. 궁능유적본부 누리집 문화행사 쪽 모양(왼쪽 작은 지도, 오른쪽 알약 + 카드 줄).
 import type { Metadata } from "next";
+import { pageMetadata } from "@/site/og";
 import { SubPage } from "@/components/layout/PageParts";
 import { menuPage } from "@/components/place-list/helpers";
 import { areaOptions, cardsByArea } from "@/components/place-list/cardData";
@@ -8,7 +9,7 @@ import AreaListView from "@/components/place-list/AreaListView";
 const HREF = "/list";
 const page = menuPage(HREF);
 
-export const metadata: Metadata = { title: page.title };
+export const metadata: Metadata = pageMetadata(page.title, HREF);
 
 export default function ListByAreaPage() {
   const cards = cardsByArea();

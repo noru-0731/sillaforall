@@ -2,6 +2,7 @@
 // 관광지 61곳은 "관광지 목록" 아래 권역별로 나열한다. 권역 이름 줄 아래에 관광지마다 한 칸,
 // 그 아래 "- " 줄로 관광지 쪽 다섯(궁능: 경복궁 아래 - 경복궁, - 경복궁 소개·역사, - 경복궁 이야기).
 import type { Metadata } from "next";
+import { pageMetadata } from "@/site/og";
 import Link from "next/link";
 import { SubPage } from "@/components/layout/PageParts";
 import { MENU, placePages } from "@/site/ia";
@@ -9,7 +10,7 @@ import type { SideMenu } from "@/site/ia";
 import { areas, byName, placeById } from "@/data";
 import s from "./sitemap.module.css";
 
-export const metadata: Metadata = { title: "사이트맵" };
+export const metadata: Metadata = pageMetadata("사이트맵", "/sitemap");
 
 type Col = { label: string; href: string; items?: { label: string; href: string }[]; wide?: boolean; head?: boolean };
 

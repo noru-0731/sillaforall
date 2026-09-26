@@ -40,7 +40,8 @@ export function stepFreeSourceLines(srcs?: Iterable<string>): string[] {
  * 자료 출처 쪽(/about/sources) '계단 없는 길' 표의 칸(자료, 제공 기관, 이용허락, 기준일, 주소). 차례는 쪽 끝 출처 줄과 같은 자료 파일 차례.
  * 이용허락은 공공데이터포털 쪽의 '이용허락범위' 값, 그런 칸이 없는 누리집·신문은 그 쪽 바닥글·기사 끝에 적힌 글 그대로.
  * 경주시 누리집 두 쪽은 공공누리 표시가 없어 이미 쓰는 점선 글(licensePh).
- * 기준일은 쪽 끝 출처 줄(line)에서 읽는다: 'YYYY-MM-DD 기준'이 있으면 그것(파일 자료), 없으면 'YYYY-MM-DD 받음'·'확인'.
+ * 자료 칸과 기준일 칸은 쪽 끝 출처 줄(line) "자료: 이름(…)"을 나눠 쓴다(09-27 점검: 짧은 이름 name 은 출처 줄과 글이 달라 쓰지 않는다).
+ * 끝 괄호 안의 날짜 조각('YYYY-MM-DD 기준·받음·확인')은 기준일 칸에, 나머지 조각(포털 번호, 기사 제목)은 자료 칸 괄호에 그대로 남긴다.
  * 확인: 05_사이트/도구/cache/출처확인/(2026-09-26 받은 쪽), 산림복지 서비스 바닥글은 첫 쪽(smartapp.fowi.or.kr/cmrd)을 화면으로 열어 읽음.
  * link false 는 주소를 글자로만(경주시 누리집으로 가는 링크는 싣지 않는다, 자료 출처 쪽 '경주시 문화관광' 칸과 같음).
  */
@@ -102,10 +103,22 @@ const SOURCE_INFO: Record<string, StepFreeSourceInfo> = {
 export function stepFreeSourceRows(): ({ key: string; name: string; refDate: string } & StepFreeSourceInfo)[] {
   return Object.entries(SF.meta.sources).map(([key, src]) => {
     const info = SOURCE_INFO[key];
-    const ref = src.line.match(/(\d{4}-\d{2}-\d{2}) 기준/) ?? src.line.match(/(\d{4}-\d{2}-\d{2}) (받음|확인)\)/);
-    if (!info || !ref) throw new Error(`stepfree.ts: 자료 출처 쪽 칸 값이나 날짜가 없는 출처 ${key}`);
-    return { key, name: src.name, refDate: ref[0].replace(/\)$/, ""), ...info };
+    const cut = splitSourceLine(src.line);
+    if (!info || !cut) throw new Error(`stepfree.ts: 자료 출처 쪽 칸 값이나 날짜가 없는 출처 ${key}`);
+    return { key, ...cut, ...info };
   });
+}
+
+/** 출처 줄 "자료: 이름(조각, 조각, …)" → 자료 칸(이름 + 날짜 아닌 조각), 기준일 칸(날짜 조각들). 끝 괄호나 날짜 조각이 없으면 null */
+function splitSourceLine(line: string): { name: string; refDate: string } | null {
+  const m = line.replace(/^자료:\s*/, "").match(/^(.*)\(([^()]*)\)$/);
+  if (!m) return null;
+  const parts = m[2].split(/,\s*/);
+  const isDate = (p: string) => /^\d{4}-\d{2}-\d{2} (기준|받음|확인)$/.test(p);
+  const dates = parts.filter(isDate);
+  const rest = parts.filter((p) => !isDate(p));
+  if (!dates.length) return null;
+  return { name: rest.length ? `${m[1]}(${rest.join(", ")})` : m[1], refDate: dates.join(", ") };
 }
 
 /** 이 곳의 계단 없는 길 덩어리. 실리지 않은 곳은 null */

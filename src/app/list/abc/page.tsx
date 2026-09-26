@@ -1,5 +1,6 @@
 // 관광지 목록 > 가나다순. 궁능유적본부 누리집 공지사항 쪽 모양(알약 줄 + 전체 곳 수 + 이름 검색 + 게시판 표).
 import type { Metadata } from "next";
+import { pageMetadata } from "@/site/og";
 import { SubPage } from "@/components/layout/PageParts";
 import { menuPage } from "@/components/place-list/helpers";
 import { areaOptions, boardRows } from "@/components/place-list/cardData";
@@ -8,7 +9,7 @@ import { AbcBoard, AbcPills, AbcProvider } from "@/components/place-list/AbcBoar
 const HREF = "/list/abc";
 const page = menuPage(HREF);
 
-export const metadata: Metadata = { title: page.title };
+export const metadata: Metadata = pageMetadata(page.title, HREF);
 
 export default function ListAbcPage() {
   const options = areaOptions();

@@ -6,6 +6,7 @@
 // - 인쇄 쪽(BusStopUnitsPrint): 펼침 없이 노선번호·첫차시간·막차시간 세 칸 표.
 // - 노선이 오픈스트리트맵으로 남은 정류장(src osm)은 그 줄 아래에 오픈스트리트맵 출처 줄.
 // 자료: data/bus.json(도구/12_버스_문단_사이트.py → 도구/20_버스_TAGO.py).
+import { Fragment } from "react";
 import { DASH } from "@/components/layout/Dash";
 import { Icon } from "@/components/icons";
 import { BoardTable } from "@/components/royal";
@@ -17,6 +18,32 @@ const fmtM = (m: number) => `${m.toLocaleString("ko-KR")}m`;
 export const stopTitle = (name: string, no: string | null) => `${name} 정류장${no ? `(${no})` : ""}`;
 const val = (v: string | null) => v ?? DASH;
 const mins = (v: number | null) => (v === null ? DASH : `${v}분`);
+
+/**
+ * 노선번호 칸 글. 글자는 그대로 두고 줄바꿈 자리만 정한다(09-27 점검: 390·가장 크게에서 '800( / 기본-', '100- / 1'처럼 끊겼다).
+ * 빈칸으로 나뉜 낱말('포항', '800', '100-1')은 끊지 않고, 괄호 앞과 괄호 안 빈칸·줄표 뒤에서만 줄을 바꾼다(.busNo, .busNoWord).
+ */
+function RouteNo({ no }: { no: string }) {
+  const i = no.indexOf("(");
+  const head = i > 0 ? no.slice(0, i) : no;
+  const paren = i > 0 ? no.slice(i) : "";
+  return (
+    <span className={s.busNo}>
+      {head.split(" ").map((w, k) => (
+        <Fragment key={k}>
+          {k > 0 && " "}
+          <span className={s.busNoWord}>{w}</span>
+        </Fragment>
+      ))}
+      {paren && (
+        <>
+          <wbr />
+          {paren}
+        </>
+      )}
+    </span>
+  );
+}
 
 /** 이 정류장들 가운데 화면에 "-"가 나오는 것이 있는지(노선 없음, 노선 줄의 빈 칸). print 면 인쇄 쪽 표의 칸(첫차시간·막차시간)만 본다 */
 export function busHasDash(stops: BusStop[], print = false): boolean {
@@ -78,7 +105,7 @@ export function BusStopUnits({ stops }: { stops: BusStop[] }) {
                   cols={["25%", "auto"]}
                   align={["c", "l"]}
                   rowHeader
-                  rows={ls.map((l) => [l.no, <LineCell key={l.no} l={l} iv={iv} />])}
+                  rows={ls.map((l) => [<RouteNo key="n" no={l.no} />, <LineCell key={l.no} l={l} iv={iv} />])}
                 />
               </details>
             ) : (
@@ -114,7 +141,7 @@ export function BusStopUnitsPrint({ stops, keepClass }: { stops: BusStop[]; keep
                   caption={`${tit} 노선: 노선번호, 첫차시간, 막차시간`}
                   head={["노선번호", "첫차시간", "막차시간"]}
                   cols={["34%", "33%", "33%"]}
-                  rows={rows}
+                  rows={rows.map(([no, a, b]) => [<RouteNo key="n" no={no} />, a, b])}
                 />
               </>
             ) : (

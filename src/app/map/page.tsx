@@ -1,5 +1,6 @@
 // 관광지 지도 > 경주 전체. 궁능유적본부 누리집 관람코스 쪽 모양(배너·왼쪽 메뉴·알약 줄·지도 상자·이름 격자·고른 곳).
 import type { Metadata } from "next";
+import { pageMetadata } from "@/site/og";
 import { MENU } from "@/site/ia";
 import { SubPage } from "@/components/layout/PageParts";
 import { KoglBox } from "@/components/royal";
@@ -10,7 +11,7 @@ import { explorerHubs, explorerIds, explorerPhotos, koglKeys } from "@/component
 const SECTION = MENU[0];
 const SELF = SECTION.children?.[0] ?? { label: "경주 전체", href: "/map" };
 
-export const metadata: Metadata = { title: `${SECTION.label} - ${SELF.label}` };
+export const metadata: Metadata = pageMetadata(`${SECTION.label} - ${SELF.label}`, SELF.href);
 
 export default function MapPage() {
   const ids = explorerIds("full");

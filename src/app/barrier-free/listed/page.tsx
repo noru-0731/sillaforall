@@ -3,6 +3,7 @@
 // 표는 무장애 정보가 있는 관광지마다 주차·접근로·화장실 칸의 한국관광공사 무장애 여행 정보 글을 한 줄에(가7, 붙은 줄은 나눔, 없으면 -),
 // 관광지 이름 아래에 글이 적힌 칸이 있는 무장애 묶음 이름표(가8)를 보인다. 칸마다 온 글은 관광지의 무장애 정보 쪽에 있다.
 import type { Metadata } from "next";
+import { pageMetadata } from "@/site/og";
 import { areaOf, areas, places } from "@/data";
 import { bfGroupNamesOf } from "@/data/bf";
 import { bfLines } from "@/lib/breaks";
@@ -18,7 +19,7 @@ import MenuSteps from "@/components/place/MenuSteps";
 const HREF = "/barrier-free/listed";
 const page = menuPage(HREF);
 
-export const metadata: Metadata = { title: page.title };
+export const metadata: Metadata = pageMetadata(page.title, HREF);
 
 export default function ListedPage() {
   const listed = groupByArea(places.filter((p) => p.registered)).flatMap((g) => g.places);
