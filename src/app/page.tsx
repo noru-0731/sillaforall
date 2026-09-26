@@ -80,15 +80,17 @@ function cardCredits(): string[] {
   return creditLines(places.filter((p) => p.side === "old").map((p) => coverPhoto(p.id) ?? anyPhoto(p.id)));
 }
 
-// ── 칸 3: 목록 10줄씩. 정보가 적힌 곳 / 정보가 없는 곳은 가나다순, 거점별은 거점 차례 → 가나다순.
+// ── 칸 3: 목록 10줄씩. 무장애 정보가 있는 곳 / 없는 곳은 가나다순, 거점별은 거점 차례 → 가나다순.
+// 알약 글은 제목 "무장애 정보" 바로 아래라 앞말을 뺀 "정보가 있는 곳 / 정보가 없는 곳"(pill). 온 이름은 목록 이름·더 보기 이름에 그대로 쓴다.
+// (온 이름이면 휴대전화 390에서 알약 한 줄이 두 줄로, 글자 가장 크게에서는 세 줄로 늘었다. 09-26 저녁 사용자 결정의 "그 자리만" 짧게.)
 function boardLists(): BoardList[] {
   const row = (p: Place, badge?: string) => ({ id: p.id, name: p.name, dong: p.dong, area: areaOf(p), badge: badge ?? areaLabel(p) });
   const listed = places.filter((p) => p.registered).sort(byName);
   const unlisted = places.filter((p) => !p.registered).sort(byName);
   const hub = HUBS.flatMap((h) => places.filter((p) => p.cluster === h).sort(byName).map((p) => row(p, h)));
   return [
-    { key: "listed", label: "정보가 적힌 곳", href: "/barrier-free/listed", rows: listed.slice(0, 10).map((p) => row(p)) },
-    { key: "unlisted", label: "정보가 없는 곳", href: "/barrier-free/unlisted", rows: unlisted.slice(0, 10).map((p) => row(p)) },
+    { key: "listed", label: "무장애 정보가 있는 곳", pill: "정보가 있는 곳", href: "/barrier-free/listed", rows: listed.slice(0, 10).map((p) => row(p)) },
+    { key: "unlisted", label: "무장애 정보가 없는 곳", pill: "정보가 없는 곳", href: "/barrier-free/unlisted", rows: unlisted.slice(0, 10).map((p) => row(p)) },
     { key: "hub", label: "거점별", href: "/list/hub", rows: hub.slice(0, 10), hub: true },
   ];
 }

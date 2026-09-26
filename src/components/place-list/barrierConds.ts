@@ -1,9 +1,9 @@
-// 무장애 조건으로 관광지 거르기: 관광지마다 어느 항목을 "있다고 적힌 곳"으로 치는지 가른다.
+// 무장애 조건으로 관광지 거르기: 관광지마다 어느 항목을 "있다고 적힌 관광지"로 치는지 가른다.
 // 가르는 규칙과 판정한 글 전체는 05_사이트/레퍼런스/궁능_포맷/04_무장애_거르기_규칙.md 에 적었다(규칙을 바꾸면 그 문서도 같이).
 // 이 파일은 형(type)만 부르고 places.json을 부르지 않는다. 서버·클라이언트 어디서나 쓴다.
 import type { Place } from "@/data/types";
 
-/** 거르기 단추 다섯. 대중교통은 명부에 글이 있는 곳이 2곳뿐이라 단추로 두지 않는다. */
+/** 거르기 단추 다섯. 대중교통은 무장애 여행 정보에 글이 있는 곳이 2곳뿐이라 단추로 두지 않는다. */
 export const COND_KEYS = ["parking", "walk", "toilet", "wheelchair", "elevator"] as const;
 export type CondKey = (typeof COND_KEYS)[number];
 
@@ -16,7 +16,7 @@ export const COND_LABEL: Record<CondKey, string> = {
   elevator: "엘리베이터",
 };
 
-/** 판정에 쓰는 글. 주차·걷는 길·화장실은 세 상자와 같은 글(걷는 길 = 접근로, 비면 출입통로), 휠체어·엘리베이터는 명부 칸 글. */
+/** 판정에 쓰는 글. 주차·걷는 길·화장실은 세 상자와 같은 글(걷는 길 = 접근로, 비면 출입통로), 휠체어·엘리베이터는 무장애 여행 정보 칸 글. */
 export function condText(p: Place, k: CondKey): string | null {
   switch (k) {
     case "parking":
@@ -52,7 +52,7 @@ export const KEEP: { id: string; key: CondKey; frag: string }[] = [
   { id: "p53", key: "toilet", frag: "선착장 앞과" },
 ];
 
-/** 이 관광지가 이 항목을 "있다고 적힌 곳"인지 */
+/** 이 관광지가 이 항목을 "있다고 적힌 관광지"인지 */
 export function hasCond(p: Place, k: CondKey): boolean {
   if (!p.registered) return false;
   const t = condText(p, k)?.trim();

@@ -2,9 +2,10 @@
 // 소개·무장애 정보·오시는 길 세 쪽을 따로 뽑으면 인쇄 세 번에 A4 여섯 장이고 큰 제목이 쪽 이름이었다.
 // 이 쪽은 큰 제목이 곳 이름이고, 세 쪽의 글 자료만 한 쪽에 모은다(지도·사진·알약 줄·검정 띠·길찾기 단추는 싣지 않는다).
 // - 기본 정보: 소개 쪽 기본 정보 표와 같은 칸.
-// - 무장애 정보: 명부에 오른 곳은 무장애 정보 쪽의 칸 전부(묶음별 표, 세 상자에 실은 칸도 표에). 명부에 없는 곳은 그 쪽의 두 상자 글.
+// - 무장애 정보: 무장애 정보가 있는 곳은 무장애 정보 쪽의 칸 전부(묶음별 표, 세 상자에 실은 칸도 표에). 무장애 정보가 없는 곳은 그 쪽의 두 상자 글.
 //   그 뒤에 경주시 무장애 여행정보 표(짝지은 12곳, 무장애 정보 쪽과 같은 표, data/gj.ts).
 // - 오시는 길: 가까운 정류장 셋·경주역(KTX) 노선(오시는 길 쪽과 같은 글), 무장애 여행 정보 대중교통 글(있을 때만), 교통약자이동지원센터 예약 전화.
+// - 빈 칸은 "-". 뜻풀이 한 줄은 기본 정보 표에 "-"가 있으면 그 표 아래, 없고 정류장 노선만 "-"이면 쪽 끝에 한 번.
 // 글은 모두 이미 다른 쪽에 있는 이름표와 자료 값이다. 단추는 서브 쪽 인쇄 단추 그대로(휴대전화에서도 보인다).
 // 들어오는 곳: 관광지 서브메인 관람 도우미 제목 아래 인쇄 단추. 메뉴·사이트맵에는 싣지 않는다.
 import type { Metadata } from "next";
@@ -19,6 +20,7 @@ import { GJ_CREDIT, GJ_SOURCE, gjOf } from "@/data/gj";
 import { BUS_SOURCE_LINES, KTX_NAME, busStopsOf, ktxLinesOf } from "@/data/bus";
 import { placeCrumbs, placeSideMenu, PLACE_BANNER } from "@/site/ia";
 import { Ph, Section, SubPage } from "@/components/layout/PageParts";
+import { DASH, DashNote } from "@/components/layout/Dash";
 import { BoardTable, IconHeading, TipList } from "@/components/royal";
 import { SourceLines } from "@/components/place/Amenities";
 import { bfLines, gluedLines, hoursLines, hoursNoteLines } from "@/lib/breaks";
@@ -39,7 +41,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title: p ? `${p.name} 인쇄` : "인쇄" };
 }
 
-const EMPTY = <Ph>적힌 내용 없음</Ph>;
+const EMPTY = DASH;
 const fmtM = (m: number) => `${m.toLocaleString("ko-KR")}m`;
 const pre = (t: string) => <span className={s.pre}>{t}</span>;
 const cell = (v: string | null) => (v ? pre(v.trim()) : EMPTY);
@@ -76,6 +78,20 @@ export default async function PlacePrint({ params }: Props) {
   const ktx = ktxLinesOf(p.id);
   const stopTit = (name: string, no: string | null) => `${name} 정류장${no ? `(${no})` : ""}`;
   const bfBus = p.registered ? bfLines(p.move["대중교통"]) : null;
+  const basicRows: React.ReactNode[][] = [
+    ["주소", p.address ? `${zip ? `(${zip}) ` : ""}${p.address}` : EMPTY],
+    ["읍면동·권역", `${p.dong} · ${areaLabelOf(p)}`],
+    ["이용시간", cell(hoursNoteLines(p.hours))],
+    ["쉬는 날", cell(hoursLines(p.closed))],
+    ["이용요금", cell(hoursLines(p.fee))],
+    ...extraFeeRowsOf(p.id).map(([k, v]) => [k, cell(hoursLines(v))]),
+    ["주차", cell(p.parkingInfo)],
+    ["문의", contactCell(p)],
+    ...extraRowsOf(p.id).map(([k, v]) => [k, cell(gluedLines(v))]),
+  ];
+  // "-" 뜻풀이 자리: 기본 정보 표에 "-"가 있으면 그 아래, 아니면 정류장 노선에 "-"가 있을 때 쪽 끝
+  const basicDashed = basicRows.some(([, v]) => v === EMPTY);
+  const endDashed = !basicDashed && stops.some((b) => !b.routes.length);
 
   return (
     <SubPage
@@ -94,18 +110,9 @@ export default async function PlacePrint({ params }: Props) {
             cols={["25%", "auto"]}
             align={["c", "l"]}
             rowHeader
-            rows={[
-              ["주소", p.address ? `${zip ? `(${zip}) ` : ""}${p.address}` : EMPTY],
-              ["읍면동·권역", `${p.dong} · ${areaLabelOf(p)}`],
-              ["이용시간", cell(hoursNoteLines(p.hours))],
-              ["쉬는 날", cell(hoursLines(p.closed))],
-              ["이용요금", cell(hoursLines(p.fee))],
-              ...extraFeeRowsOf(p.id).map(([k, v]) => [k, cell(hoursLines(v))]),
-              ["주차", cell(p.parkingInfo)],
-              ["문의", contactCell(p)],
-              ...extraRowsOf(p.id).map(([k, v]) => [k, cell(gluedLines(v))]),
-            ]}
+            rows={basicRows}
           />
+          {basicDashed && <DashNote className={s.tipsAfterTable} />}
         </Section>
 
         <Section id="bf" title="무장애 정보">
@@ -206,6 +213,7 @@ export default async function PlacePrint({ params }: Props) {
             </ul>
             <SourceLines lines={[`자료: 전국교통약자이동지원센터정보표준데이터(데이터기준일자 ${MOBILITY.refDate})`]} />
           </div>
+          {endDashed && <DashNote className={s.tipsAfterTable} />}
         </Section>
       </div>
     </SubPage>

@@ -34,12 +34,12 @@ function groupsOf(fields: Record<string, string | null | undefined>): BfGroup[] 
   })).filter((g) => g.rows.length > 0);
 }
 
-/** 이 곳의 무장애 정보(채워진 칸만, 묶음 차례). 명부에 없으면 빈 목록 */
+/** 이 곳의 무장애 정보(채워진 칸만, 묶음 차례). 무장애 정보가 없는 곳이면 빈 목록 */
 export function bfGroupsOf(id: string): BfGroup[] {
   const f = BF.places[id]?.fields;
   return f ? groupsOf(f) : [];
 }
-/** 글이 적힌 칸이 하나라도 있는 묶음 이름(묶음 차례). 목록 카드·표의 이름표(가8)에 쓴다. 명부에 없으면 빈 목록 */
+/** 글이 적힌 칸이 하나라도 있는 묶음 이름(묶음 차례). 목록 카드·표의 이름표(가8)에 쓴다. 무장애 정보가 없는 곳이면 빈 목록 */
 export function bfGroupNamesOf(id: string): string[] {
   return bfGroupsOf(id).map((g) => g.name);
 }
@@ -50,7 +50,7 @@ export const bfFilledOf = (id: string) => BF.places[id]?.filled ?? 0;
 const FIELD_LABEL: Record<string, string> = { 휠체어: "휠체어대여", 유모차: "유모차 대여" };
 export const bfLabel = (k: string) => FIELD_LABEL[k] ?? k;
 
-/** 글이 적힌 칸 이름(묶음·칸 차례). 무장애 쪽 머리 그림 줄(가9)에 쓴다. '… 기타' 칸은 시설 이름이 아니라서 뺀다. 명부에 없으면 빈 목록 */
+/** 글이 적힌 칸 이름(묶음·칸 차례). 무장애 쪽 머리 그림 줄(가9)에 쓴다. '… 기타' 칸은 시설 이름이 아니라서 뺀다. 무장애 정보가 없는 곳이면 빈 목록 */
 export function bfFilledFieldsOf(id: string): string[] {
   return bfGroupsOf(id)
     .flatMap((g) => g.rows.map(([k]) => k))
@@ -64,13 +64,13 @@ const TYPE_LABEL: Record<string, string> = { "12": "관광지", "14": "문화시
  */
 export type BfNeighbor = { title: string; contentId: string; typeLabel: string; distanceM: number; coordsBorrowed: boolean; groups: BfGroup[]; placeId: string | null };
 
-/** 관광공사 무장애 콘텐츠 번호 → 61곳 id(명부에 오른 곳) */
+/** 관광공사 무장애 콘텐츠 번호 → 61곳 id(무장애 정보가 있는 곳) */
 const PLACE_BY_CID: Record<string, string> = Object.fromEntries(
   Object.entries(BF.places).flatMap(([pid, r]) => (r.contentId ? [[r.contentId, pid]] : [])),
 );
 
 /**
- * 명부에 없는 곳: 300m 안 관광공사 무장애 여행 정보에 오른 관광지·문화시설과 그 칸.
+ * 무장애 정보가 없는 곳: 300m 안 관광공사 무장애 여행 정보에 올라 있는 관광지·문화시설과 그 칸.
  * 좌표를 빌린 곳(서악서원)과 넓은 구역 기록(경주시 관광특구)은 도구(06_편의시설.py)가 후보에서 뺐다(가 101번).
  */
 export function bfNeighborsOf(id: string): BfNeighbor[] {

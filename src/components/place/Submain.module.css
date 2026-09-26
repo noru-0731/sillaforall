@@ -166,12 +166,20 @@
 /* ── 관람 도우미 칸에 값 보이기(무장애 시안 bf-draft) ──
  * 궁능 sub_quick(나무/submain_1440.txt): 아이콘 50×50(안 여백 8), 아래 18px 500 이름, 칸 사이 약 169.
  * 이름 아래에 자료 값(15px, 궁능 표 글자 크기)을 세 줄까지 더하고, 칸은 4개씩 두 줄로 놓는다. */
-.quickGrid {
+/* 칸 묶음 + 그 아래 "-" 뜻풀이 ※ 줄(components/layout/Dash.tsx)을 한 덩이로 */
+.quickBody {
   flex: 1 1 auto;
+  min-width: 0;
+}
+.quickGrid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 3rem 2rem;
   min-width: 0;
+}
+/* ※ 줄: 칸 줄 사이(30)만큼 띄운다 */
+.quickNote {
+  margin-top: 3rem;
 }
 .quickGrid a {
   display: flex;

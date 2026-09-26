@@ -1,5 +1,6 @@
 // 무장애 정보 > 무장애 정보 보는 법(궁능 관람규칙·한복무료관람 가이드라인 모양).
-// 장 바로가기 격자 → 제1장 세 항목 표(가이드라인 표) → 제2·3장 조 상자(관람규칙) → 제4장 숫자 표. 맨 위 회색 안내 상자는 문구 대조 E01로 뺐다.
+// 장 바로가기 격자 → 세 항목 표(가이드라인 표) → 둘째·셋째 장 조 상자(관람규칙) → 숫자 표. 맨 위 회색 안내 상자는 문구 대조 E01로 뺐다.
+// 장·조 번호("제1장", 조 제목 앞 "1.")는 09-26 저녁 사용자 결정으로 뗐다. 장·조 이름만 둔다.
 // 숫자는 모두 places.json에서 센다. 새로 지은 문장은 <Ph>.
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -18,13 +19,14 @@ export const metadata: Metadata = { title: page.title };
 
 const THREE_ICON: Record<ThreeKey, IconName> = { parking: "parking", walk: "walk", toilet: "toilet" };
 
-// 장 바로가기(궁능 "제1장 총칙" 격자)
-const CHAPTERS = [
-  { id: "ch1", name: "세 가지 항목" },
-  { id: "ch2", name: "명부에 오른 곳" },
-  { id: "ch3", name: "적힌 내용 없음" },
-  { id: "ch4", name: "정보가 적힌 곳·없는 곳" },
+// 장 바로가기(궁능 "제1장 총칙" 격자에서 번호를 뗀 모양). ph: 새로 지은 이름이면 점선, 묶음 이름만으로 된 이름은 점선 없음
+const CHAPTERS: { id: string; name: string; ph: boolean }[] = [
+  { id: "ch1", name: "세 가지 항목", ph: true },
+  { id: "ch2", name: "무장애 정보가 있는 곳", ph: false },
+  { id: "ch3", name: "‘-’ 표시", ph: true },
+  { id: "ch4", name: "무장애 정보가 있는 곳·없는 곳", ph: false },
 ];
+const chapterName = (i: number) => (CHAPTERS[i].ph ? <Ph>{CHAPTERS[i].name}</Ph> : CHAPTERS[i].name);
 
 export default function BarrierFreeGuidePage() {
   const total = places.length;
@@ -32,7 +34,7 @@ export default function BarrierFreeGuidePage() {
   const unregistered = places.filter((p) => !p.registered);
   const filled = (k: ThreeKey) => places.filter((p) => p.three[k]).length;
   const allThree = places.filter((p) => THREE_KEYS.every((k) => p.three[k])).length;
-  // 예로 보일 곳: 첨성대(세 칸이 모두 적힌 곳). 없으면 세 칸이 모두 적힌 첫 곳(가나다순)
+  // 예로 보일 곳: 첨성대(세 칸에 모두 글이 있는 곳). 없으면 세 칸에 모두 글이 있는 첫 곳(가나다순)
   const sample =
     places.find((p) => p.name === "첨성대" && THREE_KEYS.every((k) => p.three[k])) ??
     [...places].sort(byName).find((p) => THREE_KEYS.every((k) => p.three[k]));
@@ -55,26 +57,15 @@ export default function BarrierFreeGuidePage() {
           {CHAPTERS.map((c, i) => (
             <li key={c.id}>
               <a href={`#${c.id}`} className={s.chapter}>
-                <span className={s.chapterNo}>제{i + 1}장</span>
-                <span className={s.chapterName}>
-                  <Ph>{c.name}</Ph>
-                </span>
+                <span className={s.chapterName}>{chapterName(i)}</span>
               </a>
             </li>
           ))}
         </ul>
       </nav>
 
-      {/* 제1장: 세 항목 표(궁능 한복무료관람 가이드라인 표) */}
-      <Section
-        id="ch1"
-        className={s.anchor}
-        title={
-          <>
-            제1장 <Ph>{CHAPTERS[0].name}</Ph>
-          </>
-        }
-      >
+      {/* 세 가지 항목: 세 항목 표(궁능 한복무료관람 가이드라인 표) */}
+      <Section id="ch1" className={s.anchor} title={chapterName(0)}>
         <div className={s.guideTable}>
           <BoardTable
             caption="무장애 정보 세 가지 항목: 구분과 세부내용"
@@ -104,30 +95,20 @@ export default function BarrierFreeGuidePage() {
         </p>
       </Section>
 
-      {/* 제2장: 명부에 오른 곳(궁능 관람규칙 조 상자) */}
-      <Section
-        id="ch2"
-        className={s.anchor}
-        title={
-          <>
-            제2장 <Ph>{CHAPTERS[1].name}</Ph>
-          </>
-        }
-      >
+      {/* 무장애 정보가 있는 곳(궁능 관람규칙 조 상자) */}
+      <Section id="ch2" className={s.anchor} title={chapterName(1)}>
         <div className={s.article}>
-          <h3 className={s.artTit}>
-            1. 정의
-          </h3>
+          <h3 className={s.artTit}>정의</h3>
           <div className={s.artBox}>
             <p>
               <Ph>
-                한국관광공사 관광정보에는 관광지마다 ‘무장애 정보 등록’ 표시가 있습니다. 이 표시가 ‘예’인 곳을 이 누리집에서는 ‘명부에
-                오른 곳’이라고 부릅니다.
+                한국관광공사 관광정보에는 관광지마다 ‘무장애 정보 등록’ 표시가 있습니다. 이 표시가 ‘예’인 곳을 이 누리집에서는 ‘무장애
+                정보가 있는 곳’이라고 부릅니다.
               </Ph>
             </p>
             <p>
               <Ph>
-                명부에 오른 곳에는 무장애 여행 정보 28가지 항목을 적는 칸이 있습니다. 이 누리집의 목록은 그 가운데 세 가지를 모아
+                무장애 정보가 있는 곳에는 무장애 여행 정보 28가지 항목을 적는 칸이 있습니다. 이 누리집의 목록은 그 가운데 세 가지를 모아
                 보여 드립니다.
               </Ph>
             </p>
@@ -142,63 +123,46 @@ export default function BarrierFreeGuidePage() {
         </div>
         <div className={s.article}>
           <h3 className={s.artTit}>
-            2. <Ph>명부에 올라도 비어 있는 칸</Ph>
-          </h3>
-          <div className={s.artBox}>
-            <p>
-              <Ph>명부에 올라 있다는 것은 무장애 정보를 적는 칸이 있다는 뜻입니다. 칸마다 글이 모두 적혀 있다는 뜻은 아닙니다.</Ph>
-            </p>
-          </div>
-        </div>
-      </Section>
-
-      {/* 제3장: 적힌 내용 없음 */}
-      <Section
-        id="ch3"
-        className={s.anchor}
-        title={
-          <>
-            제3장 <Ph>{CHAPTERS[2].name}</Ph>
-          </>
-        }
-      >
-        <div className={s.article}>
-          <h3 className={s.artTit}>
-            1. <Ph>적힌 내용 없음의 뜻</Ph>
-          </h3>
-          <div className={s.artBox}>
-            <p>
-              <Ph>‘적힌 내용 없음’은 명부의 그 칸에 글이 없다는 뜻입니다.</Ph>
-            </p>
-            <p>
-              <Ph>시설이 없다는 뜻은 아닙니다. 시설이 있어도 명부에 적히지 않았을 수 있습니다.</Ph>
-            </p>
-          </div>
-        </div>
-        <div className={s.article}>
-          <h3 className={s.artTit}>
-            2. <Ph>명부에 오르지 않은 곳</Ph>
+            <Ph>무장애 정보가 있어도 비어 있는 칸</Ph>
           </h3>
           <div className={s.artBox}>
             <p>
               <Ph>
-                명부에 오르지 않은 곳은 세 항목이 모두 ‘적힌 내용 없음’으로 보입니다.
+                한국관광공사 무장애 여행 정보에 올라 있다는 것은 무장애 정보를 적는 칸이 있다는 뜻입니다. 칸마다 글이 모두 적혀 있다는
+                뜻은 아닙니다.
               </Ph>
             </p>
           </div>
         </div>
       </Section>
 
-      {/* 제4장: 숫자 표 + 두 목록 쪽으로 */}
-      <Section
-        id="ch4"
-        className={s.anchor}
-        title={
-          <>
-            제4장 <Ph>{CHAPTERS[3].name}</Ph>
-          </>
-        }
-      >
+      {/* ‘-’ 표시(빈 칸 표시, components/layout/Dash.tsx) */}
+      <Section id="ch3" className={s.anchor} title={chapterName(2)}>
+        <div className={s.article}>
+          <h3 className={s.artTit}>
+            <Ph>‘-’ 표시의 뜻</Ph>
+          </h3>
+          <div className={s.artBox}>
+            <p>
+              <Ph>‘-’ 표시는 한국관광공사 무장애 여행 정보의 그 칸에 글이 없다는 뜻입니다.</Ph>
+            </p>
+            <p>
+              <Ph>시설이 없다는 뜻은 아닙니다. 시설이 있어도 목록에 적히지 않았을 수 있습니다.</Ph>
+            </p>
+          </div>
+        </div>
+        <div className={s.article}>
+          <h3 className={s.artTit}>무장애 정보가 없는 곳</h3>
+          <div className={s.artBox}>
+            <p>
+              <Ph>무장애 정보가 없는 곳은 세 항목이 모두 ‘-’ 표시로 보입니다.</Ph>
+            </p>
+          </div>
+        </div>
+      </Section>
+
+      {/* 무장애 정보가 있는 곳·없는 곳: 숫자 표 + 두 목록 쪽으로 */}
+      <Section id="ch4" className={s.anchor} title={chapterName(3)}>
         <div className={s.summary}>
           <BoardTable
             caption={`관광지 ${total}곳의 무장애 정보 요약: 구분과 곳 수`}
@@ -208,10 +172,10 @@ export default function BarrierFreeGuidePage() {
             rowHeader
             rows={[
               ["전체", total],
-              ["정보가 적힌 곳", registered.length],
-              ["정보가 없는 곳", unregistered.length],
+              ["무장애 정보가 있는 곳", registered.length],
+              ["무장애 정보가 없는 곳", unregistered.length],
               ...THREE_KEYS.map((k) => [THREE_TEXT[k], filled(k)]),
-              [<Ph key="k">세 항목이 모두 적힌 곳</Ph>, allThree],
+              [<Ph key="k">세 항목에 모두 글이 있는 곳</Ph>, allThree],
             ]}
           />
         </div>

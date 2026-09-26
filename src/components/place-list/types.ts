@@ -20,7 +20,7 @@ export type CardPlace = {
   /** 분류(관광공사 소분류 이름 그대로) */
   category: string | null;
   photo: CardPhoto;
-  /** 무장애 여행 정보 명부에 올라 있는지 */
+  /** 한국관광공사 무장애 여행 정보에 올라 있는지(무장애 정보가 있는 곳) */
   registered: boolean;
   /** 글이 적힌 칸이 있는 무장애 묶음 이름(지체장애, 시각장애, 청각장애, 영유아 가족 차례). 보이기만 한다 */
   bfGroups: string[];

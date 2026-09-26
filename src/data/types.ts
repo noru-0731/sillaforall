@@ -12,10 +12,10 @@ export type Place = {
   share60: number; // 60대 이상 몫(%) 2026년 1~8월
   share60prev: number; // 60대 이상 몫(%) 2025년
   share2030: number; // 20·30대 몫(%) 2026년 1~8월
-  registered: boolean; // 무장애 여행 정보 명부에 올라 있는지
+  registered: boolean; // 한국관광공사 무장애 여행 정보에 올라 있는지(무장애 정보가 있는 곳)
   filled: number; // 28항목 가운데 글이 적힌 항목 수
-  three: { parking: string | null; walk: string | null; toilet: string | null }; // 주차, 걷는 길(접근로·출입통로), 화장실 — 명부 글 그대로, 없으면 null
-  move: Record<string, string | null>; // 이동 일곱 항목 명부 글
+  three: { parking: string | null; walk: string | null; toilet: string | null }; // 주차, 걷는 길(접근로·출입통로), 화장실 — 무장애 여행 정보 글 그대로, 없으면 null
+  move: Record<string, string | null>; // 이동 일곱 항목 무장애 여행 정보 글
   cluster: string | null; // 같은 여행 덩어리: 문무대왕면 / 안강·선도 / 산내·건천
   plan: 1 | 2 | null; // 1차 등록 / 2차 등록 대상
   nearestRegistered: string | null; // 비어 있는 13곳만: 가장 가까운 등록 관광지

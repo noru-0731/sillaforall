@@ -1,5 +1,5 @@
 "use client";
-// 첫 쪽 칸 3(궁능 main_s2 "궁·능 소통"): 제목, 알약 탭 3개(정보가 적힌 곳 / 정보가 없는 곳 / 거점별)와 큰 +,
+// 첫 쪽 칸 3(궁능 main_s2 "궁·능 소통"): 제목, 알약 탭 3개(정보가 있는 곳 / 정보가 없는 곳 / 거점별, 제목 "무장애 정보" 아래라 앞말을 뺐다)와 큰 +,
 // 왼쪽 흰 카드 안 목록 10줄([권역] 이름 … 읍면동), 오른쪽 흰 카드 = 경주 전체 지도 판(누르면 /map).
 // 아래쪽 파란 띠 바탕(무늬 없이 단색 흐름), 뒤에 흐린 큰 영문 "GYEONGJU".
 import { useId, useState } from "react";
@@ -11,7 +11,8 @@ import { MoreLink } from "./bits";
 import s from "./home.module.css";
 
 export type BoardRow = { id: string; name: string; dong: string; area: AreaKey; badge: string };
-export type BoardList = { key: string; label: string; href: string; rows: BoardRow[]; hub?: boolean };
+/** label = 온 이름(목록·더 보기 이름), pill = 알약에 보이는 글(없으면 label) */
+export type BoardList = { key: string; label: string; pill?: string; href: string; rows: BoardRow[]; hub?: boolean };
 
 export default function HomeBoard({ title, lists }: { title: string; lists: BoardList[] }) {
   const [cur, setCur] = useState(lists[0]?.key);
@@ -38,7 +39,7 @@ export default function HomeBoard({ title, lists }: { title: string; lists: Boar
                 aria-controls={panelId}
                 onClick={() => setCur(l.key)}
               >
-                {l.label}
+                {l.pill ?? l.label}
               </button>
             ))}
           </div>

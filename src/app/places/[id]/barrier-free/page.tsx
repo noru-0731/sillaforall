@@ -1,16 +1,16 @@
 // 관광지 무장애 정보(61곳). 궁능 누리집 "관람시간"(hours) 모양:
 // 윗줄 상자(궁능 정기휴일 두 상자 → 우리: 주차·접근로·화장실 세 상자) + ※ 줄 → 표(궁능 일반관람시간 표 → 우리: 무장애 정보 칸).
-// 명부(한국관광공사 무장애 여행 정보) 글은 손대지 않고 그대로 싣는다. 줄바꿈이 빠져 붙은 자리만 줄을 나눈다(lib/breaks.ts).
+// 한국관광공사 무장애 여행 정보 글은 손대지 않고 그대로 싣는다. 줄바꿈이 빠져 붙은 자리만 줄을 나눈다(lib/breaks.ts).
 //
 // 무장애 시안(bf-draft)에서 더한 것:
-// - 명부의 채워진 칸을 모두(예전에는 이동 일곱 칸만). 관광공사 묶음(지체장애, 시각장애, 청각장애, 영유아 가족)대로 나누고 칸 이름은 자료 그대로.
-// - 명부에 없는 곳: 300m 안에서 명부에 오른 관광지·문화시설(barrierfree.json candidates)의 칸. 그 곳의 정보가 아님을 ※ 줄로 밝힌다.
+// - 무장애 여행 정보의 채워진 칸을 모두(예전에는 이동 일곱 칸만). 관광공사 묶음(지체장애, 시각장애, 청각장애, 영유아 가족)대로 나누고 칸 이름은 자료 그대로.
+// - 무장애 정보가 없는 곳: 300m 안에서 무장애 정보가 있는 관광지·문화시설(barrierfree.json candidates)의 칸. 그 곳의 정보가 아님을 ※ 줄로 밝힌다.
 // - 배리어프리 문화예술관광지(한국문화정보원) 행이 이름으로 짝지어진 12곳: Y/N 칸.
 // - 편의시설: 진짜 지도 위 번호 네모 + 목록 표(궁능 관람코스 편의시설 지도 모양, components/place/Amenities.tsx).
 //
 // 페르소나 장점 묶음3(morning)에서 더한 것:
 // - 가10 쪽 머리에 문의 전화 줄(AccessAble 장소 이름 아래 전화 줄. 모양은 오시는 길 '연락처' 줄과 같다).
-// - 가9 그 아래 글이 적힌 칸의 그림 줄(카카오맵 매장 정보처럼 그림 + 칸 이름). 적힌 칸만 그린다(빈칸은 '없음'이 아니라서). '… 기타' 칸은 뺀다.
+// - 가9 그 아래 글이 있는 칸의 그림 줄(카카오맵 매장 정보처럼 그림 + 칸 이름). 글이 있는 칸만 그린다(빈칸은 '없음'이 아니라서). '… 기타' 칸은 뺀다.
 // - 가12 겹침 줄이기: 세 상자에 실은 칸(주차·접근로(없으면 출입통로)·화장실)은 아래 무장애 정보 표에서 뺀다.
 //   절이 둘 이상이면 KRDS '이 페이지의 구성' 목차를 두고, 절마다 제목 줄을 눌러 접고 연다(궁능 자주 묻는 질문의 '열기'·'닫기'). 처음에는 모두 열려 있다.
 //
@@ -25,6 +25,7 @@ import { GJ_CREDIT, GJ_SOURCE, gjOf } from "@/data/gj";
 import { amenitiesOf, bfCultureOf, bfFilledFieldsOf, bfGroupsOf, bfLabel, bfNeighborsOf, BF_SOURCE, NEAR_RADII, sourceLines, type AmenitySrc } from "@/data/bf";
 import { placeCrumbs, placePages, placeSideMenu, PLACE_BANNER } from "@/site/ia";
 import { InPageNav, Ph, Section, SubPage } from "@/components/layout/PageParts";
+import { DASH, DashNote } from "@/components/layout/Dash";
 import { Icon, type IconName } from "@/components/icons";
 import { BoardTable, TipList } from "@/components/royal";
 import { withJosa } from "@/lib/josa";
@@ -48,7 +49,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title: p ? `${p.name} 무장애 정보` : "무장애 정보" };
 }
 
-const EMPTY = <Ph>적힌 내용 없음</Ph>;
+const EMPTY = DASH;
 const fmtM = (m: number) => `${m.toLocaleString("ko-KR")}m`;
 const pre = (t: string) => <span className={s.pre}>{t}</span>;
 const BF_CREDIT = `자료: ${BF_SOURCE.name}(${BF_SOURCE.fetched} 받음)`;
@@ -158,6 +159,8 @@ export default async function PlaceBarrierFree({ params }: Props) {
             {bfLines(p.three.toilet) ?? EMPTY}
           </Box>
         </ul>
+        {/* "-" 상자가 있으면 세 상자 바로 아래 뜻풀이 한 줄(이 쪽의 "-"는 세 상자뿐) */}
+        {[p.three.parking, p.three.walk, p.three.toilet].some((v) => !bfLines(v)) && <DashNote className={s.tipsAfterTable} />}
         {groups.length === 0 && <SourceLines lines={[BF_CREDIT]} />}
       </>
     ) : (
@@ -206,7 +209,7 @@ export default async function PlaceBarrierFree({ params }: Props) {
     });
   }
 
-  // 경주시 무장애 여행정보: 관광공사 이 곳 무장애 정보 절 바로 다음(명부에 없는 곳은 주차·접근로·화장실 절 다음, 인근 명소 절 앞)
+  // 경주시 무장애 여행정보: 관광공사 이 곳 무장애 정보 절 바로 다음(무장애 정보가 없는 곳은 주차·접근로·화장실 절 다음, 인근 명소 절 앞)
   if (gj) {
     parts.push({
       id: "gj",
@@ -365,7 +368,7 @@ export default async function PlaceBarrierFree({ params }: Props) {
               </p>
             </div>
           )}
-          {/* 가9 글이 적힌 칸 그림 줄. 아래 표와 같은 칸 이름이라 소리로 듣기는 건너뛴다 */}
+          {/* 가9 글이 있는 칸 그림 줄. 아래 표와 같은 칸 이름이라 소리로 듣기는 건너뛴다 */}
           {fields.length > 0 && (
             <ul className={s.bfIcons} aria-label={`${p.name} 무장애 정보`} data-read-skip="">
               {fields.map((k) => (

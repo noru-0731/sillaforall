@@ -14,7 +14,8 @@ import type { Place } from "@/data";
 import { creditLines, photoCreditOf } from "@/data/photos";
 import type { Photo as PhotoData } from "@/data/photos";
 import { placeCrumbs, placePages, placeSideMenu, PLACE_BANNER } from "@/site/ia";
-import { Ph, Section, SubPage } from "@/components/layout/PageParts";
+import { Section, SubPage } from "@/components/layout/PageParts";
+import { DASH, DashNote } from "@/components/layout/Dash";
 import { BoardTable, OffsetPhoto, Photo } from "@/components/royal";
 import { overviewParas } from "@/data/overview";
 import { extraFeeRowsOf, extraRowsOf } from "@/data/introExtra";
@@ -38,7 +39,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title: p ? `${p.name} 소개` : "관광지 소개" };
 }
 
-const EMPTY = <Ph>적힌 내용 없음</Ph>;
+const EMPTY = DASH;
 
 /**
  * 본문 옆 사진 장 수: 본문이 PC 글 칸(691px, 16px 글, 줄 27.2px, 한 줄 52자 안팎(띄어쓰기 포함), 문단 사이 27)에서 차지할 높이를
@@ -57,7 +58,7 @@ function sidePhotos(id: string, topUrl: string | null, n: number): PhotoData[] {
   return ordered.slice(0, n).map(({ url, type, name, from, by }) => ({ url, type, name, from, by }));
 }
 
-/** 표 칸 글: 비면 "적힌 내용 없음", 줄바꿈은 살린다 */
+/** 표 칸 글: 비면 "-", 줄바꿈은 살린다 */
 function cell(v: string | null) {
   return v ? <span className={s.pre}>{v.trim()}</span> : EMPTY;
 }
@@ -152,6 +153,8 @@ export default async function PlaceIntro({ params }: Props) {
           rowHeader
           rows={rows}
         />
+        {/* "-" 칸이 있으면 표 바로 아래 뜻풀이 한 줄 */}
+        {rows.some(([, v]) => v === EMPTY) && <DashNote className={s.tipsAfterTable} />}
       </Section>
     </SubPage>
   );

@@ -16,11 +16,14 @@
 //   자료는 data/bus.json(도구/12_버스_문단_사이트.py). 좌표를 빌린 서악서원은 거리 없이 이름이 맞은 정류장.
 // - 그 아래 경주역(KTX) 칸: 경주역(KTX) 정류장에서 이 곳 정류장 쪽으로 가는 노선 번호(국립경주박물관 교통안내 "철도" 칸 자리).
 // - 이용시간·쉬는 날·무장애 글은 붙은 줄을 나눠 보인다(lib/breaks.ts, 글자는 그대로).
+//
+// 빈 칸은 "-"(09-26 저녁). "-"가 쪽 여러 곳(정류장 노선, 무장애 대중교통, 주차 안내, 이용안내 표)에 흩어질 수 있어 뜻풀이 한 줄은 쪽 끝(이용안내 표 아래)에 한 번.
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { areaOf, placeById, places, zipOf } from "@/data";
 import { placeCrumbs, placePages, placeSideMenu, PLACE_BANNER } from "@/site/ia";
 import { Ph, Section, SubPage } from "@/components/layout/PageParts";
+import { DASH, DashNote } from "@/components/layout/Dash";
 import { Icon } from "@/components/icons";
 import { BlackBar, BoardTable, IconHeading, PillTabs, TipList } from "@/components/royal";
 import MapView from "@/components/map/MapView";
@@ -47,7 +50,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title: p ? `${p.name} 오시는 길` : "오시는 길" };
 }
 
-const EMPTY = <Ph>적힌 내용 없음</Ph>;
+const EMPTY = DASH;
 const fmtM = (m: number) => `${m.toLocaleString("ko-KR")}m`;
 
 /** 원(돈) 선 아이콘: 공통 아이콘에 없어 여기서 직접 그렸다(궁능 "주차요금" 아이콘 자리) */
@@ -93,6 +96,11 @@ export default async function PlaceDirections({ params }: Props) {
   const stops = busStopsOf(p.id);
   const ktx = ktxLinesOf(p.id);
   const stopTit = (name: string, no: string | null) => `${name} 정류장${no ? `(${no})` : ""}`;
+
+  // 무장애 여행 정보 대중교통 글(없으면 "-")
+  const bfBus = bfLines((reg && p.move["대중교통"]) || null);
+  // 이 쪽에 "-"가 하나라도 있으면 쪽 끝에 뜻풀이 한 줄
+  const dashed = stops.some((b) => !b.routes.length) || !bfBus || !parking.length || !p.fee || !p.hours || !p.closed;
 
   return (
     <SubPage crumbs={placeCrumbs(p, page)} title={page.label} banner={PLACE_BANNER} sideMenu={placeSideMenu(p)} current={page.href} tabs={pills}>
@@ -191,7 +199,7 @@ export default async function PlaceDirections({ params }: Props) {
           )}
           <div className={s.transUnit}>
             <p className={s.transUnitTit}>한국관광공사 무장애 여행 정보</p>
-            <p className={s.transUnitTxt}>{bfLines((reg && p.move["대중교통"]) || null) || EMPTY}</p>
+            <p className={s.transUnitTxt}>{bfBus || EMPTY}</p>
           </div>
           <div className={s.transUnit}>
             <p className={s.transUnitTit}>{M.name}</p>
@@ -293,6 +301,7 @@ export default async function PlaceDirections({ params }: Props) {
             ["쉬는 날", p.closed ? <span className={s.pre}>{hoursLines(p.closed.trim())}</span> : EMPTY],
           ]}
         />
+        {dashed && <DashNote className={s.tipsAfterTable} />}
       </div>
     </SubPage>
   );
