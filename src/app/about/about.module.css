@@ -505,3 +505,9 @@
     justify-content: center;
   }
 }
+
+/* 자료 출처 표의 링크 없는 주소(경주시 문화관광). 좁은 화면에서 줄을 넘기지 않게 아무 곳에서나 줄을 나눈다 */
+.plainUrl {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}

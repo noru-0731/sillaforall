@@ -3,6 +3,7 @@
 // 이 쪽은 큰 제목이 곳 이름이고, 세 쪽의 글 자료만 한 쪽에 모은다(지도·사진·알약 줄·검정 띠·길찾기 단추는 싣지 않는다).
 // - 기본 정보: 소개 쪽 기본 정보 표와 같은 칸.
 // - 무장애 정보: 명부에 오른 곳은 무장애 정보 쪽의 칸 전부(묶음별 표, 세 상자에 실은 칸도 표에). 명부에 없는 곳은 그 쪽의 두 상자 글.
+//   그 뒤에 경주시 무장애 여행정보 표(짝지은 12곳, 무장애 정보 쪽과 같은 표, data/gj.ts).
 // - 오시는 길: 가까운 정류장 셋·경주역(KTX) 노선(오시는 길 쪽과 같은 글), 무장애 여행 정보 대중교통 글(있을 때만), 교통약자이동지원센터 예약 전화.
 // 글은 모두 이미 다른 쪽에 있는 이름표와 자료 값이다. 단추는 서브 쪽 인쇄 단추 그대로(휴대전화에서도 보인다).
 // 들어오는 곳: 관광지 서브메인 관람 도우미 제목 아래 인쇄 단추. 메뉴·사이트맵에는 싣지 않는다.
@@ -14,6 +15,7 @@ import { placeById, places, zipOf } from "@/data";
 import type { Place } from "@/data";
 import { bfGroupsOf, bfLabel, BF_SOURCE, MOBILITY } from "@/data/bf";
 import { extraFeeRowsOf, extraRowsOf } from "@/data/introExtra";
+import { GJ_CREDIT, GJ_SOURCE, gjOf } from "@/data/gj";
 import { BUS_SOURCE_LINES, KTX_NAME, busStopsOf, ktxLinesOf } from "@/data/bus";
 import { placeCrumbs, placeSideMenu, PLACE_BANNER } from "@/site/ia";
 import { Ph, Section, SubPage } from "@/components/layout/PageParts";
@@ -69,6 +71,7 @@ export default async function PlacePrint({ params }: Props) {
   const zip = zipOf(p.id);
   const groups = p.registered ? bfGroupsOf(p.id) : [];
   const near = p.registered ? null : nearestRegistered(p);
+  const gj = gjOf(p.id);
   const stops = busStopsOf(p.id);
   const ktx = ktxLinesOf(p.id);
   const stopTit = (name: string, no: string | null) => `${name} 정류장${no ? `(${no})` : ""}`;
@@ -142,6 +145,21 @@ export default async function PlacePrint({ params }: Props) {
                 </div>
               )}
             </>
+          )}
+          {gj && (
+            <div className={`${s.bfGroup} ${pr.gj} ${pr.keep}`}>
+              <h3 className={s.bfGroupTit}>{GJ_SOURCE.section}</h3>
+              <p className={s.bfMeta}>{gj.entry}</p>
+              <BoardTable
+                caption={`${gj.entry} ${GJ_SOURCE.section}`}
+                head={["구분", "내용"]}
+                cols={["25%", "auto"]}
+                align={["c", "l"]}
+                rowHeader
+                rows={gj.rows.map(([k, v]) => [k, pre(v)])}
+              />
+              <SourceLines lines={[GJ_CREDIT]} />
+            </div>
           )}
         </Section>
 

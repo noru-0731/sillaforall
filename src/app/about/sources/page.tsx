@@ -8,6 +8,7 @@ import { MENU } from "@/site/ia";
 import { koglCondition, photoCredit, type KoglType } from "@/data/photos";
 import { SOURCES } from "@/data/bf";
 import { BUS_META } from "@/data/bus";
+import { GJ_SOURCE } from "@/data/gj";
 import { BoardTable } from "@/components/royal";
 import s from "../about.module.css";
 
@@ -164,6 +165,28 @@ export default function SourcesPage() {
               <OutLink key="u" href={BUS_META.molit.url}>
                 {BUS_META.molit.url.replace(/^https:\/\//, "")}
               </OutLink>,
+            ],
+          ]}
+        />
+      </Section>
+
+      {/* 관광지 무장애 정보 쪽 '경주시 무장애 여행정보' 절(도구/15_경주시_무장애.py). 원 쪽에 공공누리 표시가 없어 사실만 옮겼다.
+          두 누리집으로 가는 링크는 싣지 않으므로 주소는 글자로만 둔다. */}
+      <Section id="gyeongju" title="경주시 문화관광">
+        <BoardTable
+          caption="관광지 무장애 정보에 쓴 경주시 자료: 자료, 제공 기관, 이용허락, 기준일, 주소"
+          head={["자료", "제공 기관", "이용허락", "기준일", "주소"]}
+          cols={["24%", "18%", "20%", "14%", "auto"]}
+          align={["l", "l", "l", "c", "l"]}
+          rows={[
+            [
+              "무장애 여행정보",
+              "경주시",
+              <Ph key="l">누리집 쪽에 공공누리 표시 없음</Ph>,
+              `${GJ_SOURCE.checked} 확인`,
+              <span key="u" className={s.plainUrl}>
+                {GJ_SOURCE.url.replace(/^https:\/\//, "")}
+              </span>,
             ],
           ]}
         />
