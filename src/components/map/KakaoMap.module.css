@@ -18,6 +18,13 @@
   position: relative;
   pointer-events: none;
 }
+/* 휴대전화: 카카오가 지도 안에 건 touch-action: none(인라인)을 풀어, 지도 위를 쓸어도 쪽이 내려가게(KakaoMap.tsx onTouch 와 짝) */
+@media (pointer: coarse) {
+  .kmap,
+  .kmap * {
+    touch-action: pan-x pan-y !important;
+  }
+}
 .kmap div:has(> .ov) {
   pointer-events: none; /* 카카오 겉 상자도 */
 }
