@@ -27,7 +27,7 @@ import { areaOf, placeById, places } from "@/data";
 import { creditLines, largeUrl, photosOf } from "@/data/photos";
 import { placePages } from "@/site/ia";
 import { withJosa } from "@/lib/josa";
-import { bfLines, hoursLines } from "@/lib/breaks";
+import { bfLines, hoursLines, hoursNoteLines } from "@/lib/breaks";
 import { Icon, type IconName } from "@/components/icons";
 import { CircleButton, Photo } from "@/components/royal";
 import { Ph } from "@/components/layout/Ph";
@@ -94,7 +94,7 @@ export default async function PlaceSubmain({ params }: Props) {
     tel?: boolean;
     now?: boolean;
   }[] = [
-    { key: "hours", label: "이용시간", value: clean(hoursLines(p.hours)), href: `${intro.href}#basic`, icon: "clock", now: ruleShowsAnything(openRule) },
+    { key: "hours", label: "이용시간", value: clean(hoursNoteLines(p.hours)), href: `${intro.href}#basic`, icon: "clock", now: ruleShowsAnything(openRule) },
     { key: "closed", label: "쉬는 날", value: clean(hoursLines(p.closed)), href: `${intro.href}#basic`, icon: "calendar" },
     { key: "parking", label: "주차", value: clean(bfLines((p.registered && p.move["주차"]) || p.parkingInfo)), href: `${dir.href}#parking`, icon: "parking" },
     { key: "walk", label: "접근로", value: clean(bfLines(p.three.walk)), href: bf.href, icon: "walk" },

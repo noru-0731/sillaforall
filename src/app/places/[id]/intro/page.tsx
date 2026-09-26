@@ -18,7 +18,7 @@ import { Ph, Section, SubPage } from "@/components/layout/PageParts";
 import { BoardTable, OffsetPhoto, Photo } from "@/components/royal";
 import { overviewParas } from "@/data/overview";
 import { extraFeeRowsOf, extraRowsOf } from "@/data/introExtra";
-import { gluedLines, hoursLines } from "@/lib/breaks";
+import { gluedLines, hoursLines, hoursNoteLines } from "@/lib/breaks";
 import { anyPhoto, areaLabelOf, cleanPhotoName, coverPhoto, phoneOf, photosOf, splitParas } from "@/components/place/placeData";
 import IntroMark from "@/components/place/IntroMark";
 import s from "@/components/place/Place.module.css";
@@ -92,7 +92,7 @@ export default async function PlaceIntro({ params }: Props) {
   const rows: React.ReactNode[][] = [
     ["주소", cell(p.address)],
     ["읍면동·권역", `${p.dong} · ${areaLabelOf(p)}`],
-    ["이용시간", cell(hoursLines(p.hours))],
+    ["이용시간", cell(hoursNoteLines(p.hours))],
     ["쉬는 날", cell(hoursLines(p.closed))],
     ["이용요금", cell(hoursLines(p.fee))],
     ...extraFeeRowsOf(p.id).map(([k, v]) => [k, cell(hoursLines(v))]),

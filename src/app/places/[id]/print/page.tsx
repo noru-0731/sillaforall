@@ -21,7 +21,7 @@ import { placeCrumbs, placeSideMenu, PLACE_BANNER } from "@/site/ia";
 import { Ph, Section, SubPage } from "@/components/layout/PageParts";
 import { BoardTable, IconHeading, TipList } from "@/components/royal";
 import { SourceLines } from "@/components/place/Amenities";
-import { bfLines, gluedLines, hoursLines } from "@/lib/breaks";
+import { bfLines, gluedLines, hoursLines, hoursNoteLines } from "@/lib/breaks";
 import s from "@/components/place/Place.module.css";
 import pr from "./print.module.css";
 
@@ -97,7 +97,7 @@ export default async function PlacePrint({ params }: Props) {
             rows={[
               ["주소", p.address ? `${zip ? `(${zip}) ` : ""}${p.address}` : EMPTY],
               ["읍면동·권역", `${p.dong} · ${areaLabelOf(p)}`],
-              ["이용시간", cell(hoursLines(p.hours))],
+              ["이용시간", cell(hoursNoteLines(p.hours))],
               ["쉬는 날", cell(hoursLines(p.closed))],
               ["이용요금", cell(hoursLines(p.fee))],
               ...extraFeeRowsOf(p.id).map(([k, v]) => [k, cell(hoursLines(v))]),
