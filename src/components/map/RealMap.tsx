@@ -17,8 +17,14 @@
 // - 처음 화면: points 가운데 near(반경 안)인 점과 관광지가 모두 들어오게 맞춘다(fitBounds). 먼 점은 찍어 두되 맞추기에서 뺀다.
 // - tall: 궁능 관람코스 지도 상자 높이(693)를 따른다. 없으면 오시는 길 상자(429).
 // 점은 키보드로 고르지 않는다(같은 내용이 아래 목록 표에 글로 있다).
+//
+// 번호 네모 비키기(무장애 시안 검토 9.3의 1·2): 네모끼리, 또 관광지 핀·이름 상자·범례·단추·축척 줄과 겹치면
+// 네모를 가장 가까운 빈자리로 옮긴다(6px 격자, 132px 안). 다른 네모의 제자리 점도 덮지 않게 비킨다.
+// 제자리를 벗어난 네모는 제자리에 작은 점을 남기고 네모까지 가는 선을 긋는다. 점과 선은 표시 겹 아래라 핀·이름 상자·네모를 덮지 않는다.
+// 확대 단계·지도 자리·크기가 바뀔 때마다(moveend·resize) 다시 셈하므로, 확대하면 네모가 제자리로 돌아간다.
+// 처음 화면 밖에 제자리가 있는 네모는 옮기지 않는다.
 import { useEffect, useRef, useState } from "react";
-import type { Map as LeafletMap } from "leaflet";
+import type { Map as LeafletMap, Marker } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { Icon } from "@/components/icons";
 import s from "./RealMap.module.css";
@@ -67,6 +73,26 @@ const MAX_ZOOM = 19;
 const SCALE_MAX_PX = 80;
 /** 지구 둘레(m, 웹 메르카토르) */
 const EARTH = 40075016.686;
+/** 번호 네모를 옮겨 볼 자리(네모 가운데가 제자리에서 몇 px). 6px 격자, 반지름 132 안, 가까운 차례 */
+const NUDGE: [number, number][] = (() => {
+  const out: [number, number][] = [];
+  for (let dx = -132; dx <= 132; dx += 6) for (let dy = -132; dy <= 132; dy += 6) if (Math.hypot(dx, dy) <= 132) out.push([dx, dy]);
+  return out.sort((a, b) => Math.hypot(a[0], a[1]) - Math.hypot(b[0], b[1]));
+})();
+/** 네모 사이 띄움(px) */
+const GAP = 2;
+/** 네모가 지도 상자 가장자리에서 떨어질 거리(px) */
+const EDGE = 4;
+/** 제자리 점 반지름(px). 벤치·쉼터 점(12)보다 작게 */
+const ANCHOR_R = 4;
+/** 선 그리는 겹(표시 겹 600 아래, 그림자 겹 500 위) */
+const LEADER_PANE = "rcLeaders";
+
+type Rect = { l: number; t: number; r: number; b: number };
+/** 두 네모가 겹치는 넓이(px²) */
+function overlap(a: Rect, b: Rect) {
+  return Math.max(0, Math.min(a.r, b.r) - Math.max(a.l, b.l)) * Math.max(0, Math.min(a.b, b.b) - Math.max(a.t, b.t));
+}
 
 /** 확대 단계와 위도에서 축척 막대 길이(px)와 글자("500m", "1km") */
 function scaleOf(lat: number, zoom: number) {
@@ -130,6 +156,8 @@ export default function RealMap({ lat, lon, name, label, zoom = 16, points, lege
   // 처음 화면(맞추기 결과). 처음 크기 단추가 이리로 돌아온다
   const homeRef = useRef<{ center: [number, number]; zoom: number }>({ center: [lat, lon], zoom });
   const legRef = useRef<HTMLUListElement>(null);
+  const ctrlRef = useRef<HTMLDivElement>(null);
+  const footRef = useRef<HTMLDivElement>(null);
   const ptsKey = points?.map((p) => `${p.key}:${p.lat},${p.lon}:${p.label ?? ""}`).join("|") ?? "";
   const [view, setView] = useState({ zoom, lat });
   const [ready, setReady] = useState(false);
@@ -137,6 +165,7 @@ export default function RealMap({ lat, lon, name, label, zoom = 16, points, lege
   useEffect(() => {
     let off = false;
     let ro: ResizeObserver | undefined;
+    let roMarks: ResizeObserver | undefined;
     (async () => {
       const L = (await import("leaflet")).default;
       const el = mapEl.current;
@@ -153,24 +182,99 @@ export default function RealMap({ lat, lon, name, label, zoom = 16, points, lege
         dragging: !(L.Browser.mobile || window.matchMedia("(pointer: coarse)").matches),
       });
       L.tileLayer(TILE_URL, { maxZoom: MAX_ZOOM, minZoom: MIN_ZOOM }).addTo(map);
-      L.marker([lat, lon], {
+      const pinMk = L.marker([lat, lon], {
         icon: L.divIcon({ className: s.marker, html: pinHtml(name), iconSize: [29, 42], iconAnchor: [14.5, 42] }),
         interactive: false,
         keyboard: false,
       }).addTo(map);
       // 편의시설 점: 작은 점(벤치·쉼터)을 아래에, 번호 네모를 위에
       const pts = [...(points ?? [])].sort((a, b) => Number(!!a.label) - Number(!!b.label));
+      const nums: { mk: Marker; p: MapPoint; w: number; h: number }[] = [];
       for (const p of pts) {
         const ic = pointIcon(p);
         const mk = L.marker([p.lat, p.lon], {
-          icon: L.divIcon({ className: s.marker, html: ic.html, iconSize: [ic.w, ic.h], iconAnchor: [ic.w / 2, ic.h / 2] }),
+          icon: L.divIcon({
+            className: p.label ? `${s.marker} ${s.numIcon}` : s.marker,
+            html: ic.html,
+            iconSize: [ic.w, ic.h],
+            iconAnchor: [ic.w / 2, ic.h / 2],
+          }),
           interactive: !!p.href,
           keyboard: false,
           title: p.title,
           zIndexOffset: p.label ? 500 : 0,
         }).addTo(map);
         if (p.href) mk.on("click", () => (window.location.hash = p.href!));
+        if (p.label) nums.push({ mk, p, w: ic.w, h: ic.h });
       }
+      // 번호 네모 비키기. 네모는 목록 번호 차례(가까운 곳부터)로 자리를 잡고, 먼저 잡은 네모는 다음 네모의 장애물이 된다
+      map.createPane(LEADER_PANE).style.zIndex = "550";
+      const leaders = L.layerGroup().addTo(map);
+      const place = () => {
+        leaders.clearLayers();
+        if (!nums.length) return;
+        const { x: W, y: H } = map.getSize();
+        const inside: Rect = { l: EDGE, t: EDGE, r: W - EDGE, b: H - EDGE };
+        const hard: Rect[] = [];
+        const boxOf = (el: HTMLElement | null, pad = 0): Rect | null =>
+          el && el.offsetWidth
+            ? { l: el.offsetLeft - pad, t: el.offsetTop - pad, r: el.offsetLeft + el.offsetWidth + pad, b: el.offsetTop + el.offsetHeight + pad }
+            : null;
+        // 관광지 핀(29×42, 끝이 제자리)과 그 아래 이름 상자(RealMap.module.css .pinName: 핀 끝 4px 아래 가운데)
+        const c = map.latLngToContainerPoint([lat, lon]);
+        hard.push({ l: c.x - 14.5 - GAP, t: c.y - 42 - GAP, r: c.x + 14.5 + GAP, b: c.y + GAP });
+        const nm = pinMk.getElement()?.querySelector("span");
+        if (nm) hard.push({ l: c.x - nm.offsetWidth / 2 - GAP, t: c.y + 4 - GAP, r: c.x + nm.offsetWidth / 2 + GAP, b: c.y + 4 + nm.offsetHeight + GAP });
+        // + − ↻ 단추, 축척 줄, 지도 안 범례(좁은 화면에서는 지도 아래라 빼고)
+        const leg = legRef.current;
+        for (const el of [ctrlRef.current, footRef.current, leg && getComputedStyle(leg).position === "absolute" ? leg : null]) {
+          const r = boxOf(el, 4);
+          if (r) hard.push(r);
+        }
+        // 네모마다 제자리(px)와, 다른 네모가 덮지 말아야 할 제자리 점 자리
+        const at = nums.map((n) => map.latLngToContainerPoint([n.p.lat, n.p.lon]));
+        const R = ANCHOR_R + GAP;
+        const dots = at.map((a) => ({ l: a.x - R, t: a.y - R, r: a.x + R, b: a.y + R }));
+        const inView = (i: number) => at[i].x >= 0 && at[i].x <= W && at[i].y >= 0 && at[i].y <= H;
+        // 제자리가 상자 밖인 네모는 옮기지 않고 제자리에 둔다. 가장자리에 걸쳐 보이는 것은 다른 네모가 비켜 가게 먼저 넣는다
+        const placed: Rect[] = nums.flatMap((n, i) =>
+          inView(i) ? [] : [{ l: at[i].x - n.w / 2 - GAP, t: at[i].y - n.h / 2 - GAP, r: at[i].x + n.w / 2 + GAP, b: at[i].y + n.h / 2 + GAP }],
+        );
+        nums.forEach((n, i) => {
+          const a = at[i];
+          const sq = n.mk.getElement()?.firstElementChild as HTMLElement | null | undefined;
+          let best: [number, number] = [0, 0];
+          if (inView(i)) {
+            let bestCost = Infinity;
+            for (const [dx, dy] of NUDGE) {
+              const r = { l: a.x + dx - n.w / 2, t: a.y + dy - n.h / 2, r: a.x + dx + n.w / 2, b: a.y + dy + n.h / 2 };
+              let cost = n.w * n.h - overlap(r, inside); // 지도 상자 밖으로 나간 넓이
+              for (const o of hard) cost += overlap(r, o);
+              for (const o of placed) cost += overlap(r, o);
+              dots.forEach((o, j) => j !== i && (cost += overlap(r, o)));
+              if (cost === 0) {
+                best = [dx, dy];
+                break;
+              }
+              cost += Math.hypot(dx, dy) * 0.5; // 다 겹치면 덜 겹치고 가까운 자리
+              if (cost < bestCost) {
+                bestCost = cost;
+                best = [dx, dy];
+              }
+            }
+          }
+          const [dx, dy] = best;
+          if (inView(i)) placed.push({ l: a.x + dx - n.w / 2 - GAP, t: a.y + dy - n.h / 2 - GAP, r: a.x + dx + n.w / 2 + GAP, b: a.y + dy + n.h / 2 + GAP });
+          if (sq) sq.style.transform = dx || dy ? `translate(${dx}px, ${dy}px)` : "";
+          // 네모가 제자리 점을 다 덮지 못할 만큼 비켜나면 제자리 점과 선
+          if (Math.abs(dx) > n.w / 2 - ANCHOR_R || Math.abs(dy) > n.h / 2 - ANCHOR_R) {
+            const k = s[`k_${n.p.kind}`] ?? "";
+            const opt = { pane: LEADER_PANE, interactive: false };
+            L.polyline([[n.p.lat, n.p.lon], map.containerPointToLatLng([a.x + dx, a.y + dy])], { ...opt, className: `${s.leader} ${k}` }).addTo(leaders);
+            L.circleMarker([n.p.lat, n.p.lon], { ...opt, radius: ANCHOR_R, className: `${s.anchor} ${k}` }).addTo(leaders);
+          }
+        });
+      };
       // 처음 화면: 반경 안 점과 관광지가 모두 들어오게(너무 가까이 당기지는 않게 17까지)
       const fit = (points ?? []).filter((p) => p.near);
       if (fit.length) {
@@ -188,6 +292,13 @@ export default function RealMap({ lat, lon, name, label, zoom = 16, points, lege
       const sync = () => setView({ zoom: map.getZoom(), lat: map.getCenter().lat });
       map.on("zoomend moveend", sync);
       sync();
+      // 확대·축소 움직임 동안은 선을 지웠다가 멈추면 다시 셈한다
+      map.on("zoomstart", () => leaders.clearLayers());
+      map.on("moveend resize", place);
+      place();
+      // 장애물 크기가 바뀌면 다시 셈한다(이름 상자는 글꼴을 받은 뒤, 축척 줄은 확대 단계마다 폭이 바뀐다)
+      roMarks = new ResizeObserver(() => place());
+      for (const o of [ctrlRef.current, footRef.current, legRef.current, pinMk.getElement()?.querySelector("span")]) if (o) roMarks.observe(o);
       // 글자·화면 설정(몸 zoom)이나 폭이 바뀌면 지도 크기를 다시 잰다
       ro = new ResizeObserver(() => map.invalidateSize());
       ro.observe(el);
@@ -197,6 +308,7 @@ export default function RealMap({ lat, lon, name, label, zoom = 16, points, lege
     return () => {
       off = true;
       ro?.disconnect();
+      roMarks?.disconnect();
       mapRef.current?.remove();
       mapRef.current = null;
       setReady(false);
@@ -232,7 +344,7 @@ export default function RealMap({ lat, lon, name, label, zoom = 16, points, lege
     <div className={`${s.box}${tall ? " " + s.tall : ""}`}>
       <div ref={mapEl} className={s.map} role="region" aria-label={label ?? `${name} 위치 지도`} />
 
-      <div className={s.controls}>
+      <div ref={ctrlRef} className={s.controls}>
         <button type="button" className={s.ctrl} aria-label="확대" title="확대" aria-disabled={!canIn} onClick={() => canIn && mapRef.current?.zoomIn()}>
           <Icon name="plus" size={18} strokeWidth={2} />
         </button>
@@ -251,7 +363,7 @@ export default function RealMap({ lat, lon, name, label, zoom = 16, points, lege
         </button>
       </div>
 
-      <div className={s.foot}>
+      <div ref={footRef} className={s.foot}>
         {ready && (
           <div className={s.scale} aria-hidden="true">
             <span className={s.scaleBar} style={{ width: `${scale.px}px` }} />
