@@ -19,7 +19,7 @@ const areaLabel = (p: Place) => areas.find((a) => a.key === areaOf(p))!.label;
 const shortAddress = (p: Place) => (p.address ?? "").replace(/^경상북도\s*경주시\s*/, "") || p.dong;
 
 // ── 칸 1: 넘기기 배너. 이름난 관광지 다섯 곳의 제1유형 사진(잘라 써도 되는 사진)만 쓴다. 차례는 사용자가 바꿀 수 있다.
-// 관광정보 제1유형은 줄여 둔 판(960·1600 폭, photos.ts heroPhoto → localPhoto "big")을 쓴다. 동궁과 월지(p47)는 따로 고른 사진(HERO_PICK).
+// 관광정보 제1유형은 줄여 둔 판(여러 폭, photos.ts heroPhoto → localPhoto "big", sizes 는 SIZES.hero)을 쓴다. 동궁과 월지(p47)는 따로 고른 사진(HERO_PICK).
 const HERO_IDS = ["p34", "p39", "p47", "p51", "p28"]; // 불국사, 첨성대, 동궁과 월지, 대릉원, 석굴암
 
 function heroSlides(): HeroSlide[] {
@@ -28,7 +28,7 @@ function heroSlides(): HeroSlide[] {
     const p = places.find((q) => q.id === id);
     const ph = heroPhoto(id);
     if (!p || !ph || ph.type !== "Type1") continue;
-    // 줄여 둔 판 여러 폭(srcset) 또는 큰 판(가로 1,620 안팎)이 있으면 <Photo>가 srcset으로 함께 준다(휴대전화는 960 판, 넓은 화면은 큰 판)
+    // 줄여 둔 판 여러 폭(srcset) 또는 큰 판(가로 1,620 안팎)이 있으면 <Photo>가 srcset으로 함께 준다(브라우저가 칸 폭 × 화면 밀도로 고름)
     out.push({
       id,
       name: p.name,
@@ -65,9 +65,9 @@ function cardItems(): CardItem[] {
     .filter((p) => p.side === "old")
     .sort((a, b) => rank(a) - rank(b) || b.share60 - a.share60)
     .map((p) => {
-      // 카드는 작은 칸이라 관광정보 제1유형은 줄여 둔 480 판(localPhoto "small")
+      // 카드 칸: 관광정보 제1유형은 줄여 둔 480·720·960 판(localPhoto "card", sizes 는 SIZES.homeCard)
       const ph0 = coverPhoto(p.id) ?? anyPhoto(p.id);
-      const ph = ph0 && localPhoto(ph0, "small");
+      const ph = ph0 && localPhoto(ph0, "card");
       return {
         id: p.id,
         name: p.name,
@@ -75,7 +75,7 @@ function cardItems(): CardItem[] {
         areaLabel: areaLabel(p),
         registered: p.registered,
         address: shortAddress(p),
-        photo: ph ? { url: ph.url, type: ph.type } : null,
+        photo: ph ? { url: ph.url, type: ph.type, ...(ph.srcset ? { srcset: ph.srcset } : {}) } : null,
         credit: ph ? photoCreditOf(ph) : null,
       };
     });

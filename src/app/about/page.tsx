@@ -7,6 +7,7 @@ import { Ph, SubPage } from "@/components/layout/PageParts";
 import { MENU, SITE_NAME } from "@/site/ia";
 import { places, placeById } from "@/data";
 import { coverPhoto, heroPhoto, localPhoto, photoCreditOf } from "@/data/photos";
+import { SIZES } from "@/components/royal/Photo";
 import s from "./about.module.css";
 
 const SECTION = MENU[3];
@@ -25,7 +26,7 @@ export default function AboutPage() {
   const alt = coverPhoto("p37");
   const photo = own ?? (alt && localPhoto(alt, "big"));
   const photoPlace = placeById(own ? PHOTO_PLACE : "p37")?.name ?? "";
-  // 줄여 둔 판 여러 폭이 있으면 그것, 없고 큰 판이 있으면 두 판을 너비와 함께(사진 칸은 본문 폭 1,030. 휴대전화 폭은 960 판까지만, SIZES_BIG 과 같은 뜻)
+  // 줄여 둔 판 여러 폭이 있으면 그것, 없고 큰 판이 있으면 두 판을 너비와 함께(sizes 는 SIZES.about: 사진 칸은 본문 폭 1,030, 휴대전화는 4:3 칸)
   const srcSet = photo?.srcset ?? (photo?.large ? `${photo.url} ${photo.w ?? 940}w, ${photo.large} ${photo.lw ?? 1620}w` : undefined);
 
   return (
@@ -45,7 +46,7 @@ export default function AboutPage() {
             <img
               src={photo.url}
               srcSet={srcSet}
-              sizes={srcSet ? "(max-width: 767px) 320px, (max-width: 1119px) 100vw, 1030px" : undefined}
+              sizes={srcSet ? SIZES.about : undefined}
               alt={`${photoPlace} 풍경`}
               loading="eager"
               decoding="async"

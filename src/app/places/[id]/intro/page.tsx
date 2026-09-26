@@ -8,8 +8,8 @@
 //   사진은 큰 사진과 다른 장, 제1유형 먼저. 장 수는 본문 높이에 맞춘다(sideCount). 휴대전화는 사진 3칸 격자 뒤에 글.
 //   궁능은 사진마다 아래에 이름 띠를 얹지만, 우리 사진 이름은 대부분 관광지 이름이나 파일 이름이라 띠를 넣지 않았다.
 // 사진 출처(짧은 꼴 "ⓒ한국관광공사" 등)는 사진마다 곁에: 제1유형은 사진 오른쪽 아래에 얹고, 제3유형은 사진 틀 바로 아래 오른쪽 한 줄.
-// 사진 파일(09-27 "제1유형만 줄여 둠"): 관광정보 제1유형은 줄여 둔 판(data/photos.ts localPhoto). 맨 위 사진은 큰 자리(휴대전화 960 판,
-// 넓은 화면 1600 판), 본문 옆 사진은 작은 자리(480 판). 그 밖은 원 주소.
+// 사진 파일(09-27 "제1유형만 줄여 둠"): 관광정보 제1유형은 줄여 둔 판(data/photos.ts localPhoto). 맨 위 사진은 큰 자리(여러 폭,
+// sizes 는 SIZES.introTop), 본문 옆 사진은 작은 자리(480 판). 그 밖은 원 주소.
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { placeById, places } from "@/data";
@@ -19,7 +19,7 @@ import type { Photo as PhotoData } from "@/data/photos";
 import { placeCrumbs, placePages, placeSideMenu, PLACE_BANNER } from "@/site/ia";
 import { Section, SubPage } from "@/components/layout/PageParts";
 import { DASH, DashNote } from "@/components/layout/Dash";
-import { BoardTable, CreditBelow, OffsetPhoto, Photo, SIZES_BIG } from "@/components/royal";
+import { BoardTable, CreditBelow, OffsetPhoto, Photo, SIZES } from "@/components/royal";
 import { overviewParas } from "@/data/overview";
 import { extraFeeRowsOf, extraRowsOf } from "@/data/introExtra";
 import { gluedLines, hoursLines, hoursNoteLines } from "@/lib/breaks";
@@ -122,7 +122,7 @@ export default async function PlaceIntro({ params }: Props) {
             ratio="101/50"
             bg="light"
             loading="eager"
-            sizes={SIZES_BIG}
+            sizes={SIZES.introTop}
             credit={photo?.type === "Type1" ? photoCreditOf(photo) : null}
           />
         </OffsetPhoto>

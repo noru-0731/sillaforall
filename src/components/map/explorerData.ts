@@ -4,8 +4,9 @@ import { areaOf, byName, HUBS, places } from "@/data";
 import type { AreaKey } from "@/data";
 import { anyPhoto, coverPhoto, localPhoto, type KoglType, type PhotoSlot } from "@/data/photos";
 
-/** from·by: 관광사진 정보(한국관광콘텐츠랩) 사진이면 "gallery"와 촬영자(사진 곁 출처·공공누리 상자에 쓴다) */
-export type ExplorerPhoto = { url: string; type: KoglType; from?: "tourapi" | "gallery"; by?: string } | null;
+/** from·by: 관광사진 정보(한국관광콘텐츠랩) 사진이면 "gallery"와 촬영자(사진 곁 출처·공공누리 상자에 쓴다).
+ *  srcset: 줄여 둔 판 여러 폭(관광정보 제1유형을 카드 칸에 쓸 때만) */
+export type ExplorerPhoto = { url: string; type: KoglType; from?: "tourapi" | "gallery"; by?: string; srcset?: string } | null;
 
 /** 지도 쪽에 보일 관광지 id(가나다순). view가 권역이면 그 권역만 */
 export function explorerIds(view: "full" | AreaKey): string[] {
@@ -17,13 +18,13 @@ export function explorerIds(view: "full" | AreaKey): string[] {
 
 /**
  * 관광지 사진 한 장: 잘라 써도 되는 제1유형 → 없으면 아무 사진(제3유형은 <Photo>가 자르지 않는다) → 없으면 null.
- * slot 을 주면 관광정보 제1유형은 그 자리에 맞게 줄여 둔 판(목록·거점 카드는 "small"). 지도 쪽은 주지 않는다(원 주소).
+ * slot 을 주면 관광정보 제1유형은 그 자리에 맞게 줄여 둔 판(목록·거점 카드는 "card", 여러 폭). 지도 쪽은 주지 않는다(원 주소).
  */
 export function pickPhoto(id: string, slot?: PhotoSlot): ExplorerPhoto {
   const p0 = coverPhoto(id) ?? anyPhoto(id);
   const p = p0 && slot ? localPhoto(p0, slot) : p0;
   if (!p) return null;
-  return p.from === "gallery" ? { url: p.url, type: p.type, from: "gallery", by: p.by } : { url: p.url, type: p.type };
+  return p.from === "gallery" ? { url: p.url, type: p.type, from: "gallery", by: p.by } : { url: p.url, type: p.type, ...(p.srcset ? { srcset: p.srcset } : {}) };
 }
 
 /** 관광지마다 큰 사진 한 장 */

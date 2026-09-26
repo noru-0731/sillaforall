@@ -3,8 +3,8 @@
 import type { AreaKey } from "@/data/types";
 import type { KoglType } from "@/data/photos";
 
-/** from·by: 관광사진 정보(한국관광콘텐츠랩) 사진이면 "gallery"와 촬영자 */
-export type CardPhoto = { url: string; type: KoglType; from?: "tourapi" | "gallery"; by?: string } | null;
+/** from·by: 관광사진 정보(한국관광콘텐츠랩) 사진이면 "gallery"와 촬영자. srcset: 줄여 둔 판 여러 폭(관광정보 제1유형만) */
+export type CardPhoto = { url: string; type: KoglType; from?: "tourapi" | "gallery"; by?: string; srcset?: string } | null;
 
 /** 카드 한 장(궁능 문화행사 카드 모양) */
 export type CardPlace = {

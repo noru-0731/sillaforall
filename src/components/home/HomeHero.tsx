@@ -7,7 +7,7 @@
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import Link from "next/link";
 import { Icon, type IconName } from "@/components/icons";
-import Photo, { SIZES_BIG } from "@/components/royal/Photo";
+import Photo, { SIZES } from "@/components/royal/Photo";
 import { Ph } from "@/components/layout/Ph";
 import { useReducedMotion } from "./bits";
 import s from "./home.module.css";
@@ -91,7 +91,7 @@ export default function HomeHero({
                   aria-hidden={!on}
                   inert={!on}
                 >
-                  <Photo photo={sl.photo} alt={sl.name} height="100%" sizes={SIZES_BIG} loading={i === 0 ? "eager" : "lazy"} />
+                  <Photo photo={sl.photo} alt={sl.name} height="100%" sizes={SIZES.hero} loading={i === 0 ? "eager" : "lazy"} />
                   <div className={s.visualPanel}>
                     {sl.kicker && <p className={s.visualKicker}>{sl.kicker}</p>}
                     <p className={s.visualName}>

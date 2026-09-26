@@ -49,7 +49,7 @@ export function fmtDist(m: number): string {
 }
 
 /** credit: 그 사진의 출처(짧은 꼴: "ⓒ한국관광공사" / "ⓒ한국관광콘텐츠랩-촬영자").
- *  srcset: 관광정보 제1유형이면 "줄여 둔 480 판, 원 주소"(가운데 자리, localPhoto "mid"). 부품은 SIZES_MID 와 함께 쓴다 */
+ *  srcset: 관광정보 제1유형이고 줄여 둔 판이 있으면 여러 폭(localPhoto "big"). 부품은 SIZES.nearby 와 함께 쓴다 */
 export type NearbySlide = { id: string; name: string; dong: string; url: string; srcset?: string; credit: string };
 
 /**
@@ -64,7 +64,7 @@ export function nearbySlides(p: Place, n = 8): NearbySlide[] {
       .sort((a, b) => a.d - b.d)
       .slice(0, n)
       .map((x) => {
-        const m = localPhoto(x.c!, "mid");
+        const m = localPhoto(x.c!, "big");
         return { id: x.q.id, name: x.q.name, dong: x.q.dong, url: m.url, ...(m.srcset ? { srcset: m.srcset } : {}), credit: photoCreditOf(x.c!) };
       });
   const same = pick(sameArea(p, false));
