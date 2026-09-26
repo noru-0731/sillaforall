@@ -45,10 +45,7 @@ export default function UnlistedPage() {
         />
         <TipList
           className={s.tips}
-          items={[
-            <Ph key="a">가까운 등록 관광지는 무장애 정보가 있는 관광지 가운데 가장 가까운 곳과 직선거리입니다.</Ph>,
-            <Ph key="b">물어볼 곳: 가기 전에 확인할 수 있는 곳을 적을 자리</Ph>,
-          ]}
+          items={[<Ph key="a">가까운 등록 관광지는 무장애 정보가 있는 관광지 가운데 가장 가까운 곳과 직선거리입니다.</Ph>]}
         />
         {/* 쪽 끝 이어 읽기(무장애 정보 메뉴 차례) */}
         <MenuSteps section={page.section} current={HREF} />

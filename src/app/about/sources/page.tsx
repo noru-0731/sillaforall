@@ -1,5 +1,6 @@
 // 사이트 소개 > 자료 출처와 저작권(궁능 가이드 > 저작권정책 모양).
-// 맨 위 안내 글(윗선 남색) → 공공누리 유형 카드(사진이 쓰는 두 유형) → • 줄과 (예시) 상자 → 출처별 칸 → 문의 상자.
+// 맨 위 안내 글(윗선 남색) → 공공누리 유형 카드(사진이 쓰는 두 유형) → • 줄과 (예시) 상자 → 출처별 칸.
+// 자리표시 글만 있던 '한국관광 데이터랩' 칸과 맨 아래 문의 상자는 09-27 사용자 결정("자리표시 줄 빼기")으로 뺐다.
 // KRDS 출처 문장은 행정안전부가 정한 그대로 둔다.
 import type { Metadata } from "next";
 import { pageMetadata } from "@/site/og";
@@ -302,20 +303,6 @@ export default function SourcesPage() {
           <OutLink href="https://www.openstreetmap.org/copyright">www.openstreetmap.org/copyright</OutLink>
         </p>
       </Section>
-
-      <Section id="datalab" title="한국관광 데이터랩">
-        <p className={s.sourceText}>
-          <Ph>분석에 쓴 자료의 이름, 기간, 항목을 적습니다.</Ph>
-        </p>
-      </Section>
-
-      {/* 맨 아래 문의 상자(궁능 "저작권 정책 관련 문의") */}
-      <div className={s.contact}>
-        <p>
-          <strong>자료 출처 관련 문의 : </strong>
-          <Ph>만든 팀 연락처를 적을 자리</Ph>
-        </p>
-      </div>
     </SubPage>
   );
 }
