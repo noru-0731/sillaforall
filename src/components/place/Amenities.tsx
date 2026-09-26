@@ -138,12 +138,7 @@ export function AmenityTable({
               </td>
               {showKind && <td className={s.kind}>{KIND_LABEL[it.kind]}</td>}
               <th scope="row" className={s.name}>
-                {it.name ?? (
-                  <>
-                    <span aria-hidden="true">−</span>
-                    <span className="sr-only">이름 없음</span>
-                  </>
-                )}
+                {it.name ?? <span className="sr-only">이름 없음</span>}
                 {!showKind ? null : <span className={s.mKind}>{KIND_LABEL[it.kind]}</span>}
               </th>
               <td className={s.dist}>{fmtM(it.distanceM)}</td>
@@ -158,10 +153,7 @@ export function AmenityTable({
                     ))}
                   </dl>
                 ) : (
-                  <>
-                    <span aria-hidden="true">−</span>
-                    <span className="sr-only">없음</span>
-                  </>
+                  <span className="sr-only">없음</span>
                 )}
               </td>
               <td className={s.src}>{SRC_LABEL[it.src]}</td>

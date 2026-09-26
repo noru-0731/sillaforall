@@ -156,7 +156,7 @@ export function cleanPhotoName(name?: string | null): string | null {
   return t;
 }
 
-/** made: 관광공사 사진 이름이 없어 새로 지은 이름("{관광지} 사진 {n}", 궁능에 짝 없음 → 화면에서 <Ph>). by: 관광사진 정보 사진의 촬영자.
+/** made: 관광공사 사진 이름이 없어 붙인 이름("{관광지} {n}", 열린관광 사진 이름 꼴이라 09-27부터 점선 없음). by: 관광사진 정보 사진의 촬영자.
  *  credit: 사진 곁 출처(짧은 꼴) */
 export type ViewerPhoto = { url: string; small: string; type: Photo["type"]; name: string; made?: boolean; by?: string; credit: string };
 

@@ -32,7 +32,7 @@ export const MENU: NavItem[] = [
     children: [
       { label: "권역별", href: "/list" },
       { label: "가나다순", href: "/list/abc" },
-      { label: "거점별", href: "/list/hub" },
+      { label: "덩어리별", href: "/list/hub" },
     ],
   },
   {
@@ -76,7 +76,7 @@ export const LEFT_BAR: { label: string; href: string; icon: "map" | "list" | "wh
   { label: "관광지 지도", href: "/map", icon: "map" },
   { label: "관광지 목록", href: "/list", icon: "list" },
   { label: "무장애 정보", href: "/barrier-free", icon: "wheelchair" },
-  { label: "거점별", href: "/list/hub", icon: "hub" },
+  { label: "덩어리별", href: "/list/hub", icon: "hub" },
   { label: "이용 안내", href: "/about/guide", icon: "guide" },
   { label: "사이트 소개", href: "/about", icon: "about" },
 ];

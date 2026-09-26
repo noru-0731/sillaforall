@@ -216,6 +216,14 @@
   word-break: keep-all;
   overflow-wrap: anywhere;
 }
+/* 채운 값의 자료 꼬리: 값(세 줄 자르기) 바로 다음 줄. 칸 안 간격(0.8rem)을 되돌려 값과 한 덩이로 붙인다 */
+.quickTail {
+  margin-top: -0.8rem;
+  font-size: 1.5rem;
+  line-height: 1.5;
+  color: var(--rc-text-sub);
+  word-break: keep-all;
+}
 .quickGrid a:hover .quickLabel {
   text-decoration: underline;
   text-underline-offset: 0.4rem;

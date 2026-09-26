@@ -1,4 +1,5 @@
-// 공통 푸터(궁능유적본부 누리집 모양): 위 줄 링크 + 관련사이트 펼침, 아래 회색 판에 사이트 이름·"관광지별 연락처" 펼침·만든 곳·출처.
+// 공통 푸터(궁능유적본부 누리집 모양): 위 줄 링크 + 관련사이트 펼침, 아래 회색 판에 사이트 이름·"관광지별 연락처" 펼침·출처.
+// '만든 곳' 줄(자리표시)은 09-27 사용자 결정("자리표시 줄 빼기")으로 뺐다.
 // 정부 누리집이 아니므로 인증 마크·운영기관 식별자는 넣지 않는다. KRDS 출처는 짧은 꼴로 한 줄 둔다(사용자 09-26: 출처 표기 줄이기).
 // 출처는 두 줄(화면 틀, 자료)만. 온전한 KRDS 출처 문장과 자료별 이용허락은 위 줄 링크 "자료 출처와 저작권" 쪽에 있다.
 // 관광지별 연락처(궁능 "관리소별 연락처" 표: 기관 / 주소 / 연락처): 문의 글이 있는 관광지(가나다순), 주소 앞 [우편번호].
@@ -7,7 +8,6 @@ import Link from "next/link";
 import { SITE_NAME } from "@/site/ia";
 import { byName, places, zipOf } from "@/data";
 import { phoneOf } from "@/components/place/placeData";
-import { Ph } from "./Ph";
 import FooterRelated from "./FooterRelated";
 import FooterTel from "./FooterTel";
 import { NewWinIcon } from "./NewWin";
@@ -70,7 +70,7 @@ function TelTable() {
               <th scope="row">{p.name}</th>
               <td>
                 {zip && <>[{zip}] </>}
-                {p.address ?? "-"}
+                {p.address}
               </td>
               <td>
                 <Contact text={p.contact!} />
@@ -109,9 +109,6 @@ export default function SiteFooter() {
             <FooterTel label="관광지별 연락처">
               <TelTable />
             </FooterTel>
-            <p className="rc-ft-maker">
-              만든 곳 <Ph>2026 한국관광 데이터랩 활용 경진대회 출품 팀</Ph>
-            </p>
             <ul className="rc-ft-credit">
               <li>
                 화면 틀: 행정안전부 ‘범정부 UI/UX 디자인시스템(

@@ -5,7 +5,7 @@
 import Link from "next/link";
 import { Ph } from "@/components/layout/Ph";
 import { BoardTable } from "@/components/royal";
-import { isPhLabel, sourceName, stepFreeGroupOf, stepFreeSourceLines, STEPFREE_HREF, STEPFREE_PLACES, type StepFreePlace } from "@/data/stepfree";
+import { isPhLabel, rowLabelOf, sourceName, stepFreeGroupOf, stepFreeSourceLines, STEPFREE_HREF, STEPFREE_PLACES, type StepFreePlace } from "@/data/stepfree";
 import { Icon } from "@/components/icons";
 import { SourceLines } from "./Amenities";
 import pl from "./Place.module.css";
@@ -47,7 +47,7 @@ export function StepFreeBlock({ place, self = false }: { place: StepFreePlace; s
         align={["c", "l"]}
         rowHeader
         rows={place.rows.map((r) => [
-          isPhLabel(r.k) ? <Ph key="k">{r.k}</Ph> : r.k,
+          isPhLabel(r.k) ? <Ph key="k">{rowLabelOf(r.k)}</Ph> : rowLabelOf(r.k),
           <span key="v">
             <span className={pl.pre}>{r.v}</span>
             <span className={s.src}>자료: {sourceName(r)}</span>

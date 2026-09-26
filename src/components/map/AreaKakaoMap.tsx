@@ -16,7 +16,6 @@ import Link from "next/link";
 import { AREA_COLOR, areaByKey, areaColorVar, areaOf, areas, places as allPlaces, units } from "@/data";
 import type { AreaKey, Place } from "@/data";
 import { cn } from "@/lib/cn";
-import { Ph } from "@/components/layout/Ph";
 import { Icon } from "@/components/icons";
 import { ANCHOR_R, FIT_MAX_ZOOM, FIT_PAD, MapControls, boxOf, esc, nudgeAll, type Rect } from "./mapParts";
 import { MAX_LEVEL, MIN_LEVEL, guardTouch, isCoarse, kakaoFoot, levelOf, markKakaoLogo, relRect } from "./kakaoParts";
@@ -377,7 +376,8 @@ export default function AreaKakaoMap({
           {hubLegend && (
             <li>
               <span className={cn(rs.legSw, a.swOn, a.swEmph)} aria-hidden="true" />
-              <Ph>거점 관광지</Ph>
+              {/* 첫 쪽 가운데 띠 이름(점선 없음, 09-27 점선 1차 정리) */}
+              <span>덩어리 관광지</span>
             </li>
           )}
           {sfHere && stepFree && (
@@ -406,7 +406,8 @@ export default function AreaKakaoMap({
           </p>
           <p>
             <span className={cn(mv.badge, selPlace.registered ? mv.badgeOn : mv.badgeOff)}>
-              <Ph>{selPlace.registered ? "무장애 정보 있음" : "무장애 정보 없음"}</Ph>
+              {/* 첫 쪽 카드 탭과 같은 글(점선 없음, 09-27 점선 1차 정리) */}
+              {selPlace.registered ? "무장애 정보 있음" : "무장애 정보 없음"}
             </span>
           </p>
           <div className={mv.panelActions}>

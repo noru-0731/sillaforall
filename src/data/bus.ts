@@ -18,7 +18,7 @@ export type BusLine = {
   /** 첫차시간·막차시간(HH:MM) */
   first: string | null;
   last: string | null;
-  /** 배차간격(평일·토요일·일요일, 분). TAGO 값 그대로(0 도 값), 칸이 없으면 null(화면 '-') */
+  /** 배차간격(평일·토요일·일요일, 분). TAGO 값 그대로(0 도 값), 칸이 없으면 null(화면은 빈칸) */
   int: number | null;
   sat: number | null;
   sun: number | null;

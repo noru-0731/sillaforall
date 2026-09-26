@@ -19,7 +19,6 @@ import { localPhoto, photoCreditOf } from "@/data/photos";
 import type { Photo as PhotoData } from "@/data/photos";
 import { placeCrumbs, placePages, placeSideMenu, PLACE_BANNER } from "@/site/ia";
 import { Section, SubPage } from "@/components/layout/PageParts";
-import { DASH, DashNote } from "@/components/layout/Dash";
 import { BoardTable, CreditBelow, OffsetPhoto, Photo, SIZES } from "@/components/royal";
 import { overviewParas } from "@/data/overview";
 import { extraFeeRowsOf, extraRowsOf } from "@/data/introExtra";
@@ -44,8 +43,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return p ? placeMetadata(p.id, `${p.name} 소개`, `/places/${p.id}/intro`) : { title: "관광지 소개" };
 }
 
-const EMPTY = DASH;
-
 /**
  * 본문 옆 사진 장 수: 본문이 PC 글 칸(691px, 16px 글, 줄 27.2px, 한 줄 52자 안팎(띄어쓰기 포함), 문단 사이 27)에서 차지할 높이를
  * 사진 한 칸(213 + 사이 20)으로 나눈 값. 1~5장(궁능 story_history는 5장).
@@ -66,13 +63,13 @@ function sidePhotos(id: string, topUrl: string | null, n: number): PhotoData[] {
   });
 }
 
-/** 표 칸 글: 비면 "-", 줄바꿈은 살린다 */
+/** 표 칸 글: 비면 빈칸(09-27 사용자: 표시 없이 비움), 줄바꿈은 살린다 */
 function cell(v: string | null) {
-  return v ? <span className={s.pre}>{v.trim()}</span> : EMPTY;
+  return v ? <span className={s.pre}>{v.trim()}</span> : null;
 }
 
 function contactCell(p: Place) {
-  if (!p.contact) return EMPTY;
+  if (!p.contact) return null;
   const tel = phoneOf(p.contact);
   if (!tel) return cell(p.contact);
   const [before, after] = [p.contact.slice(0, p.contact.indexOf(tel)), p.contact.slice(p.contact.indexOf(tel) + tel.length)];
@@ -176,8 +173,6 @@ export default async function PlaceIntro({ params }: Props) {
           rowHeader
           rows={rows}
         />
-        {/* "-" 칸이 있으면 표 바로 아래 뜻풀이 한 줄 */}
-        {rows.some(([, v]) => v === EMPTY) && <DashNote className={s.tipsAfterTable} />}
       </Section>
       {/* deck 갈래: 쪽 끝 이어 읽기 */}
       <PageSteps place={p} at={1} />

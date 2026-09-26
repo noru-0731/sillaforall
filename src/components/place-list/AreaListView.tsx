@@ -9,8 +9,7 @@ import { cn } from "@/lib/cn";
 import { Icon } from "@/components/icons";
 import PillTabs from "@/components/royal/PillTabs";
 import MapView from "@/components/map/MapView";
-import { DashNote } from "@/components/layout/Dash";
-import { PlaceCardList, cardHasDash } from "./PlaceCards";
+import { PlaceCardList } from "./PlaceCards";
 import type { AreaOption, CardPlace } from "./types";
 import s from "./AreaList.module.css";
 
@@ -92,8 +91,6 @@ export default function AreaListView({ cards, options }: { cards: CardPlace[]; o
         </div>
         {/* 쪽 제목(h1 권역별) 바로 아래 카드라 곳 이름은 h2(제목 차례를 건너뛰지 않게, 보이는 모양은 .tit 그대로) */}
         <PlaceCardList items={shown} headingLevel={2} />
-        {/* 보이는 카드에 "-" 칸이 있으면 카드 줄 바로 아래 뜻풀이 한 줄 */}
-        {shown.some(cardHasDash) && <DashNote className={s.dashNote} />}
       </div>
     </div>
   );

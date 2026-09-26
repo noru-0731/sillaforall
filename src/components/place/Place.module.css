@@ -267,6 +267,10 @@
   border: 0.1rem solid var(--rc-line-light);
   border-top: 0.2rem solid var(--rc-text);
 }
+/* 글이 없는 칸(09-27 사용자: 표시 없이 비움): 한 줄 높이는 남겨 상자가 납작해지지 않게 */
+.blankLine {
+  min-height: 2.4rem;
+}
 .dotList {
   display: flex;
   flex-direction: column;

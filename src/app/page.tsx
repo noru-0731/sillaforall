@@ -50,7 +50,7 @@ function heroSlides(): HeroSlide[] {
 const BAND = [
   { label: `${places.length}곳으로 떠나는 경주 여행`, href: "/map" },
   { label: "무장애 정보", href: "/barrier-free" },
-  { label: "거점 관광지", href: "/list/hub" },
+  { label: "덩어리 관광지", href: "/list/hub" },
 ];
 
 // 바로가기 줄(궁능: 궁궐안내▲ 왕릉안내 해설안내▲ 관람시간 오시는길). ▲는 눌러서 펼친다.
@@ -58,8 +58,8 @@ const QUICK: QuickItem[] = [
   { label: MENU[0].label, href: MENU[0].href, icon: "map", children: MENU[0].children?.map((c) => ({ label: c.label, href: c.href })) },
   { label: MENU[1].label, href: MENU[1].href, icon: "list" },
   { label: MENU[2].label, href: MENU[2].href, icon: "wheelchair", children: MENU[2].children?.map((c) => ({ label: c.label, href: c.href })) },
-  // 넷째 칸 이름은 메뉴 이름("거점별")·가운데 띠("거점 관광지")와 달라 새로 지은 글로 둔다(점선)
-  { label: "거점별 관광지", href: "/list/hub", icon: "hub", ph: true },
+  // 넷째 칸 이름: 예전 '덩어리별 관광지'(점선)를 09-27 점선 1차 정리로 메뉴 이름(ia.ts 2차 메뉴·왼쪽 막대 '덩어리별')으로 바꿨다. 다른 칸도 메뉴 이름이다
+  { label: MENU[1].children![2].label, href: MENU[1].children![2].href, icon: "hub" },
   { label: "이용 안내", href: "/about/guide", icon: "guide" },
 ];
 
@@ -97,7 +97,7 @@ function boardLists(): BoardList[] {
   return [
     { key: "listed", label: "무장애 정보가 있는 곳", pill: "정보가 있는 곳", href: "/barrier-free/listed", rows: listed.slice(0, 10).map((p) => row(p)) },
     { key: "unlisted", label: "무장애 정보가 없는 곳", pill: "정보가 없는 곳", href: "/barrier-free/unlisted", rows: unlisted.slice(0, 10).map((p) => row(p)) },
-    { key: "hub", label: "거점별", href: "/list/hub", rows: hub.slice(0, 10), hub: true },
+    { key: "hub", label: "덩어리별", href: "/list/hub", rows: hub.slice(0, 10), hub: true },
     // deck 갈래: 계단 없는 길(테마 쪽 차례 그대로 앞 10곳, 딱지는 권역)
     { key: "stepfree", label: "계단 없는 길", href: STEPFREE_HREF, rows: STEPFREE_PLACES.slice(0, 10).map((q) => row(places.find((p) => p.id === q.id)!)) },
   ];

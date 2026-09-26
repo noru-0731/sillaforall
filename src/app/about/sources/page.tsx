@@ -1,9 +1,13 @@
 // 사이트 소개 > 자료 출처와 저작권(궁능 가이드 > 저작권정책 모양).
-// 맨 위 안내 글(윗선 남색) → 공공누리 유형 카드(사진이 쓰는 두 유형) → • 줄과 (예시) 상자 → 출처별 칸 → 문의 상자.
+// 맨 위 안내 글(윗선 남색) → 공공누리 유형 카드(사진이 쓰는 두 유형) → • 줄과 (예시) 상자 → 출처별 칸.
+// 자리표시 글만 있던 '한국관광 데이터랩' 칸과 맨 아래 문의 상자는 09-27 사용자 결정("자리표시 줄 빼기")으로 뺐다.
 // KRDS 출처 문장은 행정안전부가 정한 그대로 둔다.
+// 09-27 점선 1차 정리(05_사이트/11_안건_점선_문구.md): 유형 카드 아래 이 누리집 쓰임 줄 둘, '사진은 …' 점 줄, 카카오 칸 '지도(오시는 길, 편의시설)' 줄,
+// 제공 기관 칸 괄호 설명, 이용허락 칸의 '… 표시 없음' 글은 뺐다(이용허락 칸은 빈칸, 09-27 사용자 "나머지는 그냥 비워요"와 같은 꼴).
+// 오픈스트리트맵 칸 두 줄은 앞말·괄호를 떼어 편의시설 구분 이름('화장실·벤치·쉼터')과 자료 이름('버스 정류장')만 남겼다.
 import type { Metadata } from "next";
 import { pageMetadata } from "@/site/og";
-import { Ph, Section, SubPage } from "@/components/layout/PageParts";
+import { Section, SubPage } from "@/components/layout/PageParts";
 import { Icon } from "@/components/icons";
 import { MENU } from "@/site/ia";
 import { koglCondition, koglLabel, type KoglType } from "@/data/photos";
@@ -36,18 +40,11 @@ function OutLink({ href, children }: { href: string; children: React.ReactNode }
 }
 
 /**
- * 제공 기관 칸: 괄호 앞 기관 이름은 포털에서 옮긴 글이라 그대로, 괄호 설명은 Claude가 적은 글이라 점선(가 35번).
- * 예: "행정안전부(지방자치단체 기초자료 등록)" → 행정안전부 + 점선 "(지방자치단체 기초자료 등록)"
+ * 제공 기관 칸: 괄호 앞 기관 이름(포털에서 옮긴 글)만 적는다. 괄호 설명(Claude가 적은 글, 가 35번에서 점선)은 09-27 점선 1차 정리로 뺐다.
+ * 예: "행정안전부(지방자치단체 기초자료 등록)" → "행정안전부"
  */
-function providerCell(provider: string): React.ReactNode {
-  const m = provider.match(/^([^(]+)(\(.+\))$/);
-  if (!m) return provider;
-  return (
-    <>
-      {m[1]}
-      <Ph>{m[2]}</Ph>
-    </>
-  );
+function providerCell(provider: string): string {
+  return provider.replace(/\(.+\)$/, "");
 }
 
 /** 공공누리 표시 그림 대신 글자 상자 */
@@ -98,9 +95,6 @@ export default function SourcesPage() {
             <div className={s.cardBody}>
               <KoglText type="Type1" />
               <p>공공저작물의 출처를 명시하고, 상업적 활용 여부에 관계없이 이용하며, 2차적저작물 작성 등 변경하여 이용할 수 있다.</p>
-              <p className={s.cardUse}>
-                <Ph>이 누리집에서는 배너, 카드처럼 사진을 잘라 쓰는 자리에 씁니다.</Ph>
-              </p>
             </div>
           </li>
           <li className={s.card}>
@@ -111,20 +105,11 @@ export default function SourcesPage() {
                 공공저작물의 출처를 명시하여, 상업적 활용 여부에 관계없이 이용할 수 있으나, 2차적저작물 작성 등 변경하여 이용하는 것은
                 금지된다.
               </p>
-              <p className={s.cardUse}>
-                <Ph>
-                  이 누리집은 제3유형 사진을 자르지 않고 사진 전체가 보이게 씁니다. 남는 곳은 단색 바탕으로 두고, 흐리게 하거나 글자를
-                  겹치지 않습니다.
-                </Ph>
-              </p>
             </div>
           </li>
         </ul>
 
         <ul className={s.bullets}>
-          <li>
-            <Ph>사진은 한국관광공사 관광정보(TourAPI)와 관광사진 정보(한국관광콘텐츠랩)의 사진입니다.</Ph>
-          </li>
           <li>
             공공누리 제1유형부터 제4유형은 출처를 반드시 표시하여야 합니다.
             <div className={s.example}>
@@ -175,7 +160,7 @@ export default function SourcesPage() {
               return [
                 src.name.replace(/\(.*\)$/, ""),
                 providerCell(src.provider),
-                src.license.startsWith("이용허락범위 제한 없음") ? "이용허락범위 제한 없음" : <Ph key="l">표준데이터 쪽에 이용허락 표시 없음</Ph>,
+                src.license.startsWith("이용허락범위 제한 없음") ? "이용허락범위 제한 없음" : "",
                 REF_DATE[k],
                 <OutLink key="u" href={src.url}>
                   {src.url.replace(/^https:\/\//, "")}
@@ -218,7 +203,7 @@ export default function SourcesPage() {
             [
               "무장애 여행정보",
               "경주시",
-              <Ph key="l">누리집 쪽에 공공누리 표시 없음</Ph>,
+              "",
               `${GJ_SOURCE.checked} 확인`,
               <span key="u" className={s.plainUrl}>
                 {GJ_SOURCE.url.replace(/^https:\/\//, "")}
@@ -227,7 +212,7 @@ export default function SourcesPage() {
             [
               "권역별 관광지",
               "경주시",
-              <Ph key="l">누리집 쪽에 공공누리 표시 없음</Ph>,
+              "",
               "2026-09-26 확인",
               <span key="u" className={s.plainUrl}>
                 {AREAS6_URL.replace(/^https:\/\//, "")}
@@ -247,7 +232,7 @@ export default function SourcesPage() {
           rows={stepFreeSourceRows().map((r) => [
             r.name,
             r.provider,
-            r.licensePh ? <Ph key="l">{r.license}</Ph> : r.license,
+            r.licensePh ? "" : r.license,
             r.refDate,
             r.link ? (
               <OutLink key="u" href={r.url}>
@@ -276,9 +261,6 @@ export default function SourcesPage() {
       {/* 오시는 길·편의시설 지도(components/map/PlaceMap). 카카오 지도가 뜨지 않을 때는 오픈스트리트맵 지도(아래 칸)로 그린다 */}
       <Section id="kakao" title="Kakao 지도 API">
         <ul className={`${s.bullets} ${s.bulletsTight}`}>
-          <li>
-            <Ph>지도(오시는 길, 편의시설)</Ph>
-          </li>
           <li>© Kakao Corp.</li>
         </ul>
         <p>
@@ -289,11 +271,11 @@ export default function SourcesPage() {
       <Section id="osm" title="오픈스트리트맵(OpenStreetMap)">
         <ul className={`${s.bullets} ${s.bulletsTight}`}>
           <li>
-            <Ph>관광지 둘레 화장실·벤치·쉼터</Ph>
+            화장실·벤치·쉼터
           </li>
           <li>
             {/* 노선 번호는 TAGO 로 바꿨다. TAGO 에서 짝을 못 찾아 오픈스트리트맵 노선이 남은 정류장이 있을 때만 '노선 번호'까지 */}
-            <Ph>{BUS_OSM_ROUTES_LEFT ? "버스 정류장·노선 번호(오시는 길 대중교통)" : "버스 정류장(오시는 길 대중교통)"}</Ph>
+            {BUS_OSM_ROUTES_LEFT ? "버스 정류장·노선 번호" : "버스 정류장"}
           </li>
           <li>© OpenStreetMap 기여자</li>
           <li>ODbL(Open Database License)</li>
@@ -302,20 +284,6 @@ export default function SourcesPage() {
           <OutLink href="https://www.openstreetmap.org/copyright">www.openstreetmap.org/copyright</OutLink>
         </p>
       </Section>
-
-      <Section id="datalab" title="한국관광 데이터랩">
-        <p className={s.sourceText}>
-          <Ph>분석에 쓴 자료의 이름, 기간, 항목을 적습니다.</Ph>
-        </p>
-      </Section>
-
-      {/* 맨 아래 문의 상자(궁능 "저작권 정책 관련 문의") */}
-      <div className={s.contact}>
-        <p>
-          <strong>자료 출처 관련 문의 : </strong>
-          <Ph>만든 팀 연락처를 적을 자리</Ph>
-        </p>
-      </div>
     </SubPage>
   );
 }

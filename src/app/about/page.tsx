@@ -1,10 +1,13 @@
 // 사이트 소개 > 만든 까닭(궁능 기관소개 > 인사말 모양).
 // 큰 사진(제1유형, 아래가 흐려짐) → 왼쪽 표장(우리 아이콘 src/app/icon.svg) + 오른쪽 큰 제목, 파란 환영 한 줄, 본문.
 // 본문은 예전 /about 글(모두 임시 문구)을 문단으로 옮겼다. 궁능 문장을 바꿔 쓴 줄만 <Ph> 없이 둔다.
+// '…적습니다' 자리표시 네 줄은 09-27 사용자 결정("자리표시 줄 빼기")으로 뺐다.
+// 첫 문단은 09-27 점선 1차 정리로 첫 쪽 '경주 관광지' 칸 설명 글(궁능 첫 쪽 문장을 바꿔 쓴 글, 점선 없음)과 같은 문장으로 바꿨다.
 import type { Metadata } from "next";
 import { pageMetadata } from "@/site/og";
 import Link from "next/link";
 import { Ph, SubPage } from "@/components/layout/PageParts";
+import { withJosa } from "@/lib/josa";
 import { MENU, SITE_NAME } from "@/site/ia";
 import { places, placeById } from "@/data";
 import { coverPhoto, heroPhoto, localPhoto, photoCreditOf } from "@/data/photos";
@@ -75,15 +78,8 @@ export default function AboutPage() {
           <p className={s.gWelcome}>{SITE_NAME} 누리집 방문을 환영합니다.</p>
 
           <div className={s.gProse}>
-            {/* 예전 /about "보고서 요약" */}
             <p>
-              <Ph>분석에서 드러난 문제를 두세 문장으로 적습니다.</Ph>
-            </p>
-            <p>
-              <Ph>문제를 보여 주는 근거를 적습니다.</Ph>
-            </p>
-            <p>
-              <Ph>경주 관광지 {places.length}곳의 위치와 무장애 여행 정보를 한곳에 모읍니다.</Ph>
+              {withJosa(SITE_NAME, "은/는")} 한눈에 볼 수 있는 경주 관광지 {places.length}곳의 위치와 무장애 정보를 제공합니다.
             </p>
             <ul>
               <li>
@@ -94,13 +90,6 @@ export default function AboutPage() {
             </ul>
             <p>
               <Link href={SOURCES.href}>{SOURCES.label}</Link>
-            </p>
-            {/* 예전 /about "만든 사람", "관련 제출물" */}
-            <p>
-              <Ph>만든 팀과 맡은 일을 적습니다.</Ph>
-            </p>
-            <p>
-              <Ph>2026 한국관광 데이터랩 활용 경진대회 제출물과의 관계를 적습니다.</Ph>
             </p>
             <p>감사합니다.</p>
             <p>{SITE_NAME} 만든 팀</p>

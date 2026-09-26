@@ -7,7 +7,6 @@
 // - 노선이 오픈스트리트맵으로 남은 정류장(src osm)은 그 줄 아래에 오픈스트리트맵 출처 줄.
 // 자료: data/bus.json(도구/12_버스_문단_사이트.py → 도구/20_버스_TAGO.py).
 import { Fragment } from "react";
-import { DASH } from "@/components/layout/Dash";
 import { Icon } from "@/components/icons";
 import { BoardTable } from "@/components/royal";
 import { SourceLines } from "@/components/place/Amenities";
@@ -16,8 +15,9 @@ import s from "./Place.module.css";
 
 const fmtM = (m: number) => `${m.toLocaleString("ko-KR")}m`;
 export const stopTitle = (name: string, no: string | null) => `${name} 정류장${no ? `(${no})` : ""}`;
-const val = (v: string | null) => v ?? DASH;
-const mins = (v: number | null) => (v === null ? DASH : `${v}분`);
+// 빈 값은 표시 없이 비운다(09-27 사용자). 노선이 없는 정류장은 '노선' 줄을 두지 않는다
+const val = (v: string | null) => v ?? "";
+const mins = (v: number | null) => (v === null ? "" : `${v}분`);
 
 /**
  * 노선번호 칸 글. 글자는 그대로 두고 줄바꿈 자리만 정한다(09-27 점검: 390·가장 크게에서 '800( / 기본-', '100- / 1'처럼 끊겼다).
@@ -43,17 +43,6 @@ function RouteNo({ no }: { no: string }) {
       )}
     </span>
   );
-}
-
-/** 이 정류장들 가운데 화면에 "-"가 나오는 것이 있는지(노선 없음, 노선 줄의 빈 칸). print 면 인쇄 쪽 표의 칸(첫차시간·막차시간)만 본다 */
-export function busHasDash(stops: BusStop[], print = false): boolean {
-  return stops.some((b) => {
-    if (!b.routes.length) return true;
-    const ls = linesOf(b);
-    if (print) return ls.some((l) => !l.first || !l.last);
-    const iv = intervalKeysOf(ls);
-    return ls.some((l) => !l.start || !l.end || !l.first || !l.last || iv.some((k) => l[k.key] === null));
-  });
 }
 
 function LineCell({ l, iv }: { l: BusLine; iv: ReturnType<typeof intervalKeysOf> }) {
@@ -83,7 +72,7 @@ export function BusStopUnits({ stops }: { stops: BusStop[] }) {
         const tit = stopTitle(b.name, b.stopNo);
         const ls = linesOf(b);
         const iv = intervalKeysOf(ls);
-        const routeTxt = `노선 ${b.routes.length ? b.routes.join(", ") : DASH}`;
+        const routeTxt = `노선 ${b.routes.join(", ")}`;
         return (
           <div key={b.stopNo ?? b.name} className={s.transUnit}>
             <p className={s.transUnitTit}>{tit}</p>
@@ -108,9 +97,9 @@ export function BusStopUnits({ stops }: { stops: BusStop[] }) {
                   rows={ls.map((l) => [<RouteNo key="n" no={l.no} />, <LineCell key={l.no} l={l} iv={iv} />])}
                 />
               </details>
-            ) : (
+            ) : b.routes.length ? (
               <p className={`${s.transUnitTxt} ${b.distM !== null ? s.busNoGap : ""}`}>{routeTxt}</p>
-            )}
+            ) : null}
             {b.src === "osm" && <SourceLines lines={[OSM_SOURCE_LINE]} />}
           </div>
         );
@@ -145,10 +134,13 @@ export function BusStopUnitsPrint({ stops, keepClass }: { stops: BusStop[]; keep
                 />
               </>
             ) : (
-              <p className={s.transUnitTxt}>
-                {b.distM !== null && `직선거리 ${fmtM(b.distM)}\n`}
-                노선 {b.routes.length ? b.routes.join(", ") : DASH}
-              </p>
+              (b.distM !== null || b.routes.length > 0) && (
+                <p className={s.transUnitTxt}>
+                  {[b.distM !== null ? `직선거리 ${fmtM(b.distM)}` : null, b.routes.length ? `노선 ${b.routes.join(", ")}` : null]
+                    .filter(Boolean)
+                    .join("\n")}
+                </p>
+              )
             )}
             {b.src === "osm" && <SourceLines lines={[OSM_SOURCE_LINE]} />}
           </div>

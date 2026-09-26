@@ -8,11 +8,11 @@
 import { createContext, useContext, useId, useMemo, useState } from "react";
 import Link from "next/link";
 import PillTabs from "@/components/royal/PillTabs";
-import { Ph } from "@/components/layout/Ph";
-import { DASH } from "@/components/layout/Dash";
 import { Icon } from "@/components/icons";
 import type { AreaKey } from "@/data/types";
 import s from "../bf.module.css";
+import { FillText } from "@/components/place/FillText";
+import type { Fill } from "@/data/fill";
 
 export type BoardArea = { key: AreaKey; label: string };
 export type BoardRow = {
@@ -23,6 +23,8 @@ export type BoardRow = {
   areaLabel: string;
   /** 무장애 정보가 있는 곳: 세 항목의 무장애 여행 정보 글(붙은 줄은 나눔). 없으면 null */
   three?: { parking: string | null; walk: string | null; toilet: string | null };
+  /** 세 항목 글이 없는 칸을 채울 값(data/fill.ts, 관람 도우미·무장애 정보 쪽과 같은 규칙). 없으면 빈칸 */
+  fill?: { parking: Fill | null; walk: Fill | null; toilet: Fill | null };
   /** 무장애 정보가 있는 곳: 글이 있는 칸이 있는 무장애 묶음 이름(보이기만 한다) */
   groups?: string[];
   /** 무장애 정보가 없는 곳: 가까운 등록 관광지(없으면 null) */
@@ -66,10 +68,14 @@ export function BoardPills({ areas }: { areas: BoardArea[] }) {
 
 const colorOf = (k: AreaKey) => ({ "--c": `var(--rc-area-${k})` }) as React.CSSProperties;
 
-/** 무장애 여행 정보 글 그대로. 비어 있으면 "-"(components/layout/Dash.tsx, 뜻풀이는 표 아래 ※ 줄) */
-function ThreeText({ text }: { text: string | null }) {
+/** 무장애 여행 정보 글 그대로. 비어 있으면 채운 값과 자료 꼬리, 그것도 없으면 빈칸(09-27 사용자: 채울 수 있는 대로 채우고 나머지는 비움) */
+function ThreeText({ text, fill }: { text: string | null; fill?: Fill | null }) {
   if (text) return <span className={s.threeTxt}>{text}</span>;
-  return <span className={`${s.mark} ${s.markOff}`}>{DASH}</span>;
+  return fill ? (
+    <span className={s.threeTxt}>
+      <FillText fill={fill} />
+    </span>
+  ) : null;
 }
 
 /** 무장애 묶음 이름표(열린관광 목록 카드 이름표 모양). 누르지 않는 표시 */
@@ -90,7 +96,7 @@ function GroupTags({ groups }: { groups?: string[] }) {
 /**
  * 곳 수 + 검색 줄 + 표(넓은 화면) / 목록(좁은 화면).
  * (무장애 시안 bf-draft: 무장애 조건 거르기 줄과 주소 뒤 ?조건= 읽기를 뺐다. FilterPills·barrierConds·useConds 파일은 그대로 둔다.)
- * kind="listed": 번호 / 권역 / 관광지(+ 무장애 묶음 이름표) / 주차 / 접근로 / 화장실(무장애 여행 정보 글 한 줄, 없으면 -)
+ * kind="listed": 번호 / 권역 / 관광지(+ 무장애 묶음 이름표) / 주차 / 접근로 / 화장실(무장애 여행 정보 글 한 줄, 없으면 빈칸)
  * kind="unlisted": 번호 / 권역 / 관광지 / 읍면동 / 가까운 등록 관광지
  */
 export function BoardList({
@@ -200,7 +206,7 @@ export function BoardList({
                 {kind === "listed" ? (
                   keys.map((k) => (
                     <th scope="col" key={k}>
-                      <Ph>{threeText[k]}</Ph>
+                      {threeText[k]}
                     </th>
                   ))
                 ) : (
@@ -236,19 +242,14 @@ export function BoardList({
                   {kind === "listed" && r.three ? (
                     keys.map((k) => (
                       <td key={k} className={s.three}>
-                        <ThreeText text={r.three![k]} />
+                        <ThreeText text={r.three![k]} fill={r.fill?.[k]} />
                       </td>
                     ))
                   ) : (
                     <>
                       <td>{r.dong}</td>
                       <td className={s.near}>
-                        {r.nearest ?? (
-                          <>
-                            <span aria-hidden="true">−</span>
-                            <span className="sr-only">없음</span>
-                          </>
-                        )}
+                        {r.nearest ?? <span className="sr-only">없음</span>}
                       </td>
                     </>
                   )}
@@ -274,11 +275,9 @@ export function BoardList({
                 <dl className={s.mThree}>
                   {keys.map((k) => (
                     <div key={k}>
-                      <dt>
-                        <Ph>{threeText[k]}</Ph>
-                      </dt>
+                      <dt>{threeText[k]}</dt>
                       <dd>
-                        <ThreeText text={r.three![k]} />
+                        <ThreeText text={r.three![k]} fill={r.fill?.[k]} />
                       </dd>
                     </div>
                   ))}
