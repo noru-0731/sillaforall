@@ -277,7 +277,7 @@ export default async function PlaceDirections({ params }: Props) {
               className={s.tipsAfterTable}
               items={[
                 <Ph key="a">
-                  번호는 위 지도의 번호와 같습니다. 거리는 두 곳 사이의 직선거리입니다. {NEAR_RADII.parking}m 안의 공영주차장과, 장애인전용주차구역이 있는 가장 가까운 곳(1km 안)을 보입니다.
+                  번호는 위 지도의 번호와 같습니다. 거리는 두 곳 사이의 직선거리입니다. {NEAR_RADII.parking}m 안의 공영주차장과, 장애인 전용 주차 구역이 있는 가장 가까운 곳(1km 안)을 보입니다.
                 </Ph>,
               ]}
             />
