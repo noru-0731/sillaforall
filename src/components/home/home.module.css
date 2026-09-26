@@ -961,8 +961,8 @@
     transform: translateX(50%);
     padding: 0.5rem 1.5rem; /* 궁능 390 185×58, 안쪽 5 15 */
   }
-  /* 가운데 띠: 궁능 390처럼 한 줄(사진 345 + 띠 45 = 390). 글자는 16 아래로 줄이지 않고,
-     큰 글자 설정 등으로 넘치면 띠 안에서 옆으로 밀어 본다. */
+  /* 가운데 띠: 궁능 390처럼 한 줄(사진 345 + 띠 45 = 390). 글자는 16 아래로 줄이지 않는다.
+     한 줄에 다 들어가지 않는 좁은 폭(큰 글자 설정 등)은 아래 360 미만 규칙에서 두 줄로 바꾼다(가 56번). */
   .band {
     display: block;
     min-height: 4.5rem;
@@ -1040,5 +1040,28 @@
   }
   .mapBar {
     height: 6.4rem;
+  }
+}
+
+/* 가 56번: 가운데 띠 세 칸이 한 줄에 다 들어가지 않는 폭(본문 칸 360 미만: 휴대전화 390의 조금 크게·크게·가장 크게,
+   320·360 폭 휴대전화 등)에서는 옆으로 미는 숨은 스크롤 대신 두 줄로 모두 보인다.
+   첫 칸("61곳으로 떠나는 경주 여행")이 한 줄, 나머지 두 칸이 다음 줄(사이 세로줄은 둘째 줄 안에만).
+   세 칸 한 줄 폭은 글자 16에서 약 344px + 띠 좌우 안쪽 12px(도구로 잰 값). 기본 크기 390의 한 줄 모양은 그대로다. */
+@container rc-main (max-width: 359.98px) {
+  .bandList {
+    flex-wrap: wrap;
+    justify-content: center;
+    overflow-x: visible;
+  }
+  .bandList li:first-child {
+    flex: 0 0 100%;
+    justify-content: center;
+  }
+  .bandList li:nth-child(2)::before {
+    display: none;
+  }
+  .bandLink {
+    white-space: normal;
+    text-align: center;
   }
 }
