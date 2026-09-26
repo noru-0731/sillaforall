@@ -358,6 +358,31 @@
   height: 2.4rem;
 }
 
+/* 계단 없는 길 표시(09-27): 점 옆 작은 원 안 걷는 사람(사이트 아이콘 walk, 무장애 정보 쪽 '접근로' 그림). 크기는 MapView.tsx R_SF 와 짝 */
+.sfMark {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  width: 1.6rem;
+  height: 1.6rem;
+  margin: -0.8rem 0 0 -0.8rem;
+  border-radius: 50%;
+  background: var(--rc-bg);
+  border: 0.15rem solid var(--map-on);
+  color: var(--map-on);
+  pointer-events: none;
+}
+.sfSwatch {
+  position: static;
+  margin: 0;
+}
+.legendLink {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+}
+
 /* 이름표 */
 .label {
   position: absolute;

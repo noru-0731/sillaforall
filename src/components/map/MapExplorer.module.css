@@ -116,6 +116,40 @@
   text-decoration-thickness: 0.2rem;
   text-underline-offset: 0.4rem;
 }
+/* 세부 지도(카카오) 쪽: 이름 앞 번호 네모(지도 번호 네모와 같은 번호·색, AreaKakaoMap.module.css). 네모 24 = 궁능 범례 칸 */
+.nameNum {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+}
+/* 번호 네모 곁 이름: 좁은 칸(휴대전화 두 칸 + 글자 가장 크게)에서 긴 이름이 옆 칸으로 넘치지 않게 필요할 때만 낱말 안에서 줄을 바꾼다 */
+.nameTxt {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.num {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  min-width: 2.4rem;
+  height: 2.4rem;
+  margin-top: -0.05rem;
+  padding: 0 0.4rem;
+  border-radius: 0.3rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1;
+  text-decoration: none;
+}
+.numOn {
+  background: #17106e;
+  color: #ffffff;
+}
+.numOff {
+  background: #ffffff;
+  color: #17106e;
+  box-shadow: inset 0 0 0 0.2rem #17106e;
+}
 .empty {
   margin-top: 4rem;
   padding: 3rem;
@@ -214,6 +248,11 @@
   .name {
     padding: 1.2rem 1.5rem;
     font-size: 1.7rem;
+  }
+  /* 두 칸 격자에서는 번호 네모를 이름 위에 둔다(이름이 칸 폭을 다 쓰게) */
+  .nameNum {
+    flex-direction: column;
+    gap: 0.6rem;
   }
   .detailTit {
     margin-bottom: 2rem;

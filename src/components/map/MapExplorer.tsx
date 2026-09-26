@@ -7,7 +7,10 @@
 // (무장애 시안 bf-draft: 무장애 조건 거르기 줄과 ?조건= 읽기를 뺐다. 전체/무장애 정보가 있는 곳/없는 곳 나눔은 그대로.)
 // 가 62번: 보이는 곳이 0곳이면 ⓘ 안내 상자와 거점 단추를 숨긴다(새 글은 넣지 않는다).
 // 가 22번: 개요가 없는 곳은 소개 쪽과 같은 글 "등록된 소개 글이 없습니다."(레퍼런스 글이라 점선 없음).
-import { useId, useMemo, useState, useSyncExternalStore } from "react";
+// 09-27 map2: 권역 쪽(/map/[권역])은 카카오 SDK 가 뜨면 도식 지도 대신 카카오 세부 지도(AreaKakaoMap)를 그린다(판정은 여기서 한 번,
+// kakaoSdk.loadKakao). 뜨지 않으면(키 없음·오류·8초) 지금까지의 도식 지도(MapView) 그대로. 경주 전체(/map)는 늘 도식 지도.
+// 세부 지도일 때는 이름 격자 이름 앞에 지도 번호 네모와 같은 번호(차례 + 1)를 둔다. 계단 없는 길 표시는 두 지도 모두(stepFree).
+import { useEffect, useId, useMemo, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { placeById } from "@/data";
 import type { AreaKey, Place } from "@/data";
@@ -18,10 +21,14 @@ import { photoCreditOf } from "@/data/credit";
 import { SegTabs } from "@/components/royal/PillTabs";
 import { InfoBox } from "@/components/royal/Bits";
 import MapView from "./MapView";
+import AreaKakaoMap from "./AreaKakaoMap";
+import { loadKakao } from "./kakaoSdk";
 import type { ExplorerPhoto } from "./explorerData";
 import s from "./MapExplorer.module.css";
 
 type Seg = "all" | "listed" | "unlisted";
+/** 권역 쪽 지도 판: 판정 전 · 카카오 세부 지도 · 도식 지도(돌아가기) */
+type Engine = "wait" | "kakao" | "plan";
 
 const noSubscribe = () => () => {};
 const readPlaceParam = () => new URLSearchParams(window.location.search).get("place");
@@ -41,6 +48,7 @@ export default function MapExplorer({
   hubs,
   photos,
   kogl,
+  stepFree,
 }: {
   view: "full" | AreaKey;
   /** 보일 관광지(가나다순) */
@@ -51,6 +59,8 @@ export default function MapExplorer({
   photos: Record<string, ExplorerPhoto>;
   /** 공공누리 글자 상자(서버에서 유형별로 그려 넘김). 관광사진 정보 사진은 "by:촬영자" 칸(촬영자 출처 줄이 붙은 상자) */
   kogl: Record<string, React.ReactNode>;
+  /** 계단 없는 길 곳과 그 쪽 주소(지도 표시와 범례 한 줄) */
+  stepFree?: { ids: string[]; href: string };
 }) {
   const uid = useId();
   const hubLabelId = `${uid}-hub`;
@@ -63,6 +73,19 @@ export default function MapExplorer({
   const [selId, setSelId] = useState<string | null>(null);
   // 주소의 ?place= (서버에서 그릴 때는 없음 → 브라우저에서 한 번 더 그린다)
   const placeParam = useSyncExternalStore(noSubscribe, readPlaceParam, () => null);
+  // 권역 쪽 지도 판(경주 전체는 늘 도식 지도라 묻지 않는다)
+  const [engine, setEngine] = useState<Engine>("wait");
+  useEffect(() => {
+    if (view === "full") return;
+    let off = false;
+    loadKakao().then((ok) => {
+      if (!off) setEngine(ok ? "kakao" : "plan");
+    });
+    return () => {
+      off = true;
+    };
+  }, [view]);
+  const numbered = view !== "full" && engine === "kakao";
 
   const list = all.filter((p) => seg === "all" || (seg === "listed" ? p.registered : !p.registered));
   const wanted = selId ?? placeParam;
@@ -115,14 +138,29 @@ export default function MapExplorer({
       </div>
 
       <div className={s.map}>
-        <MapView
-          view={view}
-          // 빈 배열은 "전부"로 읽히므로 거른 결과가 0곳이면 없는 id 하나를 넘긴다
-          placeIds={list.length ? list.map((p) => p.id) : ["-"]}
-          highlightId={sel?.id}
-          emphasisIds={emph}
-          onSelectPlace={choose}
-        />
+        {view !== "full" && engine !== "plan" ? (
+          <AreaKakaoMap
+            area={view}
+            live={engine === "kakao"}
+            fitPlaces={all}
+            places={list}
+            highlightId={sel?.id}
+            emphasisIds={emph}
+            onSelectPlace={choose}
+            stepFree={stepFree}
+            hubLegend={hubs.length > 0}
+          />
+        ) : (
+          <MapView
+            view={view}
+            // 빈 배열은 "전부"로 읽히므로 거른 결과가 0곳이면 없는 id 하나를 넘긴다
+            placeIds={list.length ? list.map((p) => p.id) : ["-"]}
+            highlightId={sel?.id}
+            emphasisIds={emph}
+            onSelectPlace={choose}
+            stepFree={stepFree}
+          />
+        )}
       </div>
 
       {/* 보이는 곳이 0곳이면 안내 상자를 숨긴다 */}
@@ -130,12 +168,14 @@ export default function MapExplorer({
 
       {list.length > 0 ? (
         <ul className={s.names} aria-label="관광지 이름">
-          {list.map((p) => {
+          {list.map((p, i) => {
             const on = sel?.id === p.id;
             return (
               <li key={p.id}>
-                <button type="button" className={cn(s.name, on && s.nameOn)} aria-pressed={on} aria-controls={detailId} onClick={() => choose(p.id)}>
-                  {p.name}
+                <button type="button" className={cn(s.name, on && s.nameOn, numbered && s.nameNum)} aria-pressed={on} aria-controls={detailId} onClick={() => choose(p.id)}>
+                  {/* 세부 지도의 번호 네모와 같은 번호·색(무장애 정보가 있는 곳은 채움, 없는 곳은 테두리) */}
+                  {numbered && <span className={cn(s.num, p.registered ? s.numOn : s.numOff)}>{i + 1}</span>}
+                  {numbered ? <span className={s.nameTxt}>{p.name}</span> : p.name}
                 </button>
               </li>
             );
