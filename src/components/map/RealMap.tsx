@@ -45,7 +45,7 @@ type Props = {
 /** 지도 위 편의시설 점 하나. kind는 RealMap.module.css 의 pt_{kind} / dot_{kind} 색 */
 export type MapPoint = {
   key: string;
-  kind: "toiletA" | "toilet" | "parking" | "charger" | "bench" | "shelter";
+  kind: "toiletA" | "toilet" | "parking" | "charger" | "food" | "bench" | "shelter";
   lat: number;
   lon: number;
   /** 네모 안 글자(번호). 없으면 작은 점 */
@@ -117,6 +117,8 @@ function LegendGlyph({ kind }: { kind: LegendItem["kind"] }) {
       return svg(<path d="M9 18V6h4.5a3.5 3.5 0 0 1 0 7H9" />);
     case "charger":
       return svg(<path d="M13 3 6.5 13H12l-1 8 6.5-10H12z" />);
+    case "food":
+      return svg(<path d="M7 3v18M4 3v5a3 3 0 0 0 6 0V3M17 21V3c-2.2 1.2-3.5 3.8-3.5 7v3H17" />);
     case "place":
       return <Icon name="pin" size={18} strokeWidth={2} />;
     default:

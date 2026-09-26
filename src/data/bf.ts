@@ -2,12 +2,15 @@
 // - barrierfree.json: 관광공사 무장애 여행 정보 28칸(곳마다), 짝 못 지은 곳의 가까운 후보. 만드는 곳: 도구/06_편의시설.py
 // - amenities.json: 곳마다 가까운 편의시설 요약, 배리어프리 문화예술관광지 짝, 시 전체 창구(교통약자이동지원센터), 자료 출처. 같은 도구.
 // - amenities_near.json: 지도에 찍을 가까운 화장실·공영주차장·충전기(번호 매김)와 벤치·쉼터. 만드는 곳: 도구/10_편의시설_지도.py
+// - food_near.json: 1km 안 관광공사 무장애 여행 정보 음식점(유형 39, 가까운 순 몇 곳). 만드는 곳: 도구/14_무장애_음식점.py
+//   amenitiesOf 에서 편의시설 목록 끝에 번호를 이어 붙인다.
 // 칸 이름은 원본 자료의 칸 이름을 그대로 쓴다(새 글이 아니다). 거리는 모두 직선거리(m).
 // 무장애 칸 글은 줄바꿈이 빠져 붙은 자리만 줄을 나눠 돌려준다(lib/breaks.ts bfLines, 글자는 그대로).
 import { bfLines } from "@/lib/breaks";
 import bfRaw from "./barrierfree.json";
 import amRaw from "./amenities.json";
 import nearRaw from "./amenities_near.json";
+import foodRaw from "./food_near.json";
 
 // ───────── 관광공사 무장애 여행 정보 28칸 ─────────
 type Fields = Record<string, string | null>;
@@ -115,8 +118,8 @@ export const SOURCES = AM.sources;
 export const MOBILITY = AM.cityWide.mobilityCenter;
 
 // ───────── 지도에 찍을 가까운 편의시설 ─────────
-export type AmenityKind = "toiletA" | "toilet" | "parking" | "charger";
-export type AmenitySrc = "toiletStd" | "osm" | "korwith" | "bfCulture" | "parking" | "charger";
+export type AmenityKind = "toiletA" | "toilet" | "parking" | "charger" | "food";
+export type AmenitySrc = "toiletStd" | "osm" | "korwith" | "bfCulture" | "parking" | "charger" | "korwithFood";
 export type AmenityItem = {
   no: number;
   kind: AmenityKind;
@@ -137,9 +140,19 @@ const NEAR = nearRaw as unknown as {
 };
 export const NEAR_RADII = NEAR.meta.radii;
 
-/** 가까운 편의시설(좌표를 빌린 두 곳은 null) */
+const FOOD = foodRaw as unknown as {
+  meta: { fetched: string; radius: number; cap: number };
+  places: Record<string, { name: string; inRadius: number; items: Omit<AmenityItem, "no">[] }>;
+};
+
+/** 가까운 편의시설(좌표를 빌린 두 곳은 null). 무장애 음식점은 끝에 번호를 이어 붙인다 */
 export function amenitiesOf(id: string): NearPlace | null {
-  return NEAR.places[id] ?? null;
+  const base = NEAR.places[id];
+  if (!base) return null;
+  const food = FOOD.places[id]?.items ?? [];
+  if (!food.length) return base;
+  const last = base.items.reduce((n, i) => Math.max(n, i.no), 0);
+  return { ...base, items: [...base.items, ...food.map((f, n) => ({ ...f, no: last + n + 1 }))] };
 }
 
 /** 가장 가까운 장애인 화장실 한 곳(관람 도우미 칸) */
@@ -153,6 +166,7 @@ export const KIND_LABEL: Record<AmenityKind | "bench" | "shelter", string> = {
   toilet: "화장실",
   parking: "공영주차장",
   charger: "전동휠체어 급속충전기",
+  food: "음식점",
   bench: "벤치",
   shelter: "쉼터",
 };
@@ -165,6 +179,7 @@ export const SRC_LABEL: Record<AmenitySrc, string> = {
   bfCulture: "배리어프리 문화예술관광지",
   parking: "주차장정보 표준데이터",
   charger: "전동휠체어급속충전기 표준데이터",
+  korwithFood: "한국관광공사 무장애 여행 정보",
 };
 
 /** 출처 줄: "자료: 이름(기준일)" 꼴. src 차례 = SRC_LABEL 차례 */
@@ -179,6 +194,7 @@ export function sourceLines(srcs: Iterable<AmenitySrc | "osmRest">): string[] {
   if (set.has("bfCulture")) lines.push(`자료: ${S.bfCulture.name}(최종작성일 2022-11-25)`);
   if (set.has("parking")) lines.push(`자료: ${S.parking.name}(${ref(S.parking)})`);
   if (set.has("charger")) lines.push(`자료: ${S.charger.name}(${ref(S.charger)})`);
+  if (set.has("korwithFood")) lines.push(`자료: ${S.korwith.name.replace(/\(.*\)$/, "")} 음식점(${FOOD.meta.fetched} 받음)`);
   if (set.has("osm") || set.has("osmRest")) lines.push(`자료: © OpenStreetMap 기여자, ODbL(${S.osm.fetched.slice(0, 10)} 받음)`);
   return lines;
 }
