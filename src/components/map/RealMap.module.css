@@ -258,6 +258,9 @@
 .k_charger {
   --k: var(--am-charger);
 }
+.k_food {
+  --k: var(--am-food); /* 음식점(food 갈래)을 더할 때 빠져 제자리 점과 선이 검정으로 그려졌다 */
+}
 /* 벤치·쉼터 작은 점 */
 .dot {
   display: block;
