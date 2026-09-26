@@ -8,7 +8,7 @@ export type { Place, Photo };
 
 export { anyPhoto, coverPhoto, photosOf, type1List };
 
-/** 권역 이름("보문·불국사" 등) */
+/** 권역 이름("보문관광단지권" 등) */
 export function areaLabelOf(p: Place): string {
   const k = areaOf(p);
   return areas.find((a) => a.key === k)?.label ?? k;
@@ -53,7 +53,7 @@ export type NearbySlide = { id: string; name: string; dong: string; url: string;
 
 /**
  * 서브메인 오른쪽 넘기기 판: 같은 권역 다른 관광지의 제1유형 사진(가까운 차례).
- * 같은 권역에 제1유형 사진이 있는 곳이 하나도 없으면(서쪽·남쪽 읍면의 화랑의언덕 등) 권역을 가리지 않고 가까운 곳에서 고른다.
+ * 같은 권역에 제1유형 사진이 있는 곳이 하나도 없으면 권역을 가리지 않고 가까운 곳에서 고른다(권역 여섯에서는 그런 곳이 없다).
  */
 export function nearbySlides(p: Place, n = 8): NearbySlide[] {
   const pick = (list: Place[]) =>

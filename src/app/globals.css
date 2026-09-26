@@ -98,12 +98,14 @@
   --rc-photo-empty: #e9e9e9; /* 서브메인 사진 띠: 제3유형 필름 줄의 남는 곳, 사진 없는 판 */
   --rc-focus: #1344cf;
 
-  /* 권역 색(궁별 알약 색을 차례로): 시내=경복궁, 보문·불국사=창덕궁, 동해안=덕수궁, 서쪽·남쪽 읍면=창경궁, 북쪽 읍면=종묘 */
-  --rc-area-city: #604206;
+  /* 권역 색(궁별 알약 색, data/index.ts AREA_COLOR와 같음): 시내권=경복궁, 보문관광단지권=창덕궁, 동해안권=덕수궁,
+     서악·북부권=창경궁, 남산권=종묘, 불국사권=조선왕릉(관람코스)·세종대왕유적(공지사항) */
   --rc-area-bomun: #a2383d;
+  --rc-area-city: #604206;
+  --rc-area-bulguk: #47325d;
   --rc-area-east: #286d79;
-  --rc-area-southwest: #14489c;
-  --rc-area-north: #c14b35;
+  --rc-area-namsan: #c14b35;
+  --rc-area-seoak: #14489c;
   --rc-on-area: #ffffff; /* 권역 색을 채운 바탕 위 글자 */
 
   /* 틀 치수 */
@@ -138,11 +140,12 @@
   --rc-photo-light: #1c1c1c;
   --rc-photo-empty: #262626;
   --rc-focus: #ffd400;
-  --rc-area-city: #e0bf7e;
   --rc-area-bomun: #ff9ea2;
+  --rc-area-city: #e0bf7e;
+  --rc-area-bulguk: #cbb4ee; /* 검정 바탕 대비 11.3(다른 권역 10.7~12.7) */
   --rc-area-east: #86d6e3;
-  --rc-area-southwest: #9fc0ff;
-  --rc-area-north: #ffab96;
+  --rc-area-namsan: #ffab96;
+  --rc-area-seoak: #9fc0ff;
   --rc-on-area: #000000;
 }
 
@@ -315,7 +318,7 @@ body {
 }
 /* 펼침판: 폭 전체 흰 판(머리 아래, 왼쪽 막대 오른쪽)
    격자 두 칸 = [소개 상자 자리 34(왼쪽 여백 2 + 상자 32)][2차 칸 격자]. 줄 높이는 긴 쪽을 따르므로
-   3차가 길어(시내 29줄) 판 안에서 내려 볼 때도 회색 소개 상자가 끝까지 칠해진다.
+   3차가 길어(시내권 20줄) 판 안에서 내려 볼 때도 회색 소개 상자가 끝까지 칠해진다.
    판이 아주 좁으면(좁은 PC + 글자 가장 크게) 소개 상자 자리가 먼저 줄어든다. */
 .rc-gnb__panel {
   position: absolute;
@@ -384,7 +387,7 @@ body {
   background: var(--rc-dim);
 }
 
-/* 남색 둥근 띠: 권역 5개 */
+/* 남색 둥근 띠: 권역 6개 */
 .rc-areaband {
   flex: 0 0 auto;
   display: flex;

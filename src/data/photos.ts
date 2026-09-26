@@ -161,12 +161,16 @@ export function bannerPhoto(section: string): BannerPhoto {
 }
 
 // ─── 권역 사진(휴대전화 전체메뉴의 권역 카드) ───
+// 권역에 든 이름난 곳 하나의 대표사진(관광정보 대표사진이 제1유형인 곳). 권역 다섯이던 때 카드(첨성대·불국사·문무대왕릉·
+// 화랑의언덕·옥산서원) 가운데 그 곳이 든 권역의 카드는 그대로 두고, 서악·북부권은 옥산서원(세계유산)을 남겼다.
+// 새로 고른 둘: 보문관광단지권 = 권역 이름과 같은 곳, 남산권 = 오릉(세계유산 대릉원지구, 경주시 남산권 목록 첫 항목).
 const AREA_PHOTO_PLACE: Record<AreaKey, string> = {
+  bomun: "p49", // 보문관광단지
   city: "p39", // 첨성대
-  bomun: "p34", // 불국사
+  bulguk: "p34", // 불국사
   east: "p29", // 문무대왕릉
-  southwest: "p01", // 화랑의언덕
-  north: "p04", // 옥산서원
+  namsan: "p24", // 오릉
+  seoak: "p04", // 옥산서원
 };
 /** 권역 대표 사진(제1유형, 잘라 써도 됨). 없으면 null */
 export function areaPhoto(key: AreaKey): (Photo & { placeId: string }) | null {

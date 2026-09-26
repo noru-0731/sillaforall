@@ -15,7 +15,7 @@
    PC: 2차 칸 240×43(∨), 아래 5 띄우고 3차 줄 240×37(16px 500 #666, 안쪽 8 15, 앞에 작은 네모), 목록 아래 5.
    휴대전화: 2차 칸 51(열리면 바탕 #f7f7f7, ∧), 아래 5 띄우고 3차 줄 34(14px 500 #666, 안쪽 8 15). */
 
-/* 3차가 길면(시내 29줄) 펼침판이 화면보다 길어진다. 판 안에서 내려 보게 한다. */
+/* 3차가 길면(시내권 20줄) 펼침판이 화면보다 길어진다. 판 안에서 내려 보게 한다. */
 .panel {
   /* 글자·화면 설정(body zoom)이면 dvh도 커지므로 zoom 값(--rc-zoom, DisplaySettings.tsx)으로 나눈다 */
   max-height: calc(100dvh / var(--rc-zoom, 1) - var(--rc-header-h));
@@ -92,6 +92,7 @@
   font-size: 1.575rem;
   color: var(--rc-text);
   text-align: left;
+  overflow-wrap: anywhere; /* 글자 가장 크게에서 띄어 쓴 곳 없는 긴 권역 이름(보문관광단지권)이 ∨를 칸 밖으로 밀지 않게(.mLink와 같음) */
   cursor: pointer;
 }
 .mToggle svg {

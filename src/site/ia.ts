@@ -60,7 +60,7 @@ export const MENU: NavItem[] = [
 /**
  * 1차 메뉴 펼침판·휴대전화 전체메뉴의 3차 목록(궁능: 2차 칸의 ∨를 누르면 3차 목록이 열린다. 첫 칸은 2차 쪽 자신).
  * 2차 주소 → 3차 목록. 3차가 없으면 undefined(그 2차 칸은 바로 가는 링크, 궁능 "경희궁"처럼 ∨ 없음).
- * 지금은 관광지 지도의 권역 다섯: 첫 칸 = 그 권역 지도, 그다음 그 권역 관광지(가나다순) → 관광지 쪽.
+ * 지금은 관광지 지도의 권역 여섯: 첫 칸 = 그 권역 지도, 그다음 그 권역 관광지(가나다순) → 관광지 쪽.
  */
 export function depth3Of(href: string): SideMenuLink[] | undefined {
   const m = href.match(/^\/map\/([a-z]+)$/);
@@ -80,7 +80,7 @@ export const LEFT_BAR: { label: string; href: string; icon: "map" | "list" | "wh
   { label: "사이트 소개", href: "/about", icon: "about" },
 ];
 
-/** 머리의 남색 둥근 띠: 권역 5개 */
+/** 머리의 남색 둥근 띠: 권역 6개 */
 export const AREA_LINKS = areas.map((a) => ({ key: a.key, label: a.label, href: `/map/${a.key}` }));
 
 export { HUBS };

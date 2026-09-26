@@ -1,4 +1,4 @@
-// 관광지 지도 > 권역 하나. 권역 다섯 쪽을 미리 만든다(generateStaticParams).
+// 관광지 지도 > 권역 하나. 권역 여섯 쪽을 미리 만든다(generateStaticParams).
 // 모양은 경주 전체 쪽과 같다(궁능 관람코스). ?place=id 로 들어오면 그 곳을 고른 채로 연다.
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";

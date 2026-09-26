@@ -205,7 +205,7 @@ export default function SiteHeader({ areaCards }: { areaCards: AreaCard[] }) {
             </ul>
           </nav>
 
-          {/* 남색 둥근 띠: 권역 5개 */}
+          {/* 남색 둥근 띠: 권역 6개 */}
           <ul className="rc-areaband" aria-label="권역 지도 바로가기">
             {AREA_LINKS.map((a) => (
               <li key={a.key}>

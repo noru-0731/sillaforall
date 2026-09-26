@@ -49,7 +49,7 @@ export function BoardState({ children }: { children: React.ReactNode }) {
   return <Ctx.Provider value={{ area, setArea, query, setQuery }}>{children}</Ctx.Provider>;
 }
 
-/** 권역 알약 줄(전체 + 권역 5). 궁능 공지사항의 궁 알약 줄 자리. 휴대전화에서는 한 줄 + ‹ › 넘기기(궁능 notice_m390). */
+/** 권역 알약 줄(전체 + 권역 6). 궁능 공지사항의 궁 알약 줄 자리. 휴대전화에서는 한 줄 + ‹ › 넘기기(궁능 notice_m390). */
 export function BoardPills({ areas }: { areas: BoardArea[] }) {
   const { area, setArea } = useBoard();
   return (
