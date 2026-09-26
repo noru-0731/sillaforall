@@ -7,10 +7,15 @@ import SiteFooter from "@/components/layout/SiteFooter";
 import { DisplaySettingsProvider } from "@/components/layout/DisplaySettings";
 import { AREA_LINKS, SITE_NAME } from "@/site/ia";
 import { areaPhoto, photoCreditOf } from "@/data/photos";
+import { SITE_DESC, SITE_OG, SITE_URL } from "@/site/og";
 
+// 링크 미리보기(site/og.ts): 사이트 기본 og 제목·설명·사진·종류·언어와 트위터 카드. og:url 은 첫 쪽과 관광지 쪽에서 둔다.
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: { default: SITE_NAME, template: `%s | ${SITE_NAME}` },
-  description: "경주 관광지 61곳의 위치와 무장애 정보를 모은 안내 사이트",
+  description: SITE_DESC,
+  openGraph: SITE_OG,
+  twitter: { card: "summary_large_image" },
 };
 
 export const viewport: Viewport = { width: "device-width", initialScale: 1 };

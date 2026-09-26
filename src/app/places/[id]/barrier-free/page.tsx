@@ -18,6 +18,7 @@
 // - 절 '경주시 무장애 여행정보'(원 누리집 쪽 이름). 관광공사 무장애 정보 절(표 절, 없으면 주차·접근로·화장실 절) 바로 다음.
 //   원 쪽 곳 이름(작은 제목) + 구분/내용 표 + 출처 줄. 공공누리 표시가 없는 쪽이라 사실만 칸으로(data/gj.ts). 관광공사 값과 달라도 고치지 않는다.
 import type { Metadata } from "next";
+import { placeMetadata } from "@/site/og";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { placeById, places } from "@/data";
@@ -51,7 +52,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const p = placeById(id);
-  return { title: p ? `${p.name} 무장애 정보` : "무장애 정보" };
+  return p ? placeMetadata(p.id, `${p.name} 무장애 정보`, `/places/${p.id}/barrier-free`) : { title: "무장애 정보" };
 }
 
 const EMPTY = DASH;

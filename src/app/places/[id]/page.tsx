@@ -26,6 +26,7 @@
 // 넘기기 판은 이름 판·조작 상자가 아래를 차지해 오른쪽 위),
 // 제3유형은 사진 위에 얹지 않고 사진 틀 바로 아래 오른쪽 한 줄. 여러 사진 출처를 한곳에 모아 적지 않는다.
 import type { Metadata } from "next";
+import { placeMetadata } from "@/site/og";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { areaOf, placeById, places } from "@/data";
@@ -56,7 +57,8 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  return { title: placeById(id)?.name ?? "관광지" };
+  const p = placeById(id);
+  return p ? placeMetadata(p.id, p.name, `/places/${p.id}`) : { title: "관광지" };
 }
 
 export default async function PlaceSubmain({ params }: Props) {

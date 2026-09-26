@@ -13,12 +13,14 @@
 //
 // 페르소나 장점 취합(가1·가2·가13)에서 더한 것:
 // - 대중교통 첫머리에 가까운 정류장 셋(궁능 버스 칸 "경복궁 하차 / 간선 …" 모양: 굵은 제목에 정류장 이름과 번호, 아래 줄에 직선거리와 노선 번호).
-//   자료는 data/bus.json(도구/12_버스_문단_사이트.py). 좌표를 빌린 서악서원은 거리 없이 이름이 맞은 정류장.
+//   자료는 data/bus.json(도구/12_버스_문단_사이트.py → 도구/20_버스_TAGO.py). 좌표를 빌린 서악서원은 거리 없이 이름이 맞은 정류장.
+//   노선 번호는 국토교통부 TAGO(정류소별경유노선). 노선 줄을 누르면 노선별 기점·종점·첫차시간·막차시간·배차간격 표가 펼쳐진다(components/place/BusStops.tsx).
 // - 그 아래 경주역(KTX) 칸: 경주역(KTX) 정류장에서 이 곳 정류장 쪽으로 가는 노선 번호(국립경주박물관 교통안내 "철도" 칸 자리).
 // - 이용시간·쉬는 날·무장애 글은 붙은 줄을 나눠 보인다(lib/breaks.ts, 글자는 그대로).
 //
 // 빈 칸은 "-"(09-26 저녁). "-"가 쪽 여러 곳(정류장 노선, 무장애 대중교통, 주차 안내, 이용안내 표)에 흩어질 수 있어 뜻풀이 한 줄은 쪽 끝(이용안내 표 아래)에 한 번.
 import type { Metadata } from "next";
+import { placeMetadata } from "@/site/og";
 import { notFound } from "next/navigation";
 import { areaOf, placeById, places, zipOf } from "@/data";
 import { placeCrumbs, placePages, placeSideMenu, PLACE_BANNER } from "@/site/ia";
@@ -30,7 +32,8 @@ import MapView from "@/components/map/MapView";
 import PlaceMap from "@/components/map/PlaceMap";
 import { kakaoTo, phoneOf, sameArea } from "@/components/place/placeData";
 import { amenitiesOf, MOBILITY, NEAR_RADII, sourceLines } from "@/data/bf";
-import { BUS_SOURCE_LINES, KTX_NAME, busStopsOf, ktxLinesOf } from "@/data/bus";
+import { KTX_NAME, busSourceLines, busStopsOf, ktxLinesOf } from "@/data/bus";
+import { BusStopUnits, busHasDash, stopTitle } from "@/components/place/BusStops";
 import { extraFeeRowsOf } from "@/data/introExtra";
 import { bfLines, hoursLines, hoursNoteLines } from "@/lib/breaks";
 import { AmenityTable, SourceLines, amenityPoints, legendOf } from "@/components/place/Amenities";
@@ -49,11 +52,10 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const p = placeById(id);
-  return { title: p ? `${p.name} 오시는 길` : "오시는 길" };
+  return p ? placeMetadata(p.id, `${p.name} 오시는 길`, `/places/${p.id}/directions`) : { title: "오시는 길" };
 }
 
 const EMPTY = DASH;
-const fmtM = (m: number) => `${m.toLocaleString("ko-KR")}m`;
 
 /** 원(돈) 선 아이콘: 공통 아이콘에 없어 여기서 직접 그렸다(궁능 "주차요금" 아이콘 자리) */
 function WonIcon() {
@@ -97,12 +99,11 @@ export default async function PlaceDirections({ params }: Props) {
   // 가까운 버스 정류장 셋과 경주역(KTX)에서 오는 노선
   const stops = busStopsOf(p.id);
   const ktx = ktxLinesOf(p.id);
-  const stopTit = (name: string, no: string | null) => `${name} 정류장${no ? `(${no})` : ""}`;
 
   // 무장애 여행 정보 대중교통 글(없으면 "-")
   const bfBus = bfLines((reg && p.move["대중교통"]) || null);
   // 이 쪽에 "-"가 하나라도 있으면 쪽 끝에 뜻풀이 한 줄
-  const dashed = stops.some((b) => !b.routes.length) || !bfBus || !parking.length || !p.fee || !p.hours || !p.closed;
+  const dashed = busHasDash(stops) || !bfBus || !parking.length || !p.fee || !p.hours || !p.closed;
 
   return (
     <SubPage crumbs={placeCrumbs(p, page)} title={page.label} banner={PLACE_BANNER} sideMenu={placeSideMenu(p)} current={page.href} tabs={pills}>
@@ -175,20 +176,12 @@ export default async function PlaceDirections({ params }: Props) {
 
         <div className={s.transCon}>
           <IconHeading icon="bus">대중교통</IconHeading>
-          {stops.map((b) => (
-            <div key={b.stopNo ?? b.name} className={s.transUnit}>
-              <p className={s.transUnitTit}>{stopTit(b.name, b.stopNo)}</p>
-              <p className={s.transUnitTxt}>
-                {b.distM !== null && `직선거리 ${fmtM(b.distM)}\n`}
-                노선 {b.routes.length ? b.routes.join(", ") : EMPTY}
-              </p>
-            </div>
-          ))}
+          <BusStopUnits stops={stops} />
           {ktx.length > 0 && (
             <div className={s.transUnit}>
               <p className={s.transUnitTit}>{KTX_NAME}</p>
               <p className={s.transUnitTxt}>
-                {ktx.map((l) => `노선 ${l.routes.join(", ")} → ${stopTit(l.name, l.stopNos.join(", ") || null)}`).join("\n")}
+                {ktx.map((l) => `노선 ${l.routes.join(", ")} → ${stopTitle(l.name, l.stopNos.join(", ") || null)}`).join("\n")}
               </p>
             </div>
           )}
@@ -197,7 +190,7 @@ export default async function PlaceDirections({ params }: Props) {
               {stops.some((b) => b.distM !== null) && (
                 <TipList items={[<Ph key="a">거리는 두 곳 사이의 직선거리입니다. 길을 따라 걷는 거리와 다릅니다.</Ph>]} />
               )}
-              <SourceLines lines={BUS_SOURCE_LINES} />
+              <SourceLines lines={busSourceLines(p.id)} />
             </div>
           )}
           <div className={s.transUnit}>

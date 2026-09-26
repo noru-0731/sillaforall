@@ -5,8 +5,10 @@
 // 사진 고르기·목록 만들기는 여기(서버)에서 하고, 결과만 부품으로 넘긴다(photos.json을 브라우저로 보내지 않으려고).
 import { areaOf, areas, byName, HUBS, places } from "@/data";
 import type { Place } from "@/data";
+import type { Metadata } from "next";
 import { anyPhoto, coverPhoto, heroPhoto, photoCreditOf } from "@/data/photos";
 import { MENU, SITE_NAME } from "@/site/ia";
+import { HERO_IDS, SITE_OG } from "@/site/og";
 import { withJosa } from "@/lib/josa";
 import { STEPFREE_HREF, STEPFREE_PLACES } from "@/data/stepfree";
 import HomeHero, { type HeroSlide, type QuickItem } from "@/components/home/HomeHero";
@@ -20,7 +22,10 @@ const shortAddress = (p: Place) => (p.address ?? "").replace(/^경상북도\s*�
 
 // ── 칸 1: 넘기기 배너. 이름난 관광지 다섯 곳의 제1유형 사진(잘라 써도 되는 사진)만 쓴다. 차례는 사용자가 바꿀 수 있다.
 // 동궁과 월지(p47)는 public/photos 에 줄여 둔 판(960·1619 폭)을 쓴다(photos.ts heroPhoto, 09-26 사용자 허락).
-const HERO_IDS = ["p34", "p39", "p47", "p51", "p28"]; // 불국사, 첨성대, 동궁과 월지, 대릉원, 석굴암
+// 곳 차례(HERO_IDS)는 site/og.ts 에 있다(링크 미리보기 사진이 첫 장을 따라가게). 불국사, 첨성대, 동궁과 월지, 대릉원, 석굴암.
+
+// 링크 미리보기: 사이트 기본에 og:url(배포 주소 첫 쪽)만 더한다
+export const metadata: Metadata = { openGraph: { ...SITE_OG, url: "/" } };
 
 function heroSlides(): HeroSlide[] {
   const out: HeroSlide[] = [];

@@ -4,6 +4,7 @@
 // 궁능의 "전체 다운로드"·"이 저작물만 다운로드"는 없다: 관광공사 사진 서버가 다른 누리집에서 파일을 받아 가는 허락(CORS)을 주지 않아
 // 브라우저에서 파일로 내려받게 할 수 없다. 대신 "원본 보기"(새 창)가 그 자리에 있다(PhotoViewer).
 import type { Metadata } from "next";
+import { placeMetadata } from "@/site/og";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { placeById, places } from "@/data";
@@ -28,7 +29,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const p = placeById(id);
-  return { title: p ? `${p.name} 사진` : "관광지 사진" };
+  return p ? placeMetadata(p.id, `${p.name} 사진`, `/places/${p.id}/photos`) : { title: "관광지 사진" };
 }
 
 export default async function PlacePhotos({ params }: Props) {

@@ -7,7 +7,8 @@ import { Icon } from "@/components/icons";
 import { MENU } from "@/site/ia";
 import { koglCondition, koglLabel, type KoglType } from "@/data/photos";
 import { SOURCES } from "@/data/bf";
-import { BUS_META } from "@/data/bus";
+import { BUS_META, BUS_OSM_ROUTES_LEFT, TAGO_APIS } from "@/data/bus";
+import { stepFreeSourceRows } from "@/data/stepfree";
 import { GJ_SOURCE } from "@/data/gj";
 import areas6 from "@/data/areas6.json";
 import { BoardTable } from "@/components/royal";
@@ -161,7 +162,7 @@ export default function SourcesPage() {
 
       <Section id="portal" title="공공데이터포털(data.go.kr)">
         <BoardTable
-          caption="가까운 편의시설, 교통약자 이동 지원, 버스 정류장에 쓴 공공데이터: 자료, 제공 기관, 이용허락, 기준일, 주소"
+          caption="가까운 편의시설, 교통약자 이동 지원, 버스 정류장·노선에 쓴 공공데이터: 자료, 제공 기관, 이용허락, 기준일, 주소"
           head={["자료", "제공 기관", "이용허락", "기준일", "주소"]}
           cols={["24%", "18%", "20%", "14%", "auto"]}
           align={["l", "l", "l", "c", "l"]}
@@ -188,6 +189,16 @@ export default function SourcesPage() {
                 {BUS_META.molit.url.replace(/^https:\/\//, "")}
               </OutLink>,
             ],
+            // 오시는 길 대중교통의 노선 번호·기점·종점·첫차시간·막차시간·배차간격(도구/20_버스_TAGO.py). 이용허락은 포털 쪽 값 그대로(2026-09-26)
+            ...TAGO_APIS.map((a) => [
+              a.name,
+              a.provider,
+              a.license,
+              `${BUS_META.tago.fetched} 받음`,
+              <OutLink key="u" href={a.url}>
+                {a.url.replace(/^https:\/\//, "")}
+              </OutLink>,
+            ]),
           ]}
         />
       </Section>
@@ -223,6 +234,31 @@ export default function SourcesPage() {
         />
       </Section>
 
+      {/* 무장애 정보 > 계단 없는 길 쪽 끝 출처 줄의 자료(data/stepfree.json, 도구/19_계단없는길.py). 칸 값은 data/stepfree.ts */}
+      <Section id="stepfree" title="계단 없는 길">
+        <BoardTable
+          caption="계단 없는 길에 쓴 자료: 자료, 제공 기관, 이용허락, 기준일, 주소"
+          head={["자료", "제공 기관", "이용허락", "기준일", "주소"]}
+          cols={["24%", "18%", "20%", "14%", "auto"]}
+          align={["l", "l", "l", "c", "l"]}
+          rows={stepFreeSourceRows().map((r) => [
+            r.name,
+            r.provider,
+            r.licensePh ? <Ph key="l">{r.license}</Ph> : r.license,
+            r.refDate,
+            r.link ? (
+              <OutLink key="u" href={r.url}>
+                {r.url.replace(/^https:\/\//, "")}
+              </OutLink>
+            ) : (
+              <span key="u" className={s.plainUrl}>
+                {r.url.replace(/^https:\/\//, "")}
+              </span>
+            ),
+          ])}
+        />
+      </Section>
+
       <Section id="boundary" title="읍면동 경계선">
         <ul className={`${s.bullets} ${s.bulletsTight}`}>
           <li>통계청 SGIS 행정구역 경계(2026년 7월)</li>
@@ -253,7 +289,8 @@ export default function SourcesPage() {
             <Ph>관광지 둘레 화장실·벤치·쉼터</Ph>
           </li>
           <li>
-            <Ph>버스 정류장·노선 번호(오시는 길 대중교통)</Ph>
+            {/* 노선 번호는 TAGO 로 바꿨다. TAGO 에서 짝을 못 찾아 오픈스트리트맵 노선이 남은 정류장이 있을 때만 '노선 번호'까지 */}
+            <Ph>{BUS_OSM_ROUTES_LEFT ? "버스 정류장·노선 번호(오시는 길 대중교통)" : "버스 정류장(오시는 길 대중교통)"}</Ph>
           </li>
           <li>© OpenStreetMap 기여자</li>
           <li>ODbL(Open Database License)</li>

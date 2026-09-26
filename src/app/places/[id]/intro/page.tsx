@@ -9,6 +9,7 @@
 //   궁능은 사진마다 아래에 이름 띠를 얹지만, 우리 사진 이름은 대부분 관광지 이름이나 파일 이름이라 띠를 넣지 않았다.
 // 사진 출처(짧은 꼴 "ⓒ한국관광공사" 등)는 사진마다 곁에: 제1유형은 사진 오른쪽 아래에 얹고, 제3유형은 사진 틀 바로 아래 오른쪽 한 줄.
 import type { Metadata } from "next";
+import { placeMetadata } from "@/site/og";
 import { notFound } from "next/navigation";
 import { placeById, places } from "@/data";
 import type { Place } from "@/data";
@@ -38,7 +39,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const p = placeById(id);
-  return { title: p ? `${p.name} 소개` : "관광지 소개" };
+  return p ? placeMetadata(p.id, `${p.name} 소개`, `/places/${p.id}/intro`) : { title: "관광지 소개" };
 }
 
 const EMPTY = DASH;

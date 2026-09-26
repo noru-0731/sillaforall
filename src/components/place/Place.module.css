@@ -434,6 +434,87 @@
 .busNote > :first-child {
   margin-top: 0;
 }
+/*
+ * 정류장 노선 줄 펼침(components/place/BusStops.tsx). 줄 글은 .transUnitTxt 와 같은 16px·24px 줄 높이·옅은 글자색,
+ * 오른쪽 '열기'·'닫기'와 ∨ 는 무장애 정보 쪽 접는 절(.foldCtl)과 같은 16px. 누르는 자리는 줄 전체이고,
+ * 위아래 1rem 을 더 잡되(높이 44px) 음수 바깥 여백으로 글 자리는 그대로 둔다.
+ */
+.busFold {
+  margin-top: 1rem;
+}
+.transUnitTxt + .busFold {
+  margin-top: 0;
+}
+.busSum {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin: -1rem 0;
+  padding: 1rem 0;
+  font-size: 1.6rem;
+  line-height: 2.4rem;
+  color: var(--rc-text-sub);
+  cursor: pointer;
+  list-style: none;
+}
+.busSum::-webkit-details-marker {
+  display: none;
+}
+.busSum::marker {
+  content: "";
+}
+.busSumTxt {
+  flex: 1 1 auto;
+  min-width: 0;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+.busSum:hover .busSumTxt {
+  text-decoration: underline;
+  text-underline-offset: 0.3rem;
+}
+.busCtl {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 2.4rem;
+  white-space: nowrap;
+}
+.busFold[open] .busOff,
+.busFold:not([open]) .busOn {
+  display: none;
+}
+.busFold[open] .busChev {
+  transform: rotate(180deg);
+}
+/* 노선이 없어 펼침 없이 글로 둔 노선 줄: 직선거리 줄 바로 아래(한 문단이던 때와 같은 자리) */
+.busNoGap {
+  margin-top: 0;
+}
+.busTable {
+  margin-top: 1.5rem;
+}
+/* 펼친 표의 내용 칸: '칸 이름 값' 짝을 한 줄에 이어 두고 좁으면 다음 줄로. 칸 이름은 .dotLabel 처럼 굵게 */
+.busKv {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem 1.6rem;
+}
+.busKv li {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+.busK {
+  font-weight: 700;
+  color: var(--rc-text);
+}
+@media print {
+  .busCtl {
+    display: none;
+  }
+}
 
 /* ───────── 관광지 무장애 정보 쪽 머리(페르소나 묶음3 가9·가10)와 접는 절(가12) ───────── */
 /* 머리: 문의 전화 줄(오시는 길 연락처 줄 .mapCon 그대로) → 글이 적힌 칸 그림 줄 */

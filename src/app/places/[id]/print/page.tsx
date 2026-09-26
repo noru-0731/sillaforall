@@ -4,11 +4,13 @@
 // - 기본 정보: 소개 쪽 기본 정보 표와 같은 칸.
 // - 무장애 정보: 무장애 정보가 있는 곳은 무장애 정보 쪽의 칸 전부(묶음별 표, 세 상자에 실은 칸도 표에). 무장애 정보가 없는 곳은 그 쪽의 두 상자 글.
 //   그 뒤에 경주시 무장애 여행정보 표(짝지은 12곳, 무장애 정보 쪽과 같은 표, data/gj.ts).
-// - 오시는 길: 가까운 정류장 셋·경주역(KTX) 노선(오시는 길 쪽과 같은 글), 무장애 여행 정보 대중교통 글(있을 때만), 교통약자이동지원센터 예약 전화.
+// - 오시는 길: 가까운 정류장 셋(오시는 길 쪽과 같은 제목·직선거리, 노선은 펼침 없이 노선번호·첫차시간·막차시간 표)·경주역(KTX) 노선(오시는 길 쪽과 같은 글),
+//   무장애 여행 정보 대중교통 글(있을 때만), 교통약자이동지원센터 예약 전화.
 // - 빈 칸은 "-". 뜻풀이 한 줄은 기본 정보 표에 "-"가 있으면 그 표 아래, 없고 정류장 노선만 "-"이면 쪽 끝에 한 번.
 // 글은 모두 이미 다른 쪽에 있는 이름표와 자료 값이다. 단추는 서브 쪽 인쇄 단추 그대로(휴대전화에서도 보인다).
 // 들어오는 곳: 관광지 서브메인 관람 도우미 제목 아래 인쇄 단추. 메뉴·사이트맵에는 싣지 않는다.
 import type { Metadata } from "next";
+import { placeMetadata } from "@/site/og";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { areaLabelOf, nearestRegistered, phoneOf } from "@/components/place/placeData";
@@ -17,7 +19,8 @@ import type { Place } from "@/data";
 import { bfGroupsOf, bfLabel, BF_SOURCE, MOBILITY } from "@/data/bf";
 import { extraFeeRowsOf, extraRowsOf } from "@/data/introExtra";
 import { GJ_CREDIT, GJ_SOURCE, gjOf } from "@/data/gj";
-import { BUS_SOURCE_LINES, KTX_NAME, busStopsOf, ktxLinesOf } from "@/data/bus";
+import { KTX_NAME, busSourceLines, busStopsOf, ktxLinesOf } from "@/data/bus";
+import { BusStopUnitsPrint, busHasDash, stopTitle } from "@/components/place/BusStops";
 import { placeCrumbs, placeSideMenu, PLACE_BANNER } from "@/site/ia";
 import { Ph, Section, SubPage } from "@/components/layout/PageParts";
 import { DASH, DashNote } from "@/components/layout/Dash";
@@ -38,11 +41,10 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const p = placeById(id);
-  return { title: p ? `${p.name} 인쇄` : "인쇄" };
+  return p ? placeMetadata(p.id, `${p.name} 인쇄`, `/places/${p.id}/print`) : { title: "인쇄" };
 }
 
 const EMPTY = DASH;
-const fmtM = (m: number) => `${m.toLocaleString("ko-KR")}m`;
 const pre = (t: string) => <span className={s.pre}>{t}</span>;
 const cell = (v: string | null) => (v ? pre(v.trim()) : EMPTY);
 const BF_CREDIT = `자료: ${BF_SOURCE.name}(${BF_SOURCE.fetched} 받음)`;
@@ -76,7 +78,6 @@ export default async function PlacePrint({ params }: Props) {
   const gj = gjOf(p.id);
   const stops = busStopsOf(p.id);
   const ktx = ktxLinesOf(p.id);
-  const stopTit = (name: string, no: string | null) => `${name} 정류장${no ? `(${no})` : ""}`;
   const bfBus = p.registered ? bfLines(p.move["대중교통"]) : null;
   const basicRows: React.ReactNode[][] = [
     ["주소", p.address ? `${zip ? `(${zip}) ` : ""}${p.address}` : EMPTY],
@@ -91,7 +92,7 @@ export default async function PlacePrint({ params }: Props) {
   ];
   // "-" 뜻풀이 자리: 기본 정보 표에 "-"가 있으면 그 아래, 아니면 정류장 노선에 "-"가 있을 때 쪽 끝
   const basicDashed = basicRows.some(([, v]) => v === EMPTY);
-  const endDashed = !basicDashed && stops.some((b) => !b.routes.length);
+  const endDashed = !basicDashed && busHasDash(stops, true);
 
   return (
     <SubPage
@@ -172,20 +173,12 @@ export default async function PlacePrint({ params }: Props) {
 
         <Section id="dir" title="오시는 길">
           <IconHeading icon="bus">대중교통</IconHeading>
-          {stops.map((b) => (
-            <div key={b.stopNo ?? b.name} className={`${s.transUnit} ${pr.keep}`}>
-              <p className={s.transUnitTit}>{stopTit(b.name, b.stopNo)}</p>
-              <p className={s.transUnitTxt}>
-                {b.distM !== null && `직선거리 ${fmtM(b.distM)}\n`}
-                노선 {b.routes.length ? b.routes.join(", ") : EMPTY}
-              </p>
-            </div>
-          ))}
+          <BusStopUnitsPrint stops={stops} keepClass={pr.keep} />
           {ktx.length > 0 && (
             <div className={`${s.transUnit} ${pr.keep}`}>
               <p className={s.transUnitTit}>{KTX_NAME}</p>
               <p className={s.transUnitTxt}>
-                {ktx.map((l) => `노선 ${l.routes.join(", ")} → ${stopTit(l.name, l.stopNos.join(", ") || null)}`).join("\n")}
+                {ktx.map((l) => `노선 ${l.routes.join(", ")} → ${stopTitle(l.name, l.stopNos.join(", ") || null)}`).join("\n")}
               </p>
             </div>
           )}
@@ -194,7 +187,7 @@ export default async function PlacePrint({ params }: Props) {
               {stops.some((b) => b.distM !== null) && (
                 <TipList items={[<Ph key="a">거리는 두 곳 사이의 직선거리입니다. 길을 따라 걷는 거리와 다릅니다.</Ph>]} />
               )}
-              <SourceLines lines={BUS_SOURCE_LINES} />
+              <SourceLines lines={busSourceLines(p.id)} />
             </div>
           )}
           {bfBus && (

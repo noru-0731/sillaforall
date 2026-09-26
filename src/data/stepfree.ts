@@ -36,6 +36,78 @@ export function stepFreeSourceLines(srcs?: Iterable<string>): string[] {
     .map(([, s]) => s.line);
 }
 
+/**
+ * 자료 출처 쪽(/about/sources) '계단 없는 길' 표의 칸(자료, 제공 기관, 이용허락, 기준일, 주소). 차례는 쪽 끝 출처 줄과 같은 자료 파일 차례.
+ * 이용허락은 공공데이터포털 쪽의 '이용허락범위' 값, 그런 칸이 없는 누리집·신문은 그 쪽 바닥글·기사 끝에 적힌 글 그대로.
+ * 경주시 누리집 두 쪽은 공공누리 표시가 없어 이미 쓰는 점선 글(licensePh).
+ * 기준일은 쪽 끝 출처 줄(line)에서 읽는다: 'YYYY-MM-DD 기준'이 있으면 그것(파일 자료), 없으면 'YYYY-MM-DD 받음'·'확인'.
+ * 확인: 05_사이트/도구/cache/출처확인/(2026-09-26 받은 쪽), 산림복지 서비스 바닥글은 첫 쪽(smartapp.fowi.or.kr/cmrd)을 화면으로 열어 읽음.
+ * link false 는 주소를 글자로만(경주시 누리집으로 가는 링크는 싣지 않는다, 자료 출처 쪽 '경주시 문화관광' 칸과 같음).
+ */
+export type StepFreeSourceInfo = { provider: string; license: string; licensePh?: boolean; url: string; link: boolean };
+const SOURCE_INFO: Record<string, StepFreeSourceInfo> = {
+  fowi: {
+    provider: "한국산림복지진흥원",
+    license: "COPYRIGHTⒸ 산림청 SINCE1967. ALL RIGHTS RESERVED.",
+    url: "https://smartapp.fowi.or.kr/cmrd/detail/41",
+    link: true,
+  },
+  fowiFile: {
+    provider: "한국산림복지진흥원",
+    license: "이용허락범위 제한 없음",
+    url: "https://www.data.go.kr/data/15063418/fileData.do",
+    link: true,
+  },
+  tour: {
+    provider: "한국관광공사",
+    license: "이용허락범위 제한 없음",
+    url: "https://www.data.go.kr/data/15101578/openapi.do",
+    link: true,
+  },
+  korwith: {
+    provider: "한국관광공사",
+    license: "이용허락범위 제한 없음",
+    url: "https://www.data.go.kr/data/15101897/openapi.do",
+    link: true,
+  },
+  gjbf: {
+    provider: "경주시",
+    license: "누리집 쪽에 공공누리 표시 없음",
+    licensePh: true,
+    url: "https://www.gyeongju.go.kr/tour/page.do?mnu_uid=4840",
+    link: false,
+  },
+  gjWalk: {
+    provider: "경주시",
+    license: "누리집 쪽에 공공누리 표시 없음",
+    licensePh: true,
+    url: "https://www.gyeongju.go.kr/tour/page.do?mnu_uid=4740",
+    link: false,
+  },
+  gbTour: {
+    provider: "경상북도",
+    license: "Copyright ⓒ 2020 Gyeongsangbuk-do all rights reserved.",
+    url: "https://tour.gb.go.kr/tip/storyView.do?idx=16126",
+    link: true,
+  },
+  idaegu: {
+    provider: "대구일보",
+    license: "저작권자 © 대구일보 무단전재 및 재배포 금지",
+    url: "https://www.idaegu.com/news/articleView.html?idxno=638085",
+    link: true,
+  },
+};
+
+/** 자료 출처 쪽 표 줄(쪽 끝 출처 줄과 같은 자료, 같은 차례). 칸 값이 없는 자료가 있으면 멈춘다(자료 파일에 새 출처가 생긴 때) */
+export function stepFreeSourceRows(): ({ key: string; name: string; refDate: string } & StepFreeSourceInfo)[] {
+  return Object.entries(SF.meta.sources).map(([key, src]) => {
+    const info = SOURCE_INFO[key];
+    const ref = src.line.match(/(\d{4}-\d{2}-\d{2}) 기준/) ?? src.line.match(/(\d{4}-\d{2}-\d{2}) (받음|확인)\)/);
+    if (!info || !ref) throw new Error(`stepfree.ts: 자료 출처 쪽 칸 값이나 날짜가 없는 출처 ${key}`);
+    return { key, name: src.name, refDate: ref[0].replace(/\)$/, ""), ...info };
+  });
+}
+
 /** 이 곳의 계단 없는 길 덩어리. 실리지 않은 곳은 null */
 export function stepFreeOf(id: string): StepFreePlace | null {
   return SF.places.find((p) => p.id === id) ?? null;
