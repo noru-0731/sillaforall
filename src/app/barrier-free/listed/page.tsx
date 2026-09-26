@@ -7,7 +7,7 @@ import { pageMetadata } from "@/site/og";
 import { areaOf, areas, places } from "@/data";
 import { bfGroupNamesOf } from "@/data/bf";
 import { bfLines } from "@/lib/breaks";
-import { Ph, SubPage } from "@/components/layout/PageParts";
+import { SubPage } from "@/components/layout/PageParts";
 import { TipList } from "@/components/royal";
 import { groupByArea, menuPage } from "@/components/place-list/helpers";
 import { THREE_TEXT } from "@/components/place-list/Parts";
@@ -48,9 +48,10 @@ export default function ListedPage() {
           threeText={THREE_TEXT}
           caption={`무장애 정보가 있는 곳 목록: 번호, 권역, 관광지(무장애 묶음), ${THREE_TEXT.parking}, ${THREE_TEXT.walk}, ${THREE_TEXT.toilet}`}
         />
+        {/* 궁능 관람코스 "번호를 클릭하시면 아래 화면에서 시설사진을 볼 수 있습니다." 틀(09-27 점선 1차 정리) */}
         <TipList
           className={s.tips}
-          items={[<Ph key="b">관광지 이름을 누르면 무장애 정보 쪽에서 적힌 글을 볼 수 있습니다.</Ph>]}
+          items={["관광지 이름을 누르시면 그 관광지의 무장애 정보 쪽에서 적힌 글을 볼 수 있습니다."]}
         />
         {/* 쪽 끝 이어 읽기(무장애 정보 메뉴 차례) */}
         <MenuSteps section={page.section} current={HREF} />

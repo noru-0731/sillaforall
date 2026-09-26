@@ -19,8 +19,16 @@ export const STEPFREE_HREF = "/barrier-free/step-free";
 export const STEPFREE_GROUPS = SF.meta.groups;
 export const STEPFREE_PLACES = SF.places;
 
-/** 새로 지은 칸 이름(점선으로 보인다) */
-export const isPhLabel = (k: string) => SF.meta.phLabels.includes(k);
+/**
+ * 화면에 적을 칸 이름. 자료(도구/19_계단없는길.py)의 칸 이름을 레퍼런스 칸 이름으로 바꿔 적는 것만 여기 둔다(09-27 점선 1차 정리).
+ * '걸리는 시간' → '소요시간': 국립공원공단 무장애탐방로·서울둘레길·부산 갈맷길·두루누비·전국길관광정보표준데이터('총소요시간')의 칸 이름
+ * (레퍼런스/데크길/03_데크길_레퍼런스.md 요약 표·3절). 자료 파일은 그대로 두어 도구를 다시 돌려도 이 바꿈은 남는다.
+ */
+const ROW_LABEL: Record<string, string> = { "걸리는 시간": "소요시간" };
+export const rowLabelOf = (k: string) => ROW_LABEL[k] ?? k;
+
+/** 새로 지은 칸 이름(점선으로 보인다). 레퍼런스 칸 이름으로 바꿔 적는 칸은 점선 없음 */
+export const isPhLabel = (k: string) => SF.meta.phLabels.includes(k) && !(k in ROW_LABEL);
 
 /** 칸마다 붙는 짧은 출처 이름. 원문 칸이 줄 칸과 다르면 괄호에 원문 칸 이름 */
 export function sourceName(r: StepFreeRow): string {
@@ -39,7 +47,7 @@ export function stepFreeSourceLines(srcs?: Iterable<string>): string[] {
 /**
  * 자료 출처 쪽(/about/sources) '계단 없는 길' 표의 칸(자료, 제공 기관, 이용허락, 기준일, 주소). 차례는 쪽 끝 출처 줄과 같은 자료 파일 차례.
  * 이용허락은 공공데이터포털 쪽의 '이용허락범위' 값, 그런 칸이 없는 누리집·신문은 그 쪽 바닥글·기사 끝에 적힌 글 그대로.
- * 경주시 누리집 두 쪽은 공공누리 표시가 없어 이미 쓰는 점선 글(licensePh).
+ * 경주시 누리집 두 쪽은 공공누리 표시가 없어 이미 쓰는 점선 글(licensePh)이었고, 09-27 점선 1차 정리로 화면에서는 빈칸으로 둔다(자료 출처 쪽).
  * 자료 칸과 기준일 칸은 쪽 끝 출처 줄(line) "자료: 이름(…)"을 나눠 쓴다(09-27 점검: 짧은 이름 name 은 출처 줄과 글이 달라 쓰지 않는다).
  * 끝 괄호 안의 날짜 조각('YYYY-MM-DD 기준·받음·확인')은 기준일 칸에, 나머지 조각(포털 번호, 기사 제목)은 자료 칸 괄호에 그대로 남긴다.
  * 확인: 05_사이트/도구/cache/출처확인/(2026-09-26 받은 쪽), 산림복지 서비스 바닥글은 첫 쪽(smartapp.fowi.or.kr/cmrd)을 화면으로 열어 읽음.

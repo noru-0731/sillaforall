@@ -751,7 +751,8 @@ export default function MapView({
               </p>
               <p>
                 <span className={cn(s.badge, selPlace.registered ? s.badgeOn : s.badgeOff)}>
-                  <Ph>{selPlace.registered ? "무장애 정보 있음" : "무장애 정보 없음"}</Ph>
+                  {/* 첫 쪽 카드 탭과 같은 글(점선 없음, 09-27 점선 1차 정리) */}
+                  {selPlace.registered ? "무장애 정보 있음" : "무장애 정보 없음"}
                 </span>
               </p>
               <div className={s.panelActions}>
@@ -812,7 +813,8 @@ export default function MapView({
                   <span className={cn(s.dot, s.dotOn)} />
                 </span>
               </span>
-              <Ph>덩어리 관광지</Ph>
+              {/* 첫 쪽 가운데 띠 이름(점선 없음, 09-27 점선 1차 정리) */}
+              덩어리 관광지
             </li>
           )}
           <li>
@@ -836,7 +838,8 @@ export default function MapView({
           {areaMode && (
             <li>
               <span className={cn(s.swatch, s.swatchArea)} aria-hidden="true" />
-              <Ph>{selectMode ? "색칠한 권역을 누르면 그 권역만 봅니다" : "색칠한 권역을 누르면 그 권역 지도로 갑니다"}</Ph>
+              {/* 궁능 관람코스 "번호를 클릭하시면 아래 화면에서 시설사진을 볼 수 있습니다." 틀(09-27 점선 1차 정리) */}
+              {selectMode ? "색칠한 권역을 누르시면 그 권역만 볼 수 있습니다." : "색칠한 권역을 누르시면 그 권역 지도를 볼 수 있습니다."}
             </li>
           )}
         </ul>

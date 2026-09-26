@@ -63,7 +63,8 @@ export default function PhotoViewer({ photos, placeName }: { photos: ViewerItem[
   const cur = photos[i];
   // 제1유형만 사진 위에 이름 상자를 얹는다(제3유형은 사진 아래 줄)
   const onPhoto = cur.type === "Type1";
-  const nameText = cur.made ? <Ph>{cur.name}</Ph> : cur.name;
+  // 지은 이름 "{관광지} {n}"은 열린관광 사진 이름 꼴("국립경주박물관 1")이라 점선 없음(09-27 점선 1차 정리, 레퍼런스/문구/01_문구_대조.md I01·I02)
+  const nameText = cur.name;
   const pick = (j: number) => {
     moved.current = true;
     setI(j);

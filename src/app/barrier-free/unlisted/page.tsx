@@ -1,14 +1,13 @@
 // 무장애 정보 > 무장애 정보가 없는 곳(궁능 공지사항 모양): 권역 알약, "전체: N곳", 이름 검색, 게시판 표.
 // 표는 무장애 정보가 없는 관광지와, 있으면 가장 가까운 등록 관광지(직선거리)를 보인다.
+// 표 아래 점선 풀이 줄('가까운 등록 관광지는 …')은 09-27 점선 1차 정리로 뺐다(칸 이름 '인근 무장애 ‘명소’'와 값의 '(직선 …km)'가 같은 뜻, 11_안건_점선_문구.md).
 import type { Metadata } from "next";
 import { pageMetadata } from "@/site/og";
 import { areaOf, areas, places } from "@/data";
-import { Ph, SubPage } from "@/components/layout/PageParts";
-import { TipList } from "@/components/royal";
+import { SubPage } from "@/components/layout/PageParts";
 import { groupByArea, menuPage } from "@/components/place-list/helpers";
 import { THREE_TEXT } from "@/components/place-list/Parts";
 import { BoardList, BoardPills, BoardState, type BoardRow } from "../_parts/Board";
-import s from "../bf.module.css";
 import MenuSteps from "@/components/place/MenuSteps";
 
 const HREF = "/barrier-free/unlisted";
@@ -42,10 +41,6 @@ export default function UnlistedPage() {
           rows={rows}
           threeText={THREE_TEXT}
           caption="무장애 정보가 없는 곳 목록: 번호, 권역, 관광지, 읍면동, 인근 무장애 ‘명소’"
-        />
-        <TipList
-          className={s.tips}
-          items={[<Ph key="a">가까운 등록 관광지는 무장애 정보가 있는 관광지 가운데 가장 가까운 곳과 직선거리입니다.</Ph>]}
         />
         {/* 쪽 끝 이어 읽기(무장애 정보 메뉴 차례) */}
         <MenuSteps section={page.section} current={HREF} />

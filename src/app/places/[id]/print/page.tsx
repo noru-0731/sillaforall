@@ -22,8 +22,8 @@ import { GJ_CREDIT, GJ_SOURCE, gjOf } from "@/data/gj";
 import { KTX_NAME, busSourceLines, busStopsOf, ktxLinesOf } from "@/data/bus";
 import { BusStopUnitsPrint, stopTitle } from "@/components/place/BusStops";
 import { placeCrumbs, placeSideMenu, PLACE_BANNER } from "@/site/ia";
-import { Ph, Section, SubPage } from "@/components/layout/PageParts";
-import { BoardTable, IconHeading, TipList } from "@/components/royal";
+import { Section, SubPage } from "@/components/layout/PageParts";
+import { BoardTable, IconHeading } from "@/components/royal";
 import { SourceLines } from "@/components/place/Amenities";
 import { bfLines, gluedLines, hoursLines, hoursNoteLines } from "@/lib/breaks";
 import s from "@/components/place/Place.module.css";
@@ -178,9 +178,6 @@ export default async function PlacePrint({ params }: Props) {
           )}
           {stops.length > 0 && (
             <div className={s.busNote}>
-              {stops.some((b) => b.distM !== null) && (
-                <TipList items={[<Ph key="a">거리는 두 곳 사이의 직선거리입니다. 길을 따라 걷는 거리와 다릅니다.</Ph>]} />
-              )}
               <SourceLines lines={busSourceLines(p.id)} />
             </div>
           )}

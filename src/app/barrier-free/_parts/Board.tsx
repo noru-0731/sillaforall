@@ -8,7 +8,6 @@
 import { createContext, useContext, useId, useMemo, useState } from "react";
 import Link from "next/link";
 import PillTabs from "@/components/royal/PillTabs";
-import { Ph } from "@/components/layout/Ph";
 import { Icon } from "@/components/icons";
 import type { AreaKey } from "@/data/types";
 import s from "../bf.module.css";
@@ -198,7 +197,7 @@ export function BoardList({
                 {kind === "listed" ? (
                   keys.map((k) => (
                     <th scope="col" key={k}>
-                      <Ph>{threeText[k]}</Ph>
+                      {threeText[k]}
                     </th>
                   ))
                 ) : (
@@ -267,9 +266,7 @@ export function BoardList({
                 <dl className={s.mThree}>
                   {keys.map((k) => (
                     <div key={k}>
-                      <dt>
-                        <Ph>{threeText[k]}</Ph>
-                      </dt>
+                      <dt>{threeText[k]}</dt>
                       <dd>
                         <ThreeText text={r.three![k]} />
                       </dd>

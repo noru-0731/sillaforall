@@ -4,7 +4,7 @@
 // 문구는 궁능 문장의 명사만 바꾼 것이라 점선 밑줄(Ph)이 없다.
 //
 // 무장애 시안(bf-draft): 관람 도우미 칸에 바로가기 이름만이 아니라 이 곳의 자료 값을 함께 보인다(궁능은 아이콘 + 이름 바로가기 줄).
-// 칸: 이용시간, 쉬는 날, 주차, 접근로(값은 접근로 글, 비면 출입통로 글), 화장실, 가까운 장애인 화장실, 문의 전화, 지도에서 보기. 값은 관광공사 관광정보·무장애 여행 정보 글 그대로,
+// 칸: 이용시간, 쉬는 날, 주차, 접근로(값은 접근로 글, 비면 출입통로 글), 화장실, 장애인 화장실(09-27 전 이름 '가까운 장애인 화장실'), 문의 전화, 지도에서 보기. 값은 관광공사 관광정보·무장애 여행 정보 글 그대로,
 // 가까운 장애인 화장실은 도구/10_편의시설_지도.py 의 가장 가까운 한 곳(이름과 직선거리).
 // 빈 칸(09-27 사용자 "채울 수 있는 대로 채우고 나머지는 그냥 비워요"): 주차·접근로·화장실은 무장애 여행 정보 글이 없으면
 // 경주시 무장애 여행정보·관광정보 주차 글·가까운 편의시설로 채우고 자료 꼬리를 붙인다(data/fill.ts, components/place/FillText.tsx). 그래도 없는 칸은 값 없이 둔다.
@@ -38,7 +38,6 @@ import { withJosa } from "@/lib/josa";
 import { bfLines, hoursLines, hoursNoteLines } from "@/lib/breaks";
 import { Icon, type IconName } from "@/components/icons";
 import { CircleButton, CreditBelow, CreditTag, Photo } from "@/components/royal";
-import { Ph } from "@/components/layout/Ph";
 import { parkingFill, toiletFill, walkFill, type Fill } from "@/data/fill";
 import { FillText } from "@/components/place/FillText";
 import ReadAloud from "@/components/layout/ReadAloud";
@@ -121,7 +120,8 @@ export default async function PlaceSubmain({ params }: Props) {
   if (!p.approx)
     quick.push({
       key: "toiletA",
-      label: <Ph>가까운 장애인 화장실</Ph>,
+      // 09-27 점선 1차 정리: '가까운'을 떼면 편의시설 구분 이름(data/bf.ts KIND_LABEL.toiletA, 점선 없음)과 같아 점선을 뗐다
+      label: "장애인 화장실",
       value: toiletA ? `${toiletA.name ? `${toiletA.name} · ` : ""}직선거리 ${toiletA.distanceM.toLocaleString("ko-KR")}m` : null,
       href: `${bf.href}#near`,
       icon: "wheelchair",

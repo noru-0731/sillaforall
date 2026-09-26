@@ -23,7 +23,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { placeById, places } from "@/data";
 import { GJ_CREDIT, GJ_SOURCE, gjOf } from "@/data/gj";
-import { amenitiesOf, bfCultureOf, bfFilledFieldsOf, bfGroupsOf, bfLabel, bfNeighborsOf, BF_CULTURE_SOURCE_LINE, BF_SOURCE, NEAR_RADII, sourceLines, stdLabel, stdValue, type AmenitySrc } from "@/data/bf";
+import { amenitiesOf, bfCultureOf, bfFilledFieldsOf, bfGroupsOf, bfLabel, bfNeighborsOf, BF_CULTURE_SOURCE_LINE, BF_SOURCE, sourceLines, stdLabel, stdValue, type AmenitySrc } from "@/data/bf";
 import { placeCrumbs, placePages, placeSideMenu, PLACE_BANNER } from "@/site/ia";
 import { InPageNav, Ph, Section, SubPage } from "@/components/layout/PageParts";
 import { parkingFill, toiletFill, walkFill } from "@/data/fill";
@@ -316,7 +316,8 @@ export default async function PlaceBarrierFree({ params }: Props) {
   if (am) {
     parts.push({
       id: "near",
-      title: <Ph>편의시설</Ph>,
+      // '편의시설'은 궁능 관람코스 탭 이름(course.txt)이라 점선 없음(09-27 점선 1차 정리)
+      title: "편의시설",
       body: (
         <>
           <AmenityMap
@@ -328,18 +329,7 @@ export default async function PlaceBarrierFree({ params }: Props) {
             legend={legendOf([...items.map((i) => i.kind), ...am.rest.map((r) => r.kind)], p.name)}
           />
           <AmenityTable items={items} idPrefix="am" caption={`${p.name} 가까운 편의시설: 번호, 구분, 이름, 직선거리, 내용, 자료`} />
-          <TipList
-            className={s.tipsAfterTable}
-            items={[
-              <Ph key="a">거리는 두 곳 사이의 직선거리입니다. 길을 따라 걷는 거리와 다릅니다.</Ph>,
-              <Ph key="b">
-                화장실은 {NEAR_RADII.toilet.toLocaleString("ko-KR")}m, 공영주차장은 {NEAR_RADII.parking}m 안에서 가까운 곳부터 몇 곳만 보입니다.{" "}
-                {NEAR_RADII.toilet.toLocaleString("ko-KR")}m 안에 장애인 화장실이나 충전기가 없으면 가장 가까운 한 곳을 보입니다.
-              </Ph>,
-              <Ph key="c">같은 화장실이 두 자료에 함께 있으면 두 줄로 보일 수 있습니다. 공영주차장 자료에는 사찰·관광지 자체 주차장이 없습니다.</Ph>,
-              ...(am.rest.length ? [<Ph key="d">벤치·쉼터는 {NEAR_RADII.benchShelter}m 안의 것을 지도에만 표시했습니다.</Ph>] : []),
-            ]}
-          />
+          {/* 표 아래 점선 풀이 줄 넷(직선거리, 찾는 거리, 두 줄로 보이는 화장실, 벤치·쉼터)은 09-27 점선 1차 정리로 뺐다(11_안건_점선_문구.md) */}
           <SourceLines
             lines={sourceLines([...new Set<AmenitySrc | "osmRest">([...items.map((i) => i.src), ...(am.rest.length ? ["osmRest" as const] : [])])])}
           />

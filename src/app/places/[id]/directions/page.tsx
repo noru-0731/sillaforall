@@ -19,6 +19,7 @@
 // - 이용시간·쉬는 날·무장애 글은 붙은 줄을 나눠 보인다(lib/breaks.ts, 글자는 그대로).
 //
 // 빈 칸은 표시 없이 비운다(09-27 사용자). 무장애 여행 정보 대중교통 글이 없으면 그 칸(이름 줄)을 두지 않는다.
+// 09-27 점선 1차 정리(05_사이트/11_안건_점선_문구.md): 버스·공영주차장 아래 점선 풀이 줄(직선거리, 번호·찾는 거리)은 뺐다(값과 칸 이름에 '직선거리'가 있음).
 import type { Metadata } from "next";
 import { placeMetadata } from "@/site/og";
 import { notFound } from "next/navigation";
@@ -26,11 +27,11 @@ import { areaOf, placeById, places, zipOf } from "@/data";
 import { placeCrumbs, placePages, placeSideMenu, PLACE_BANNER } from "@/site/ia";
 import { Ph, Section, SubPage } from "@/components/layout/PageParts";
 import { Icon } from "@/components/icons";
-import { BlackBar, BoardTable, IconHeading, PillTabs, TipList } from "@/components/royal";
+import { BlackBar, BoardTable, IconHeading, PillTabs } from "@/components/royal";
 import MapView from "@/components/map/MapView";
 import PlaceMap from "@/components/map/PlaceMap";
 import { kakaoTo, phoneOf, sameArea } from "@/components/place/placeData";
-import { amenitiesOf, MOBILITY, NEAR_RADII, sourceLines } from "@/data/bf";
+import { amenitiesOf, MOBILITY, sourceLines } from "@/data/bf";
 import { KTX_NAME, busSourceLines, busStopsOf, ktxLinesOf } from "@/data/bus";
 import { BusStopUnits, stopTitle } from "@/components/place/BusStops";
 import { extraFeeRowsOf } from "@/data/introExtra";
@@ -184,9 +185,6 @@ export default async function PlaceDirections({ params }: Props) {
           )}
           {stops.length > 0 && (
             <div className={s.busNote}>
-              {stops.some((b) => b.distM !== null) && (
-                <TipList items={[<Ph key="a">거리는 두 곳 사이의 직선거리입니다. 길을 따라 걷는 거리와 다릅니다.</Ph>]} />
-              )}
               <SourceLines lines={busSourceLines(p.id)} />
             </div>
           )}
@@ -263,18 +261,9 @@ export default async function PlaceDirections({ params }: Props) {
         </div>
         {pk.length > 0 && (
           <div className={s.pkWrap}>
-            <p className={s.transUnitTit}>
-              <Ph>공영주차장</Ph>
-            </p>
+            {/* '공영주차장'은 편의시설 구분 이름(data/bf.ts KIND_LABEL.parking)이자 경주문화관광 상세 쪽 알약 이름이라 점선 없음(09-27 점선 1차 정리) */}
+            <p className={s.transUnitTit}>공영주차장</p>
             <AmenityTable items={pk} idPrefix="pk" showKind={false} caption={`${p.name} 가까운 공영주차장: 번호, 이름, 직선거리, 내용, 자료`} />
-            <TipList
-              className={s.tipsAfterTable}
-              items={[
-                <Ph key="a">
-                  번호는 위 지도의 번호와 같습니다. 거리는 두 곳 사이의 직선거리입니다. {NEAR_RADII.parking}m 안의 공영주차장과, 장애인 전용 주차 구역이 있는 가장 가까운 곳(1km 안)을 보입니다.
-                </Ph>,
-              ]}
-            />
             <SourceLines lines={sourceLines(["parking"])} />
           </div>
         )}

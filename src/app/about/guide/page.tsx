@@ -2,12 +2,15 @@
 // "Q&A" 제목 → 윗선 남색 → 묻고 답하기 줄(Q 동그라미 + 물음 + ∨). 누르면 아래에 답이 펼쳐진다.
 // 펼침은 <details>/<summary>라 자바스크립트 없이도 되고, 키보드(Tab으로 옮기고 Enter·Space로 여닫기)로 쓸 수 있다.
 // 물음과 답은 예전 이용 안내 글(모두 임시 문구)을 그대로 옮겼다.
+// 09-27 점선 1차 정리(05_사이트/11_안건_점선_문구.md): 답은 궁능 관람코스 "번호를 클릭하시면 아래 화면에서 시설사진을 볼 수 있습니다."와
+// 자주 묻는 질문 "따라서 관람 종류도 전각관람과 후원관람이 있습니다." 틀로 바꿔 점선을 뗐다. 단추 이름 '글자·화면 설정'은 머리 단추 이름 그대로.
 import type { Metadata } from "next";
 import { pageMetadata } from "@/site/og";
 import Link from "next/link";
-import { Ph, Section, SubPage } from "@/components/layout/PageParts";
+import { Section, SubPage } from "@/components/layout/PageParts";
 import { Icon } from "@/components/icons";
 import { MENU } from "@/site/ia";
+import { withJosa } from "@/lib/josa";
 import SettingsButton from "../_parts/SettingsButton";
 import s from "../about.module.css";
 
@@ -28,11 +31,11 @@ export default function GuidePage() {
       a: (
         <>
           <p>
-            <Ph>화면 오른쪽 위의 ‘글자·화면 설정’ 단추를 누르면 글자 크기와 화면 밝기를 바꿀 수 있습니다.</Ph>
+            화면 오른쪽 위 ‘글자·화면 설정’을 누르시면 글자 크기와 화면 밝기 설정을 볼 수 있습니다.
           </p>
           <div className={s.actions}>
             <SettingsButton>
-              <Ph>글자·화면 설정</Ph>
+              글자·화면 설정
             </SettingsButton>
           </div>
         </>
@@ -45,13 +48,13 @@ export default function GuidePage() {
         <>
           <ul>
             <li>
-              <Ph>경주 전체 지도에서 지역을 누르면 그 지역 지도로 갑니다.</Ph>
+              경주 전체 지도에서 색칠한 권역을 누르시면 그 권역 지도를 볼 수 있습니다.
             </li>
             <li>
-              <Ph>지도 위 점을 누르면 관광지 이름과 안내가 나옵니다.</Ph>
+              지도 위 점을 누르시면 관광지 이름과 안내를 볼 수 있습니다.
             </li>
             <li>
-              <Ph>지도 단추로 크게, 작게 볼 수 있습니다.</Ph>
+              확대·축소 단추를 누르시면 지도를 크게, 작게 볼 수 있습니다.
             </li>
           </ul>
           <div className={s.actions}>
@@ -69,7 +72,7 @@ export default function GuidePage() {
       a: (
         <>
           <p>
-            <Ph>관광지를 지역별, 가나다순, 덩어리별로 나눠 볼 수 있습니다.</Ph>
+            관광지 목록 종류는 {withJosa((LIST.children ?? []).map((c) => c.label).join(", "), "이/가")} 있습니다.
           </p>
           <div className={s.actions}>
             {LIST.children?.map((c) => (
