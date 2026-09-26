@@ -5,6 +5,7 @@
 import Link from "next/link";
 import type { NavItem } from "@/site/ia";
 import { Icon } from "@/components/icons";
+import { titleLand } from "./landing";
 import s from "./PageSteps.module.css";
 
 export default function MenuSteps({ section, current }: { section: NavItem; current: string }) {
@@ -20,7 +21,7 @@ export default function MenuSteps({ section, current }: { section: NavItem; curr
       <ul className={s.list}>
         {prev && (
           <li className={s.prev}>
-            <Link href={prev.href} className={s.link}>
+            <Link href={titleLand(prev.href)} className={s.link}>
               <Icon name="chevron-left" size={22} strokeWidth={2} className={s.arrow} />
               <span className={s.txt}>
                 <span className={s.dir}>이전</span>
@@ -32,7 +33,7 @@ export default function MenuSteps({ section, current }: { section: NavItem; curr
         )}
         {next && (
           <li className={s.next}>
-            <Link href={next.href} className={s.link}>
+            <Link href={titleLand(next.href)} className={s.link}>
               <span className={s.txt}>
                 <span className={s.dir}>다음</span>
                 <span className="sr-only">: </span>

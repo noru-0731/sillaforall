@@ -85,12 +85,13 @@
   --rc-ink: #131313; /* 검정 상자 바탕(왼쪽 메뉴 머리, 검정 띠, 동그라미 단추) */
   --rc-on-ink: #ffffff; /* 검정 상자 위 글자 */
   --rc-navy: #0e2b5e; /* 머리의 남색 둥근 띠 rgb(14,43,94) */
-  --rc-pink: #d44177; /* 분홍 동그라미 rgb(212,65,119) */
+  --rc-pink: #d03e74; /* 분홍 동그라미. 궁능 rgb(212,65,119) #d44177 은 흰 글자 대비 4.36:1 이라 같은 색상(338°)에서 가장 가까운 4.5:1 넘는 색(4.54:1)으로(09-26 평가 02) */
   --rc-blue: #1344cf; /* 푸터 첫 링크 rgb(19,68,207) */
   --rc-welcome: #1344cf; /* 인사말의 파란 문장 */
   --rc-sitemap-line: #0a134f; /* 사이트맵 윗선·아랫선 rgb(10,19,79) */
   --rc-seg: #17106e; /* 오른쪽 작은 탭(전체/둘러보기) 고른 칸 rgb(23,16,110) */
-  --rc-seg-off: #949494; /* 고르지 않은 칸 글자·테두리(궁능 rgb(148,148,148)) */
+  --rc-seg-off: #949494; /* 고르지 않은 칸 테두리(궁능 rgb(148,148,148)) */
+  --rc-seg-off-text: #717171; /* 고르지 않은 칸 글자. 궁능 #949494 는 흰 바탕 3.0:1·#f7f7f7 바탕 2.8:1 이라 같은 회색에서 두 바탕 모두 4.5:1 넘는 가장 옅은 값(4.9:1·4.6:1, 09-26 평가 02) */
   --rc-grad: linear-gradient(to right, #d44177 0%, #0c68be 100%); /* "전체" 알약 */
   --rc-dim: rgba(0, 0, 0, 0.55); /* 펼침판 뒤를 어둡게 */
   --rc-photo-dark: #131313; /* 제3유형 사진 남는 곳 바탕(어두움) */
@@ -135,6 +136,7 @@
   --rc-sitemap-line: #ffffff;
   --rc-seg: #ffffff;
   --rc-seg-off: #d6d6d6;
+  --rc-seg-off-text: #d6d6d6;
   --rc-dim: rgba(0, 0, 0, 0.75);
   --rc-photo-dark: #000000;
   --rc-photo-light: #1c1c1c;
@@ -172,6 +174,10 @@ body {
 #wrap {
   padding-top: var(--rc-header-h);
   padding-left: var(--rc-bar-w);
+}
+/* 본문 시작(#contents: 건너뛰기 링크, 이어 읽기 링크가 여는 자리)으로 옮길 때 고정 머리 밑에 가리지 않게 */
+#contents {
+  scroll-margin-top: var(--rc-header-h);
 }
 
 /* ───────────────────────── 왼쪽 고정 막대(PC) ───────────────────────── */
@@ -1493,7 +1499,7 @@ main {
   background: none;
   font-size: 1.6rem;
   font-weight: 500;
-  color: var(--rc-seg-off);
+  color: var(--rc-seg-off-text);
   cursor: pointer;
 }
 .rc-seg__btn.is-active {

@@ -8,6 +8,7 @@ import type { Place } from "@/data";
 import { placePages } from "@/site/ia";
 import { Icon } from "@/components/icons";
 import { fmtDist, nearby } from "./placeData";
+import { placeLand, titleLand } from "./landing";
 import sm from "./Submain.module.css";
 import s from "./PageSteps.module.css";
 
@@ -17,13 +18,15 @@ export default function PageSteps({ place, at, className }: { place: Place; at: 
   const prev = at > 0 ? pages[at - 1] : null;
   const next = at < pages.length - 1 ? pages[at + 1] : null;
   const near = next ? [] : nearby(place, 3);
+  // 새 쪽은 제목 자리로 연다(landing.ts): 서브메인은 '○○ 관람 도우미' 제목, 나머지는 #contents
+  const land = (href: string) => (href === pages[0].href ? placeLand(place.id) : titleLand(href));
 
   return (
     <nav className={[s.steps, at === 0 ? s.onSubmain : "", className ?? ""].filter(Boolean).join(" ")} aria-label={`${place.name} 이어 읽기`}>
       <ul className={`${s.list}${near.length ? " " + s.withNear : ""}`}>
         {prev && (
           <li className={s.prev}>
-            <Link href={prev.href} className={s.link}>
+            <Link href={land(prev.href)} className={s.link}>
               <Icon name="chevron-left" size={22} strokeWidth={2} className={s.arrow} />
               <span className={s.txt}>
                 <span className={s.dir}>이전</span>
@@ -35,7 +38,7 @@ export default function PageSteps({ place, at, className }: { place: Place; at: 
         )}
         {next && (
           <li className={s.next}>
-            <Link href={next.href} className={s.link}>
+            <Link href={land(next.href)} className={s.link}>
               <span className={s.txt}>
                 <span className={s.dir}>다음</span>
                 <span className="sr-only">: </span>
@@ -54,7 +57,7 @@ export default function PageSteps({ place, at, className }: { place: Place; at: 
             <ul className={sm.nearList} aria-labelledby={`${place.id}-steps-near`}>
               {near.map(({ place: q, distM }) => (
                 <li key={q.id}>
-                  <Link href={`/places/${q.id}`}>
+                  <Link href={placeLand(q.id)}>
                     <span className={sm.nearName}>{q.name}</span>
                     <span className={sm.nearDong}>
                       {q.dong}

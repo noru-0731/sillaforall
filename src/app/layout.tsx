@@ -5,6 +5,7 @@ import "./globals.css";
 import SiteHeader, { type AreaCard } from "@/components/layout/SiteHeader";
 import SiteFooter from "@/components/layout/SiteFooter";
 import { DisplaySettingsProvider } from "@/components/layout/DisplaySettings";
+import { RouteTop, ToTop } from "@/components/layout/PageTop";
 import { AREA_LINKS, SITE_NAME } from "@/site/ia";
 import { areaPhoto, photoCreditOf } from "@/data/photos";
 
@@ -22,8 +23,9 @@ const areaCards: AreaCard[] = AREA_LINKS.map((a) => {
 });
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
+  // data-scroll-behavior: KRDS reset 의 html scroll-behavior: smooth 를 Next 가 쪽 옮길 때만 끄게 한다(없으면 새 쪽이 맨 위가 아닌 자리에서 열림, components/layout/PageTop.tsx)
   return (
-    <html lang="ko" data-krds-mode="light">
+    <html lang="ko" data-krds-mode="light" data-scroll-behavior="smooth">
       <body>
         <DisplaySettingsProvider>
           <div id="wrap">
@@ -33,7 +35,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <SiteHeader areaCards={areaCards} />
             <main>{children}</main>
             <SiteFooter />
+            <ToTop />
           </div>
+          <RouteTop />
         </DisplaySettingsProvider>
       </body>
     </html>

@@ -103,6 +103,8 @@
   flex: 0 0 24rem;
 }
 .quickTit h2 {
+  /* 이어 읽기·주변 관광지 링크(#quick-tit)로 열 때 고정 머리 밑에 가리지 않게(다른 쪽 안 자리와 같은 값) */
+  scroll-margin-top: calc(var(--rc-header-h) + 2rem);
   font-size: 2.8rem;
   font-weight: 700;
   line-height: 1.3;

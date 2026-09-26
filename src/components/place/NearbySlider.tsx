@@ -11,6 +11,7 @@ import { useEffect, useRef, useState } from "react";
 import { Icon } from "@/components/icons";
 import { CreditTag } from "@/components/royal/Photo";
 import { useReducedMotion } from "@/components/home/bits";
+import { placeLand } from "./landing";
 import s from "./NearbySlider.module.css";
 
 export type Slide = {
@@ -64,7 +65,7 @@ export default function NearbySlider({
         }}
       >
         <Link
-          href={`/places/${cur.id}`}
+          href={placeLand(cur.id)}
           className={s.photo}
           tabIndex={-1}
           aria-hidden="true"
@@ -84,7 +85,7 @@ export default function NearbySlider({
             aria-live={running ? "off" : "polite"}
             aria-atomic="true"
           >
-            <Link href={`/places/${cur.id}`}>
+            <Link href={placeLand(cur.id)}>
               {cur.name}
               <span className={s.dong}>{cur.dong}</span>
             </Link>
