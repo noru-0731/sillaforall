@@ -171,16 +171,18 @@ export function amenitiesOf(id: string): NearPlace | null {
 
 /** 가장 가까운 장애인 화장실 한 곳(관람 도우미 칸) */
 export function nearestAccessibleToilet(id: string): AmenityItem | null {
-  return NEAR.places[id]?.items.find((i) => i.kind === "toiletA") ?? null;
+  return NEAR.places[id]?.items.find((i) => i.kind === "toiletA" && !isAreaRecord(i)) ?? null;
 }
 
-/** 이 거리(m) 안에서 가장 가까운 한 곳(종류별, 빈 칸 채우기 data/fill.ts). 찾는 거리 밖이라 가장 가까운 한 곳으로 실린 것(far)은 뺀다 */
 /** 구역 전체를 좌표 한 점으로 올린 무장애 기록(도구/06_편의시설.py AREA_RECORDS 와 같음). 직선거리가 실제 거리가 아니라 '가장 가까운 곳'으로 고르지 않는다 */
 const AREA_RECORDS = new Set(["1957348"]); // 경주시 관광특구
+const isAreaRecord = (i: AmenityItem) => !!i.contentId && AREA_RECORDS.has(i.contentId);
+
+/** 이 거리(m) 안에서 가장 가까운 한 곳(종류별, 빈 칸 채우기 data/fill.ts). 찾는 거리 밖이라 가장 가까운 한 곳으로 실린 것(far)은 뺀다 */
 
 export function nearestWithin(id: string, kind: AmenityKind, maxM: number): AmenityItem | null {
   const xs = (NEAR.places[id]?.items ?? []).filter(
-    (i) => i.kind === kind && !i.far && i.distanceM <= maxM && !(i.contentId && AREA_RECORDS.has(i.contentId)),
+    (i) => i.kind === kind && !i.far && i.distanceM <= maxM && !isAreaRecord(i),
   );
   return xs.reduce<AmenityItem | null>((m, i) => (!m || i.distanceM < m.distanceM ? i : m), null);
 }
