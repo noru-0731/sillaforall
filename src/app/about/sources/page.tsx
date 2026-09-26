@@ -28,6 +28,21 @@ function OutLink({ href, children }: { href: string; children: React.ReactNode }
   );
 }
 
+/**
+ * 제공 기관 칸: 괄호 앞 기관 이름은 포털에서 옮긴 글이라 그대로, 괄호 설명은 Claude가 적은 글이라 점선(가 35번).
+ * 예: "행정안전부(지방자치단체 기초자료 등록)" → 행정안전부 + 점선 "(지방자치단체 기초자료 등록)"
+ */
+function providerCell(provider: string): React.ReactNode {
+  const m = provider.match(/^([^(]+)(\(.+\))$/);
+  if (!m) return provider;
+  return (
+    <>
+      {m[1]}
+      <Ph>{m[2]}</Ph>
+    </>
+  );
+}
+
 /** 공공누리 표시 그림 대신 글자 상자 */
 function KoglText({ type }: { type: KoglType }) {
   return (
@@ -148,7 +163,7 @@ export default function SourcesPage() {
               const src = SOURCES[k];
               return [
                 src.name.replace(/\(.*\)$/, ""),
-                src.provider,
+                providerCell(src.provider),
                 src.license.startsWith("이용허락범위 제한 없음") ? "이용허락범위 제한 없음" : <Ph key="l">표준데이터 쪽에 이용허락 표시 없음</Ph>,
                 REF_DATE[k],
                 <OutLink key="u" href={src.url}>
