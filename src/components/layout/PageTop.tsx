@@ -18,26 +18,24 @@ import s from "./PageTop.module.css";
 
 export function RouteTop() {
   const pathname = usePathname();
-  const popped = useRef(false);
-  const first = useRef(true);
+  const popped = useRef<string | null>(null); // 뒤로·앞으로 가기로 온 주소(그때의 location.pathname)
+  const prev = useRef(pathname);
 
   useEffect(() => {
     const onPop = () => {
-      popped.current = true;
+      popped.current = window.location.pathname;
     };
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
   }, []);
 
   useEffect(() => {
-    if (first.current) {
-      first.current = false;
-      return;
-    }
-    if (popped.current) {
-      popped.current = false;
-      return;
-    }
+    // 처음 불러올 때(개발 모드에서 효과가 두 번 돌 때 포함)와 주소 뒤 ?만 바뀐 때는 건드리지 않는다
+    if (prev.current === pathname) return;
+    prev.current = pathname;
+    const wasPop = popped.current !== null && decodeURI(popped.current) === decodeURI(pathname);
+    popped.current = null;
+    if (wasPop) return;
     if (window.location.hash) return;
     if (window.scrollY !== 0) window.scrollTo({ top: 0, left: 0, behavior: "instant" });
   }, [pathname]);
