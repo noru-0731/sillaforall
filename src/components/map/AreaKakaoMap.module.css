@@ -14,9 +14,12 @@
   --ak-ring: #d44177;
 }
 
-/* 지도 상자 높이: PC 는 궁능 관람코스 지도(693), 좁은 화면은 폭에 가까운 정사각(최소 360) */
+/* 지도 상자 높이: 칸 폭의 0.67(PC 1440 은 본문 칸 1030 이라 690, 더 넓은 칸에서 궁능 관람코스 지도 693 이 상한),
+ * 좁은 화면은 최소 360. 그리고 늘 떠 있는 머리(--rc-header-h) 밑 화면 높이에서 위아래 여백 2rem 씩을 뺀 것을 넘지 않게
+ * (09-27 점검: PC 글자 가장 크게에서 상자 852 가 머리 150 밑 화면 750 보다 커서 한 번에 다 안 보이고 위쪽 번호가 머리에 가렸다).
+ * 글자·화면 설정은 body zoom 이라 svh 도 zoom 배가 되므로 --rc-zoom 으로 나눈다(HeaderParts.module.css 와 같은 셈). */
 .box {
-  height: clamp(36rem, 67cqi, 69.3rem);
+  height: clamp(36rem, min(67cqi, calc(100svh / var(--rc-zoom, 1) - var(--rc-header-h) - 4rem)), 69.3rem);
 }
 
 /* 번호 네모(단추). 크기·글자·그림자는 RealMap.module.css .pt 그대로 */

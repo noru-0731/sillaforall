@@ -91,6 +91,9 @@ export default function MapExplorer({
   const wanted = selId ?? placeParam;
   const sel = list.find((p) => p.id === wanted) ?? list[0];
   const emph = hub ? list.filter((p) => p.cluster === hub).map((p) => p.id) : [];
+  // 이 범위(거르기 전)에 계단 없는 길 곳이 없으면(불국사권) 표시도 범례 줄도 넘기지 않는다. 세부 지도의 sfHere 와 같은 셈이라
+  // 카카오가 안 떠서 도식 지도로 돌아가도 범례가 같다(09-27 점검 고침).
+  const sfScope = stepFree && all.some((p) => stepFree.ids.includes(p.id)) ? stepFree : undefined;
   const photo = sel ? photos[sel.id] : null;
   const ov = sel ? splitOverview(sel.overview) : null;
 
@@ -147,7 +150,7 @@ export default function MapExplorer({
             highlightId={sel?.id}
             emphasisIds={emph}
             onSelectPlace={choose}
-            stepFree={stepFree}
+            stepFree={sfScope}
             hubLegend={hubs.length > 0}
           />
         ) : (
@@ -158,7 +161,7 @@ export default function MapExplorer({
             highlightId={sel?.id}
             emphasisIds={emph}
             onSelectPlace={choose}
-            stepFree={stepFree}
+            stepFree={sfScope}
           />
         )}
       </div>
