@@ -143,7 +143,7 @@ export default function KakaoMap({ lat, lon, name, label, zoom = 16, points, leg
       const fr = foot && relRect(foot, el, 4);
       if (fr) hard.push(fr);
       const at = nums.map((n) => proj.containerPointFromCoords(n.pos));
-      const moves = nudgeAll(W, H, hard, nums.map((n, i) => ({ x: at[i].x, y: at[i].y, w: n.w, h: n.h })));
+      const moves = nudgeAll(W, H, hard, nums.map((n, i) => ({ x: at[i].x, y: at[i].y, w: n.w, h: n.h, spot: n.p.spot })));
       nums.forEach((n, i) => {
         const { dx, dy, lead } = moves[i];
         const sq = n.root.firstElementChild as HTMLElement | null;

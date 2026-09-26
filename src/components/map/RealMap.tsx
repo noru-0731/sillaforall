@@ -141,7 +141,7 @@ export default function RealMap({ lat, lon, name, label, zoom = 16, points, lege
         }
         // 네모마다 제자리(px). 비키기 셈은 mapParts.nudgeAll(카카오 판과 같은 셈)
         const at = nums.map((n) => map.latLngToContainerPoint([n.p.lat, n.p.lon]));
-        const moves = nudgeAll(W, H, hard, nums.map((n, i) => ({ x: at[i].x, y: at[i].y, w: n.w, h: n.h })));
+        const moves = nudgeAll(W, H, hard, nums.map((n, i) => ({ x: at[i].x, y: at[i].y, w: n.w, h: n.h, spot: n.p.spot })));
         nums.forEach((n, i) => {
           const a = at[i];
           const { dx, dy, lead } = moves[i];

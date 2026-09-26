@@ -20,7 +20,7 @@ function metersBetween(a: { lat: number; lon: number }, b: { lat: number; lon: n
   return Math.hypot(dx, dy);
 }
 
-/** 같은 자리(약 10m 안)의 점은 번호를 이어 한 네모로: "1·2", 셋 넘게 이어지면 "1~4" */
+/** 같은 자리(약 10m 안)·같은 종류의 점은 번호를 이어 한 네모로: "1·2", 셋 넘게 이어지면 "1~4" */
 function mergeLabel(nos: number[]) {
   const run = nos.every((n, i) => i === 0 || n === nos[i - 1] + 1);
   return nos.length > 2 && run ? `${nos[0]}~${nos[nos.length - 1]}` : nos.join("·");
@@ -40,19 +40,27 @@ export function amenityPoints(items: (AmenityItem & { show: number })[], idPrefi
     else merged.push(g);
   }
   for (const g of merged) g.sort((a, b) => a.show - b.show);
-  const pts: MapPoint[] = merged.map((g) => {
-    const first = g[0];
-    const nos = g.map((i) => i.show);
-    return {
-      key: `${idPrefix}-${nos.join("-")}`,
-      kind: first.kind,
-      lat: first.lat,
-      lon: first.lon,
-      label: mergeLabel(nos),
-      title: g.map((i) => `${i.show}. ${i.name ?? KIND_LABEL[i.kind]} (${fmtM(i.distanceM)})`).join("\n"),
-      href: `${idPrefix}-${first.show}`,
-      near: g.some((i) => !i.far),
-    };
+  // 가 173번: 같은 자리 묶음 안에 종류가 다른 점이 있으면 종류별로 네모를 나눠 제 종류 색을 쓴다.
+  // 나뉜 네모는 같은 제자리(spot)를 갖고, 지도의 번호 네모 비키기(mapParts.nudgeAll)가 번호가 작은 네모 옆으로 나란히 놓는다.
+  const pts: MapPoint[] = merged.flatMap((g) => {
+    const spot = `${idPrefix}-s${g[0].show}`;
+    const kinds = [...new Set(g.map((i) => i.kind))];
+    return kinds.map((kind) => {
+      const sub = g.filter((i) => i.kind === kind);
+      const first = sub[0];
+      const nos = sub.map((i) => i.show);
+      return {
+        key: `${idPrefix}-${nos.join("-")}`,
+        kind,
+        lat: g[0].lat,
+        lon: g[0].lon,
+        label: mergeLabel(nos),
+        title: sub.map((i) => `${i.show}. ${i.name ?? KIND_LABEL[i.kind]} (${fmtM(i.distanceM)})`).join("\n"),
+        href: `${idPrefix}-${first.show}`,
+        near: sub.some((i) => !i.far),
+        ...(kinds.length > 1 ? { spot } : {}),
+      };
+    });
   });
   for (const r of rest) pts.push({ key: `${idPrefix}-r-${r.lat},${r.lon}`, kind: r.kind, lat: r.lat, lon: r.lon, near: false });
   return pts;
