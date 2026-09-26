@@ -48,3 +48,16 @@
   overflow: visible;
 }
 
+
+/* 카카오 로고 링크 옆 새 창 표시(kakaoParts.markKakaoLogo, 09-27). KRDS .svg-icon.ico-go 가림판 그림(NewWinIcon 과 같은 그림)을
+   로고 높이(10px)에 맞춰 로고 오른쪽에 둔다. 카카오 로고 줄은 선명한 화면 모드에서도 밝은 지도 위 검정 글자라 색은 카카오 줄 글자색(검정) 그대로.
+   .svg-icon 보다 앞서게 두 겹 선택자 */
+.logoNewWin:global(.svg-icon) {
+  float: left;
+  display: block;
+  width: 10px;
+  height: 10px;
+  margin-left: 2px;
+  background-color: #000000;
+  pointer-events: none;
+}
