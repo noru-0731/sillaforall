@@ -203,6 +203,19 @@ export default function SourcesPage() {
         </p>
       </Section>
 
+      {/* 오시는 길·편의시설 지도(components/map/PlaceMap). 카카오 지도가 뜨지 않을 때는 오픈스트리트맵 지도(아래 칸)로 그린다 */}
+      <Section id="kakao" title="Kakao 지도 API">
+        <ul className={`${s.bullets} ${s.bulletsTight}`}>
+          <li>
+            <Ph>지도(오시는 길, 편의시설)</Ph>
+          </li>
+          <li>© Kakao Corp.</li>
+        </ul>
+        <p>
+          <OutLink href="https://apis.map.kakao.com">apis.map.kakao.com</OutLink>
+        </p>
+      </Section>
+
       <Section id="osm" title="오픈스트리트맵(OpenStreetMap)">
         <ul className={`${s.bullets} ${s.bulletsTight}`}>
           <li>

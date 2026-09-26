@@ -3,7 +3,7 @@
 // 지도 상자(번호 네모 + 왼쪽 범례) → ⓘ 안내 상자("번호를 클릭하시면 아래 화면에서 …") → 목록(궁능은 이름 격자 + 고른 시설 사진, 우리는 게시판 표).
 // 표는 번호 / 구분 / 이름 / 직선거리 / 자료에 적힌 칸 / 자료. 칸 이름과 값은 원본 자료 그대로.
 // 좁은 화면(본문 767 이하)에서는 표 줄을 한 칸씩 쌓는다(Amenities.module.css).
-import RealMap, { type LegendItem, type MapPoint } from "@/components/map/RealMap";
+import PlaceMap, { type LegendItem, type MapPoint } from "@/components/map/PlaceMap";
 import { InfoBox } from "@/components/royal";
 import { KIND_LABEL, SRC_LABEL, type AmenityItem, type AmenityKind, type RestPoint } from "@/data/bf";
 import s from "./Amenities.module.css";
@@ -82,7 +82,7 @@ export function AmenityMap({
 }) {
   return (
     <>
-      <RealMap lat={lat} lon={lon} name={name} label={`${name} 둘레 편의시설 지도`} zoom={16} points={points} legend={legend} tall={tall} />
+      <PlaceMap lat={lat} lon={lon} name={name} label={`${name} 둘레 편의시설 지도`} zoom={16} points={points} legend={legend} tall={tall} />
       <InfoBox className={s.info}>번호를 누르시면 아래 목록에서 시설 정보를 볼 수 있습니다.</InfoBox>
     </>
   );

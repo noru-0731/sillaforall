@@ -1,0 +1,42 @@
+/*
+ * 카카오 지도 판(KakaoMap.tsx)에만 필요한 것. 상자·핀·번호 네모·범례·단추 모양은 RealMap.module.css 를 같이 쓴다.
+ * 카카오는 표시(CustomOverlay)마다 우리 HTML 을 겉 상자 하나로 싸서 지도 위에 놓는다.
+ */
+
+/* 카카오에 넘기는 안쪽 상자. 카카오가 position 을 relative 로 바꿔도 .map(absolute, inset 0)을 꽉 채우게 */
+.kmap {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  font-family: inherit;
+}
+
+/* 우리 표시의 뿌리: 누르지 않는다(지도 끌기가 지나가게). 누를 것은 .hit 의 네모만 */
+.ov {
+  position: relative;
+  pointer-events: none;
+}
+.kmap div:has(> .ov) {
+  pointer-events: none; /* 카카오 겉 상자도 */
+}
+.hit > * {
+  pointer-events: auto;
+}
+
+/* 관광지 핀 뿌리: 29×42(핀 끝이 제자리), 이름 상자는 RealMap.module.css .pinName 이 아래에 놓는다 */
+.pin {
+  width: 29px;
+  height: 42px;
+}
+
+/* 비킨 번호 네모의 제자리 점과 선(색은 RealMap.module.css .anchor/.leader + .k_{kind}) */
+.lead {
+  width: 0;
+  height: 0;
+}
+.leadSvg {
+  position: absolute;
+  overflow: visible;
+}
+
