@@ -98,7 +98,7 @@ export default async function PlacePrint({ params }: Props) {
               ["주소", p.address ? `${zip ? `(${zip}) ` : ""}${p.address}` : EMPTY],
               ["읍면동·권역", `${p.dong} · ${areaLabelOf(p)}`],
               ["이용시간", cell(hoursLines(p.hours))],
-              ["휴무일", cell(hoursLines(p.closed))],
+              ["쉬는 날", cell(hoursLines(p.closed))],
               ["이용요금", cell(hoursLines(p.fee))],
               ...extraFeeRowsOf(p.id).map(([k, v]) => [k, cell(hoursLines(v))]),
               ["주차", cell(p.parkingInfo)],

@@ -289,7 +289,7 @@ export default async function PlaceDirections({ params }: Props) {
             ["이용요금", p.fee ? <span className={s.pre}>{hoursLines(p.fee.trim())}</span> : EMPTY],
             ...extraFeeRowsOf(p.id).map(([k, v]) => [k, <span key={k} className={s.pre}>{hoursLines(v)}</span>]),
             ["이용시간", p.hours ? <span className={s.pre}>{hoursLines(p.hours.trim())}</span> : EMPTY],
-            ["휴무일", p.closed ? <span className={s.pre}>{hoursLines(p.closed.trim())}</span> : EMPTY],
+            ["쉬는 날", p.closed ? <span className={s.pre}>{hoursLines(p.closed.trim())}</span> : EMPTY],
           ]}
         />
       </div>
