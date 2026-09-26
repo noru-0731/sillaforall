@@ -4,7 +4,7 @@ import { areaOf, areas, byName, places } from "@/data";
 import type { Place } from "@/data";
 import { photoCredit, photoCreditOf } from "@/data/photos";
 import { pickPhoto } from "@/components/map/explorerData";
-import { hoursLines } from "@/lib/breaks";
+import { hoursLines, hoursNoteLines } from "@/lib/breaks";
 import { bfGroupNamesOf } from "@/data/bf";
 import type { AreaOption, BoardRow, CardPlace } from "./types";
 
@@ -12,6 +12,8 @@ const labelOf = (p: Place) => areas.find((a) => a.key === areaOf(p))?.label ?? "
 
 /** 이용시간·쉬는 날: 빈 줄을 한 줄 바꿈으로, 붙은 줄(줄 첫머리가 아닌 "- "·"[")은 나눈다 */
 const cleanHours = (h: string | null) => (h ? hoursLines(h.replace(/\n\s*\n/g, "\n").trim()) : null);
+/** 이용시간: 위에 더해 줄 첫머리가 아닌 "※" 앞에서도 나눈다(가 157번) */
+const cleanOpenHours = (h: string | null) => (h ? hoursNoteLines(h.replace(/\n\s*\n/g, "\n").trim()) : null);
 
 export function toCard(p: Place): CardPlace {
   const photo = pickPhoto(p.id);
@@ -22,7 +24,7 @@ export function toCard(p: Place): CardPlace {
     areaLabel: labelOf(p),
     dong: p.dong,
     address: p.address,
-    hours: cleanHours(p.hours),
+    hours: cleanOpenHours(p.hours),
     closed: cleanHours(p.closed),
     category: p.category,
     photo,

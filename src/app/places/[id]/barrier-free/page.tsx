@@ -238,7 +238,16 @@ export default async function PlaceBarrierFree({ params }: Props) {
         <>
           {neighbors.map((n) => (
             <div key={n.contentId} className={s.bfGroup}>
-              <h3 className={s.bfGroupTit}>{n.title}</h3>
+              {/* 가 99번: 61곳 안 관광지의 기록이면 이름을 그 곳 무장애 정보 쪽으로 잇는다(글은 그대로) */}
+              <h3 className={s.bfGroupTit}>
+                {n.placeId ? (
+                  <Link href={`/places/${n.placeId}/barrier-free`} className={s.cellLink}>
+                    {n.title}
+                  </Link>
+                ) : (
+                  n.title
+                )}
+              </h3>
               {/* 좌표를 빌린 곳(서악서원)은 빌린 좌표로 잰 거리라 적지 않는다(오시는 길·편의시설과 같은 규칙) */}
               <p className={s.bfMeta}>
                 {n.typeLabel}

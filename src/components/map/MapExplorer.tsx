@@ -4,13 +4,14 @@
 // → 고른 관광지(이름 제목, 사진, 개요, "관광지 자세히 보기", 공공누리 글자 상자).
 // ?place=id 가 있으면 그 곳을 고른 채로 연다(정적 쪽이라 브라우저에서 읽는다).
 // (무장애 시안 bf-draft: 무장애 조건 거르기 줄과 ?조건= 읽기를 뺐다. 전체/정보가 적힌 곳/정보가 없는 곳 나눔은 그대로.)
+// 가 62번: 보이는 곳이 0곳이면 ⓘ 안내 상자와 거점 단추를 숨긴다(새 글은 넣지 않는다).
+// 가 22번: 개요가 없는 곳은 소개 쪽과 같은 글 "등록된 소개 글이 없습니다."(레퍼런스 글이라 점선 없음).
 import { useId, useMemo, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { placeById } from "@/data";
 import type { AreaKey, Place } from "@/data";
 import { cn } from "@/lib/cn";
 import { Icon } from "@/components/icons";
-import { Ph } from "@/components/layout/Ph";
 import Photo from "@/components/royal/Photo";
 import { SegTabs } from "@/components/royal/PillTabs";
 import { InfoBox } from "@/components/royal/Bits";
@@ -79,7 +80,8 @@ export default function MapExplorer({
   return (
     <div className={s.wrap}>
       <div className={s.tabRow}>
-        {hubs.length > 0 && (
+        {/* 보이는 곳이 0곳이면 거점 단추를 숨긴다(누를 관광지가 없다) */}
+        {hubs.length > 0 && list.length > 0 && (
           <div className={s.hubWrap} role="group" aria-labelledby={hubLabelId}>
             <span className={s.hubTit} id={hubLabelId}>
               <Icon name="pin" size={20} strokeWidth={2} />
@@ -121,7 +123,8 @@ export default function MapExplorer({
         />
       </div>
 
-      <InfoBox className={s.info}>관광지 이름을 누르시면 아래 화면에서 사진을 볼 수 있습니다.</InfoBox>
+      {/* 보이는 곳이 0곳이면 안내 상자를 숨긴다 */}
+      {list.length > 0 && <InfoBox className={s.info}>관광지 이름을 누르시면 아래 화면에서 사진을 볼 수 있습니다.</InfoBox>}
 
       {list.length > 0 ? (
         <ul className={s.names} aria-label="관광지 이름">
@@ -155,9 +158,7 @@ export default function MapExplorer({
                 {ov.rest && <> {ov.rest}</>}
               </p>
             ) : (
-              <p>
-                <Ph>소개 글이 없습니다.</Ph>
-              </p>
+              <p>등록된 소개 글이 없습니다.</p>
             )}
           </div>
           <div className={s.btnWrap}>

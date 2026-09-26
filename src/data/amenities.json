@@ -6,8 +6,7 @@
    1000
   ],
   "skipped": {
-   "p20": "서악서원",
-   "p45": "블루원워터파크"
+   "p20": "서악서원"
   },
   "toiletAccessibleSources": {
    "toiletStd": "표준데이터 화장실 가운데 장애인용 대변기·소변기가 1개 이상인 곳",
@@ -10398,28 +10397,7 @@
      {
       "name": "블루원워터파크",
       "category": "워터파크",
-      "distanceM": 294,
-      "refDate": "2022-11-25",
-      "hours": "실내 10:00-18:00,실외 10:00-17:00",
-      "closed": null,
-      "yn": {
-       "장애인용 출입문": "N",
-       "휠체어 대여 가능 여부": "N",
-       "장애인 화장실 유무": "N",
-       "장애인 전용 주차장 여부": "N",
-       "대형주차장 가능여부": "N",
-       "무료주차 가능여부": "Y",
-       "유료주차 가능여부": "N",
-       "시각장애인 안내견 동반 가능 여부": "N",
-       "점자 가이드 여부": "N",
-       "오디오 가이드(한국어)": "N",
-       "입장료 유무 여부": "Y"
-      }
-     },
-     {
-      "name": "블루원워터파크",
-      "category": "워터파크",
-      "distanceM": 579,
+      "distanceM": 1083,
       "refDate": "2022-11-25",
       "hours": "실내 10:00-18:00,실외 10:00-17:00",
       "closed": "연중무휴",
@@ -10436,10 +10414,250 @@
        "오디오 가이드(한국어)": "N",
        "입장료 유무 여부": "Y"
       }
+     },
+     {
+      "name": "블루원워터파크",
+      "category": "워터파크",
+      "distanceM": 1865,
+      "refDate": "2022-11-25",
+      "hours": "실내 10:00-18:00,실외 10:00-17:00",
+      "closed": null,
+      "yn": {
+       "장애인용 출입문": "N",
+       "휠체어 대여 가능 여부": "N",
+       "장애인 화장실 유무": "N",
+       "장애인 전용 주차장 여부": "N",
+       "대형주차장 가능여부": "N",
+       "무료주차 가능여부": "Y",
+       "유료주차 가능여부": "N",
+       "시각장애인 안내견 동반 가능 여부": "N",
+       "점자 가이드 여부": "N",
+       "오디오 가이드(한국어)": "N",
+       "입장료 유무 여부": "Y"
+      }
      }
     ]
    },
-   "skipped": "좌표를 가까운 곳에서 빌려 와 거리 계산을 하지 않음"
+   "toiletAccessible": {
+    "nearest": {
+     "name": "러브캐슬",
+     "category": "기타전시/박물관",
+     "refDate": "2022-11-25",
+     "distanceM": 574,
+     "lat": 35.81289,
+     "lon": 129.307051,
+     "self": false,
+     "source": "bfCultureToilet"
+    },
+    "bySource": {
+     "toiletStd": {
+      "name": "불국사 녹지대",
+      "kind": "공중화장실",
+      "address": "경상북도 경주시 불국로 385",
+      "openTime": "24시간",
+      "accessible": true,
+      "stalls": {
+       "남성용-장애인용대변기수": 1,
+       "남성용-장애인용소변기수": 1,
+       "여성용-장애인용대변기수": 1
+      },
+      "refDate": "2019-09-21",
+      "distanceM": 3692,
+      "lat": 35.792304,
+      "lon": 129.331723
+     },
+     "osmToilet": {
+      "osm": "way/374030156",
+      "name": "불국사 공중화장실2",
+      "wheelchair": "yes",
+      "toiletsWheelchair": null,
+      "openTime": null,
+      "accessible": true,
+      "distanceM": 3986,
+      "lat": 35.78721,
+      "lon": 129.328461
+     },
+     "bfCultureToilet": {
+      "name": "러브캐슬",
+      "category": "기타전시/박물관",
+      "refDate": "2022-11-25",
+      "distanceM": 574,
+      "lat": 35.81289,
+      "lon": 129.307051,
+      "self": false
+     },
+     "korwithToilet": {
+      "name": "경주민속공예촌",
+      "contentId": "126229",
+      "restroom": "장애인 화장실 있음(공중화장실)",
+      "distanceM": 1599,
+      "lat": 35.804315,
+      "lon": 129.311409,
+      "self": false
+     }
+    },
+    "within": {
+     "toiletStd": {
+      "500": 0,
+      "1000": 0
+     },
+     "osmToilet": {
+      "500": 0,
+      "1000": 0
+     },
+     "bfCultureToilet": {
+      "500": 0,
+      "1000": 1
+     },
+     "korwithToilet": {
+      "500": 0,
+      "1000": 0
+     }
+    }
+   },
+   "toiletAny": {
+    "sources": [
+     "toiletStd",
+     "osm"
+    ],
+    "nearestStd": {
+     "name": "불국사 녹지대",
+     "kind": "공중화장실",
+     "address": "경상북도 경주시 불국로 385",
+     "openTime": "24시간",
+     "accessible": true,
+     "stalls": {
+      "남성용-장애인용대변기수": 1,
+      "남성용-장애인용소변기수": 1,
+      "여성용-장애인용대변기수": 1
+     },
+     "refDate": "2019-09-21",
+     "distanceM": 3692,
+     "lat": 35.792304,
+     "lon": 129.331723
+    },
+    "nearestOsm": {
+     "osm": "way/693915524",
+     "name": null,
+     "wheelchair": null,
+     "toiletsWheelchair": null,
+     "openTime": null,
+     "accessible": false,
+     "distanceM": 2999,
+     "lat": 35.836267,
+     "lon": 129.281299
+    },
+    "within": {
+     "toiletStd": {
+      "500": 0,
+      "1000": 0
+     },
+     "osmToilet": {
+      "500": 0,
+      "1000": 0
+     }
+    }
+   },
+   "charger": {
+    "source": "charger",
+    "nearest": {
+     "name": "경주시 교통약자 이동지원센터",
+     "spot": "1층 현관",
+     "weekday": "09:00~18:00",
+     "saturday": "00:00~00:00",
+     "holiday": "00:00~00:00",
+     "units": 1,
+     "phone": "054-777-2811",
+     "refDate": "2025-09-15",
+     "distanceM": 7887,
+     "lat": 35.851768,
+     "lon": 129.228792
+    },
+    "within": {
+     "500": 0,
+     "1000": 0
+    }
+   },
+   "parking": {
+    "source": "parking",
+    "nearest": {
+     "name": "월성 도지앞마을 공용주차장",
+     "kind": "공영·노외",
+     "spaces": 19,
+     "disabledZone": null,
+     "fee": "무료",
+     "weekday": "09:00~20:00",
+     "note": null,
+     "phone": "054-779-6531",
+     "refDate": "2026-04-16",
+     "distanceM": 3799,
+     "lat": 35.793894,
+     "lon": 129.275746
+    },
+    "nearestDisabledZone": {
+     "name": "국립경주박물관공영주차장",
+     "kind": "공영·노외",
+     "spaces": 264,
+     "disabledZone": "Y",
+     "fee": "유료",
+     "weekday": "09:00~18:00",
+     "note": "50할인(장애인및국가유공자,고엽제후유의증환자탑승시,저공해자동차표지부착차량,경차,임산부-경주시민,세자녀이상다자녀-경주시민,병역명문가),요금면제(도로교통법제2조규정에의한긴급자동차,성실납세증스티커부착차량)",
+     "phone": "054-750-8718",
+     "refDate": "2026-04-16",
+     "distanceM": 6969,
+     "lat": 35.830185,
+     "lon": 129.229886
+    },
+    "within": {
+     "500": 0,
+     "1000": 0
+    },
+    "withinDisabledZone": {
+     "500": 0,
+     "1000": 0
+    }
+   },
+   "osm": {
+    "source": "osm",
+    "bench": {
+     "500": 0,
+     "1000": 0
+    },
+    "shelter": {
+     "500": 0,
+     "1000": 0
+    },
+    "osmToilet": {
+     "500": 0,
+     "1000": 0
+    },
+    "wheelchairTag": {
+     "500": 0,
+     "1000": 0
+    },
+    "osmToiletAccessible": {
+     "500": 0,
+     "1000": 0
+    },
+    "wheelchairTags500": []
+   },
+   "heatShelter": {
+    "source": "heatShelter",
+    "nearest": {
+     "name": "유리방(덕동)경로당",
+     "kind": "노인시설",
+     "capacity": 21,
+     "weekend": "Y",
+     "refDate": "2020-06-29",
+     "distanceM": 2329,
+     "lat": 35.834382,
+     "lon": 129.321682
+    },
+    "within": {
+     "500": 0,
+     "1000": 0
+    }
+   }
   },
   "p46": {
    "name": "교촌마을",

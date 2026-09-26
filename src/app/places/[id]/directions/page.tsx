@@ -3,7 +3,8 @@
 // → 주소(앞에 우편번호, 궁능 "(03045) 서울 …")·연락처 줄 + 길찾기 → 검정 띠 "주차 및 이용안내"
 // → 대중교통·자가용(아이콘 소제목) → 주차 안내 상자 → 이용요금 표.
 // 지도: 궁능처럼 도로가 보이는 진짜 지도(PlaceMap: 카카오 지도, 카카오 SDK 가 뜨지 않으면 오픈스트리트맵 RealMap).
-// 좌표를 이웃 곳에서 빌린 두 곳(approx: 서악서원, 블루원워터파크)은 진짜 지도에 핀을 꽂지 않고 우리 그린 지도(MapView)를 그대로 쓴다.
+// 좌표를 이웃 곳에서 빌린 곳(approx: 서악서원)은 진짜 지도에 핀을 꽂지 않고 우리 그린 지도(MapView)를 그대로 쓴다.
+// (블루원워터파크는 09-26 가 88번으로 관광정보 '강동 워터파크'(2044527) 좌표를 써서 approx 가 아니다.)
 //
 // 무장애 시안(bf-draft)에서 더한 것:
 // - 지도 위에 500m 안 공영주차장(장애인전용주차구역이 있는 곳은 1km 안까지) 번호 네모, 주차 안내 아래에 같은 번호의 표.
@@ -12,7 +13,7 @@
 //
 // 페르소나 장점 취합(가1·가2·가13)에서 더한 것:
 // - 대중교통 첫머리에 가까운 정류장 셋(궁능 버스 칸 "경복궁 하차 / 간선 …" 모양: 굵은 제목에 정류장 이름과 번호, 아래 줄에 직선거리와 노선 번호).
-//   자료는 data/bus.json(도구/12_버스_문단_사이트.py). 좌표를 빌린 서악서원은 거리 없이 이름이 맞은 정류장, 블루원워터파크는 없음.
+//   자료는 data/bus.json(도구/12_버스_문단_사이트.py). 좌표를 빌린 서악서원은 거리 없이 이름이 맞은 정류장.
 // - 그 아래 경주역(KTX) 칸: 경주역(KTX) 정류장에서 이 곳 정류장 쪽으로 가는 노선 번호(국립경주박물관 교통안내 "철도" 칸 자리).
 // - 이용시간·쉬는 날·무장애 글은 붙은 줄을 나눠 보인다(lib/breaks.ts, 글자는 그대로).
 import type { Metadata } from "next";
@@ -28,7 +29,7 @@ import { kakaoTo, phoneOf, sameArea } from "@/components/place/placeData";
 import { amenitiesOf, MOBILITY, NEAR_RADII, sourceLines } from "@/data/bf";
 import { BUS_SOURCE_LINES, KTX_NAME, busStopsOf, ktxLinesOf } from "@/data/bus";
 import { extraFeeRowsOf } from "@/data/introExtra";
-import { bfLines, hoursLines } from "@/lib/breaks";
+import { bfLines, hoursLines, hoursNoteLines } from "@/lib/breaks";
 import { AmenityTable, SourceLines, amenityPoints, legendOf } from "@/components/place/Amenities";
 import s from "@/components/place/Place.module.css";
 
@@ -288,8 +289,8 @@ export default async function PlaceDirections({ params }: Props) {
           rows={[
             ["이용요금", p.fee ? <span className={s.pre}>{hoursLines(p.fee.trim())}</span> : EMPTY],
             ...extraFeeRowsOf(p.id).map(([k, v]) => [k, <span key={k} className={s.pre}>{hoursLines(v)}</span>]),
-            ["이용시간", p.hours ? <span className={s.pre}>{hoursLines(p.hours.trim())}</span> : EMPTY],
-            ["휴무일", p.closed ? <span className={s.pre}>{hoursLines(p.closed.trim())}</span> : EMPTY],
+            ["이용시간", p.hours ? <span className={s.pre}>{hoursNoteLines(p.hours.trim())}</span> : EMPTY],
+            ["쉬는 날", p.closed ? <span className={s.pre}>{hoursLines(p.closed.trim())}</span> : EMPTY],
           ]}
         />
       </div>

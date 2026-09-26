@@ -5,6 +5,7 @@
 // 본문: "전체: 61곳" + 검색(궁능처럼 고르기[전체/관광지/읍면동] + 입력 + 검색, 화면 안에서 거르기) + 표(번호/권역/관광지/읍면동/분류/쉬는 날/무장애 정보/사진). 쪽 나누기 없음.
 // 분류·쉬는 날(가6)은 자료 글 그대로 보이기만 한다(분류로 거르는 단추는 두지 않는다).
 // 고르기 항목 이름과 입력 칸 안내 글은 무장애 목록 두 쪽(app/barrier-free/_parts/Board.tsx)과 같다.
+// 고르기 '전체'는 관광지 이름·읍면동에 더해 분류(관광공사 소분류 이름)도 찾는다(가 163번). 빈칸과 부호(ㆍ · . /)는 비교할 때 뗀다.
 // 알약 줄은 휴대전화에서 한 줄 + ‹ › 넘기기(궁능 휴대전화 공지사항).
 import { createContext, useContext, useId, useState } from "react";
 import Link from "next/link";
@@ -50,12 +51,16 @@ export function AbcBoard({ rows, options }: { rows: BoardRow[]; options: AreaOpt
   const [draft, setDraft] = useState("");
   const [query, setQuery] = useState<{ field: Field; text: string }>({ field: "all", text: "" });
 
-  const q = query.text.replace(/\s+/g, "");
+  // 비교할 때 빈칸과 부호(ㆍ · . /)는 뗀다(가 163번: 분류 이름 "성ㆍ산성ㆍ성곽", "해변. 해수욕장", "미술관/화랑" 등)
+  const norm = (t: string) => t.replace(/[\sㆍ·./]+/g, "");
+  const q = norm(query.text);
   const hit = (r: BoardRow) => {
     if (!q) return true;
-    const name = r.name.replace(/\s+/g, "").includes(q);
-    const dong = r.dong.replace(/\s+/g, "").includes(q);
-    return query.field === "name" ? name : query.field === "dong" ? dong : name || dong;
+    const name = norm(r.name).includes(q);
+    const dong = norm(r.dong).includes(q);
+    // 고르기 '전체'는 분류(관광공사 소분류 이름)도 찾는다(가 163번)
+    const category = !!r.category && norm(r.category).includes(q);
+    return query.field === "name" ? name : query.field === "dong" ? dong : name || dong || category;
   };
   const shown = rows.filter((r) => (cur === "all" || r.area === cur) && hit(r));
   const curLabel = cur === "all" ? "전체" : (options.find((o) => o.key === cur)?.label ?? "");

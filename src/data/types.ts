@@ -21,7 +21,7 @@ export type Place = {
   nearestRegistered: string | null; // 비어 있는 13곳만: 가장 가까운 등록 관광지
   lon: number;
   lat: number;
-  approx: boolean; // true면 가까운 곳 좌표를 빌려 씀(서악서원, 블루원워터파크)
+  approx: boolean; // true면 가까운 곳 좌표를 빌려 씀(서악서원). 블루원워터파크는 가 88번으로 관광정보 '강동 워터파크' 좌표
   inCity: boolean; // 시내 확대 칸 안에 있는지
   address: string | null;
   hours: string | null;

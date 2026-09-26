@@ -39,6 +39,8 @@ export type MapPoint = {
   href?: string;
   /** 처음 화면 맞추기에 넣는지(반경 안) */
   near?: boolean;
+  /** 같은 제자리를 나눠 쓰는 네모 묶음 이름(같은 자리 묶음을 종류별로 나눈 것, 가 173번). 서로의 제자리 점은 비킬 장애물로 보지 않는다 */
+  spot?: string;
 };
 export type LegendItem = { kind: MapPoint["kind"] | "place"; label: string };
 
@@ -80,8 +82,8 @@ export function pinRects(x: number, y: number, nameEl: HTMLElement | null | unde
   return out;
 }
 
-/** 번호 네모 하나: 제자리(지도 상자 안 px, 네모 가운데)와 크기 */
-export type NudgeItem = { x: number; y: number; w: number; h: number };
+/** 번호 네모 하나: 제자리(지도 상자 안 px, 네모 가운데)와 크기. spot 이 같은 네모끼리는 제자리 점을 나눠 쓴다 */
+export type NudgeItem = { x: number; y: number; w: number; h: number; spot?: string };
 /** 옮길 거리와, 제자리 점과 선을 그릴지 */
 export type Nudge = { dx: number; dy: number; lead: boolean };
 
@@ -106,7 +108,8 @@ export function nudgeAll(W: number, H: number, hard: Rect[], items: NudgeItem[])
         let cost = a.w * a.h - overlap(r, inside); // 지도 상자 밖으로 나간 넓이
         for (const o of hard) cost += overlap(r, o);
         for (const o of placed) cost += overlap(r, o);
-        dots.forEach((o, j) => j !== i && (cost += overlap(r, o)));
+        // 다른 네모의 제자리 점. 같은 제자리를 나눠 쓰는 네모(spot 같음)의 점은 뺀다: 먼저 잡은 네모가 그 자리에 서고 나머지가 옆으로 비킨다
+        dots.forEach((o, j) => j !== i && !(a.spot && items[j].spot === a.spot) && (cost += overlap(r, o)));
         if (cost === 0) {
           best = [dx, dy];
           break;

@@ -15,7 +15,31 @@
   },
   "notInListNear500m": [],
   "notInListKeyword": [],
-  "rule": "이름(괄호·'경주'·띄어쓰기 뺀 것)이 같고 직선 300m 안이면 짝짓는다. 좌표를 빌린 곳은 짝짓지 않는다. 나머지는 candidates 에만 적는다.",
+  "rule": "이름(괄호·'경주'·띄어쓰기 뺀 것)이 같고 직선 300m 안이면 짝짓는다. 좌표를 빌린 곳은 짝짓지 않는다. 나머지는 candidates 에만 적는다. 좌표를 빌린 곳의 후보와 넓은 구역 기록(관광특구)은 candidates 에서 빼고 candidatesExcluded 에 적는다.",
+  "candidatesExcluded": {
+   "p20": {
+    "name": "서악서원",
+    "candidates": [
+     {
+      "contentId": "126210",
+      "title": "경주 무열왕릉·태종무열왕릉비",
+      "distanceM": 269,
+      "why": "좌표를 빌린 곳이라 빌린 좌표에서 잰 거리(300m 안이 사실로 서지 않음)"
+     }
+    ]
+   },
+   "p58": {
+    "name": "솔거미술관",
+    "candidates": [
+     {
+      "contentId": "1957348",
+      "title": "경주시 관광특구",
+      "distanceM": 0,
+      "why": "넓은 구역 기록이라 0m 가 실제 거리가 아님"
+     }
+    ]
+   }
+  },
   "tagRemoved": "'_…편의시설' 꼬리표를 뗐다(띄어쓰기가 달라도). 꼬리표 뒤에 글이 줄바꿈 없이 이어지면 그 자리에서 줄을 나눴다.",
   "fieldOrder": [
    "주차",
@@ -1775,26 +1799,6 @@
     }
    ]
   },
-  "p20": {
-   "name": "서악서원",
-   "candidates": [
-    {
-     "contentId": "126210",
-     "title": "경주 무열왕릉·태종무열왕릉비",
-     "type": "12",
-     "distanceM": 269,
-     "sameName": false,
-     "nameOverlap": false,
-     "coordsBorrowed": true,
-     "fields": {
-      "주차": "장애인 주차장 있음(2대,왕릉입구 주차장,장애인표지판)",
-      "접근로": "출입구까지 경사로가 있어 휠체어 접근 가능함",
-      "출입통로": "주출입구는 경사로가 있어 휠체어 접근 가능함",
-      "화장실": "장애인 화장실 있음(주차장 공중화장실,경사로설치됨)"
-     }
-    }
-   ]
-  },
   "p26": {
    "name": "황룡사지",
    "candidates": [
@@ -1960,19 +1964,6 @@
   "p58": {
    "name": "솔거미술관",
    "candidates": [
-    {
-     "contentId": "1957348",
-     "title": "경주시 관광특구",
-     "type": "12",
-     "distanceM": 0,
-     "sameName": false,
-     "nameOverlap": false,
-     "coordsBorrowed": false,
-     "fields": {
-      "화장실": "장애인 화장실 있음",
-      "지체장애 기타": "무장애 편의시설"
-     }
-    },
     {
      "contentId": "3307775",
      "title": "경주세계문화엑스포 기념관",
