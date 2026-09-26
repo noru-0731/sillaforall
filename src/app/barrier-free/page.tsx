@@ -7,11 +7,13 @@
 // 09-27 점선 1차 정리(05_사이트/11_안건_점선_문구.md): 장 이름 '세 가지 항목' → '주차·접근로·화장실'(관광지 무장애 정보 쪽 절 이름),
 // 정의 조 두 문단과 '비어 있는 칸' 조 본문 둘은 궁능 관람규칙 문장 틀로 바꾸고, '비어 있는 칸' 조는 제목을 떼고 정의 조 뒤 항으로 붙였다.
 // 별표 줄, '무장애 정보가 없는 곳' 조(풀이 한 줄뿐), 숫자 표의 '세 항목에 모두 글이 있는 곳' 줄은 뺐다. 세 항목 이름(자료 칸 이름)은 점선을 뗐다.
+// 점검(09-27: '28가지 항목'과 '시설이 없다는 뜻은 아닙니다'가 빠지고 '다만,' 문장이 둘 이어짐)으로 정의 조 둘째 문단과 '비어 있는 칸' 조(제목·본문 둘)는
+// 전 글(점선)로 되돌렸다. 정의 조 첫 문단은 틀 글 그대로. 정할 것: 11_안건_점선_문구.md 다8
 import type { Metadata } from "next";
 import { pageMetadata } from "@/site/og";
 import Link from "next/link";
 import { byName, places } from "@/data";
-import { Section, SubPage } from "@/components/layout/PageParts";
+import { Ph, Section, SubPage } from "@/components/layout/PageParts";
 import { BoardTable } from "@/components/royal";
 import { Icon, type IconName } from "@/components/icons";
 import { THREE_KEYS, menuPage, type ThreeKey } from "@/components/place-list/helpers";
@@ -106,16 +108,33 @@ export default function BarrierFreeGuidePage() {
           <div className={s.artBox}>
             {/* 궁능 관람규칙 제2조 1호 "“일반공개”란 … 것을 말한다." 틀 */}
             <p>“무장애 정보가 있는 곳”이란 한국관광공사 관광정보의 ‘무장애 정보 등록’ 표시가 ‘예’인 관광지를 말한다.</p>
-            {/* 궁능 관람규칙 제3조의2 ① "…은 다음의 각 호와 같다." 틀 */}
-            <p>이 누리집의 목록이 모아 보이는 한국관광공사 무장애 여행 정보의 칸은 다음의 각 호와 같다.</p>
+            <p>
+              <Ph>
+                무장애 정보가 있는 곳에는 무장애 여행 정보 28가지 항목을 적는 칸이 있습니다. 이 누리집의 목록은 그 가운데 세 가지를 모아
+                보여 드립니다.
+              </Ph>
+            </p>
             <ul className={s.numList}>
               {THREE_KEYS.map((k) => (
                 <li key={k}>{THREE_TEXT[k]}</li>
               ))}
             </ul>
-            {/* 궁능 관람규칙 제3조 ③ 끝 "다만, … 않을 수 있다." 틀 */}
-            <p>다만, 무장애 정보가 있는 곳이라도 칸에 글이 적혀 있지 않을 수 있다.</p>
-            <p>다만, 시설이 있어도 한국관광공사 무장애 여행 정보에 적혀 있지 않을 수 있다.</p>
+          </div>
+        </div>
+        <div className={s.article}>
+          <h3 className={s.artTit}>
+            <Ph>무장애 정보가 있어도 비어 있는 칸</Ph>
+          </h3>
+          <div className={s.artBox}>
+            <p>
+              <Ph>
+                한국관광공사 무장애 여행 정보에 올라 있다는 것은 무장애 정보를 적는 칸이 있다는 뜻입니다. 칸마다 글이 모두 적혀 있다는
+                뜻은 아닙니다.
+              </Ph>
+            </p>
+            <p>
+              <Ph>시설이 없다는 뜻은 아닙니다. 시설이 있어도 한국관광공사 무장애 여행 정보에 적히지 않았을 수 있습니다.</Ph>
+            </p>
           </div>
         </div>
       </Section>

@@ -23,7 +23,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { placeById, places } from "@/data";
 import { GJ_CREDIT, GJ_SOURCE, gjOf } from "@/data/gj";
-import { amenitiesOf, bfCultureOf, bfFilledFieldsOf, bfGroupsOf, bfLabel, bfNeighborsOf, BF_CULTURE_SOURCE_LINE, BF_SOURCE, sourceLines, stdLabel, stdValue, type AmenitySrc } from "@/data/bf";
+import { amenitiesOf, bfCultureOf, bfFilledFieldsOf, bfGroupsOf, bfLabel, bfNeighborsOf, BF_CULTURE_SOURCE_LINE, BF_SOURCE, NEAR_RADII, sourceLines, stdLabel, stdValue, type AmenitySrc } from "@/data/bf";
 import { placeCrumbs, placePages, placeSideMenu, PLACE_BANNER } from "@/site/ia";
 import { InPageNav, Ph, Section, SubPage } from "@/components/layout/PageParts";
 import { parkingFill, toiletFill, walkFill } from "@/data/fill";
@@ -329,7 +329,18 @@ export default async function PlaceBarrierFree({ params }: Props) {
             legend={legendOf([...items.map((i) => i.kind), ...am.rest.map((r) => r.kind)], p.name)}
           />
           <AmenityTable items={items} idPrefix="am" caption={`${p.name} 가까운 편의시설: 번호, 구분, 이름, 직선거리, 내용, 자료`} />
-          {/* 표 아래 점선 풀이 줄 넷(직선거리, 찾는 거리, 두 줄로 보이는 화장실, 벤치·쉼터)은 09-27 점선 1차 정리로 뺐다(11_안건_점선_문구.md) */}
+          {/* 표 아래 점선 풀이 줄 넷(직선거리, 찾는 거리, 두 줄로 보이는 화장실, 벤치·쉼터)은 09-27 점선 1차 정리로 뺐다(11_안건_점선_문구.md).
+              그 가운데 찾는 거리·자료 두 줄(전 나2·나3)은 점검(1km 밖 한 곳이 표에 왜 나오는지 화면에 글이 없음)으로 전 글(점선)로 되돌렸다. 정할 것: 다10 */}
+          <TipList
+            className={s.tipsAfterTable}
+            items={[
+              <Ph key="b">
+                화장실은 {NEAR_RADII.toilet.toLocaleString("ko-KR")}m, 공영주차장은 {NEAR_RADII.parking}m 안에서 가까운 곳부터 몇 곳만 보입니다.{" "}
+                {NEAR_RADII.toilet.toLocaleString("ko-KR")}m 안에 장애인 화장실이나 충전기가 없으면 가장 가까운 한 곳을 보입니다.
+              </Ph>,
+              <Ph key="c">같은 화장실이 두 자료에 함께 있으면 두 줄로 보일 수 있습니다. 공영주차장 자료에는 사찰·관광지 자체 주차장이 없습니다.</Ph>,
+            ]}
+          />
           <SourceLines
             lines={sourceLines([...new Set<AmenitySrc | "osmRest">([...items.map((i) => i.src), ...(am.rest.length ? ["osmRest" as const] : [])])])}
           />

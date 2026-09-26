@@ -4,10 +4,11 @@
 // 물음과 답은 예전 이용 안내 글(모두 임시 문구)을 그대로 옮겼다.
 // 09-27 점선 1차 정리(05_사이트/11_안건_점선_문구.md): 답은 궁능 관람코스 "번호를 클릭하시면 아래 화면에서 시설사진을 볼 수 있습니다."와
 // 자주 묻는 질문 "따라서 관람 종류도 전각관람과 후원관람이 있습니다." 틀로 바꿔 점선을 뗐다. 단추 이름 '글자·화면 설정'은 머리 단추 이름 그대로.
+// 첫 답은 점검(틀 글 '설정을 볼 수 있습니다'에는 바꿀 수 있다는 말이 없음)으로 전 글(점선)로 되돌렸다. 정할 것: 11_안건_점선_문구.md 다9
 import type { Metadata } from "next";
 import { pageMetadata } from "@/site/og";
 import Link from "next/link";
-import { Section, SubPage } from "@/components/layout/PageParts";
+import { Ph, Section, SubPage } from "@/components/layout/PageParts";
 import { Icon } from "@/components/icons";
 import { MENU } from "@/site/ia";
 import { withJosa } from "@/lib/josa";
@@ -31,7 +32,7 @@ export default function GuidePage() {
       a: (
         <>
           <p>
-            화면 오른쪽 위 ‘글자·화면 설정’을 누르시면 글자 크기와 화면 밝기 설정을 볼 수 있습니다.
+            <Ph>화면 오른쪽 위의 ‘글자·화면 설정’ 단추를 누르면 글자 크기와 화면 밝기를 바꿀 수 있습니다.</Ph>
           </p>
           <div className={s.actions}>
             <SettingsButton>
