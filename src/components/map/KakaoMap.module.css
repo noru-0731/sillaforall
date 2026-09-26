@@ -7,6 +7,7 @@
 .kmap {
   position: absolute;
   inset: 0;
+  z-index: 0; /* 카카오 겹(z-index)을 이 안에 가둬 + − ↻ 단추(1000) 밑에 둔다 */
   width: 100%;
   height: 100%;
   font-family: inherit;
