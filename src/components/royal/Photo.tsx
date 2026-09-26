@@ -4,11 +4,27 @@
 // 출처(credit, 짧은 꼴 "ⓒ한국관광공사" 등): 제1유형은 사진 구석(creditAt, 기본 오른쪽 아래)에 작은 반투명 검정 딱지로 얹고,
 //   제3유형은 사진 위에 얹지 않고 사진 틀 바로 아래 오른쪽 한 줄(.rc-pcredit-below)로 둔다(틀 뒤 형제로 그리므로 부모가 자리를 준다).
 //   딱지 글은 보이는 글 그대로 읽힌다(대체 글 alt와 따로).
-// 큰 판: photo에 large(같은 사진의 가로 1,600픽셀 안팎 판)가 있으면 srcset으로 함께 주어, 넓은 화면·고해상도 화면에서는 브라우저가 큰 판을 받는다.
-//   sizes(기본 "100vw")는 이 사진이 화면에서 차지하는 너비다. 카드처럼 작은 자리에는 large를 넘기지 않거나 sizes를 작게 준다.
-// 사진 파일은 관광공사 서버 주소를 그대로 쓴다(한국관광콘텐츠랩 저작권 정책: 콘텐츠 캐싱(로컬서버 저장방식) 금지).
-// 예외: p47 첫 화면 사진(관광정보 제1유형)만 public/photos 에 줄여 둔 판(data/photos.ts heroPhoto, 09-26 사용자 허락).
+// 여러 판: photo에 srcset(줄여 둔 판 여러 폭, data/photos.ts localPhoto)이 있으면 그것을, 없고 large(같은 사진의 가로 1,600픽셀 안팎 판)가
+//   있으면 "url, large" 두 판을 srcset으로 준다. 어느 판을 받을지는 브라우저가 sizes(기본 "100vw")를 보고 고른다.
+//   큰 자리는 SIZES_BIG, 가운데 자리는 SIZES_MID 를 준다(아래). 카드처럼 작은 자리에는 한 장(480 판)만 넘긴다.
+// 사진 파일 주소(09-27 사용자 결정 "제1유형만 줄여 둠"):
+//   - 관광정보 제1유형(변경 가능): 자리에 맞게 줄여 둔 판(public/photos/t1, 도구/21_사진_줄이기.py). 없는 사진은 원 주소.
+//   - 관광사진 정보(한국관광콘텐츠랩): 저작권 정책의 "콘텐츠 캐싱(로컬서버 저장방식) 금지" 때문에 관광공사 서버 원 주소 그대로.
+//   - 제3유형(변경 금지): 줄이지 않고 관광공사 서버 원 주소 그대로.
+//   어느 쪽이든 출처 표기는 같다.
 import type { Photo as PhotoData } from "@/data/photos";
+
+/**
+ * 큰 자리(첫 쪽 넘기기 판, 배너, 관광지 맨 위 큰 사진, 소개 쪽 맨 위 사진, 사이트 소개 쪽 사진)의 sizes.
+ * 휴대전화 폭(767px 이하)에서는 320px 로 셈하게 해, 화면 밀도 2~3배 휴대전화도 960 판을 받는다(1600 판을 받지 않는다).
+ * 넓은 화면은 화면 폭만큼으로 셈해 1600 판을 받는다. (sizes 는 원래 사진이 차지하는 폭이지만, 여기서는 받을 판의 윗한도로 쓴다.)
+ */
+export const SIZES_BIG = "(max-width: 767px) 320px, 100vw";
+/**
+ * 가운데 자리(서브메인 사진 띠, 주변 관광지 넘기기 판)의 sizes. 휴대전화 폭에서는 160px 로 셈해 480 판을,
+ * 넓은 화면은 960px 로 셈해 원 주소(가로 940 안팎)를 받는다.
+ */
+export const SIZES_MID = "(max-width: 767px) 160px, 960px";
 
 export default function Photo({
   photo,
@@ -24,7 +40,7 @@ export default function Photo({
   credit,
   creditAt = "br",
 }: {
-  photo: (Pick<PhotoData, "url" | "type"> & Partial<Pick<PhotoData, "w" | "large" | "lw" | "from" | "by">>) | null | undefined;
+  photo: (Pick<PhotoData, "url" | "type"> & Partial<Pick<PhotoData, "w" | "large" | "lw" | "from" | "by" | "srcset">>) | null | undefined;
   /** 대체 글(뜻 없는 꾸밈 사진이면 "") */
   alt: string;
   fit?: "cover" | "contain";
@@ -38,7 +54,7 @@ export default function Photo({
   loading?: "lazy" | "eager";
   /** cover일 때 object-position(예: "50% 30%") */
   position?: string;
-  /** large가 있을 때만 쓴다. 이 사진이 화면에서 차지하는 너비(img sizes 값) */
+  /** srcset·large가 있을 때만 쓴다. img sizes 값(큰 자리 SIZES_BIG, 가운데 자리 SIZES_MID) */
   sizes?: string;
   /** 사진 곁 출처(짧은 꼴). 없으면 적지 않는다 */
   credit?: string | null;
@@ -55,8 +71,9 @@ export default function Photo({
   }
   const contain = photo.type === "Type3" || fit === "contain";
   const cls = `rc-photo${contain ? " rc-photo--contain" : ""}${bg === "dark" ? " rc-photo--dark" : ""}${!ratio && !height ? " rc-photo--auto" : ""}${className ? " " + className : ""}`;
-  // 큰 판이 있으면 두 판을 너비와 함께 준다(작은 판 너비를 모르면 940으로 본다. 관광공사 사진 목록의 보통 너비).
-  const srcSet = photo.large && photo.large !== photo.url ? `${photo.url} ${photo.w ?? 940}w, ${photo.large} ${photo.lw ?? 1620}w` : undefined;
+  // 줄여 둔 판 여러 폭(srcset)이 있으면 그것. 없고 큰 판이 있으면 두 판을 너비와 함께 준다(작은 판 너비를 모르면 940으로 본다. 관광공사 사진 목록의 보통 너비).
+  const srcSet =
+    photo.srcset ?? (photo.large && photo.large !== photo.url ? `${photo.url} ${photo.w ?? 940}w, ${photo.large} ${photo.lw ?? 1620}w` : undefined);
   const onPhoto = !!credit && photo.type === "Type1";
   const frame = (
     <span className={cls} style={style} data-kogl={photo.type} data-from={photo.from} data-by={photo.by}>

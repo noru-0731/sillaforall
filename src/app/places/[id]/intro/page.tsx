@@ -8,16 +8,18 @@
 //   사진은 큰 사진과 다른 장, 제1유형 먼저. 장 수는 본문 높이에 맞춘다(sideCount). 휴대전화는 사진 3칸 격자 뒤에 글.
 //   궁능은 사진마다 아래에 이름 띠를 얹지만, 우리 사진 이름은 대부분 관광지 이름이나 파일 이름이라 띠를 넣지 않았다.
 // 사진 출처(짧은 꼴 "ⓒ한국관광공사" 등)는 사진마다 곁에: 제1유형은 사진 오른쪽 아래에 얹고, 제3유형은 사진 틀 바로 아래 오른쪽 한 줄.
+// 사진 파일(09-27 "제1유형만 줄여 둠"): 관광정보 제1유형은 줄여 둔 판(data/photos.ts localPhoto). 맨 위 사진은 큰 자리(휴대전화 960 판,
+// 넓은 화면 1600 판), 본문 옆 사진은 작은 자리(480 판). 그 밖은 원 주소.
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { placeById, places } from "@/data";
 import type { Place } from "@/data";
-import { photoCreditOf } from "@/data/photos";
+import { localPhoto, photoCreditOf } from "@/data/photos";
 import type { Photo as PhotoData } from "@/data/photos";
 import { placeCrumbs, placePages, placeSideMenu, PLACE_BANNER } from "@/site/ia";
 import { Section, SubPage } from "@/components/layout/PageParts";
 import { DASH, DashNote } from "@/components/layout/Dash";
-import { BoardTable, CreditBelow, OffsetPhoto, Photo } from "@/components/royal";
+import { BoardTable, CreditBelow, OffsetPhoto, Photo, SIZES_BIG } from "@/components/royal";
 import { overviewParas } from "@/data/overview";
 import { extraFeeRowsOf, extraRowsOf } from "@/data/introExtra";
 import { gluedLines, hoursLines, hoursNoteLines } from "@/lib/breaks";
@@ -53,11 +55,14 @@ function sideCount(paras: string[]): number {
   return Math.max(1, Math.min(5, Math.round((h + 20) / 233)));
 }
 
-/** 본문 옆 사진: 맨 위 큰 사진과 다른 장, 제1유형 먼저(차례 유지). 작은 칸이라 큰 판(large)은 넘기지 않는다. */
+/** 본문 옆 사진: 맨 위 큰 사진과 다른 장, 제1유형 먼저(차례 유지). 작은 칸이라 큰 판(large)은 넘기지 않고, 관광정보 제1유형은 줄여 둔 480 판. */
 function sidePhotos(id: string, topUrl: string | null, n: number): PhotoData[] {
   const rest = photosOf(id).filter((x) => x.url !== topUrl);
   const ordered = [...rest.filter((x) => x.type === "Type1"), ...rest.filter((x) => x.type !== "Type1")];
-  return ordered.slice(0, n).map(({ url, type, name, from, by }) => ({ url, type, name, from, by }));
+  return ordered.slice(0, n).map((x) => {
+    const { url, type, name, from, by } = localPhoto(x, "small");
+    return { url, type, name, from, by };
+  });
 }
 
 /** 표 칸 글: 비면 "-", 줄바꿈은 살린다 */
@@ -87,9 +92,12 @@ export default async function PlaceIntro({ params }: Props) {
   if (!p) notFound();
 
   const page = placePages(p)[1];
-  const photo = coverPhoto(p.id) ?? anyPhoto(p.id);
+  const top = coverPhoto(p.id) ?? anyPhoto(p.id);
   const ov = splitParas(overviewParas(p.id));
-  const side = ov && ov.rest.length ? sidePhotos(p.id, photo?.url ?? null, sideCount(ov.rest)) : [];
+  // 본문 옆 사진은 맨 위 사진과 다른 장(바꾸기 전 주소로 견준다)
+  const side = ov && ov.rest.length ? sidePhotos(p.id, top?.url ?? null, sideCount(ov.rest)) : [];
+  // 맨 위 사진: 큰 자리(줄여 둔 판이 있으면 여러 폭)
+  const photo = top && localPhoto(top, "big");
   const body = ov?.rest.map((x, i) => <p key={i}>{x}</p>);
 
   const rows: React.ReactNode[][] = [
@@ -114,6 +122,7 @@ export default async function PlaceIntro({ params }: Props) {
             ratio="101/50"
             bg="light"
             loading="eager"
+            sizes={SIZES_BIG}
             credit={photo?.type === "Type1" ? photoCreditOf(photo) : null}
           />
         </OffsetPhoto>

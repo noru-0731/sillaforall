@@ -16,7 +16,8 @@ const cleanHours = (h: string | null) => (h ? hoursLines(h.replace(/\n\s*\n/g, "
 const cleanOpenHours = (h: string | null) => (h ? hoursNoteLines(h.replace(/\n\s*\n/g, "\n").trim()) : null);
 
 export function toCard(p: Place): CardPlace {
-  const photo = pickPhoto(p.id);
+  // 카드는 작은 칸이라 관광정보 제1유형은 줄여 둔 480 판
+  const photo = pickPhoto(p.id, "small");
   return {
     id: p.id,
     name: p.name,

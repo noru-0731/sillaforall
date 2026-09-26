@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Ph, SubPage } from "@/components/layout/PageParts";
 import { MENU, SITE_NAME } from "@/site/ia";
 import { places, placeById } from "@/data";
-import { coverPhoto, heroPhoto, photoCreditOf } from "@/data/photos";
+import { coverPhoto, heroPhoto, localPhoto, photoCreditOf } from "@/data/photos";
 import s from "./about.module.css";
 
 const SECTION = MENU[3];
@@ -17,15 +17,16 @@ export const metadata: Metadata = { title: PAGE.label };
 
 // 사진: 동궁과 월지(궁능 인사말의 부용정 사진 자리 — 물에 비친 전각). 제1유형 사진만 쓴다.
 // 출처는 사진 오른쪽 아래에 작은 딱지로 얹는다(곳 이름 · 짧은 꼴, 예: "동궁과 월지 · ⓒ한국관광공사").
-// 첫 화면 넘기기 판과 같은 사진: 관광정보 3422660 '동궁과 월지 (2)'를 public/photos 에 줄여 둔 판(photos.ts heroPhoto, 09-26 사용자 허락).
+// 첫 화면 넘기기 판과 같은 사진: 관광정보 3422660 '동궁과 월지 (2)'(photos.ts heroPhoto 의 HERO_PICK). 제1유형이라 줄여 둔 판(960·1600 폭)을 쓴다.
 const PHOTO_PLACE = "p47";
 
 export default function AboutPage() {
   const own = heroPhoto(PHOTO_PLACE);
-  const photo = own ?? coverPhoto("p37");
+  const alt = coverPhoto("p37");
+  const photo = own ?? (alt && localPhoto(alt, "big"));
   const photoPlace = placeById(own ? PHOTO_PLACE : "p37")?.name ?? "";
-  // 큰 판이 있으면 두 판을 너비와 함께(사진 칸은 본문 폭 1,030)
-  const srcSet = photo?.large ? `${photo.url} ${photo.w ?? 940}w, ${photo.large} ${photo.lw ?? 1620}w` : undefined;
+  // 줄여 둔 판 여러 폭이 있으면 그것, 없고 큰 판이 있으면 두 판을 너비와 함께(사진 칸은 본문 폭 1,030. 휴대전화 폭은 960 판까지만, SIZES_BIG 과 같은 뜻)
+  const srcSet = photo?.srcset ?? (photo?.large ? `${photo.url} ${photo.w ?? 940}w, ${photo.large} ${photo.lw ?? 1620}w` : undefined);
 
   return (
     <SubPage
@@ -44,7 +45,7 @@ export default function AboutPage() {
             <img
               src={photo.url}
               srcSet={srcSet}
-              sizes={srcSet ? "(max-width: 1119px) 100vw, 1030px" : undefined}
+              sizes={srcSet ? "(max-width: 767px) 320px, (max-width: 1119px) 100vw, 1030px" : undefined}
               alt={`${photoPlace} 풍경`}
               loading="eager"
               decoding="async"

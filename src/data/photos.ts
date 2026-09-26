@@ -6,9 +6,14 @@
 // Type3 = 공공누리 제3유형(출처표시, 변경 금지): 자르지 않는다. <Photo>가 알아서 contain + 단색 바탕으로 보인다.
 // 큰 판(large): 같은 사진을 관광공사 서버가 가로 1,600픽셀 안팎으로도 두고 있으면 그 주소. 큰 자리(첫 화면, 배너, 관광지 맨 위)에 쓴다.
 // 서버 컴포넌트에서 부른다(photos.json이 수백 KB라 클라이언트로 보내지 않는다). 클라이언트에는 결과만 props로 넘긴다.
-// 사진 파일은 관광공사 서버 주소를 그대로 쓴다. 다만 p47 첫 화면 사진만 public/photos 에 줄여 둔 판을 쓴다(09-26 사용자 허락, 아래 heroPhoto).
+// 사진 파일 주소(09-27 사용자 결정 "제1유형만 줄여 둠", 아래 "줄여 둔 판"):
+//  - 관광정보 제1유형(변경 가능): 자리에 맞게 줄여 둔 판(public/photos/t1, 도구/21_사진_줄이기.py)이 있으면 그것을 쓴다. 자리마다 localPhoto(사진, 자리)를 지난다.
+//  - 관광사진 정보(한국관광콘텐츠랩): 저작권 정책의 "콘텐츠 캐싱(로컬서버 저장방식) 금지" 때문에 줄여 두지 않고 관광공사 서버 주소 그대로.
+//  - 제3유형(변경 금지): 줄이지 않고 관광공사 서버 주소 그대로.
+//  - 사진 쪽(/photos) 넘기기 전체 목록은 줄인 판을 쓰지 않는다(원 주소, "원본 보기"는 큰 판).
 // 출처 글(짧은 꼴 "ⓒ한국관광공사" 등)과 공공누리 이름은 credit.ts에 있다(photos.json 없이 클라이언트 부품도 부르려고). 여기서 다시 내보낸다.
 import raw from "./photos.json";
+import localRaw from "./photos_local.json";
 import type { AreaKey } from "./types";
 import type { KoglType } from "./credit";
 
@@ -32,6 +37,8 @@ export type Photo = {
   from?: "tourapi" | "gallery";
   /** 촬영자(관광사진 정보 사진만) */
   by?: string;
+  /** 줄여 둔 판 여러 폭("주소 폭w, …", img srcset 값). 큰 자리에 localPhoto(사진, "big")로 받았을 때만 있다 */
+  srcset?: string;
 };
 
 type Sized = { w?: number; h?: number; large?: string; lw?: number; lh?: number };
@@ -104,28 +111,74 @@ export function anyPhoto(id: string): Photo | null {
 /** 사진이 한 장이라도 있는지 */
 export const hasPhoto = (id: string) => photosOf(id).length > 0;
 
-// ─── 줄여 둔 판(public/photos) ───
-// p47 첫 화면 사진만 public/photos 에 줄여 둔 판을 쓴다(09-26 사용자 허락: "고화질 다운받아서 알아서 하세요").
-// 관광정보 3422660 '동궁과 월지 (2)'(제1유형, 관광공사 서버의 큰 판은 1619×1080 PNG 약 3.2MB)를 JPEG(품질 82, 진행형)로
-// 1619·960 폭 두 판으로 줄였다(PIL). 제1유형이라 형식 바꾸기·줄이기가 된다. 받아 둔 원본: 05_사이트/레퍼런스/출처_표기/동궁과월지_3422660_원본.png
-// (p47은 대표사진이 제3유형이라 coverPhoto 는 목록 첫 장 3029037(가로 940, 큰 판 없음)을 고르고, 첫 화면에서는 늘려 보였다.)
-const LOCAL: Record<string, Photo> = {
-  p47: {
-    url: "/photos/p47-3422660-960.jpg",
-    w: 960,
-    h: 640,
-    large: "/photos/p47-3422660-1619.jpg",
-    lw: 1619,
-    lh: 1080,
-    type: "Type1",
-    name: "동궁과 월지 (2)",
-    from: "tourapi",
-  },
-};
+// ─── 줄여 둔 판(public/photos/t1) ───
+// 관광정보 제1유형 사진을 자리에 맞는 폭으로 줄여 둔 판(JPEG 품질 80, 진행형, sRGB). 도구/21_사진_줄이기.py 가 관광공사 서버의 가장 큰 판
+// (large, 없으면 url)을 받아 만들고, 만든 폭을 photos_local.json(사진 번호 → 폭 목록, 작은 것부터)에 적는다. 파일은 /photos/t1/<번호>-<폭>.jpg.
+// 폭: 작은 자리·가운데 자리 480, 큰 자리 960·1600(원본보다 큰 폭은 없다. 원본이 960보다 작으면 원본 폭 한 장).
+// 09-27: 194장 270개 파일, 합 24,959,520바이트(예산 25MB. 넘으면 도구가 품질 78 → 1600 판 빼기 차례로 줄인다).
+// 제1유형은 공공누리 조건상 줄이기·형식 바꾸기가 되고, 출처 표기(ⓒ한국관광공사)는 원 주소일 때와 같다.
+// 목록에 없는 사진(관광사진 정보, 제3유형, 대상 자리에 쓰지 않는 제1유형)은 원 주소 그대로 돌려준다.
+// 어느 판을 받을지는 브라우저가 srcset 과 sizes 로 고른다. sizes 값은 components/royal/Photo.tsx 의 SIZES_BIG·SIZES_MID.
+const LOCAL_W = localRaw as Record<string, number[]>;
+const localUrl = (n: string, w: number) => `/photos/t1/${n}-${w}.jpg`;
 
-/** 첫 화면 넘기기 판·사이트 소개 쪽 사진: 줄여 둔 판이 있으면 그것(지금은 p47만), 없으면 coverPhoto(잘라 써도 되는 제1유형) */
+/**
+ * 자리(도구/21_사진_줄이기.py 의 대상 고르기와 같다. 자리를 늘리거나 바꾸면 도구도 같이 고친다):
+ * - small = 카드·작은 칸(480 한 장): 첫 쪽 카드, 목록·거점 카드, 휴대전화 전체메뉴 권역 카드, 소개 쪽 본문 옆 사진
+ * - mid = 가운데 칸(휴대전화 폭은 480 판, 넓은 화면은 원 주소 940 안팎): 서브메인 사진 띠, 주변 관광지 넘기기 판.
+ *   960 으로 다시 줄여도 원 주소보다 평균 10%만 작아 만들지 않았다(09-27 잰 값: 원 주소 평균 155KB, 960 판 평균 139KB).
+ * - big = 큰 칸(960·1600 srcset): 첫 쪽 넘기기 판, 서브 쪽 배너, 관광지 맨 위 큰 사진, 소개 쪽 맨 위 사진, 사이트 소개 쪽 사진
+ */
+export type PhotoSlot = "small" | "mid" | "big";
+
+/**
+ * 그 자리에 쓸 주소로 바꾼 사진. 관광정보 제1유형이고 줄여 둔 판이 있을 때만 바뀌고, 아니면 받은 사진 그대로.
+ * - small: url(과 small)이 480 판 한 장이고 large·srcset 은 없다. 원 주소 판이 이미 480 이하면 받은 사진 그대로.
+ * - mid: url 은 원 주소 그대로이고 srcset 이 "480 판 480w, 원 주소 940w". sizes 는 SIZES_MID 를 준다.
+ * - big: url 은 960 안팎 판, large 는 가장 큰 판, srcset 은 만든 폭 전부. sizes 는 SIZES_BIG 을 준다.
+ * <Photo>는 srcset 이 있으면 그것을 쓴다. 사진을 서로 견줄 때(맨 위 사진과 같은 장인지 등)는 바꾸기 전 사진의 url 로 견준다.
+ */
+export function localPhoto<T extends Photo>(p: T, slot: PhotoSlot): T {
+  if (p.from !== "tourapi" || p.type !== "Type1") return p;
+  const n = numOf(p.url);
+  const ws = LOCAL_W[n];
+  if (!ws?.length) return p;
+  const ratio = p.lw && p.lh ? p.lh / p.lw : p.w && p.h ? p.h / p.w : 0;
+  const hOf = (w: number) => (ratio ? { h: Math.round(w * ratio) } : {});
+  /** 목표 폭 이하에서 가장 큰 판(없으면 가장 작은 판) */
+  const pick = (target: number) => ws.filter((w) => w <= target).at(-1) ?? ws[0];
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { large, lw, lh, srcset, small, ...rest } = p;
+  if (slot === "big") {
+    const base = pick(960);
+    const top = ws[ws.length - 1];
+    return {
+      ...rest,
+      url: localUrl(n, base),
+      w: base,
+      ...hOf(base),
+      ...(top > base ? { large: localUrl(n, top), lw: top, ...(ratio ? { lh: Math.round(top * ratio) } : {}) } : {}),
+      srcset: ws.map((w) => `${localUrl(n, w)} ${w}w`).join(", "),
+    } as T;
+  }
+  // 작은·가운데 자리: 원 주소 판이 이미 480 이하(세로 사진 418×627 등)면 원 주소 그대로(도구도 이때는 480 판을 만들지 않는다)
+  const w = pick(480);
+  const ow = p.w ?? 940;
+  if (w >= ow) return p;
+  if (slot === "mid") return { ...rest, srcset: `${localUrl(n, w)} ${w}w, ${p.url} ${ow}w` } as T;
+  return { ...rest, url: localUrl(n, w), small: localUrl(n, w), w, ...hOf(w) } as T;
+}
+
+// 첫 화면 넘기기 판·사이트 소개 쪽이 대표 사진 대신 따로 고른 사진(사진 번호). 동궁과 월지(p47)는 대표사진이 제3유형이라
+// coverPhoto 가 목록 첫 장 3029037(가로 940, 큰 판 없음)을 고르므로 관광정보 3422660 '동궁과 월지 (2)'(제1유형, 큰 판 1619×1080)를 골랐다(09-26).
+// 도구/21_사진_줄이기.py 가 이 표를 읽어 큰 자리 판을 만든다.
+const HERO_PICK: Record<string, string> = { p47: "3422660" };
+
+/** 첫 화면 넘기기 판·사이트 소개 쪽 사진(큰 자리): 따로 고른 사진이 있으면 그것, 없으면 coverPhoto(잘라 써도 되는 제1유형). 줄여 둔 판으로 */
 export function heroPhoto(id: string): Photo | null {
-  return LOCAL[id] ?? coverPhoto(id);
+  const pick = HERO_PICK[id];
+  const p = (pick && photosOf(id).find((x) => numOf(x.url) === pick)) || coverPhoto(id);
+  return p ? localPhoto(p, "big") : null;
 }
 
 // ─── 큰 자리 ───
@@ -160,6 +213,7 @@ function findByUrl(url: string): Photo | null {
 // 1차 메뉴마다 유명한 곳의 제1유형 가로 사진(940×627 등)을 골라 고정했다. 사용자가 바꿀 수 있다.
 // 돌려주는 url은 같은 사진의 큰 판(가로 1,620픽셀 안팎)이 있으면 그것이다. 09-25 기준 여섯 가운데 "/barrier-free"(첨성대와 둘레 길)만
 // 큰 판이 없어 940픽셀 그대로다. 같은 관광지의 큰 사진은 bigPhoto("p39")(첨성대 대표사진, 1,620)이지만 띠에 넣으면 첨성대 윗부분이 잘린다.
+// 여섯 모두 관광정보 제1유형이라 줄여 둔 판(localPhoto "big")을 쓴다: url 은 가장 큰 판, srcset 은 만든 폭 전부(휴대전화 960, 넓은 화면 1600).
 export type BannerSection = "/map" | "/list" | "/barrier-free" | "/about" | "/places" | "/sitemap";
 const BANNERS: Record<BannerSection, { placeId: string; placeName: string; url: string }> = {
   // 대릉원 봉분 능선(대릉원 목록 7번)
@@ -183,6 +237,10 @@ export function bannerPhoto(section: string): BannerPhoto {
   const key = (Object.keys(BANNERS) as BannerSection[]).find((k) => section === k || section.startsWith(k + "/")) ?? "/list";
   const b = BANNERS[key];
   const hit = findByUrl(b.url);
+  // 줄여 둔 판이 있으면 그것(url 은 가장 큰 판, srcset 은 만든 폭 전부)
+  const loc = hit ? localPhoto(hit, "big") : null;
+  if (loc?.srcset)
+    return { url: loc.large ?? loc.url, w: loc.lw ?? loc.w, h: loc.lh ?? loc.h, srcset: loc.srcset, type: "Type1", from: loc.from, placeId: b.placeId, placeName: b.placeName };
   if (hit?.large) return { url: hit.large, w: hit.lw, h: hit.lh, type: "Type1", from: hit.from, by: hit.by, placeId: b.placeId, placeName: b.placeName };
   // 고른 사진에 큰 판이 없으면 고른 사진 그대로(같은 관광지의 큰 사진 bigPhoto(placeId)로 바꿀지는 사용자가 정한다).
   return { url: b.url, ...(hit?.w ? { w: hit.w, h: hit.h } : {}), type: "Type1", from: hit?.from ?? "tourapi", placeId: b.placeId, placeName: b.placeName };
@@ -200,9 +258,9 @@ const AREA_PHOTO_PLACE: Record<AreaKey, string> = {
   namsan: "p24", // 오릉
   seoak: "p04", // 옥산서원
 };
-/** 권역 대표 사진(제1유형, 잘라 써도 됨). 없으면 null */
+/** 권역 대표 사진(제1유형, 잘라 써도 됨. 작은 칸이라 줄여 둔 480 판이 있으면 그것). 없으면 null */
 export function areaPhoto(key: AreaKey): (Photo & { placeId: string }) | null {
   const id = AREA_PHOTO_PLACE[key];
   const p = coverPhoto(id);
-  return p ? { ...p, placeId: id } : null;
+  return p ? { ...localPhoto(p, "small"), placeId: id } : null;
 }
