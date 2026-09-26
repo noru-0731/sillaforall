@@ -13,10 +13,15 @@
 // - 가9 그 아래 글이 적힌 칸의 그림 줄(카카오맵 매장 정보처럼 그림 + 칸 이름). 적힌 칸만 그린다(빈칸은 '없음'이 아니라서). '… 기타' 칸은 뺀다.
 // - 가12 겹침 줄이기: 세 상자에 실은 칸(주차·접근로(없으면 출입통로)·화장실)은 아래 무장애 정보 표에서 뺀다.
 //   절이 둘 이상이면 KRDS '이 페이지의 구성' 목차를 두고, 절마다 제목 줄을 눌러 접고 연다(궁능 자주 묻는 질문의 '열기'·'닫기'). 처음에는 모두 열려 있다.
+//
+// 경주시 무장애 여행정보(gjinfo)에서 더한 것:
+// - 절 '경주시 무장애 여행정보'(원 누리집 쪽 이름). 관광공사 무장애 정보 절(표 절, 없으면 주차·접근로·화장실 절) 바로 다음.
+//   원 쪽 곳 이름(작은 제목) + 구분/내용 표 + 출처 줄. 공공누리 표시가 없는 쪽이라 사실만 칸으로(data/gj.ts). 관광공사 값과 달라도 고치지 않는다.
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { placeById, places } from "@/data";
+import { GJ_CREDIT, GJ_SOURCE, gjOf } from "@/data/gj";
 import { amenitiesOf, bfCultureOf, bfFilledFieldsOf, bfGroupsOf, bfLabel, bfNeighborsOf, BF_SOURCE, NEAR_RADII, sourceLines, type AmenitySrc } from "@/data/bf";
 import { placeCrumbs, placePages, placeSideMenu, PLACE_BANNER } from "@/site/ia";
 import { InPageNav, Ph, Section, SubPage } from "@/components/layout/PageParts";
@@ -121,6 +126,7 @@ export default async function PlaceBarrierFree({ params }: Props) {
   const items = am?.items.map((i) => ({ ...i, show: i.no })) ?? [];
   const tel = phoneOf(p.contact);
   const fields = bfFilledFieldsOf(p.id);
+  const gj = gjOf(p.id);
 
   // 가12 겹침 줄이기: 세 상자에 실은 칸은 표에서 뺀다. 접근로 상자는 접근로 칸, 그 칸이 비면 출입통로 칸 글이다(types.ts three.walk).
   const allGroups = bfGroupsOf(p.id);
@@ -195,6 +201,30 @@ export default async function PlaceBarrierFree({ params }: Props) {
             </div>
           ))}
           <SourceLines lines={[BF_CREDIT]} />
+        </>
+      ),
+    });
+  }
+
+  // 경주시 무장애 여행정보: 관광공사 이 곳 무장애 정보 절 바로 다음(명부에 없는 곳은 주차·접근로·화장실 절 다음, 인근 명소 절 앞)
+  if (gj) {
+    parts.push({
+      id: "gj",
+      title: GJ_SOURCE.section,
+      body: (
+        <>
+          <div className={s.bfGroup}>
+            <h3 className={s.bfGroupTit}>{gj.entry}</h3>
+            <BoardTable
+              caption={`${gj.entry} ${GJ_SOURCE.section}`}
+              head={["구분", "내용"]}
+              cols={["25%", "auto"]}
+              align={["c", "l"]}
+              rowHeader
+              rows={gj.rows.map(([k, v]) => [k, pre(v)])}
+            />
+          </div>
+          <SourceLines lines={[GJ_CREDIT]} />
         </>
       ),
     });
