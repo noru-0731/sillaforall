@@ -40,6 +40,7 @@ export type Region = { name: string; lon: number; lat: number; n: number; kind: 
 /** 읍면동 경계선(boundary.json). 만드는 곳: 05_사이트/도구/02_경계.py */
 export type Unit = { name: string; rings: [number, number][][] };
 
-/** 권역(지도 탭 하나). 이름과 나눔은 임시 */
-export type AreaKey = "city" | "bomun" | "east" | "southwest" | "north";
+/** 권역(지도 탭 하나). 경주문화관광 권역별 관광지 여섯(areas6.json). 차례는 경주시 그대로 */
+export type AreaKey = "bomun" | "city" | "bulguk" | "east" | "namsan" | "seoak";
+/** dongs = 지도에서 이 권역 색으로 칠하는 읍면동(경주시 목록 항목의 다수 권역). placeIds = 이 권역 곳(곳마다 경주시 목록대로) */
 export type Area = { key: AreaKey; label: string; dongs: string[]; placeIds: string[]; box: Box };

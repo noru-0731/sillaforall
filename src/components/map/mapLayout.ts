@@ -129,6 +129,38 @@ export function placeLabel(
   return null;
 }
 
+/**
+ * 꼭 보여야 하는 이름표(고른 곳)인데 빈자리가 없을 때: 네 자리(오른쪽 → 왼쪽 → 위 → 아래)를 틀 안으로 당겨 놓고
+ * 이미 차지한 자리(점·묶음 점·다른 이름표)와 겹치는 넓이가 가장 작은 곳을 고른다. 넓이가 같으면 앞 차례.
+ * (전에는 늘 오른쪽에 두어 옆 묶음 점과 포갤 때가 있었다.)
+ */
+export function forceLabel(ax: number, ay: number, r: number, tw: number, th: number, taken: Rect[], w: number, h: number): Rect {
+  const gap = 4;
+  const cx = (x: number) => Math.min(Math.max(x, 2), w - tw - 2);
+  const cy = (y: number) => Math.min(Math.max(y, 2), h - th - 2);
+  const cands: Rect[] = [
+    { x: cx(ax + r + gap), y: cy(ay - th / 2), w: tw, h: th },
+    { x: cx(ax - r - gap - tw), y: cy(ay - th / 2), w: tw, h: th },
+    { x: cx(ax - tw / 2), y: cy(ay - r - gap - th), w: tw, h: th },
+    { x: cx(ax - tw / 2), y: cy(ay + r + gap), w: tw, h: th },
+  ];
+  const hit = (c: Rect) =>
+    taken.reduce(
+      (s, t) => s + Math.max(0, Math.min(t.x + t.w, c.x + c.w) - Math.max(t.x, c.x)) * Math.max(0, Math.min(t.y + t.h, c.y + c.h) - Math.max(t.y, c.y)),
+      0,
+    );
+  let best = cands[0];
+  let bestHit = hit(best);
+  for (const c of cands.slice(1)) {
+    const v = hit(c);
+    if (v < bestHit) {
+      best = c;
+      bestHit = v;
+    }
+  }
+  return best;
+}
+
 /** 축척 막대: 1km 폭(px)을 받아 60~140px 사이의 보기 좋은 길이를 고른다. */
 export function niceScale(pxPerKm: number, maxPx = 140) {
   const steps = [0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20];

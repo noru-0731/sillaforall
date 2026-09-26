@@ -7,12 +7,13 @@
  * 색은 --rc-* 변수만(선명한 화면 모드에서 바뀜). 점 크기(rem)는 MapView.tsx의 R_* 값(px)과 짝이다.
  */
 .root {
-  /* 권역 다섯 곳의 옅은 칠: 권역 색(알약과 같은 색)을 바탕색에 섞는다 */
-  --map-city: color-mix(in srgb, var(--rc-area-city) 20%, var(--rc-bg));
+  /* 권역 여섯 곳의 옅은 칠: 권역 색(알약과 같은 색)을 바탕색에 섞는다 */
   --map-bomun: color-mix(in srgb, var(--rc-area-bomun) 20%, var(--rc-bg));
+  --map-city: color-mix(in srgb, var(--rc-area-city) 20%, var(--rc-bg));
+  --map-bulguk: color-mix(in srgb, var(--rc-area-bulguk) 20%, var(--rc-bg));
   --map-east: color-mix(in srgb, var(--rc-area-east) 20%, var(--rc-bg));
-  --map-southwest: color-mix(in srgb, var(--rc-area-southwest) 20%, var(--rc-bg));
-  --map-north: color-mix(in srgb, var(--rc-area-north) 20%, var(--rc-bg));
+  --map-namsan: color-mix(in srgb, var(--rc-area-namsan) 20%, var(--rc-bg));
+  --map-seoak: color-mix(in srgb, var(--rc-area-seoak) 20%, var(--rc-bg));
   --map-outside: var(--rc-bg-bar);
   --map-line: var(--rc-line-table);
   --map-halo: var(--rc-bg);
@@ -165,20 +166,23 @@
   stroke-width: 1;
   pointer-events: none;
 }
+.fill_bomun {
+  fill: var(--map-bomun);
+}
 .fill_city {
   fill: var(--map-city);
 }
-.fill_bomun {
-  fill: var(--map-bomun);
+.fill_bulguk {
+  fill: var(--map-bulguk);
 }
 .fill_east {
   fill: var(--map-east);
 }
-.fill_southwest {
-  fill: var(--map-southwest);
+.fill_namsan {
+  fill: var(--map-namsan);
 }
-.fill_north {
-  fill: var(--map-north);
+.fill_seoak {
+  fill: var(--map-seoak);
 }
 
 /* 권역 링크(경주 전체) 또는 거르기 단추(목록 쪽) */
@@ -553,11 +557,12 @@
   border-radius: 0.4rem;
   background: linear-gradient(
     90deg,
-    var(--map-city) 0 20%,
-    var(--map-bomun) 20% 40%,
-    var(--map-east) 40% 60%,
-    var(--map-southwest) 60% 80%,
-    var(--map-north) 80% 100%
+    var(--map-bomun) 0 16.67%,
+    var(--map-city) 16.67% 33.33%,
+    var(--map-bulguk) 33.33% 50%,
+    var(--map-east) 50% 66.67%,
+    var(--map-namsan) 66.67% 83.33%,
+    var(--map-seoak) 83.33% 100%
   );
   border: 0.1rem solid var(--map-line);
 }

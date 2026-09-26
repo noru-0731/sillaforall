@@ -22,6 +22,7 @@ import {
   clampView,
   cluster,
   fitBox,
+  forceLabel,
   HOME,
   insideFrame,
   niceScale,
@@ -292,7 +293,7 @@ export default function MapView({
       const tw = textWidth(m.p.name, fs, bold) + 8;
       const r = radiusOf(m);
       let rect = placeLabel(m.x, m.y, r, tw, lh, taken, w, h);
-      if (!rect && force) rect = { x: Math.min(Math.max(m.x + r + 4, 2), w - tw - 2), y: m.y - lh / 2, w: tw, h: lh };
+      if (!rect && force) rect = forceLabel(m.x, m.y, r, tw, lh, taken, w, h);
       if (rect) {
         labelList.push({
           ...rect,

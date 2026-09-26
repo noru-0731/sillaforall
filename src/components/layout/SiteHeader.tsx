@@ -6,7 +6,7 @@
 // 3차 목록(궁능: 2차 칸 ∨ → 3차): 3차가 있는 2차 칸은 여닫는 단추가 되고, 누르면 칸 아래에 3차 목록이 열린다(한 번에 하나).
 import Link from "next/link";
 import { usePathname, useSelectedLayoutSegment } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { AREA_LINKS, LEFT_BAR, MENU, SITE_NAME, depth3Of, sectionOf } from "@/site/ia";
 import { Icon } from "@/components/icons";
@@ -18,6 +18,30 @@ import d3 from "./HeaderParts.module.css";
 export type AreaCard = { key: string; label: string; href: string; photo: string | null; credit: string | null };
 
 const isHere = (pathname: string, href: string) => pathname === href;
+
+/**
+ * 휴대전화 전체메뉴의 좁은 칸(권역 사진 카드, 2차 칸)에서 띄어 쓴 곳 없는 긴 권역 이름이 낱말 가운데서 끊기지 않게
+ * (전에는 카드 '보문관광단/지권', 글자 가장 크게의 2차 칸 '보문관/광단지/권') 낱말 경계에만 줄바꿈 자리(<wbr>)를 둔다.
+ * 글은 그대로다. CSS는 word-break: keep-all(한글 글자 사이에서는 끊지 않음) + overflow-wrap: anywhere(그래도 넘치면 아무 데서나).
+ */
+const AREA_NAME_BREAKS: Record<string, string[]> = {
+  보문관광단지권: ["보문", "관광", "단지권"],
+  "서악·북부권": ["서악·", "북부권"],
+};
+function AreaName({ label }: { label: string }) {
+  const parts = AREA_NAME_BREAKS[label];
+  if (!parts || parts.join("") !== label) return <>{label}</>;
+  return (
+    <>
+      {parts.map((t, i) => (
+        <Fragment key={i}>
+          {i > 0 && <wbr />}
+          {t}
+        </Fragment>
+      ))}
+    </>
+  );
+}
 
 /**
  * 머리를 그릴 때 쓰는 주소(가 187번). 없는 주소(/places/p99 등)의 404 쪽은 빌드 때 주소 "/_not-found" 로 미리 그린 쪽을
@@ -206,7 +230,7 @@ export default function SiteHeader({ areaCards }: { areaCards: AreaCard[] }) {
             </ul>
           </nav>
 
-          {/* 남색 둥근 띠: 권역 5개 */}
+          {/* 남색 둥근 띠: 권역 6개 */}
           <ul className="rc-areaband" aria-label="권역 지도 바로가기">
             {AREA_LINKS.map((a) => (
               <li key={a.key}>
@@ -326,7 +350,9 @@ function MobileNav({
             <Link href={a.href} className="rc-mnav__area">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               {a.photo && <img src={a.photo} alt="" loading="lazy" decoding="async" />}
-              <span>{a.label}</span>
+              <span>
+                <AreaName label={a.label} />
+              </span>
               {/* 사진 출처(제1유형). 오른쪽 아래는 권역 이름 판이 차지해 오른쪽 위에 얹는다 */}
               {a.photo && a.credit && <CreditTag text={a.credit} at="tr" />}
             </Link>
@@ -377,7 +403,9 @@ function MobileNav({
                         aria-controls={listId}
                         onClick={() => setOpenD3(on ? null : c.href)}
                       >
-                        {c.label}
+                        <span>
+                          <AreaName label={c.label} />
+                        </span>
                         <Icon name={on ? "chevron-up" : "chevron-down"} size={20} strokeWidth={1.8} />
                       </button>
                       <ul className={d3.mList} id={listId} hidden={!on}>
