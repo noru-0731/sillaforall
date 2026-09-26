@@ -145,7 +145,7 @@ const FOOD = foodRaw as unknown as {
   places: Record<string, { name: string; inRadius: number; items: Omit<AmenityItem, "no">[] }>;
 };
 
-/** 가까운 편의시설(좌표를 빌린 두 곳은 null). 무장애 음식점은 끝에 번호를 이어 붙인다 */
+/** 가까운 편의시설(좌표를 빌린 곳은 null). 무장애 음식점은 끝에 번호를 이어 붙인다 */
 export function amenitiesOf(id: string): NearPlace | null {
   const base = NEAR.places[id];
   if (!base) return null;
