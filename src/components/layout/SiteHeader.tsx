@@ -5,7 +5,7 @@
 // 펼침판은 KRDS 규칙대로 눌러야 열린다(마우스 올림으로 열지 않음). Esc·바깥 누름·쪽 옮김으로 닫힌다.
 // 3차 목록(궁능: 2차 칸 ∨ → 3차): 3차가 있는 2차 칸은 여닫는 단추가 되고, 누르면 칸 아래에 3차 목록이 열린다(한 번에 하나).
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSelectedLayoutSegment } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { AREA_LINKS, LEFT_BAR, MENU, SITE_NAME, depth3Of, sectionOf } from "@/site/ia";
@@ -18,8 +18,20 @@ export type AreaCard = { key: string; label: string; href: string; photo: string
 
 const isHere = (pathname: string, href: string) => pathname === href;
 
-export default function SiteHeader({ areaCards }: { areaCards: AreaCard[] }) {
+/**
+ * 머리를 그릴 때 쓰는 주소(가 187번). 없는 주소(/places/p99 등)의 404 쪽은 빌드 때 주소 "/_not-found" 로 미리 그린 쪽을
+ * 그대로 보낸다. 브라우저의 usePathname 은 실제 주소(/places/p99)라서 그대로 쓰면 1차 메뉴 '지금 쪽' 표시와
+ * 휴대전화 전체메뉴 펼친 칸이 서버 그림과 달라져 React 418(그림 어긋남)이 났다.
+ * 라우터가 404 쪽을 보이는 동안(루트 아래 칸 "/_not-found")에는 서버와 같은 "/_not-found" 로 그린다.
+ */
+function useShownPathname(): string {
   const pathname = usePathname();
+  const seg = useSelectedLayoutSegment();
+  return seg === "/_not-found" || seg === "_not-found" ? "/_not-found" : pathname;
+}
+
+export default function SiteHeader({ areaCards }: { areaCards: AreaCard[] }) {
+  const pathname = useShownPathname();
   const current = sectionOf(pathname);
   const [openIdx, setOpenIdx] = useState<number | null>(null);
   const [openD3, setOpenD3] = useState<string | null>(null);
