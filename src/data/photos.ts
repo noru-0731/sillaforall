@@ -6,6 +6,7 @@
 // Type3 = 공공누리 제3유형(출처표시, 변경 금지): 자르지 않는다. <Photo>가 알아서 contain + 단색 바탕으로 보인다.
 // 큰 판(large): 같은 사진을 관광공사 서버가 가로 1,600픽셀 안팎으로도 두고 있으면 그 주소. 큰 자리(첫 화면, 배너, 관광지 맨 위)에 쓴다.
 // 서버 컴포넌트에서 부른다(photos.json이 수백 KB라 클라이언트로 보내지 않는다). 클라이언트에는 결과만 props로 넘긴다.
+// 사진 파일은 관광공사 서버 주소를 그대로 쓴다. 다만 p47 첫 화면 사진만 public/photos 에 줄여 둔 판을 쓴다(09-26 사용자 허락, 아래 heroPhoto).
 // 출처 글(짧은 꼴 "ⓒ한국관광공사" 등)과 공공누리 이름은 credit.ts에 있다(photos.json 없이 클라이언트 부품도 부르려고). 여기서 다시 내보낸다.
 import raw from "./photos.json";
 import type { AreaKey } from "./types";
@@ -102,6 +103,30 @@ export function anyPhoto(id: string): Photo | null {
 
 /** 사진이 한 장이라도 있는지 */
 export const hasPhoto = (id: string) => photosOf(id).length > 0;
+
+// ─── 줄여 둔 판(public/photos) ───
+// p47 첫 화면 사진만 public/photos 에 줄여 둔 판을 쓴다(09-26 사용자 허락: "고화질 다운받아서 알아서 하세요").
+// 관광정보 3422660 '동궁과 월지 (2)'(제1유형, 관광공사 서버의 큰 판은 1619×1080 PNG 약 3.2MB)를 JPEG(품질 82, 진행형)로
+// 1619·960 폭 두 판으로 줄였다(PIL). 제1유형이라 형식 바꾸기·줄이기가 된다. 받아 둔 원본: 05_사이트/레퍼런스/출처_표기/동궁과월지_3422660_원본.png
+// (p47은 대표사진이 제3유형이라 coverPhoto 는 목록 첫 장 3029037(가로 940, 큰 판 없음)을 고르고, 첫 화면에서는 늘려 보였다.)
+const LOCAL: Record<string, Photo> = {
+  p47: {
+    url: "/photos/p47-3422660-960.jpg",
+    w: 960,
+    h: 640,
+    large: "/photos/p47-3422660-1619.jpg",
+    lw: 1619,
+    lh: 1080,
+    type: "Type1",
+    name: "동궁과 월지 (2)",
+    from: "tourapi",
+  },
+};
+
+/** 첫 화면 넘기기 판·사이트 소개 쪽 사진: 줄여 둔 판이 있으면 그것(지금은 p47만), 없으면 coverPhoto(잘라 써도 되는 제1유형) */
+export function heroPhoto(id: string): Photo | null {
+  return LOCAL[id] ?? coverPhoto(id);
+}
 
 // ─── 큰 자리 ───
 /** 이 사진을 가장 크게 받을 수 있는 가로 픽셀(모르면 0) */

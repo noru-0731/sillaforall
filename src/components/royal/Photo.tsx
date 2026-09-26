@@ -7,6 +7,7 @@
 // 큰 판: photo에 large(같은 사진의 가로 1,600픽셀 안팎 판)가 있으면 srcset으로 함께 주어, 넓은 화면·고해상도 화면에서는 브라우저가 큰 판을 받는다.
 //   sizes(기본 "100vw")는 이 사진이 화면에서 차지하는 너비다. 카드처럼 작은 자리에는 large를 넘기지 않거나 sizes를 작게 준다.
 // 사진 파일은 관광공사 서버 주소를 그대로 쓴다(한국관광콘텐츠랩 저작권 정책: 콘텐츠 캐싱(로컬서버 저장방식) 금지).
+// 예외: p47 첫 화면 사진(관광정보 제1유형)만 public/photos 에 줄여 둔 판(data/photos.ts heroPhoto, 09-26 사용자 허락).
 import type { Photo as PhotoData } from "@/data/photos";
 
 export default function Photo({
