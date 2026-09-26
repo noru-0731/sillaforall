@@ -92,6 +92,16 @@ export default function KakaoMap({ lat, lon, name, label, zoom = 16, points, leg
     });
     map.setMinLevel(MIN_LEVEL);
     map.setMaxLevel(MAX_LEVEL);
+    // 휴대전화: 끌기를 꺼도 카카오가 touchmove 를 막아, 지도 위를 한 손가락으로 쓸면 쪽이 내려가지 않았다(오시는 길 쪽).
+    // 한 손가락 손길은 카카오에 넘기지 않는다(두 손가락은 넘김). 카카오가 건 touch-action: none 은 CSS(.kmap, coarse)에서 푼다.
+    let multi = false;
+    const onTouch = (e: TouchEvent) => {
+      if (e.type === "touchstart" && e.touches.length > 1) multi = true;
+      if (!multi) e.stopPropagation();
+      if (e.type !== "touchmove" && e.type !== "touchstart" && e.touches.length === 0) multi = false;
+    };
+    const TOUCH = ["touchstart", "touchmove", "touchend", "touchcancel"] as const;
+    if (coarse) for (const t of TOUCH) el.addEventListener(t, onTouch, { capture: true, passive: true });
     const overlays: KCustomOverlay[] = [];
     const add = (o: KCustomOverlay) => (o.setMap(map), overlays.push(o), o);
 
@@ -208,6 +218,7 @@ export default function KakaoMap({ lat, lon, name, label, zoom = 16, points, leg
     queueMicrotask(() => setReady(true));
 
     return () => {
+      for (const t of TOUCH) el.removeEventListener(t, onTouch, { capture: true });
       ro.disconnect();
       roMarks.disconnect();
       K.event.removeListener(map, "zoom_changed", onZoom);
