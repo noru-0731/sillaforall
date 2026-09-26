@@ -7,7 +7,7 @@
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import Link from "next/link";
 import { Icon, type IconName } from "@/components/icons";
-import Photo from "@/components/royal/Photo";
+import Photo, { SIZES } from "@/components/royal/Photo";
 import { Ph } from "@/components/layout/Ph";
 import { useReducedMotion } from "./bits";
 import s from "./home.module.css";
@@ -19,7 +19,8 @@ export type HeroSlide = {
   kicker: string | null;
   /** "권역 · 읍면동" */
   meta: string;
-  photo: { url: string; type: "Type1"; w?: number; large?: string; lw?: number };
+  /** srcset: 줄여 둔 판 여러 폭(관광정보 제1유형, data/photos.ts localPhoto). 있으면 <Photo>가 그것을 쓴다 */
+  photo: { url: string; type: "Type1"; w?: number; large?: string; lw?: number; srcset?: string };
   /** 사진 출처(짧은 꼴 "ⓒ한국관광공사" 등. 서버에서 photoCreditOf로 만듦). 글 상자 안 이름·권역 아래에 둔다 */
   credit: string;
 };
@@ -90,7 +91,7 @@ export default function HomeHero({
                   aria-hidden={!on}
                   inert={!on}
                 >
-                  <Photo photo={sl.photo} alt={sl.name} height="100%" loading={i === 0 ? "eager" : "lazy"} />
+                  <Photo photo={sl.photo} alt={sl.name} height="100%" sizes={SIZES.hero} loading={i === 0 ? "eager" : "lazy"} />
                   <div className={s.visualPanel}>
                     {sl.kicker && <p className={s.visualKicker}>{sl.kicker}</p>}
                     <p className={s.visualName}>

@@ -4,11 +4,46 @@
 // 출처(credit, 짧은 꼴 "ⓒ한국관광공사" 등): 제1유형은 사진 구석(creditAt, 기본 오른쪽 아래)에 작은 반투명 검정 딱지로 얹고,
 //   제3유형은 사진 위에 얹지 않고 사진 틀 바로 아래 오른쪽 한 줄(.rc-pcredit-below)로 둔다(틀 뒤 형제로 그리므로 부모가 자리를 준다).
 //   딱지 글은 보이는 글 그대로 읽힌다(대체 글 alt와 따로).
-// 큰 판: photo에 large(같은 사진의 가로 1,600픽셀 안팎 판)가 있으면 srcset으로 함께 주어, 넓은 화면·고해상도 화면에서는 브라우저가 큰 판을 받는다.
-//   sizes(기본 "100vw")는 이 사진이 화면에서 차지하는 너비다. 카드처럼 작은 자리에는 large를 넘기지 않거나 sizes를 작게 준다.
-// 사진 파일은 관광공사 서버 주소를 그대로 쓴다(한국관광콘텐츠랩 저작권 정책: 콘텐츠 캐싱(로컬서버 저장방식) 금지).
-// 예외: p47 첫 화면 사진(관광정보 제1유형)만 public/photos 에 줄여 둔 판(data/photos.ts heroPhoto, 09-26 사용자 허락).
+// 여러 판: photo에 srcset(줄여 둔 판 여러 폭, data/photos.ts localPhoto)이 있으면 그것을, 없고 large(같은 사진의 가로 1,600픽셀 안팎 판)가
+//   있으면 "url, large" 두 판을 srcset으로 준다. 어느 판을 받을지는 브라우저가 sizes(기본 "100vw")와 화면 밀도를 보고 고른다.
+//   sizes 는 자리마다 아래 SIZES 의 값을 준다(휴대전화는 사진이 그려지는 폭 ÷ 1.25, 넓은 화면은 그려지는 폭. 아래 설명).
+// 사진 파일 주소(09-27 사용자 결정 "제1유형만 줄여 둠"):
+//   - 관광정보 제1유형(변경 가능): 자리에 맞게 줄여 둔 판(public/photos/t1, 도구/21_사진_줄이기.py). 없는 사진은 원 주소.
+//   - 관광사진 정보(한국관광콘텐츠랩): 저작권 정책의 "콘텐츠 캐싱(로컬서버 저장방식) 금지" 때문에 관광공사 서버 원 주소 그대로.
+//     관광정보 목록에 들어 있어도 콘텐츠랩 사진과 같은 그림(주소가 /cms/resource_photo/ 등)이면 원 주소 그대로.
+//   - 제3유형(변경 금지): 줄이지 않고 관광공사 서버 원 주소 그대로.
+//   어느 쪽이든 출처 표기는 같다.
 import type { Photo as PhotoData } from "@/data/photos";
+
+/**
+ * 자리마다 img sizes 값. 휴대전화 폭(767 이하)은 사진이 그려지는 폭(CSS 픽셀) ÷ 1.25(= × 0.8), 768 이상은 그려지는 폭 그대로.
+ * - 그려지는 폭: 잘라 채우는(cover) 자리에서 칸이 사진보다 세로로 길면 사진은 칸보다 넓게 그려지므로,
+ *   가로:세로 3:2 사진이 그려지는 폭(칸 높이 × 1.5)으로 셈했다. 칸 크기는 09-27 잰 값(글자 기본 크기). 칸 크기를 바꾸면 여기도 고친다.
+ * - 브라우저는 srcset 가운데 "sizes × 화면 밀도" 이상인 가장 작은 판을 고른다(09-27 크롬 잰 값). 그래서
+ *   휴대전화는 파일 한 픽셀이 화면 픽셀 1.25개보다 넓게 늘어나지 않는 판 가운데 가장 작은 것을 받고
+ *   (예: 목록 카드는 화면 밀도 3이면 720 판, 2이면 480 판), 넓은 화면은 늘어나지 않는 판을 받는다(첫 쪽 가운데 카드만 1.16배).
+ * - 알맞은 판이 없으면 가장 큰 판을 받는다(카드 칸은 960 까지. 첫 쪽 카드는 휴대전화 화면 밀도 3에서 늘림 1.4~1.5배, 원 주소 940 때 1.4~1.5배).
+ */
+export const SIZES = {
+  /** 첫 쪽 넘기기 판: 휴대전화 폭 × 345(3:2 사진은 가로 518), 768 이상 폭 전체 × 550(3:2 사진은 가로 825 이상) */
+  hero: "(max-width: 518px) 414px, (max-width: 767px) 80vw, (max-width: 825px) 825px, 100vw",
+  /** 관광지 서브메인 맨 위 큰 사진: 휴대전화 폭 × 400(3:2 사진은 가로 600), 넓은 화면 폭 전체(1024 이상은 - 80) × 400~506 */
+  top: "(max-width: 600px) 480px, (max-width: 767px) 80vw, 100vw",
+  /** 서브 쪽 맨 위 그림 띠: 폭 전체(1024 이상은 - 80) × 130~185 */
+  banner: "(max-width: 767px) 80vw, 100vw",
+  /** 소개 쪽 맨 위 사진(101:50): 1023 이하 폭 - 46, 1024~1279 폭 - 126, 넓은 화면 850~1010 */
+  introTop: "(max-width: 767px) calc(80vw - 37px), (max-width: 1023px) calc(100vw - 46px), (max-width: 1279px) calc(100vw - 126px), 1010px",
+  /** 사이트 소개 쪽 사진: 휴대전화 (폭 - 30) × 3/4 칸(3:2 사진은 칸 폭의 1.125배), 1119 이하 폭 - 30, 넓은 화면 870~1030 */
+  about: "(max-width: 767px) calc(90vw - 27px), (max-width: 1119px) calc(100vw - 30px), 1030px",
+  /** 주변 관광지 넘기기 판: 1279 이하 폭 - 30(휴대전화 390 은 360×214), 넓은 화면 468~532×430(3:2 사진은 가로 645) */
+  nearby: "(max-width: 767px) calc(80vw - 24px), (max-width: 1279px) calc(100vw - 30px), 645px",
+  /** 서브메인 사진 띠(대표 사진이 들 때만 여러 판): 1279 이하 폭 - 30 × 170, 넓은 화면 836~950 × 135 */
+  strip: "(max-width: 767px) calc(80vw - 24px), (max-width: 1279px) calc(100vw - 30px), 950px",
+  /** 첫 쪽 카드: 휴대전화 239~249 × 300~320, 768 이상 229~259 × 320~370 세로 칸(3:2 사진은 가로 450~555. 넓은 화면은 옆 카드 480 기준) */
+  homeCard: "(max-width: 767px) 384px, 480px",
+  /** 목록·거점 카드: 휴대전화 130×169, 768 이상 165×215 세로 칸(3:2 사진은 가로 254, 323) */
+  listCard: "(max-width: 767px) 203px, 323px",
+} as const;
 
 export default function Photo({
   photo,
@@ -24,7 +59,7 @@ export default function Photo({
   credit,
   creditAt = "br",
 }: {
-  photo: (Pick<PhotoData, "url" | "type"> & Partial<Pick<PhotoData, "w" | "large" | "lw" | "from" | "by">>) | null | undefined;
+  photo: (Pick<PhotoData, "url" | "type"> & Partial<Pick<PhotoData, "w" | "large" | "lw" | "from" | "by" | "srcset">>) | null | undefined;
   /** 대체 글(뜻 없는 꾸밈 사진이면 "") */
   alt: string;
   fit?: "cover" | "contain";
@@ -38,7 +73,7 @@ export default function Photo({
   loading?: "lazy" | "eager";
   /** cover일 때 object-position(예: "50% 30%") */
   position?: string;
-  /** large가 있을 때만 쓴다. 이 사진이 화면에서 차지하는 너비(img sizes 값) */
+  /** srcset·large가 있을 때만 쓴다. img sizes 값(자리마다 SIZES 의 값) */
   sizes?: string;
   /** 사진 곁 출처(짧은 꼴). 없으면 적지 않는다 */
   credit?: string | null;
@@ -55,8 +90,9 @@ export default function Photo({
   }
   const contain = photo.type === "Type3" || fit === "contain";
   const cls = `rc-photo${contain ? " rc-photo--contain" : ""}${bg === "dark" ? " rc-photo--dark" : ""}${!ratio && !height ? " rc-photo--auto" : ""}${className ? " " + className : ""}`;
-  // 큰 판이 있으면 두 판을 너비와 함께 준다(작은 판 너비를 모르면 940으로 본다. 관광공사 사진 목록의 보통 너비).
-  const srcSet = photo.large && photo.large !== photo.url ? `${photo.url} ${photo.w ?? 940}w, ${photo.large} ${photo.lw ?? 1620}w` : undefined;
+  // 줄여 둔 판 여러 폭(srcset)이 있으면 그것. 없고 큰 판이 있으면 두 판을 너비와 함께 준다(작은 판 너비를 모르면 940으로 본다. 관광공사 사진 목록의 보통 너비).
+  const srcSet =
+    photo.srcset ?? (photo.large && photo.large !== photo.url ? `${photo.url} ${photo.w ?? 940}w, ${photo.large} ${photo.lw ?? 1620}w` : undefined);
   const onPhoto = !!credit && photo.type === "Type1";
   const frame = (
     <span className={cls} style={style} data-kogl={photo.type} data-from={photo.from} data-by={photo.by}>

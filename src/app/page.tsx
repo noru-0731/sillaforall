@@ -6,7 +6,7 @@
 import { areaOf, areas, byName, HUBS, places } from "@/data";
 import type { Place } from "@/data";
 import type { Metadata } from "next";
-import { anyPhoto, coverPhoto, heroPhoto, photoCreditOf } from "@/data/photos";
+import { anyPhoto, coverPhoto, heroPhoto, localPhoto, photoCreditOf } from "@/data/photos";
 import { MENU, SITE_NAME } from "@/site/ia";
 import { HERO_IDS, SITE_OG } from "@/site/og";
 import { withJosa } from "@/lib/josa";
@@ -21,7 +21,7 @@ const areaLabel = (p: Place) => areas.find((a) => a.key === areaOf(p))!.label;
 const shortAddress = (p: Place) => (p.address ?? "").replace(/^경상북도\s*경주시\s*/, "") || p.dong;
 
 // ── 칸 1: 넘기기 배너. 이름난 관광지 다섯 곳의 제1유형 사진(잘라 써도 되는 사진)만 쓴다. 차례는 사용자가 바꿀 수 있다.
-// 동궁과 월지(p47)는 public/photos 에 줄여 둔 판(960·1619 폭)을 쓴다(photos.ts heroPhoto, 09-26 사용자 허락).
+// 관광정보 제1유형은 줄여 둔 판(여러 폭, photos.ts heroPhoto → localPhoto "big", sizes 는 SIZES.hero)을 쓴다. 동궁과 월지(p47)는 따로 고른 사진(HERO_PICK).
 // 곳 차례(HERO_IDS)는 site/og.ts 에 있다(링크 미리보기 사진이 첫 장을 따라가게). 불국사, 첨성대, 동궁과 월지, 대릉원, 석굴암.
 
 // 링크 미리보기: 사이트 기본에 og:url(배포 주소 첫 쪽)만 더한다
@@ -33,13 +33,13 @@ function heroSlides(): HeroSlide[] {
     const p = places.find((q) => q.id === id);
     const ph = heroPhoto(id);
     if (!p || !ph || ph.type !== "Type1") continue;
-    // 큰 판(가로 1,620 안팎)이 있으면 <Photo>가 srcset으로 함께 준다(넓은 화면·고해상도 화면에서 큰 판)
+    // 줄여 둔 판 여러 폭(srcset) 또는 큰 판(가로 1,620 안팎)이 있으면 <Photo>가 srcset으로 함께 준다(브라우저가 칸 폭 × 화면 밀도로 고름)
     out.push({
       id,
       name: p.name,
       kicker: p.category,
       meta: `${areaLabel(p)} · ${p.dong}`,
-      photo: { url: ph.url, type: "Type1", w: ph.w, large: ph.large, lw: ph.lw },
+      photo: { url: ph.url, type: "Type1", w: ph.w, large: ph.large, lw: ph.lw, ...(ph.srcset ? { srcset: ph.srcset } : {}) },
       credit: photoCreditOf(ph),
     });
   }
@@ -70,7 +70,9 @@ function cardItems(): CardItem[] {
     .filter((p) => p.side === "old")
     .sort((a, b) => rank(a) - rank(b) || b.share60 - a.share60)
     .map((p) => {
-      const ph = coverPhoto(p.id) ?? anyPhoto(p.id);
+      // 카드 칸: 관광정보 제1유형은 줄여 둔 480·720·960 판(localPhoto "card", sizes 는 SIZES.homeCard)
+      const ph0 = coverPhoto(p.id) ?? anyPhoto(p.id);
+      const ph = ph0 && localPhoto(ph0, "card");
       return {
         id: p.id,
         name: p.name,
@@ -78,7 +80,7 @@ function cardItems(): CardItem[] {
         areaLabel: areaLabel(p),
         registered: p.registered,
         address: shortAddress(p),
-        photo: ph ? { url: ph.url, type: ph.type } : null,
+        photo: ph ? { url: ph.url, type: ph.type, ...(ph.srcset ? { srcset: ph.srcset } : {}) } : null,
         credit: ph ? photoCreditOf(ph) : null,
       };
     });

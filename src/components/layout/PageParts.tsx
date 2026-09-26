@@ -6,6 +6,7 @@ import { MENU, SITE_NAME, sectionOf, sideMenuOf } from "@/site/ia";
 import type { NavItem, SideMenu, SideMenuLink } from "@/site/ia";
 import { bannerPhoto as pickBanner, photoCreditOf, TOURAPI_CREDIT } from "@/data/photos";
 import { Icon } from "@/components/icons";
+import { SIZES } from "@/components/royal/Photo";
 import { MobileMenuBar, PageTools, SideMenuNav } from "./SubPageParts";
 import { Ph } from "./Ph";
 
@@ -106,13 +107,15 @@ export function SubPage({
   const cur = current ?? crumbs[crumbs.length - 1]?.href ?? "";
   const bannerText = banner ?? section.label;
 
-  // 배너 사진: 기본은 1차 메뉴별로 고른 제1유형 사진
+  // 배너 사진: 기본은 1차 메뉴별로 고른 제1유형 사진(줄여 둔 판이 있으면 srcset 으로 여러 폭, sizes 는 SIZES.banner)
   let photoUrl: string | null = null;
+  let photoSrcSet: string | undefined;
   let photoCaption: string | null = null;
   if (bannerPhoto === undefined) {
     const firstHref = crumbs[0]?.href ?? section.href;
     const b = pickBanner(firstHref.startsWith("/places") || firstHref === "/sitemap" ? firstHref : section.href);
     photoUrl = b.url;
+    photoSrcSet = b.srcset;
     // 딴 곳 사진이라 곳 이름을 앞에 둔다("월정교 · ⓒ한국관광공사")
     photoCaption = `${b.placeName} · ${photoCreditOf(b)}`;
   } else if (typeof bannerPhoto === "string") {
@@ -136,7 +139,7 @@ export function SubPage({
     <div className="rc-sub">
       <div className="rc-sub-visual">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        {photoUrl && <img src={photoUrl} alt="" decoding="async" />}
+        {photoUrl && <img src={photoUrl} srcSet={photoSrcSet} sizes={photoSrcSet ? SIZES.banner : undefined} alt="" decoding="async" />}
         <p className="rc-sub-visual__tit">{bannerText}</p>
         {photoCaption && <p className="rc-sub-visual__credit">{photoCaption}</p>}
       </div>

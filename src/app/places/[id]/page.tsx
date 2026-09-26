@@ -25,17 +25,21 @@
 // 제1유형은 사진 구석에 작은 딱지로 얹고(큰 사진·작은 사진은 오른쪽 아래, 띠는 PC 오른쪽 아래·휴대전화는 띠 이름이 사진 위에 얹혀 오른쪽 위,
 // 넘기기 판은 이름 판·조작 상자가 아래를 차지해 오른쪽 위),
 // 제3유형은 사진 위에 얹지 않고 사진 틀 바로 아래 오른쪽 한 줄. 여러 사진 출처를 한곳에 모아 적지 않는다.
+//
+// 사진 파일(09-27 "제1유형만 줄여 둠"): 관광정보 제1유형은 줄여 둔 판(data/photos.ts localPhoto "big", 여러 폭)이 있으면 그것.
+// 맨 위 큰 사진(SIZES.top)·주변 관광지 넘기기 판(SIZES.nearby)은 대표 사진이라 줄여 둔 판이 있고, 사진 띠(SIZES.strip)는 대표 사진이 들 때만 있다
+// (나머지 띠 사진은 원 주소 940 안팎: 휴대전화 화면 밀도 2~3이면 그 폭이 알맞다). 작은 사진 석 장은 원 주소 그대로.
 import type { Metadata } from "next";
 import { placeMetadata } from "@/site/og";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { areaOf, placeById, places } from "@/data";
-import { largeUrl, photoCreditOf, photosOf } from "@/data/photos";
+import { largeUrl, localPhoto, photoCreditOf, photosOf } from "@/data/photos";
 import { placePages } from "@/site/ia";
 import { withJosa } from "@/lib/josa";
 import { bfLines, hoursLines, hoursNoteLines } from "@/lib/breaks";
 import { Icon, type IconName } from "@/components/icons";
-import { CircleButton, CreditBelow, CreditTag, Photo } from "@/components/royal";
+import { CircleButton, CreditBelow, CreditTag, Photo, SIZES } from "@/components/royal";
 import { Ph } from "@/components/layout/Ph";
 import { DASH, DashNote } from "@/components/layout/Dash";
 import ReadAloud from "@/components/layout/ReadAloud";
@@ -74,6 +78,8 @@ export default async function PlaceSubmain({ params }: Props) {
   // 맨 위 큰 사진: 제1유형이면 잘라 채우고 아래로 흐리게. 제3유형뿐이면 자르지 않고 단색 바탕(겹 없음).
   const cover = coverPhoto(p.id);
   const hero = cover ?? anyPhoto(p.id);
+  // 맨 위 큰 사진의 파일: 줄여 둔 판이 있으면 여러 폭(srcset), 없으면 지금처럼 큰 판 한 장
+  const coverBig = cover && localPhoto(cover, "big");
 
   // 사진 띠 4개에 쓸 사진(아래 사진 띠)
   const slots = stripSlots(p.id, hero?.url ?? null);
@@ -138,7 +144,14 @@ export default async function PlaceSubmain({ params }: Props) {
         {cover ? (
           <>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={largeUrl(cover)} alt={`${p.name} 사진`} decoding="async" fetchPriority="high" />
+            <img
+              src={largeUrl(coverBig ?? cover)}
+              srcSet={coverBig?.srcset}
+              sizes={coverBig?.srcset ? SIZES.top : undefined}
+              alt={`${p.name} 사진`}
+              decoding="async"
+              fetchPriority="high"
+            />
             <CreditTag text={photoCreditOf(cover)} />
           </>
         ) : (
@@ -229,6 +242,8 @@ export default async function PlaceSubmain({ params }: Props) {
           <ul className={s.stripList}>
             {strips.map((st, i) => {
               const slot = slots[i];
+              // 제1유형 한 장: 줄여 둔 판이 있으면(대표 사진이 띠에 들 때) 여러 폭, 없으면 원 주소
+              const one = slot.kind === "type1" ? localPhoto(slot.photo, "big") : null;
               const cls = [s.strip, i % 2 ? s.stripEven : "", slot.kind === "film" ? s.stripFilm : "", slot.kind === "empty" ? s.stripPlain : ""]
                 .filter(Boolean)
                 .join(" ");
@@ -236,10 +251,18 @@ export default async function PlaceSubmain({ params }: Props) {
                 <li key={st.href}>
                   <Link href={st.href} className={cls}>
                     <span className={s.stripImg}>
-                      {slot.kind === "type1" ? (
+                      {slot.kind === "type1" && one ? (
                         <>
                           {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src={slot.photo.url} alt="" loading="lazy" decoding="async" data-kogl="Type1" />
+                          <img
+                            src={one.url}
+                            srcSet={one.srcset}
+                            sizes={one.srcset ? SIZES.strip : undefined}
+                            alt=""
+                            loading="lazy"
+                            decoding="async"
+                            data-kogl="Type1"
+                          />
                           <CreditTag text={photoCreditOf(slot.photo)} />
                         </>
                       ) : slot.kind === "film" ? (

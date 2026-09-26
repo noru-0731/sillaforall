@@ -6,7 +6,7 @@
 // 훅이 없어 서버·클라이언트 어디서나 쓴다. @/data를 부르지 않는다(클라이언트로 places.json을 보내지 않게).
 // 사진 출처(짧은 꼴)는 카드 사진마다 곁에: 제1유형은 사진 오른쪽 아래에 얹고, 제3유형은 사진 아래 한 줄.
 import Link from "next/link";
-import Photo from "@/components/royal/Photo";
+import Photo, { SIZES } from "@/components/royal/Photo";
 import { Icon } from "@/components/icons";
 import { DASH } from "@/components/layout/Dash";
 import type { CardPlace } from "./types";
@@ -20,7 +20,7 @@ export function PlaceCard({ c, headingLevel = 3 }: { c: CardPlace; headingLevel?
   return (
     <li className={s.card}>
       <div className={s.img}>
-        <Photo photo={c.photo} alt="" ratio="165/215" bg="light" credit={c.credit} />
+        <Photo photo={c.photo} alt="" ratio="165/215" bg="light" sizes={SIZES.listCard} credit={c.credit} />
       </div>
       <div className={s.txt}>
         <span className={s.ctg} style={{ "--c": `var(--rc-area-${c.area})` } as React.CSSProperties}>

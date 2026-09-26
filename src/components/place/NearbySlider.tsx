@@ -6,10 +6,11 @@
 // 움직임 줄이기 설정이면 켜지지 않는다(멈춤 단추도 숨김). 자동 넘김 중에는 이름을 소리 내어 읽지 않는다(aria-live off).
 // 지금 사진의 출처(짧은 꼴 "ⓒ한국관광공사" 등)는 사진 오른쪽 위에 작은 딱지로 얹는다(아래 두 구석은 이름 판·조작 상자 자리).
 // 사진 링크는 읽기 도구에서 숨기므로(aria-hidden) 딱지는 그 밖(판 안)에 둔다.
+// 사진 파일: 관광정보 제1유형은 줄여 둔 판 여러 폭(srcset, sizes 는 SIZES.nearby)이 온다(placeData nearbySlides).
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Icon } from "@/components/icons";
-import { CreditTag } from "@/components/royal/Photo";
+import { CreditTag, SIZES } from "@/components/royal/Photo";
 import { useReducedMotion } from "@/components/home/bits";
 import { placeLand } from "./landing";
 import s from "./NearbySlider.module.css";
@@ -19,6 +20,8 @@ export type Slide = {
   name: string;
   dong: string;
   url: string;
+  /** 줄여 둔 판 여러 폭(관광정보 제1유형만) */
+  srcset?: string;
   credit: string;
 };
 
@@ -73,6 +76,8 @@ export default function NearbySlider({
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={cur.url}
+            srcSet={cur.srcset}
+            sizes={cur.srcset ? SIZES.nearby : undefined}
             alt=""
             loading="lazy"
             decoding="async"

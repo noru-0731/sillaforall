@@ -1,7 +1,7 @@
 // 관광지 쪽(61곳 × 5쪽)이 함께 쓰는 자료 도우미. 서버 컴포넌트에서만 부른다(photos.json을 클라이언트로 보내지 않으려고).
 import { areaOf, areas, byName, places } from "@/data";
 import type { Place } from "@/data";
-import { anyPhoto, coverPhoto, photoCreditOf, photosOf, type1List } from "@/data/photos";
+import { anyPhoto, coverPhoto, localPhoto, photoCreditOf, photosOf, type1List } from "@/data/photos";
 import type { Photo } from "@/data/photos";
 
 export type { Place, Photo };
@@ -48,8 +48,9 @@ export function fmtDist(m: number): string {
   return m < 1000 ? `${m.toLocaleString("ko-KR")}m` : `${(m / 1000).toFixed(1)}km`;
 }
 
-/** credit: 그 사진의 출처(짧은 꼴: "ⓒ한국관광공사" / "ⓒ한국관광콘텐츠랩-촬영자") */
-export type NearbySlide = { id: string; name: string; dong: string; url: string; credit: string };
+/** credit: 그 사진의 출처(짧은 꼴: "ⓒ한국관광공사" / "ⓒ한국관광콘텐츠랩-촬영자").
+ *  srcset: 관광정보 제1유형이고 줄여 둔 판이 있으면 여러 폭(localPhoto "big"). 부품은 SIZES.nearby 와 함께 쓴다 */
+export type NearbySlide = { id: string; name: string; dong: string; url: string; srcset?: string; credit: string };
 
 /**
  * 서브메인 오른쪽 넘기기 판: 같은 권역 다른 관광지의 제1유형 사진(가까운 차례).
@@ -62,7 +63,10 @@ export function nearbySlides(p: Place, n = 8): NearbySlide[] {
       .filter((x) => x.c)
       .sort((a, b) => a.d - b.d)
       .slice(0, n)
-      .map((x) => ({ id: x.q.id, name: x.q.name, dong: x.q.dong, url: x.c!.url, credit: photoCreditOf(x.c!) }));
+      .map((x) => {
+        const m = localPhoto(x.c!, "big");
+        return { id: x.q.id, name: x.q.name, dong: x.q.dong, url: m.url, ...(m.srcset ? { srcset: m.srcset } : {}), credit: photoCreditOf(x.c!) };
+      });
   const same = pick(sameArea(p, false));
   if (same.length) return same;
   return pick(places.filter((q) => q.id !== p.id));

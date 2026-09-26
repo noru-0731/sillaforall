@@ -11,7 +11,7 @@ import Link from "next/link";
 import type { AreaKey } from "@/data/types";
 import type { KoglType } from "@/data/photos";
 import { Icon } from "@/components/icons";
-import Photo from "@/components/royal/Photo";
+import Photo, { SIZES } from "@/components/royal/Photo";
 import IntroMark from "@/components/place/IntroMark";
 import { MoreLink, useReducedMotion } from "./bits";
 import s from "./home.module.css";
@@ -23,7 +23,8 @@ export type CardItem = {
   areaLabel: string;
   registered: boolean;
   address: string;
-  photo: { url: string; type: KoglType } | null;
+  /** srcset: 줄여 둔 판 여러 폭(관광정보 제1유형, data/photos.ts localPhoto "card"). 있으면 <Photo>가 SIZES.homeCard 와 함께 쓴다 */
+  photo: { url: string; type: KoglType; srcset?: string } | null;
   /** 사진 출처(짧은 꼴, 서버에서 photoCreditOf로 만듦). 사진이 없으면 null */
   credit: string | null;
 };
@@ -145,7 +146,7 @@ export default function HomeCards({
                   </div>
                   <Link href={`/places/${it.id}`} className={s.card} onFocus={() => d !== 0 && setIdx(i)}>
                     <span className={s.cardPhoto}>
-                      <Photo photo={it.photo} alt="" height="100%" bg="light" credit={it.credit} />
+                      <Photo photo={it.photo} alt="" height="100%" bg="light" sizes={SIZES.homeCard} credit={it.credit} />
                     </span>
                     <span className={s.cardTxt}>
                       <span className={s.cardName}>{it.name}</span>
