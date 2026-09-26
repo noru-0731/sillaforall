@@ -5,7 +5,7 @@
 // 무장애 시안(bf-draft)에서 더한 것:
 // - 무장애 여행 정보의 채워진 칸을 모두(예전에는 이동 일곱 칸만). 관광공사 묶음(지체장애, 시각장애, 청각장애, 영유아 가족)대로 나누고 칸 이름은 자료 그대로.
 // - 무장애 정보가 없는 곳: 300m 안에서 무장애 정보가 있는 관광지·문화시설(barrierfree.json candidates)의 칸. 그 곳의 정보가 아님을 ※ 줄로 밝힌다.
-// - 배리어프리 문화예술관광지(한국문화정보원) 행이 이름으로 짝지어진 12곳: Y/N 칸.
+// - 배리어프리 문화예술관광지(한국문화정보원) 행이 이름으로 짝지어진 12곳: Y/N 칸(09-26 평가 고침: 예/아니요 대신 편의시설 표와 같은 있음/없음·가능/불가, data/bf.ts stdValue).
 // - 편의시설: 진짜 지도 위 번호 네모 + 목록 표(궁능 관람코스 편의시설 지도 모양, components/place/Amenities.tsx).
 //
 // 페르소나 장점 묶음3(morning)에서 더한 것:
@@ -23,7 +23,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { placeById, places } from "@/data";
 import { GJ_CREDIT, GJ_SOURCE, gjOf } from "@/data/gj";
-import { amenitiesOf, bfCultureOf, bfFilledFieldsOf, bfGroupsOf, bfLabel, bfNeighborsOf, BF_SOURCE, NEAR_RADII, sourceLines, type AmenitySrc } from "@/data/bf";
+import { amenitiesOf, bfCultureOf, bfFilledFieldsOf, bfGroupsOf, bfLabel, bfNeighborsOf, BF_CULTURE_SOURCE_LINE, BF_SOURCE, NEAR_RADII, sourceLines, stdLabel, stdValue, type AmenitySrc } from "@/data/bf";
 import { placeCrumbs, placePages, placeSideMenu, PLACE_BANNER } from "@/site/ia";
 import { InPageNav, Ph, Section, SubPage } from "@/components/layout/PageParts";
 import { DASH, DashNote } from "@/components/layout/Dash";
@@ -303,12 +303,12 @@ export default async function PlaceBarrierFree({ params }: Props) {
             align={["c", "c"]}
             rowHeader
             rows={[
-              ...bfc.rows.map(([k, v]) => [k, v === "Y" ? "예" : v === "N" ? "아니요" : v]),
+              ...bfc.rows.map(([k, v]) => [stdLabel(k), stdValue(k, v)]),
               ...(bfc.hours ? [["운영시간", pre(bfc.hours)]] : []),
               ...(bfc.closed ? [["휴무일", pre(bfc.closed)]] : []),
             ]}
           />
-          <SourceLines lines={["자료: 한국문화정보원_전국 배리어프리 문화예술관광지(최종작성일 2022-11-25)"]} />
+          <SourceLines lines={[BF_CULTURE_SOURCE_LINE]} />
         </>
       ),
     });

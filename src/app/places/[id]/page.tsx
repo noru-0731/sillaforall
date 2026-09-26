@@ -45,6 +45,7 @@ import OpenNow from "@/components/place/OpenNow";
 import { anyPhoto, areaLabelOf, coverPhoto, fmtDist, nearby, nearbySlides, phoneOf, stripCredit, stripSlots } from "@/components/place/placeData";
 import NearbySlider from "@/components/place/NearbySlider";
 import PageSteps from "@/components/place/PageSteps";
+import { placeLand, SUBMAIN_TITLE_ID } from "@/components/place/landing";
 import s from "@/components/place/Submain.module.css";
 
 type Props = { params: Promise<{ id: string }> };
@@ -181,10 +182,11 @@ export default async function PlaceSubmain({ params }: Props) {
       )}
 
       {/* 관람 도우미 */}
-      <section className={s.quick} aria-labelledby="quick-tit">
+      <section className={s.quick} aria-labelledby={SUBMAIN_TITLE_ID}>
         <div className={`${s.inner} ${s.quickInner}`}>
           <div className={s.quickTit}>
-            <h2 id="quick-tit">{p.name} 관람 도우미</h2>
+            {/* 이어 읽기·주변 관광지 링크가 여는 자리(landing.ts placeLand) */}
+            <h2 id={SUBMAIN_TITLE_ID}>{p.name} 관람 도우미</h2>
             {/* 가11 소리로 듣기(한국어 목소리가 있는 브라우저에서만 보임), 가14 한 곳 모아 인쇄 쪽 */}
             <div className={`rc-tools ${s.quickTools}`}>
               <ReadAloud />
@@ -278,7 +280,7 @@ export default async function PlaceSubmain({ params }: Props) {
             <ul className={s.nearList}>
               {near.map(({ place: q, distM }) => (
                 <li key={q.id}>
-                  <Link href={`/places/${q.id}`}>
+                  <Link href={placeLand(q.id)}>
                     <span className={s.nearName}>{q.name}</span>
                     <span className={s.nearDong}>
                       {q.dong}

@@ -4,7 +4,7 @@
 // - amenities_near.json: 지도에 찍을 가까운 화장실·공영주차장·충전기(번호 매김)와 벤치·쉼터. 만드는 곳: 도구/10_편의시설_지도.py
 // - food_near.json: 1km 안 관광공사 무장애 여행 정보 음식점(유형 39, 가까운 순 몇 곳). 만드는 곳: 도구/14_무장애_음식점.py
 //   amenitiesOf 에서 편의시설 목록 끝에 번호를 이어 붙인다.
-// 칸 이름은 원본 자료의 칸 이름을 그대로 쓴다(새 글이 아니다). 거리는 모두 직선거리(m).
+// 칸 이름은 원본 자료의 칸 이름을 그대로 쓴다(새 글이 아니다). 공공데이터 칸은 화면에 적을 때 낱말 사이를 띄우고 Y/N·운영시각을 읽히게 한다(아래 stdLabel·stdValue). 거리는 모두 직선거리(m).
 // 무장애 칸 글은 줄바꿈이 빠져 붙은 자리만 줄을 나눠 돌려준다(lib/breaks.ts bfLines, 글자는 그대로).
 import { bfLines } from "@/lib/breaks";
 import bfRaw from "./barrierfree.json";
@@ -183,14 +183,95 @@ export const KIND_LABEL: Record<AmenityKind | "bench" | "shelter", string> = {
   shelter: "쉼터",
 };
 
-/** 자료 이름(목록 '자료' 칸과 출처 줄). 원본 자료 이름을 줄였다 */
+// ───────── 공공데이터 칸 이름·값을 화면에 적을 때(09-26 평가 04 A③ 고침) ─────────
+// 자료(JSON)의 칸 이름·값은 원본 그대로 두고, 화면에 적을 때만 여기 한 곳에서 바꾼다(편의시설 표·오시는 길 공영주차장 표·배리어프리 문화예술관광지 표).
+// 칸 이름: 그 표준데이터의 공식 항목명을 낱말 사이만 띄어 쓴다(새 말로 바꾸지 않음). 공식 항목명은 행정안전부_공공데이터 제공 표준_20251001(공공데이터포털 15156444)에서 확인.
+//   두 항목을 한 칸에 붙인 것(○○운영시작시각~○○운영종료시각 → ○○운영시각, 주차장구분·주차장유형 → 주차장구분·유형)은 도구(10_편의시설_지도.py)가 붙인 이름을 같은 규칙으로 띄운다.
+const STD_FIELD_LABEL: Record<string, string> = {
+  // 전국공중화장실표준데이터
+  개방시간: "개방 시간",
+  소재지도로명주소: "소재지 도로명 주소",
+  "남성용-장애인용대변기수": "남성용 장애인용 대변기 수",
+  "남성용-장애인용소변기수": "남성용 장애인용 소변기 수",
+  "여성용-장애인용대변기수": "여성용 장애인용 대변기 수",
+  // 전국주차장정보표준데이터
+  "주차장구분·유형": "주차장 구분·유형",
+  주차구획수: "주차 구획 수",
+  평일운영시각: "평일 운영 시각",
+  토요일운영시각: "토요일 운영 시각",
+  공휴일운영시각: "공휴일 운영 시각",
+  요금정보: "요금 정보",
+  특기사항: "특기 사항",
+  장애인전용주차구역보유여부: "장애인 전용 주차 구역 보유 여부",
+  // 전국전동휠체어급속충전기표준데이터(운영시각 셋은 위와 같은 이름)
+  설치장소설명: "설치 장소 설명",
+  동시사용가능대수: "동시 사용 가능 대수",
+  관리기관전화번호: "관리 기관 전화번호",
+  // 전국교통약자이동지원센터정보표준데이터(오시는 길·인쇄 쪽 교통약자이동지원센터 칸).
+  // '예약접수'는 평일·주말예약접수운영시작시각~종료시각을 한 괄호에 적을 때 앞에 붙이는 조각
+  예약접수전화번호: "예약 접수 전화번호",
+  보유차량종류: "보유 차량 종류",
+  슬로프형휠체어차량대수: "슬로프형 휠체어 차량 대수",
+  사전예약신청기간: "사전 예약 신청 기간",
+  예약접수: "예약 접수",
+  차량관내운행지역: "차량 관내 운행 지역",
+  차량관외운행지역: "차량 관외 운행 지역",
+  차량이용요금: "차량 이용 요금",
+  차량이용대상: "차량 이용 대상",
+  // 표준데이터 모두에 있는 칸(출처 줄 괄호)
+  데이터기준일자: "데이터 기준 일자",
+  // 한국문화정보원 전국 배리어프리 문화예술관광지(띄어 쓰지 않은 넷만. 최종작성일은 출처 줄 괄호)
+  "무료주차 가능여부": "무료 주차 가능 여부",
+  "유료주차 가능여부": "유료 주차 가능 여부",
+  "대형주차장 가능여부": "대형 주차장 가능 여부",
+  최종작성일: "최종 작성일",
+};
+/** 화면에 적을 칸 이름(표에 없는 칸은 그대로) */
+export const stdLabel = (k: string) => STD_FIELD_LABEL[k] ?? k;
+
+/**
+ * 화면에 적을 칸 값.
+ * - Y/N: 칸 이름에 '가능'이 들면 가능/불가, 아니면 있음/없음(오픈스트리트맵 wheelchair yes·no 를 옮긴 말과 같은 낱말).
+ * - 운영시각 '시작~종료': 표준데이터 제공 표준의 항목 설명대로 읽는다. 전동휠체어급속충전기·주차장정보 모두
+ *   시작 시각은 "24시간 운영 또는 미운영 시 ‘00:00’", 종료 시각은 "24시간 운영 시 ‘23:59’, 미운영 시 ‘00:00’"으로 적게 되어 있어
+ *   00:00~00:00 은 '미운영', 00:00~23:59 는 '24시간 운영'(지침의 말)이다.
+ */
+export function stdValue(k: string, v: string | number): string {
+  const t = String(v);
+  if (t === "Y" || t === "N") return k.includes("가능") ? (t === "Y" ? "가능" : "불가") : t === "Y" ? "있음" : "없음";
+  if (k.endsWith("운영시각")) {
+    if (t === "00:00~00:00") return "미운영";
+    if (t === "00:00~23:59") return "24시간 운영";
+  }
+  return t;
+}
+
+// 자료 이름(공공데이터포털 표준데이터 제목)도 화면에 적을 때 칸 이름과 같은 규칙으로 낱말 사이만 띄운다(09-27 점검).
+// 낱말 나눔은 사이트에 이미 있는 꼴을 따른다: '공중화장실'·'전동휠체어 급속충전기'(KIND_LABEL), '요금 정보'처럼 '주차장 정보',
+// '이동지원센터'는 「교통약자의 이동편의 증진법」의 말 한 덩어리. 자료 출처 쪽(/about/sources) 표는 포털 제목 그대로 둔다(주소와 같이 적는 인용).
+const STD_DATASET_LABEL: Record<string, string> = {
+  전국공중화장실표준데이터: "전국 공중화장실 표준데이터",
+  전국주차장정보표준데이터: "전국 주차장 정보 표준데이터",
+  전국전동휠체어급속충전기표준데이터: "전국 전동휠체어 급속충전기 표준데이터",
+  전국교통약자이동지원센터정보표준데이터: "전국 교통약자 이동지원센터 정보 표준데이터",
+};
+/** 화면에 적을 자료 이름(표에 없는 이름은 그대로) */
+export const stdDataset = (name: string) => STD_DATASET_LABEL[name] ?? name;
+
+/** 교통약자이동지원센터 출처 줄(오시는 길·인쇄 쪽) */
+export const MOBILITY_SOURCE_LINE = `자료: ${stdDataset(AM.sources.mobilityCenter.name)}(${stdLabel("데이터기준일자")} ${MOBILITY.refDate})`;
+
+/** 배리어프리 문화예술관광지 출처 줄(무장애 정보 쪽 표 아래·편의시설 출처 줄) */
+export const BF_CULTURE_SOURCE_LINE = `자료: ${AM.sources.bfCulture.name}(${stdLabel("최종작성일")} 2022-11-25)`;
+
+/** 자료 이름(목록 '자료' 칸과 출처 줄). 원본 자료 이름을 줄였다(낱말 사이는 위 자료 이름과 같게) */
 export const SRC_LABEL: Record<AmenitySrc, string> = {
   toiletStd: "공중화장실 표준데이터",
   osm: "오픈스트리트맵",
   korwith: "한국관광공사 무장애 여행 정보",
   bfCulture: "배리어프리 문화예술관광지",
-  parking: "주차장정보 표준데이터",
-  charger: "전동휠체어급속충전기 표준데이터",
+  parking: "주차장 정보 표준데이터",
+  charger: "전동휠체어 급속충전기 표준데이터",
   korwithFood: "한국관광공사 무장애 여행 정보",
 };
 
@@ -199,13 +280,13 @@ export function sourceLines(srcs: Iterable<AmenitySrc | "osmRest">): string[] {
   const set = new Set(srcs);
   const S = AM.sources;
   const lines: string[] = [];
-  const ref = (s: Source) => (s.refDates ? `데이터기준일자 ${s.refDates[1]}` : `${s.fetched.slice(0, 10)} 받음`);
+  const ref = (s: Source) => (s.refDates ? `${stdLabel("데이터기준일자")} ${s.refDates[1]}` : `${s.fetched.slice(0, 10)} 받음`);
   // 이름 끝 괄호(KorWithService2, 내려받기 판 등)는 떼고 적는다. 같은 쪽 무장애 표 출처 줄과 같은 이름이 되게
   if (set.has("korwith")) lines.push(`자료: ${S.korwith.name.replace(/\(.*\)$/, "")}(${ref(S.korwith)})`);
-  if (set.has("toiletStd")) lines.push(`자료: ${S.toiletStd.name.replace(/\(.*\)$/, "")}(${ref(S.toiletStd)})`);
-  if (set.has("bfCulture")) lines.push(`자료: ${S.bfCulture.name}(최종작성일 2022-11-25)`);
-  if (set.has("parking")) lines.push(`자료: ${S.parking.name}(${ref(S.parking)})`);
-  if (set.has("charger")) lines.push(`자료: ${S.charger.name}(${ref(S.charger)})`);
+  if (set.has("toiletStd")) lines.push(`자료: ${stdDataset(S.toiletStd.name.replace(/\(.*\)$/, ""))}(${ref(S.toiletStd)})`);
+  if (set.has("bfCulture")) lines.push(BF_CULTURE_SOURCE_LINE);
+  if (set.has("parking")) lines.push(`자료: ${stdDataset(S.parking.name)}(${ref(S.parking)})`);
+  if (set.has("charger")) lines.push(`자료: ${stdDataset(S.charger.name)}(${ref(S.charger)})`);
   if (set.has("korwithFood")) lines.push(`자료: ${S.korwith.name.replace(/\(.*\)$/, "")} 음식점(${FOOD.meta.fetched} 받음)`);
   if (set.has("osm") || set.has("osmRest")) lines.push(`자료: © OpenStreetMap 기여자, ODbL(${S.osm.fetched.slice(0, 10)} 받음)`);
   return lines;

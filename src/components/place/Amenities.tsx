@@ -1,11 +1,11 @@
 // 가까운 편의시설(무장애 시안 bf-draft). 서버 컴포넌트.
 // 궁능 관람코스 "편의시설"(레퍼런스/궁능_포맷/course_d1440_full.png, 나무/course_1440.txt) 모양:
 // 지도 상자(번호 네모 + 왼쪽 범례) → ⓘ 안내 상자("번호를 클릭하시면 아래 화면에서 …") → 목록(궁능은 이름 격자 + 고른 시설 사진, 우리는 게시판 표).
-// 표는 번호 / 구분 / 이름 / 직선거리 / 자료에 적힌 칸 / 자료. 칸 이름과 값은 원본 자료 그대로.
+// 표는 번호 / 구분 / 이름 / 직선거리 / 자료에 적힌 칸 / 자료. 칸 이름과 값은 원본 자료 그대로이되, 공공데이터 칸 이름은 낱말 사이를 띄우고 Y/N·운영시각은 읽히게 적는다(data/bf.ts stdLabel·stdValue).
 // 좁은 화면(본문 767 이하)에서는 표 줄을 한 칸씩 쌓는다(Amenities.module.css).
 import PlaceMap, { type LegendItem, type MapPoint } from "@/components/map/PlaceMap";
 import { InfoBox } from "@/components/royal";
-import { KIND_LABEL, SRC_LABEL, type AmenityItem, type AmenityKind, type RestPoint } from "@/data/bf";
+import { KIND_LABEL, SRC_LABEL, stdLabel, stdValue, type AmenityItem, type AmenityKind, type RestPoint } from "@/data/bf";
 import s from "./Amenities.module.css";
 
 const fmtM = (m: number) => `${m.toLocaleString("ko-KR")}m`;
@@ -152,8 +152,8 @@ export function AmenityTable({
                   <dl>
                     {it.fields.map(([k, v]) => (
                       <div key={k}>
-                        <dt>{k}</dt>
-                        <dd>{String(v)}</dd>
+                        <dt>{stdLabel(k)}</dt>
+                        <dd>{stdValue(k, v)}</dd>
                       </div>
                     ))}
                   </dl>

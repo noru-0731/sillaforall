@@ -1,0 +1,35 @@
+/* 고정 '맨 위로' 단추(PageTop.tsx ToTop). 치수는 경주문화관광 누리집 고정 단추(캡처 G_내린뒤_맨위로단추_w1440.png):
+   흰 동그라미 약 38px, 옅은 회색 테두리와 그림자, 화면 오른쪽·아래에서 약 19px, 안에 위 화살표 그림 약 20px.
+   다른 고정 요소(머리 900·PC 메뉴 펼침판 가림 890·휴대전화 전체메뉴 990·글자·화면 설정 창)보다 아래 층이라 그것들이 열리면 가려진다.
+   글자·화면 설정(body zoom)을 키우면 이 단추도 같은 배율로 커진다. */
+.top {
+  position: fixed;
+  right: 1.9rem;
+  bottom: calc(1.9rem + env(safe-area-inset-bottom, 0px));
+  z-index: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.8rem;
+  height: 3.8rem;
+  padding: 0;
+  border: 0.1rem solid var(--rc-line);
+  border-radius: 50%;
+  background: var(--rc-bg);
+  box-shadow: 0 0.2rem 0.6rem rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+}
+.top:hover {
+  border-color: var(--rc-text);
+}
+.top :global(.svg-icon) {
+  width: 2rem;
+  height: 2rem;
+  background-color: var(--rc-text);
+}
+
+@media print {
+  .top {
+    display: none !important;
+  }
+}

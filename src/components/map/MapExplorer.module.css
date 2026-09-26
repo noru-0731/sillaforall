@@ -49,7 +49,7 @@
   font-size: 1.6rem;
   font-weight: 500;
   line-height: 1.3;
-  color: var(--rc-seg-off);
+  color: var(--rc-seg-off-text);
   cursor: pointer;
 }
 .hubBtn:hover {
