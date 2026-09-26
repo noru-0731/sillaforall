@@ -68,7 +68,7 @@ export function amenityPoints(items: (AmenityItem & { show: number })[], idPrefi
 
 export function legendOf(kinds: Iterable<AmenityKind | "bench" | "shelter">, placeName: string): LegendItem[] {
   const set = new Set(kinds);
-  const order: (AmenityKind | "bench" | "shelter")[] = ["toiletA", "toilet", "parking", "charger", "food", "bench", "shelter"];
+  const order: (AmenityKind | "bench" | "shelter")[] = ["parking", "toiletA", "toilet", "charger", "food", "bench", "shelter"]; // deck 갈래: 공영주차장 먼저(번호 차례와 같게)
   return [{ kind: "place", label: placeName }, ...order.filter((k) => set.has(k)).map((k) => ({ kind: k, label: KIND_LABEL[k] }))];
 }
 

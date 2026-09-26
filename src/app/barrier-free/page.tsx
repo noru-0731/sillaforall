@@ -9,6 +9,7 @@ import { BoardTable } from "@/components/royal";
 import { Icon, type IconName } from "@/components/icons";
 import { THREE_KEYS, menuPage, type ThreeKey } from "@/components/place-list/helpers";
 import { THREE_TEXT } from "@/components/place-list/Parts";
+import { STEPFREE_HREF, STEPFREE_PLACES } from "@/data/stepfree";
 import s from "./bf.module.css";
 
 const HREF = "/barrier-free";
@@ -40,6 +41,7 @@ export default function BarrierFreeGuidePage() {
   const subCount: Record<string, number> = {
     "/barrier-free/listed": registered.length,
     "/barrier-free/unlisted": unregistered.length,
+    [STEPFREE_HREF]: STEPFREE_PLACES.length,
   };
 
   return (

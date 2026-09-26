@@ -9,6 +9,7 @@ import { phoneOf } from "@/components/place/placeData";
 import { Ph } from "./Ph";
 import FooterRelated from "./FooterRelated";
 import FooterTel from "./FooterTel";
+import { NewWinIcon } from "./NewWin";
 import f from "./Footer.module.css";
 
 /** 전화번호는 붙임표 뒤에서만 줄이 바뀌게 한다(궁능 휴대전화 표처럼 "054-772-" / "9289"). 묶음 안에서는 끊지 않는다.
@@ -116,6 +117,7 @@ export default function SiteFooter() {
                 이용하였으며, 해당 저작물은 ‘
                 <a href="https://www.krds.go.kr" target="_blank" rel="noopener noreferrer" title="새 창 열림">
                   KRDS 디자인시스템 홈페이지(www.krds.go.kr)
+                  <NewWinIcon />
                 </a>
                 ’에서 무료로 다운받으실 수 있습니다.
               </li>

@@ -32,6 +32,11 @@ import { bfLines } from "@/lib/breaks";
 import { nearestRegistered, phoneOf } from "@/components/place/placeData";
 import { AmenityMap, AmenityTable, SourceLines, amenityPoints, legendOf } from "@/components/place/Amenities";
 import FoldOpen from "@/components/place/FoldOpen";
+import PageSteps from "@/components/place/PageSteps";
+import { StepFreeOnPlace } from "@/components/place/StepFree";
+import { parkingFirst } from "@/components/place/amenityOrder";
+import { menuPage } from "@/components/place-list/helpers";
+import { STEPFREE_HREF, stepFreeOf } from "@/data/stepfree";
 import s from "@/components/place/Place.module.css";
 
 type Props = { params: Promise<{ id: string }> };
@@ -123,7 +128,7 @@ export default async function PlaceBarrierFree({ params }: Props) {
   const neighbors = bfNeighborsOf(p.id);
   const bfc = bfCultureOf(p.id);
   const am = amenitiesOf(p.id);
-  const items = am?.items.map((i) => ({ ...i, show: i.no })) ?? [];
+  const items = parkingFirst(am?.items ?? []); // deck 갈래: 공영주차장을 맨 앞 종류로(오시는 길 번호와 같게)
   const tel = phoneOf(p.contact);
   const fields = bfFilledFieldsOf(p.id);
   const gj = gjOf(p.id);
@@ -340,6 +345,13 @@ export default async function PlaceBarrierFree({ params }: Props) {
     });
   }
 
+  // deck 갈래: 계단 없는 길 쪽에 실린 곳이면 그 곳 덩어리를 맨 끝 절로(테마 쪽 링크와 함께)
+  const sf = stepFreeOf(p.id);
+  if (sf) {
+    const sfTitle = menuPage(STEPFREE_HREF).title;
+    parts.push({ id: "stepfree", title: sfTitle, body: <StepFreeOnPlace place={sf} title={sfTitle} /> });
+  }
+
   // 절이 하나뿐이면 목차도 접기도 두지 않는다
   const fold = parts.length > 1;
 
@@ -394,6 +406,8 @@ export default async function PlaceBarrierFree({ params }: Props) {
       )}
 
       {fold && <FoldOpen />}
+      {/* deck 갈래: 쪽 끝 이어 읽기 */}
+      <PageSteps place={p} at={3} />
     </SubPage>
   );
 }

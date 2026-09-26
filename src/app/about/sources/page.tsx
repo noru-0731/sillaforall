@@ -10,6 +10,7 @@ import { SOURCES } from "@/data/bf";
 import { BUS_META } from "@/data/bus";
 import { GJ_SOURCE } from "@/data/gj";
 import { BoardTable } from "@/components/royal";
+import { NewWinIcon } from "@/components/layout/NewWin";
 import s from "../about.module.css";
 
 const SECTION = MENU[3];
@@ -132,6 +133,7 @@ export default function SourcesPage() {
           이용하였으며, 해당 저작물은 ‘
           <a href="https://www.krds.go.kr" className={s.inlineLink} target="_blank" rel="noopener noreferrer" title="새 창 열림">
             KRDS 디자인시스템 홈페이지(www.krds.go.kr)
+            <NewWinIcon />
           </a>
           ’에서 무료로 다운받으실 수 있습니다.
         </p>

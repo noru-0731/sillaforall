@@ -8,6 +8,7 @@ import type { Place } from "@/data";
 import { anyPhoto, coverPhoto, creditLines, photoCreditOf } from "@/data/photos";
 import { MENU, SITE_NAME } from "@/site/ia";
 import { withJosa } from "@/lib/josa";
+import { STEPFREE_HREF, STEPFREE_PLACES } from "@/data/stepfree";
 import HomeHero, { type HeroSlide, type QuickItem } from "@/components/home/HomeHero";
 import HomeCards, { type CardItem } from "@/components/home/HomeCards";
 import HomeBoard, { type BoardList } from "@/components/home/HomeBoard";
@@ -90,6 +91,8 @@ function boardLists(): BoardList[] {
     { key: "listed", label: "정보가 적힌 곳", href: "/barrier-free/listed", rows: listed.slice(0, 10).map((p) => row(p)) },
     { key: "unlisted", label: "정보가 없는 곳", href: "/barrier-free/unlisted", rows: unlisted.slice(0, 10).map((p) => row(p)) },
     { key: "hub", label: "거점별", href: "/list/hub", rows: hub.slice(0, 10), hub: true },
+    // deck 갈래: 계단 없는 길(테마 쪽 차례 그대로 앞 10곳, 딱지는 권역)
+    { key: "stepfree", label: "계단 없는 길", href: STEPFREE_HREF, rows: STEPFREE_PLACES.slice(0, 10).map((q) => row(places.find((p) => p.id === q.id)!)) },
   ];
 }
 

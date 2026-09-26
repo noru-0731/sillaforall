@@ -31,6 +31,8 @@ import { BUS_SOURCE_LINES, KTX_NAME, busStopsOf, ktxLinesOf } from "@/data/bus";
 import { extraFeeRowsOf } from "@/data/introExtra";
 import { bfLines, hoursLines, hoursNoteLines } from "@/lib/breaks";
 import { AmenityTable, SourceLines, amenityPoints, legendOf } from "@/components/place/Amenities";
+import PageSteps from "@/components/place/PageSteps";
+import { NewWinIcon } from "@/components/layout/NewWin";
 import s from "@/components/place/Place.module.css";
 
 type Props = { params: Promise<{ id: string }> };
@@ -155,6 +157,7 @@ export default async function PlaceDirections({ params }: Props) {
           </div>
           <a href={kakaoTo(p)} target="_blank" rel="noopener noreferrer" className={s.btnMap}>
             길찾기<span className="sr-only">(카카오맵, 새 창)</span>
+            <NewWinIcon sr={false} />
           </a>
         </div>
       </Section>
@@ -294,6 +297,8 @@ export default async function PlaceDirections({ params }: Props) {
           ]}
         />
       </div>
+      {/* deck 갈래: 쪽 끝 이어 읽기(다음: 주변 관광지 세 곳) */}
+      <PageSteps place={p} at={4} />
     </SubPage>
   );
 }

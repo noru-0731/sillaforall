@@ -14,6 +14,7 @@ import { overviewParas } from "@/data/overview";
 import { photosOf, sameArea, viewerPhotos } from "@/components/place/placeData";
 import PhotoViewer from "@/components/place/PhotoViewer";
 import type { ViewerItem } from "@/components/place/PhotoViewer";
+import PageSteps from "@/components/place/PageSteps";
 import s from "@/components/place/Place.module.css";
 
 type Props = { params: Promise<{ id: string }> };
@@ -93,6 +94,8 @@ export default async function PlacePhotos({ params }: Props) {
           ))}
         </div>
       )}
+      {/* deck 갈래: 쪽 끝 이어 읽기 */}
+      <PageSteps place={p} at={2} />
     </SubPage>
   );
 }
