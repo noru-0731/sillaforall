@@ -213,7 +213,7 @@ export default async function PlaceSubmain({ params }: Props) {
                 );
               })}
             </ul>
-            {quick.some((q) => q.value == null) && <DashNote className={s.quickNote} />}
+            {quick.some((q) => q.value == null) && <DashNote facility className={s.quickNote} />}
           </div>
         </div>
       </section>

@@ -9,8 +9,12 @@ import { koglCondition, koglLabel, type KoglType } from "@/data/photos";
 import { SOURCES } from "@/data/bf";
 import { BUS_META } from "@/data/bus";
 import { GJ_SOURCE } from "@/data/gj";
+import areas6 from "@/data/areas6.json";
 import { BoardTable } from "@/components/royal";
 import s from "../about.module.css";
+
+/** 경주문화관광 권역별 관광지(권역 여섯 쪽 가운데 첫 쪽) */
+const AREAS6_URL: string = (areas6 as { areas: { gjUrl: string }[] }).areas[0].gjUrl;
 
 const SECTION = MENU[3];
 const PAGE = SECTION.children![1];
@@ -190,7 +194,7 @@ export default function SourcesPage() {
           두 누리집으로 가는 링크는 싣지 않으므로 주소는 글자로만 둔다. */}
       <Section id="gyeongju" title="경주시 문화관광">
         <BoardTable
-          caption="관광지 무장애 정보에 쓴 경주시 자료: 자료, 제공 기관, 이용허락, 기준일, 주소"
+          caption="관광지 무장애 정보와 권역에 쓴 경주시 자료: 자료, 제공 기관, 이용허락, 기준일, 주소"
           head={["자료", "제공 기관", "이용허락", "기준일", "주소"]}
           cols={["24%", "18%", "20%", "14%", "auto"]}
           align={["l", "l", "l", "c", "l"]}
@@ -202,6 +206,15 @@ export default function SourcesPage() {
               `${GJ_SOURCE.checked} 확인`,
               <span key="u" className={s.plainUrl}>
                 {GJ_SOURCE.url.replace(/^https:\/\//, "")}
+              </span>,
+            ],
+            [
+              "권역별 관광지",
+              "경주시",
+              <Ph key="l">누리집 쪽에 공공누리 표시 없음</Ph>,
+              "2026-09-26 확인",
+              <span key="u" className={s.plainUrl}>
+                {AREAS6_URL.replace(/^https:\/\//, "")}
               </span>,
             ],
           ]}

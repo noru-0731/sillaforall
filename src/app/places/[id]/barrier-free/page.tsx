@@ -160,7 +160,7 @@ export default async function PlaceBarrierFree({ params }: Props) {
           </Box>
         </ul>
         {/* "-" 상자가 있으면 세 상자 바로 아래 뜻풀이 한 줄(이 쪽의 "-"는 세 상자뿐) */}
-        {[p.three.parking, p.three.walk, p.three.toilet].some((v) => !bfLines(v)) && <DashNote className={s.tipsAfterTable} />}
+        {[p.three.parking, p.three.walk, p.three.toilet].some((v) => !bfLines(v)) && <DashNote facility className={s.tipsAfterTable} />}
         {groups.length === 0 && <SourceLines lines={[BF_CREDIT]} />}
       </>
     ) : (

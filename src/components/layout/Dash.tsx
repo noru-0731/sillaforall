@@ -7,10 +7,12 @@ import { Ph } from "./Ph";
 /** 빈 칸 표시 */
 export const DASH = "-";
 
-/** "-" 뜻풀이 글(점선으로 감싸 쓴다) */
+/** "-" 뜻풀이 글(점선으로 감싸 쓴다). 시설 칸(주차·접근로·화장실 등)이 있는 표에는 뒷말까지 */
 export const DASH_NOTE_TEXT = "‘-’ 표시는 자료의 그 칸에 글이 없다는 뜻이며, 시설이 없다는 뜻은 아닙니다.";
+/** 시설 칸이 없는 표(목록 카드의 주소·이용시간·쉬는 날·분류, 소개·오시는 길 표)의 뜻풀이: 뒷말을 뺀 앞 절 */
+export const DASH_NOTE_SHORT = "‘-’ 표시는 자료의 그 칸에 글이 없다는 뜻입니다.";
 
-/** "-" 뜻풀이 한 줄(※ 줄). className 은 앞 표와의 간격 */
-export function DashNote({ className }: { className?: string }) {
-  return <TipList className={className} items={[<Ph key="a">{DASH_NOTE_TEXT}</Ph>]} />;
+/** "-" 뜻풀이 한 줄(※ 줄). className 은 앞 표와의 간격. facility: 시설 칸이 있는 표면 "시설이 없다는 뜻은 아닙니다"까지 */
+export function DashNote({ className, facility = false }: { className?: string; facility?: boolean }) {
+  return <TipList className={className} items={[<Ph key="a">{facility ? DASH_NOTE_TEXT : DASH_NOTE_SHORT}</Ph>]} />;
 }

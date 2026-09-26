@@ -155,7 +155,7 @@ export default function BarrierFreeGuidePage() {
           <h3 className={s.artTit}>무장애 정보가 없는 곳</h3>
           <div className={s.artBox}>
             <p>
-              <Ph>무장애 정보가 없는 곳은 세 항목이 모두 ‘-’ 표시로 보입니다.</Ph>
+              <Ph>무장애 정보가 없는 곳의 무장애 정보 쪽에는 ‘등록된 무장애 여행 정보가 없습니다.’가 보입니다.</Ph>
             </p>
           </div>
         </div>
