@@ -723,13 +723,13 @@ export default function MapView({
                 <span className={s.swatch} aria-hidden="true">
                   <span className={cn(s.dot, s.dotOn)} />
                 </span>
-                <Ph>정보가 적힌 곳</Ph>
+                무장애 정보가 있는 곳
               </li>
               <li>
                 <span className={s.swatch} aria-hidden="true">
                   <span className={cn(s.dot, s.dotOff)} />
                 </span>
-                <Ph>정보가 없는 곳</Ph>
+                무장애 정보가 없는 곳
               </li>
             </>
           )}

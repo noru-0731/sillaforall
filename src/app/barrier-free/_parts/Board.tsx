@@ -1,14 +1,15 @@
 "use client";
 
-// 무장애 목록 두 쪽(정보가 적힌 곳 / 정보가 없는 곳)의 게시판(궁능 공지사항 모양).
+// 무장애 목록 두 쪽(무장애 정보가 있는 곳 / 무장애 정보가 없는 곳)의 게시판(궁능 공지사항 모양).
 // 알약 줄은 SubPage의 tabs 자리(제목과 윗선 사이)에, 표는 본문에 들어가므로 둘이 같은 고름을 보도록 BoardState로 감싼다.
 // 무거운 자료(places.json, photos.json)는 부르지 않는다. 쪽(서버)이 계산한 줄만 props로 받는다.
-// 페르소나 장점 취합: 정보가 적힌 곳 표의 세 칸에 ○ 대신 명부 글을 한 줄에(가7, 경주문화관광 무장애 여행정보의 곳마다 한 줄),
+// 페르소나 장점 취합: 무장애 정보가 있는 곳 표의 세 칸에 ○ 대신 한국관광공사 무장애 여행 정보 글을 한 줄에(가7, 경주문화관광 무장애 여행정보의 곳마다 한 줄),
 // 관광지 이름 아래 무장애 묶음 이름표(가8). 이름표는 보이기만 하고 누르는 거르기가 아니다.
 import { createContext, useContext, useId, useMemo, useState } from "react";
 import Link from "next/link";
 import PillTabs from "@/components/royal/PillTabs";
 import { Ph } from "@/components/layout/Ph";
+import { DASH } from "@/components/layout/Dash";
 import { Icon } from "@/components/icons";
 import type { AreaKey } from "@/data/types";
 import s from "../bf.module.css";
@@ -20,11 +21,11 @@ export type BoardRow = {
   dong: string;
   area: AreaKey;
   areaLabel: string;
-  /** 정보가 적힌 곳: 세 항목의 명부 글(붙은 줄은 나눔). 없으면 null */
+  /** 무장애 정보가 있는 곳: 세 항목의 무장애 여행 정보 글(붙은 줄은 나눔). 없으면 null */
   three?: { parking: string | null; walk: string | null; toilet: string | null };
-  /** 정보가 적힌 곳: 글이 적힌 칸이 있는 무장애 묶음 이름(보이기만 한다) */
+  /** 무장애 정보가 있는 곳: 글이 있는 칸이 있는 무장애 묶음 이름(보이기만 한다) */
   groups?: string[];
-  /** 정보가 없는 곳: 가까운 등록 관광지(없으면 null) */
+  /** 무장애 정보가 없는 곳: 가까운 등록 관광지(없으면 null) */
   nearest?: string | null;
 };
 type Field = "all" | "name" | "dong";
@@ -65,17 +66,10 @@ export function BoardPills({ areas }: { areas: BoardArea[] }) {
 
 const colorOf = (k: AreaKey) => ({ "--c": `var(--rc-area-${k})` }) as React.CSSProperties;
 
-/** 명부 글 그대로. 비어 있으면 − (읽기 도구에는 "적힌 내용 없음") */
+/** 무장애 여행 정보 글 그대로. 비어 있으면 "-"(components/layout/Dash.tsx, 뜻풀이는 표 아래 ※ 줄) */
 function ThreeText({ text }: { text: string | null }) {
   if (text) return <span className={s.threeTxt}>{text}</span>;
-  return (
-    <>
-      <span className={`${s.mark} ${s.markOff}`} aria-hidden="true">
-        −
-      </span>
-      <span className="sr-only">적힌 내용 없음</span>
-    </>
-  );
+  return <span className={`${s.mark} ${s.markOff}`}>{DASH}</span>;
 }
 
 /** 무장애 묶음 이름표(열린관광 목록 카드 이름표 모양). 누르지 않는 표시 */
@@ -96,7 +90,7 @@ function GroupTags({ groups }: { groups?: string[] }) {
 /**
  * 곳 수 + 검색 줄 + 표(넓은 화면) / 목록(좁은 화면).
  * (무장애 시안 bf-draft: 무장애 조건 거르기 줄과 주소 뒤 ?조건= 읽기를 뺐다. FilterPills·barrierConds·useConds 파일은 그대로 둔다.)
- * kind="listed": 번호 / 권역 / 관광지(+ 무장애 묶음 이름표) / 주차 / 접근로 / 화장실(명부 글 한 줄, 없으면 −)
+ * kind="listed": 번호 / 권역 / 관광지(+ 무장애 묶음 이름표) / 주차 / 접근로 / 화장실(무장애 여행 정보 글 한 줄, 없으면 -)
  * kind="unlisted": 번호 / 권역 / 관광지 / 읍면동 / 가까운 등록 관광지
  */
 export function BoardList({

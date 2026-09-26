@@ -40,7 +40,7 @@
   color: var(--site-text-subtle);
 }
 
-/* 명부 글: 줄바꿈을 그대로 */
+/* 무장애 여행 정보 글: 줄바꿈을 그대로 */
 .regText {
   white-space: pre-line;
   overflow-wrap: anywhere;

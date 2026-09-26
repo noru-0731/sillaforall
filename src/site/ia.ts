@@ -41,8 +41,8 @@ export const MENU: NavItem[] = [
     desc: SITE_NAME,
     children: [
       { label: "무장애 정보 보는 법", href: "/barrier-free" },
-      { label: "정보가 적힌 곳", href: "/barrier-free/listed" },
-      { label: "정보가 없는 곳", href: "/barrier-free/unlisted" },
+      { label: "무장애 정보가 있는 곳", href: "/barrier-free/listed" },
+      { label: "무장애 정보가 없는 곳", href: "/barrier-free/unlisted" },
     ],
   },
   {

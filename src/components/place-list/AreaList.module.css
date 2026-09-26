@@ -165,3 +165,8 @@
   color: var(--rc-text-sub);
   text-align: center;
 }
+
+/* "-" 뜻풀이 ※ 줄(components/layout/Dash.tsx): 목록 바로 아래(오시는 길·소개 쪽 표 아래와 같은 간격) */
+.dashNote {
+  margin-top: 1.5rem;
+}

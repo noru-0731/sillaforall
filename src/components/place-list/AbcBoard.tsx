@@ -7,11 +7,13 @@
 // 고르기 항목 이름과 입력 칸 안내 글은 무장애 목록 두 쪽(app/barrier-free/_parts/Board.tsx)과 같다.
 // 고르기 '전체'는 관광지 이름·읍면동에 더해 분류(관광공사 소분류 이름)도 찾는다(가 163번). 빈칸과 부호(ㆍ · . /)는 비교할 때 뗀다.
 // 알약 줄은 휴대전화에서 한 줄 + ‹ › 넘기기(궁능 휴대전화 공지사항).
+// 분류·쉬는 날에 글이 없으면 "-"(components/layout/Dash.tsx). 보이는 줄에 "-"가 있으면 표 바로 아래 뜻풀이 한 줄.
 import { createContext, useContext, useId, useState } from "react";
 import Link from "next/link";
 import type { AreaKey } from "@/data/types";
 import { Icon } from "@/components/icons";
 import PillTabs from "@/components/royal/PillTabs";
+import { DASH, DashNote } from "@/components/layout/Dash";
 import type { AreaOption, BoardRow } from "./types";
 import s from "./Abc.module.css";
 
@@ -155,11 +157,11 @@ export function AbcBoard({ rows, options }: { rows: BoardRow[]; options: AreaOpt
                 <td className={s.dong}>{r.dong}</td>
                 <td className={s.cat}>
                   <span className={s.mOnly}>분류 : </span>
-                  {r.category ?? "-"}
+                  {r.category ?? DASH}
                 </td>
                 <td className={s.closed}>
                   <span className={s.mOnly}>쉬는 날 : </span>
-                  <span className={s.closedTxt}>{r.closed ?? "-"}</span>
+                  <span className={s.closedTxt}>{r.closed ?? DASH}</span>
                 </td>
                 <td className={s.flag}>
                   {r.registered ? (
@@ -194,6 +196,7 @@ export function AbcBoard({ rows, options }: { rows: BoardRow[]; options: AreaOpt
           </tbody>
         </table>
       </div>
+      {shown.some((r) => r.category == null || r.closed == null) && <DashNote className={s.dashNote} />}
     </div>
   );
 }

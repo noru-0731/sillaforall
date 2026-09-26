@@ -1,5 +1,5 @@
-// 무장애 정보 > 정보가 없는 곳(궁능 공지사항 모양): 권역 알약, "전체: N곳", 이름 검색, 게시판 표.
-// 표는 명부에 없는 관광지와, 있으면 가장 가까운 등록 관광지(직선거리)를 보인다.
+// 무장애 정보 > 무장애 정보가 없는 곳(궁능 공지사항 모양): 권역 알약, "전체: N곳", 이름 검색, 게시판 표.
+// 표는 무장애 정보가 없는 관광지와, 있으면 가장 가까운 등록 관광지(직선거리)를 보인다.
 import type { Metadata } from "next";
 import { areaOf, areas, places } from "@/data";
 import { Ph, SubPage } from "@/components/layout/PageParts";
@@ -44,7 +44,7 @@ export default function UnlistedPage() {
         <TipList
           className={s.tips}
           items={[
-            <Ph key="a">가까운 등록 관광지는 무장애 여행 정보 명부에 오른 관광지 가운데 가장 가까운 곳과 직선거리입니다.</Ph>,
+            <Ph key="a">가까운 등록 관광지는 무장애 정보가 있는 관광지 가운데 가장 가까운 곳과 직선거리입니다.</Ph>,
             <Ph key="b">물어볼 곳: 가기 전에 확인할 수 있는 곳을 적을 자리</Ph>,
           ]}
         />

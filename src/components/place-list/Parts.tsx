@@ -1,5 +1,6 @@
 // 목록·무장애 쪽의 작은 부품: 쪽 안 바로가기 줄, 곳 수, 사진 출처, 무장애 세 항목 이름.
 import { Ph } from "@/components/layout/PageParts";
+import { DASH } from "@/components/layout/Dash";
 import type { ThreeKey } from "./helpers";
 import s from "./PlaceList.module.css";
 
@@ -46,7 +47,7 @@ export function ThreeLabel({ k }: { k: ThreeKey }) {
   return <Ph>{THREE_TEXT[k]}</Ph>;
 }
 
-/** 명부 글. 비어 있으면 임시 문구 */
+/** 한국관광공사 무장애 여행 정보 글. 비어 있으면 "-"(components/layout/Dash.tsx) */
 export function RegistryText({ text }: { text: string | null }) {
-  return text ? <span className={s.regText}>{text}</span> : <Ph>적힌 내용 없음</Ph>;
+  return text ? <span className={s.regText}>{text}</span> : DASH;
 }

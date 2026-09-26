@@ -10,7 +10,7 @@
 .root > :global(.rc-section:first-child) {
   padding-top: 0;
 }
-/* 무장애 정보 절 안 경주시 무장애 여행정보 묶음: 앞 묶음(관광공사 표와 출처 줄, 또는 명부에 없다는 글)과 묶음 사이만큼 띄운다(.bfGroup + .bfGroup 과 같은 4rem) */
+/* 무장애 정보 절 안 경주시 무장애 여행정보 묶음: 앞 묶음(관광공사 표와 출처 줄, 또는 무장애 정보가 없다는 글)과 묶음 사이만큼 띄운다(.bfGroup + .bfGroup 과 같은 4rem) */
 .gj {
   margin-top: 4rem;
 }

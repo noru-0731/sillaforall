@@ -5,7 +5,7 @@
 //
 // 무장애 시안(bf-draft): 관람 도우미 칸에 바로가기 이름만이 아니라 이 곳의 자료 값을 함께 보인다(궁능은 아이콘 + 이름 바로가기 줄).
 // 칸: 이용시간, 쉬는 날, 주차, 접근로(값은 접근로 글, 비면 출입통로 글), 화장실, 가까운 장애인 화장실, 문의 전화, 지도에서 보기. 값은 관광공사 관광정보·무장애 여행 정보 글 그대로,
-// 가까운 장애인 화장실은 도구/10_편의시설_지도.py 의 가장 가까운 한 곳(이름과 직선거리). 글이 없는 칸은 "적힌 내용 없음".
+// 가까운 장애인 화장실은 도구/10_편의시설_지도.py 의 가장 가까운 한 곳(이름과 직선거리). 글이 없는 칸은 "-"이고, 그런 칸이 있으면 칸 묶음 아래에 뜻풀이 한 줄(components/layout/Dash.tsx).
 // 칸을 누르면 그 값이 자세히 있는 쪽으로 간다. 긴 값은 세 줄까지 보이고 나머지는 줄임표(읽기 도구는 끝까지 읽는다).
 // 이용시간·쉬는 날·무장애 글은 붙은 줄을 나눠 보인다(lib/breaks.ts, 글자는 그대로).
 //
@@ -36,6 +36,7 @@ import { bfLines, hoursLines, hoursNoteLines } from "@/lib/breaks";
 import { Icon, type IconName } from "@/components/icons";
 import { CircleButton, CreditBelow, CreditTag, Photo } from "@/components/royal";
 import { Ph } from "@/components/layout/Ph";
+import { DASH, DashNote } from "@/components/layout/Dash";
 import ReadAloud from "@/components/layout/ReadAloud";
 import { nearestAccessibleToilet } from "@/data/bf";
 import { parseOpenRule, ruleShowsAnything } from "@/lib/openNow";
@@ -84,7 +85,7 @@ export default async function PlaceSubmain({ params }: Props) {
   // 가4 지금 운영 상태: 셈 규칙은 서버에서 만들어 넘긴다
   const openRule = parseOpenRule(p.hours, p.closed);
 
-  // 관람 도우미 칸(값을 함께). 값이 없으면 null → "적힌 내용 없음"
+  // 관람 도우미 칸(값을 함께). 값이 없으면 null → "-"
   const tel = phoneOf(p.contact);
   const clean = (v: string | null | undefined) => (v ? v.replace(/\s*\n\s*/g, "\n").replace(/[ \t]{2,}/g, " ").trim() || null : null);
   const toiletA = nearestAccessibleToilet(p.id);
@@ -192,25 +193,28 @@ export default async function PlaceSubmain({ params }: Props) {
               </Link>
             </div>
           </div>
-          <ul className={s.quickGrid}>
-            {quick.map((q) => {
-              const inner = (
-                <>
-                  <span className={s.quickIco}>
-                    <Icon name={q.icon} size={34} strokeWidth={1.4} />
-                  </span>
-                  <span className={s.quickLabel}>{q.label}</span>
-                  {q.now && <OpenNow rule={openRule} className={s.quickNow} />}
-                  <span className={s.quickVal}>{q.value ?? <Ph>적힌 내용 없음</Ph>}</span>
-                </>
-              );
-              return (
-                <li key={q.key}>
-                  {q.tel || q.href.startsWith("tel:") ? <a href={q.href}>{inner}</a> : <Link href={q.href}>{inner}</Link>}
-                </li>
-              );
-            })}
-          </ul>
+          <div className={s.quickBody}>
+            <ul className={s.quickGrid}>
+              {quick.map((q) => {
+                const inner = (
+                  <>
+                    <span className={s.quickIco}>
+                      <Icon name={q.icon} size={34} strokeWidth={1.4} />
+                    </span>
+                    <span className={s.quickLabel}>{q.label}</span>
+                    {q.now && <OpenNow rule={openRule} className={s.quickNow} />}
+                    <span className={s.quickVal}>{q.value ?? DASH}</span>
+                  </>
+                );
+                return (
+                  <li key={q.key}>
+                    {q.tel || q.href.startsWith("tel:") ? <a href={q.href}>{inner}</a> : <Link href={q.href}>{inner}</Link>}
+                  </li>
+                );
+              })}
+            </ul>
+            {quick.some((q) => q.value == null) && <DashNote className={s.quickNote} />}
+          </div>
         </div>
       </section>
 
