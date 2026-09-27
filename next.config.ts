@@ -36,6 +36,14 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
+      // 사이트 주소를 sillaway.vercel.app 으로 바꿨다(사용자 09-27). 옛 주소로 들어오면 같은 경로·뒤 글 그대로 새 주소로.
+      // 배포마다 붙는 Vercel 주소(gyeongju-guide-….vercel.app)는 넘기지 않는다(호스트가 정확히 옛 주소일 때만). 이름이 또 바뀔 수 있어 307.
+      {
+        source: "/:path*",
+        has: [{ type: "host" as const, value: "gyeongju-guide.vercel.app" }],
+        destination: "https://sillaway.vercel.app/:path*",
+        permanent: false,
+      },
       ...movedPlaceRedirects(),
       // ?place= 가 없거나 위에 걸리지 않으면: 옛 서쪽·남쪽 읍면과 북쪽 읍면의 곳은 대부분 서악·북부권(seoak)에 들었다.
       { source: "/map/southwest", destination: "/map/seoak", permanent: false },
