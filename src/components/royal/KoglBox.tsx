@@ -8,11 +8,11 @@
 // 누리집 주소는 lic.site(www.gyeongju.go.kr), 링크는 그 기사 쪽.
 // 위키미디어 공용 사진(CC 이용허락)은 공공누리가 아니라 이 상자를 쓰지 않고 CcBox(아래)를 쓴다.
 import type { KoglType, PhotoLicense } from "@/data/credit";
-import { galleryCredit, koglCondition } from "@/data/credit";
+import { galleryCredit, koglCondition, koglNo } from "@/data/credit";
 import { withJosa } from "@/lib/josa";
 
 export default function KoglBox({ type, by, lic, className }: { type: KoglType; by?: string; lic?: PhotoLicense; className?: string }) {
-  const n = type === "Type1" ? "1" : "3";
+  const n = koglNo(type);
   const org = lic?.org ?? "한국관광공사";
   return (
     <div className={`rc-kogl${className ? " " + className : ""}`}>

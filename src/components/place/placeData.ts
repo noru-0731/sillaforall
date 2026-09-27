@@ -127,7 +127,8 @@ const FILM_MAX = 4;
  */
 export function stripSlots(id: string, heroUrl: string | null): StripSlot[] {
   const t1 = stripPhotos(id, heroUrl);
-  const all3 = photosOf(id).filter((x) => x.type === "Type3");
+  // 제4유형(변경 금지, 주사암 1장)도 제3유형처럼 자르지 않는 필름 줄에 둔다
+  const all3 = photosOf(id).filter((x) => x.type !== "Type1");
   const t3 = [...all3.filter((x) => x.url !== heroUrl), ...all3.filter((x) => x.url === heroUrl)];
   const need = t1.filter((x) => !x).length;
   const k = t3.length;

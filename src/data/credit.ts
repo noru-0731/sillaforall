@@ -8,7 +8,9 @@
 //  국가유산청·위키미디어·경주시정뉴스 사진은 도구/22_사진_채우기.py 가 짧은 꼴을 photos_extra.json 의 credit 칸에 적어 두고, 여기서는 그 값을 그대로 쓴다.
 // "사진:" 머리말과 공공누리 유형은 사진 곁에 적지 않는다. 유형은 자료 출처 쪽(/about/sources)과 사진 쪽 공공누리 상자(KoglBox)에 있다.
 
-export type KoglType = "Type1" | "Type3";
+// Type4 = 공공누리 제4유형(출처표시, 상업적 이용금지, 변경금지). 09-27 사용자 결정으로 주사암 국가유산청 사진 1장에만 쓴다(주사암은 쓸 수 있는 다른 사진이 없음).
+//   변경금지라 제3유형처럼 자르지 않고 위에 얹지 않는다(화면에서는 Type1 이 아니면 모두 그렇게 다룬다).
+export type KoglType = "Type1" | "Type3" | "Type4";
 
 /** 사진이 어디서 왔는지: tourapi 관광정보, gallery 관광사진 정보(한국관광콘텐츠랩), heritage 국가유산청, wikimedia 위키미디어 공용, gyeongju 경주시정뉴스(경주시청) */
 export type PhotoSource = "tourapi" | "gallery" | "heritage" | "wikimedia" | "gyeongju";
@@ -21,10 +23,13 @@ export type PhotoSource = "tourapi" | "gallery" | "heritage" | "wikimedia" | "gy
  */
 export type PhotoLicense = { org?: string; title?: string; author?: string; license?: string; licenseUrl?: string; page?: string; site?: string };
 
-/** "공공누리 제1유형" / "공공누리 제3유형" */
-export const koglLabel = (type: KoglType) => (type === "Type1" ? "공공누리 제1유형" : "공공누리 제3유형");
-/** 유형 조건 풀이: "출처표시" / "출처표시, 변경금지" */
-export const koglCondition = (type: KoglType) => (type === "Type1" ? "출처표시" : "출처표시, 변경금지");
+/** 유형 번호: "1" / "3" / "4" */
+export const koglNo = (type: KoglType) => type.slice(4);
+/** "공공누리 제1유형" / "공공누리 제3유형" / "공공누리 제4유형" */
+export const koglLabel = (type: KoglType) => `공공누리 제${koglNo(type)}유형`;
+/** 유형 조건 풀이: "출처표시" / "출처표시, 변경금지" / "출처표시, 상업적 이용금지, 변경금지"(공공누리 유형안내 kogl.or.kr/info/license.do 의 조건 이름) */
+export const koglCondition = (type: KoglType) =>
+  type === "Type1" ? "출처표시" : type === "Type4" ? "출처표시, 상업적 이용금지, 변경금지" : "출처표시, 변경금지";
 
 /** 관광정보(TourAPI) 사진의 출처 */
 export const TOURAPI_CREDIT = "ⓒ한국관광공사";

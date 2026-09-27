@@ -92,7 +92,8 @@ export default function Photo({
     </span>
   );
   if (!photo) return empty;
-  const contain = photo.type === "Type3" || fit === "contain";
+  // 제3·4유형(변경 금지)은 자르지 않는다
+  const contain = photo.type !== "Type1" || fit === "contain";
   const cls = `rc-photo${contain ? " rc-photo--contain" : ""}${bg === "dark" ? " rc-photo--dark" : ""}${!ratio && !height ? " rc-photo--auto" : ""}${className ? " " + className : ""}`;
   // 줄여 둔 판 여러 폭(srcset)이 있으면 그것. 없고 큰 판이 있으면 두 판을 너비와 함께 준다(작은 판 너비를 모르면 940으로 본다. 관광공사 사진 목록의 보통 너비).
   const srcSet =

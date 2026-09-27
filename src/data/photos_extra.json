@@ -1,4 +1,29 @@
 {
+ "p02": [
+  {
+   "from": "heritage",
+   "type": "Type4",
+   "name": "경주 주사암 영산전 석조삼존불좌상",
+   "file": "kh-p02-01",
+   "ws": [
+    2592
+   ],
+   "hs": [
+    1944
+   ],
+   "ow": 2592,
+   "oh": 1944,
+   "orig": "https://www.khs.go.kr/unisearch/images/cultural_material/2019051421365600.jpg",
+   "page": "https://www.heritage.go.kr/heri/cul/culSelectDetail.do?ccbaCpno=3413705220000&ccbaKdcd=31&ccbaAsno=05220000&ccbaCtcd=37",
+   "credit": "ⓒ국가유산청",
+   "org": "국가유산청",
+   "title": "경주 주사암 영산전 석조삼존불좌상",
+   "heritage": "경주 주사암 영산전 석조삼존불좌상",
+   "kind": "문화유산자료",
+   "license": "공공누리 제4유형",
+   "got": "2026-09-27"
+  }
+ ],
  "p05": [
   {
    "from": "gallery",

@@ -22,7 +22,7 @@ import type { AreaKey } from "./types";
 import type { KoglType, PhotoLicense, PhotoSource } from "./credit";
 
 export type { KoglType, PhotoLicense, PhotoSource } from "./credit";
-export { galleryCredit, koglCondition, koglLabel, koglKeyOf, photoCreditOf, TOURAPI_CREDIT } from "./credit";
+export { galleryCredit, koglCondition, koglLabel, koglKeyOf, koglNo, photoCreditOf, TOURAPI_CREDIT } from "./credit";
 export type Photo = {
   url: string;
   type: KoglType;
@@ -148,7 +148,8 @@ function extraPhoto(x: Extra): Photo {
       url: xUrl(x.file, ws[i]),
       small: xUrl(x.file, ws[0]),
       name: x.name,
-      type: asType(x.type),
+      // 국가유산청 제4유형(주사암 1장, 09-27 사용자 결정)은 유형을 그대로 둔다(자르지 않고 공공누리 상자에 제4유형)
+      type: x.type === "Type4" ? "Type4" : asType(x.type),
       w: ws[i],
       h: hs[i],
       ...(top > i ? { large: xUrl(x.file, ws[top]), lw: ws[top], lh: hs[top] } : {}),

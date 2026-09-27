@@ -9,7 +9,7 @@ import type { Metadata } from "next";
 import { pageMetadata } from "@/site/og";
 import { Section, SubPage } from "@/components/layout/PageParts";
 import { MENU } from "@/site/ia";
-import { extraSources, koglCondition, koglLabel, type KoglType } from "@/data/photos";
+import { extraSources, koglCondition, koglLabel, koglNo, type KoglType } from "@/data/photos";
 import { placeById } from "@/data";
 import { SOURCES } from "@/data/bf";
 import { BUS_META, BUS_OSM_ROUTES_LEFT, TAGO_APIS } from "@/data/bus";
@@ -53,7 +53,7 @@ function KoglText({ type }: { type: KoglType }) {
     <span className={s.kogl} aria-hidden="true">
       <span>공공누리</span>
       <span>
-        {type === "Type1" ? "제1유형" : "제3유형"} {koglCondition(type)}
+        제{koglNo(type)}유형 {koglCondition(type)}
       </span>
     </span>
   );
@@ -119,6 +119,17 @@ export default function SourcesPage() {
               <KoglText type="Type3" />
               <p>
                 공공저작물의 출처를 명시하여, 상업적 활용 여부에 관계없이 이용할 수 있으나, 2차적저작물 작성 등 변경하여 이용하는 것은
+                금지된다.
+              </p>
+            </div>
+          </li>
+          {/* 제4유형: 주사암 국가유산청 사진 1장(09-27 사용자 결정). 문장은 궁능 저작권정책의 제4유형 문장 그대로 */}
+          <li className={s.card}>
+            <h3 className={s.cardHead}>제4유형 : 출처표시+상업적 이용금지+변경금지</h3>
+            <div className={s.cardBody}>
+              <KoglText type="Type4" />
+              <p>
+                공공저작물의 출처를 명시하여 이용할 수 있으나, 상업적 목적으로 이용하거나 2차적저작물 작성 등 변경하여 이용하는 것은
                 금지된다.
               </p>
             </div>
