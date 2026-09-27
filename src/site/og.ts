@@ -10,8 +10,8 @@ import type { Metadata } from "next";
 import { SITE_NAME } from "./ia";
 import { coverPhoto, heroPhoto, largeUrl, type Photo } from "@/data/photos";
 
-/** 배포 주소(Vercel) */
-export const SITE_URL = "https://gyeongju-guide.vercel.app";
+/** 배포 주소(Vercel). 09-27 사용자 결정으로 gyeongju-guide.vercel.app → sillaway.vercel.app(옛 주소도 같은 판을 보인다) */
+export const SITE_URL = "https://sillaway.vercel.app";
 /** meta description(사이트 전체) */
 export const SITE_DESC = "경주 관광지 61곳의 위치와 무장애 정보를 모은 안내 사이트";
 
