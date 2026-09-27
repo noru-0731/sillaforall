@@ -493,6 +493,15 @@
 .busFold[open] .busChev {
   transform: rotate(180deg);
 }
+/* 표에 들지 않은 노선 번호 줄('경유노선', BusStops.tsx MoreLine): 접힌 노선 줄 바로 아래(한 문단처럼),
+   펼쳤을 때와 인쇄 쪽은 표 아래 표 위 여백(.busTable 1.5rem)과 같은 간격 */
+.busFold + .busMore {
+  margin-top: 0;
+}
+.busFold[open] + .busMore,
+:global(.rc-board-wrap) + .busMore {
+  margin-top: 1.5rem;
+}
 /* 노선이 없어 펼침 없이 글로 둔 노선 줄: 직선거리 줄 바로 아래(한 문단이던 때와 같은 자리) */
 .busNoGap {
   margin-top: 0;
@@ -516,20 +525,6 @@
 }
 .busNoWord {
   white-space: nowrap;
-}
-/* 인쇄 표의 기점 칸(09-27): 긴 정류장 이름('국민건강보험.정보고등학교')이 좁은 화면·큰 글자에서 칸을 넓혀 표가 넘치지 않게 글자 사이에서도 줄을 바꾼다 */
-.busStart {
-  word-break: keep-all;
-  overflow-wrap: anywhere;
-}
-/* 기점 칸을 더한 네 칸 표(09-27): 휴대전화 390·글자 가장 크게에서 표(264px)가 본문(230px)보다 넓어 옆으로 밀렸다.
-   좁은 본문에서만 칸 안쪽 좌우 여백을 줄인다(글자 크기는 그대로). 머리 글은 BusStops.tsx 에서 낱말 사이(<wbr>)에서만 줄을 바꾼다 */
-@container rc-main (max-width: 767px) {
-  :global(.rc-board).busTable4 th,
-  :global(.rc-board).busTable4 td {
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
-  }
 }
 /* 펼친 표의 내용 칸: '칸 이름 값' 짝을 한 줄에 이어 두고 좁으면 다음 줄로. 칸 이름은 .dotLabel 처럼 굵게 */
 .busKv {

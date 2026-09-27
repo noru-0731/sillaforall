@@ -176,9 +176,10 @@ export default function SourcesPage() {
                 {BUS_META.molit.url.replace(/^https:\/\//, "")}
               </OutLink>,
             ],
-            // 오시는 길 대중교통의 노선 번호·기점·종점·첫차시간·막차시간·배차간격(도구/20_버스_TAGO.py). 이용허락은 포털 쪽 값 그대로(2026-09-26)
+            // 오시는 길 대중교통의 노선 번호·기점·종점·첫차시간·막차시간·배차간격(도구/20_버스_TAGO.py)과 주 노선(도구/23_버스_주노선.py).
+            // 이용허락은 포털 쪽 값 그대로(2026-09-26). 자료 칸은 '이름(쓴 작업, …)' 꼴(계단 없는 길 칸과 같은 꼴), 작업 이름은 포털 화면 글 그대로
             ...TAGO_APIS.map((a) => [
-              a.name,
+              `${a.name}(${a.ops.join(", ")})`,
               a.provider,
               a.license,
               `${BUS_META.tago.fetched} 받음`,
