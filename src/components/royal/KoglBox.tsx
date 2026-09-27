@@ -4,6 +4,8 @@
 // 이 줄은 한국관광콘텐츠랩 출처표기 방법을 따른 글이라 <Ph> 없이 쓴다.
 // lic(09-27 사진 채우기)을 주면 국가유산청 사진으로 보고, 문장의 기관 이름을 lic.org(국가유산청)로 바꾸고, 출처 줄을
 // 국가유산청 저작권정책의 출처 표시(기관 이름, 저작물 이름, 누리집 주소 www.khs.go.kr) 꼴로 적는다. 저작물 이름은 원 자료의 사진 이름 그대로.
+// 경주시정뉴스 사진(경주시청 최신기사, 공공누리 제1유형)도 같은 꼴: 기관 이름은 기사 쪽 공공누리 상자의 '경주시청', 저작물 이름은 기사 제목,
+// 누리집 주소는 lic.site(www.gyeongju.go.kr), 링크는 그 기사 쪽.
 // 위키미디어 공용 사진(CC 이용허락)은 공공누리가 아니라 이 상자를 쓰지 않고 CcBox(아래)를 쓴다.
 import type { KoglType, PhotoLicense } from "@/data/credit";
 import { galleryCredit, koglCondition } from "@/data/credit";
@@ -33,10 +35,10 @@ export default function KoglBox({ type, by, lic, className }: { type: KoglType; 
             {lic.title ? `, ${lic.title}` : ""},{" "}
             {lic.page ? (
               <a href={lic.page} target="_blank" rel="noopener noreferrer" title="새 창 열림">
-                www.khs.go.kr
+                {lic.site ?? "www.khs.go.kr"}
               </a>
             ) : (
-              "www.khs.go.kr"
+              (lic.site ?? "www.khs.go.kr")
             )}
           </>
         )}
@@ -82,7 +84,7 @@ export function CcBox({ lic, className }: { lic: PhotoLicense; className?: strin
   );
 }
 
-/** 사진 한 장의 이용허락 상자: 위키미디어 사진은 CcBox, 나머지는 공공누리 상자(국가유산청 사진은 lic 으로 기관·출처 줄) */
+/** 사진 한 장의 이용허락 상자: 위키미디어 사진은 CcBox, 나머지는 공공누리 상자(국가유산청·경주시정뉴스 사진은 lic 으로 기관·출처 줄) */
 export function PhotoLicenseBox({
   photo,
   className,
@@ -95,7 +97,7 @@ export function PhotoLicenseBox({
     <KoglBox
       type={photo.type}
       by={photo.from === "gallery" ? photo.by : undefined}
-      lic={photo.from === "heritage" ? photo.lic : undefined}
+      lic={photo.from === "heritage" || photo.from === "gyeongju" ? photo.lic : undefined}
       className={className}
     />
   );

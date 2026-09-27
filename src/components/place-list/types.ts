@@ -3,7 +3,7 @@
 import type { AreaKey } from "@/data/types";
 import type { KoglType, PhotoLicense, PhotoSource } from "@/data/photos";
 
-/** from·by: 관광사진 정보(한국관광콘텐츠랩) 사진이면 "gallery"와 촬영자. credit·lic: 채운 사진(국가유산청·위키미디어)의 짧은 출처와 이용허락 칸.
+/** from·by: 관광사진 정보(한국관광콘텐츠랩) 사진이면 "gallery"와 촬영자. credit·lic: 채운 사진(국가유산청·위키미디어·경주시정뉴스)의 짧은 출처와 이용허락 칸.
  *  srcset: 줄여 둔 판 여러 폭(관광정보 제1유형·채운 사진) */
 export type CardPhoto = { url: string; type: KoglType; from?: PhotoSource; by?: string; credit?: string; lic?: PhotoLicense; srcset?: string } | null;
 

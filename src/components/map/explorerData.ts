@@ -5,7 +5,7 @@ import type { AreaKey } from "@/data";
 import { anyPhoto, coverPhoto, localPhoto, type KoglType, type PhotoLicense, type PhotoSlot, type PhotoSource } from "@/data/photos";
 
 /** from·by: 관광사진 정보(한국관광콘텐츠랩) 사진이면 "gallery"와 촬영자(사진 곁 출처·공공누리 상자에 쓴다).
- *  credit·lic: 채운 사진(국가유산청·위키미디어, 09-27)의 짧은 출처와 이용허락 칸(사진 곁 출처·이용허락 상자에 쓴다).
+ *  credit·lic: 채운 사진(국가유산청·위키미디어·경주시정뉴스, 09-27)의 짧은 출처와 이용허락 칸(사진 곁 출처·이용허락 상자에 쓴다).
  *  srcset: 줄여 둔 판 여러 폭(관광정보 제1유형·채운 사진을 카드 칸에 쓸 때만) */
 export type ExplorerPhoto = {
   url: string;
@@ -34,7 +34,7 @@ export function pickPhoto(id: string, slot?: PhotoSlot): ExplorerPhoto {
   const p = p0 && slot ? localPhoto(p0, slot) : p0;
   if (!p) return null;
   if (p.from === "gallery") return { url: p.url, type: p.type, from: "gallery", by: p.by };
-  if (p.from === "heritage" || p.from === "wikimedia")
+  if (p.from === "heritage" || p.from === "wikimedia" || p.from === "gyeongju")
     return { url: p.url, type: p.type, from: p.from, ...(p.credit ? { credit: p.credit } : {}), ...(p.lic ? { lic: p.lic } : {}), ...(p.srcset ? { srcset: p.srcset } : {}) };
   return { url: p.url, type: p.type, ...(p.srcset ? { srcset: p.srcset } : {}) };
 }

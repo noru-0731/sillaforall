@@ -222,7 +222,7 @@ export default function MapExplorer({
               <Icon name="arrow-right" size={18} strokeWidth={2} />
             </Link>
           </div>
-          {/* 공공누리 상자: 관광정보·관광사진 정보 사진은 서버가 만들어 준 상자(kogl), 채운 사진(국가유산청·위키미디어)은 사진의 이용허락 칸으로 여기서 만든다 */}
+          {/* 공공누리 상자: 관광정보·관광사진 정보 사진은 서버가 만들어 준 상자(kogl), 채운 사진(국가유산청·위키미디어·경주시정뉴스)은 사진의 이용허락 칸으로 여기서 만든다 */}
           {photo && (
             <div className={s.kogl}>
               {(() => {

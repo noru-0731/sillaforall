@@ -157,7 +157,7 @@ export function cleanPhotoName(name?: string | null): string | null {
 }
 
 /** made: 관광공사 사진 이름이 없어 붙인 이름("{관광지} {n}", 열린관광 사진 이름 꼴이라 09-27부터 점선 없음). by: 관광사진 정보 사진의 촬영자.
- *  credit: 사진 곁 출처(짧은 꼴). from·lic: 어디서 온 사진과 채운 사진(국가유산청·위키미디어)의 이용허락 칸(사진 아래 상자를 고른다) */
+ *  credit: 사진 곁 출처(짧은 꼴). from·lic: 어디서 온 사진과 채운 사진(국가유산청·위키미디어·경주시정뉴스)의 이용허락 칸(사진 아래 상자를 고른다) */
 export type ViewerPhoto = {
   url: string;
   small: string;

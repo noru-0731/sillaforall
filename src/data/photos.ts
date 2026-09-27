@@ -37,15 +37,18 @@ export type Photo = {
   large?: string;
   lw?: number;
   lh?: number;
-  /** 어디서 온 사진: tourapi = 관광정보, gallery = 관광사진 정보, heritage = 국가유산청, wikimedia = 위키미디어 공용(채운 사진) */
+  /** 어디서 온 사진: tourapi = 관광정보, gallery = 관광사진 정보, heritage = 국가유산청, wikimedia = 위키미디어 공용, gyeongju = 경주시정뉴스(채운 사진) */
   from?: PhotoSource;
   /** 촬영자(관광사진 정보 사진만) */
   by?: string;
-  /** 사진 곁 출처(짧은 꼴)를 적어 둔 사진만(국가유산청·위키미디어). 없으면 from·by 로 만든다(photoCreditOf) */
+  /** 사진 곁 출처(짧은 꼴)를 적어 둔 사진만(국가유산청·위키미디어·경주시정뉴스). 없으면 from·by 로 만든다(photoCreditOf) */
   credit?: string;
-  /** 국가유산청·위키미디어 사진의 이용허락 칸(사진 쪽 아래 상자, 지도 쪽 상자) */
+  /** 국가유산청·위키미디어·경주시정뉴스 사진의 이용허락 칸(사진 쪽 아래 상자, 지도 쪽 상자) */
   lic?: PhotoLicense;
-  /** 사이트에 줄여 둔 판(public/photos/x/<file>-<폭>.jpg)의 파일 이름과 폭 목록(작은 것부터). 국가유산청·위키미디어 사진만 */
+  /** 표지(잘라 쓰는 큰 자리: 맨 위 큰 사진, 카드, 첫 화면, 공유 그림)로 고르지 않는 사진. 사진 안에 저작자 워터마크가 있는 채운 사진(위키미디어 용굴 4장).
+   *  사진 띠·작은 사진 줄·사진 쪽에는 보인다 */
+  noCover?: boolean;
+  /** 사이트에 줄여 둔 판(public/photos/x/<file>-<폭>.jpg)의 파일 이름과 폭 목록(작은 것부터). 국가유산청·위키미디어·경주시정뉴스 사진만 */
   file?: string;
   ws?: number[];
   hs?: number[];
@@ -87,8 +90,10 @@ export function mainPhoto(id: string): Photo | null {
 //  - gallery: 관광사진 정보(한국관광콘텐츠랩, 공공누리 제1유형). 캐싱 금지라 관광공사 서버 원 주소 그대로.
 //  - heritage: 국가유산청 국가유산 이미지(공공누리 제1유형, API 칸 imageNuri "A"). 변경이 되므로 public/photos/x 에 줄여 둔 판.
 //  - wikimedia: 위키미디어 공용(CC BY-SA 등, 변경 허용). public/photos/x 에 줄여 둔 판(BY-SA 는 줄인 판도 같은 허락).
-//  국가유산청·위키미디어 사진은 잘라 써도 되는 사진이라 type 을 "Type1"(잘라 쓰는 자리에 쓸 수 있음)로 둔다. 공공누리 상자는 from 으로 가린다.
+//  - gyeongju: 경주시정뉴스(경주시청 최신기사, 기사 쪽마다 공공누리 제1유형 상자). public/photos/x 에 줄여 둔 판. 출처 "ⓒ경주시청".
+//  국가유산청·위키미디어·경주시정뉴스 사진은 잘라 써도 되는 사진이라 type 을 "Type1"(잘라 쓰는 자리에 쓸 수 있음)로 둔다. 공공누리 상자는 from 으로 가린다.
 // 표지(coverPhoto)는 차례대로 고르므로, 원 자료에 제1유형이 있으면 그것이 그대로 표지이고, 없으면 채운 사진의 첫 제1유형이 표지가 된다.
+// noCover 인 사진(사진 안에 저작자 워터마크가 있는 위키미디어 용굴 4장)은 표지·큰 자리로 고르지 않는다(coverPhoto, bigPhoto).
 type Extra = {
   from: PhotoSource;
   type: string;
@@ -103,7 +108,7 @@ type Extra = {
   lw?: number;
   lh?: number;
   by?: string;
-  /** heritage·wikimedia: 줄여 둔 판 */
+  /** heritage·wikimedia·gyeongju: 줄여 둔 판 */
   file?: string;
   ws?: number[];
   hs?: number[];
@@ -114,6 +119,10 @@ type Extra = {
   author?: string;
   license?: string;
   licenseUrl?: string;
+  /** gyeongju: 공공누리 출처 줄의 누리집 주소(www.gyeongju.go.kr) */
+  site?: string;
+  /** 사진 안에 워터마크가 있어 표지로 쓰지 않는 사진 */
+  noCover?: boolean;
 };
 const EXTRA = extraRaw as unknown as Record<string, Extra[]>;
 const xUrl = (file: string, w: number) => `/photos/x/${file}-${w}.jpg`;
@@ -126,6 +135,7 @@ function extraPhoto(x: Extra): Photo {
     ...(x.license ? { license: x.license } : {}),
     ...(x.licenseUrl ? { licenseUrl: x.licenseUrl } : {}),
     ...(x.page ? { page: x.page } : {}),
+    ...(x.site ? { site: x.site } : {}),
   };
   if (x.file && x.ws?.length && x.hs?.length) {
     const ws = x.ws;
@@ -145,6 +155,7 @@ function extraPhoto(x: Extra): Photo {
       from: x.from,
       credit: x.credit,
       lic,
+      ...(x.noCover ? { noCover: true } : {}),
       file: x.file,
       ws,
       hs,
@@ -162,14 +173,25 @@ function extraPhoto(x: Extra): Photo {
   };
 }
 
-/** 자료 출처 쪽(/about/sources)에 적을 채운 사진 목록: 국가유산청 사진(유산마다 한 줄), 위키미디어 사진(파일마다 한 줄). 곳 id 차례 */
-export type ExtraSourceRow = { placeIds: string[]; from: "heritage" | "wikimedia"; name: string; who: string; license: string; licenseUrl?: string; got: string; page: string; count: number };
+/** 자료 출처 쪽(/about/sources)에 적을 채운 사진 목록: 국가유산청 사진(유산마다 한 줄), 위키미디어 사진(파일마다 한 줄),
+ *  경주시정뉴스 사진(기사마다 한 줄, 자료 이름은 기사 제목). 곳 id 차례 */
+export type ExtraSourceRow = {
+  placeIds: string[];
+  from: "heritage" | "wikimedia" | "gyeongju";
+  name: string;
+  who: string;
+  license: string;
+  licenseUrl?: string;
+  got: string;
+  page: string;
+  count: number;
+};
 export function extraSources(): ExtraSourceRow[] {
   const out: ExtraSourceRow[] = [];
   const ids = Object.keys(EXTRA).sort((a, b) => Number(a.slice(1)) - Number(b.slice(1)));
   for (const id of ids)
     for (const x of EXTRA[id] as (Extra & { heritage?: string; got?: string })[]) {
-      if (x.from !== "heritage" && x.from !== "wikimedia") continue;
+      if (x.from !== "heritage" && x.from !== "wikimedia" && x.from !== "gyeongju") continue;
       const name = x.from === "heritage" ? (x.heritage ?? x.title ?? x.name) : (x.title ?? x.name);
       const hit = out.find((r) => r.from === x.from && r.name === name);
       if (hit) {
@@ -181,7 +203,7 @@ export function extraSources(): ExtraSourceRow[] {
         placeIds: [id],
         from: x.from,
         name,
-        who: x.from === "heritage" ? (x.org ?? "국가유산청") : (x.author ?? ""),
+        who: x.from === "heritage" ? (x.org ?? "국가유산청") : x.from === "gyeongju" ? (x.org ?? "경주시청") : (x.author ?? ""),
         license: x.license ?? "",
         ...(x.licenseUrl ? { licenseUrl: x.licenseUrl } : {}),
         got: x.got ?? "",
@@ -220,11 +242,11 @@ export function type1List(id: string): Photo[] {
   return photosOf(id).filter((p) => p.type === "Type1");
 }
 
-/** 잘라 써도 되는 대표 사진: 제1유형 대표사진 → 없으면 제1유형 목록 첫 장(관광사진 정보 포함) → 없으면 null */
+/** 잘라 써도 되는 대표 사진: 제1유형 대표사진 → 없으면 제1유형 목록 첫 장(관광사진 정보·채운 사진 포함, noCover 사진은 빼고) → 없으면 null */
 export function coverPhoto(id: string): Photo | null {
   const m = mainPhoto(id);
   if (m?.type === "Type1") return m;
-  return type1List(id)[0] ?? null;
+  return type1List(id).find((p) => !p.noCover) ?? null;
 }
 
 /** 아무 사진이나 한 장: 대표사진 → 목록 첫 장 → null. 제3유형일 수 있으니 반드시 <Photo>로 보인다. */
@@ -266,7 +288,7 @@ export type PhotoSlot = "small" | "card" | "big";
  * <Photo>는 srcset 이 있으면 그것을 쓴다. 사진을 서로 견줄 때(맨 위 사진과 같은 장인지 등)는 바꾸기 전 사진의 url 로 견준다.
  */
 export function localPhoto<T extends Photo>(p: T, slot: PhotoSlot): T {
-  // 채운 사진 가운데 줄여 둔 판이 있는 것(국가유산청·위키미디어, public/photos/x)
+  // 채운 사진 가운데 줄여 둔 판이 있는 것(국가유산청·위키미디어·경주시정뉴스, public/photos/x)
   if (p.file && p.ws?.length) return localExtra(p, slot);
   // 콘텐츠랩 주소 꼴(/cms/resource_photo/)은 관광정보 목록에 들어 있어도 줄인 판을 쓰지 않는다(도구도 만들지 않는다)
   if (p.from !== "tourapi" || p.type !== "Type1" || p.url.includes("/resource_photo/")) return p;
@@ -301,7 +323,7 @@ export function localPhoto<T extends Photo>(p: T, slot: PhotoSlot): T {
 }
 
 /**
- * 채운 사진(국가유산청·위키미디어)의 자리 판. 폭은 도구/22_사진_채우기.py 가 만든 것(가로 사진 480·960·1600, 세로 사진 480·960, 원본보다 크지 않게).
+ * 채운 사진(국가유산청·위키미디어·경주시정뉴스)의 자리 판. 폭은 도구/22_사진_채우기.py 가 만든 것(가로 사진 480·960·1600, 세로 사진 480·960, 원본보다 크지 않게).
  * small: 가장 작은 판 한 장. card: 960 이하 판 전부(srcset). big: 만든 폭 전부(srcset), url 은 960 이하 가장 큰 판, large 는 가장 큰 판.
  */
 function localExtra<T extends Photo>(p: T, slot: PhotoSlot): T {
@@ -354,7 +376,7 @@ export const largeUrl = (p: Pick<Photo, "url" | "large">) => p.large ?? p.url;
  * 돌려주는 url은 그대로(작은 판)이고, 큰 판은 large에 있다. 화면에는 largeUrl(사진)이나 <Photo>(large가 있으면 알아서 큰 판)를 쓴다.
  */
 export function bigPhoto(id: string, min = 1400): Photo | null {
-  const all = type1List(id);
+  const all = type1List(id).filter((p) => !p.noCover);
   const wide = all.filter((p) => !p.w || !p.h || p.w >= p.h);
   const biggest = (l: Photo[]) => [...l].sort((a, b) => widthOf(b) - widthOf(a))[0];
   return wide.find((p) => widthOf(p) >= min) ?? all.find((p) => widthOf(p) >= min) ?? biggest(wide) ?? biggest(all) ?? null;

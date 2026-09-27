@@ -73,10 +73,11 @@ const REF_DATE: Record<(typeof PORTAL_KEYS)[number], string> = {
   bfCulture: "최종 작성일 2022-11-25",
 };
 
-// 채운 사진의 출처 줄(국가유산청 유산마다, 위키미디어 파일마다)
+// 채운 사진의 출처 줄(국가유산청 유산마다, 위키미디어 파일마다, 경주시정뉴스 기사마다)
 const EXTRA_ROWS = extraSources();
 const HERITAGE = EXTRA_ROWS.filter((r) => r.from === "heritage");
 const WIKIMEDIA = EXTRA_ROWS.filter((r) => r.from === "wikimedia");
+const GJ_NEWS = EXTRA_ROWS.filter((r) => r.from === "gyeongju");
 /** 사진을 쓴 관광지 이름(여럿이면 가운뎃점으로) */
 const placesLabel = (ids: string[]) => ids.map((id) => placeById(id)?.name ?? id).join("·");
 /** 위키미디어 파일 쪽 주소의 한글을 읽을 수 있게(%EA… → 한글). 풀 수 없으면 그대로 */
@@ -210,6 +211,28 @@ export default function SourcesPage() {
               `${r.got} 받음`,
               <OutLink key="u" href={r.page}>
                 {safeDecode(r.page.replace(/^https:\/\//, ""))}
+              </OutLink>,
+            ])}
+          />
+        </Section>
+      )}
+
+      {/* 채운 사진 가운데 경주시정뉴스(경주시청 최신기사) 사진: 기사마다 한 줄. 자료 칸은 기사 제목과 사진을 쓴 관광지,
+          이용허락은 기사 쪽 공공누리 상자('경주시청이 창작한 최신기사 저작물은 "공공누리" 제1유형:출처표시 …'), 주소는 그 기사 쪽 */}
+      {GJ_NEWS.length > 0 && (
+        <Section id="gyeongju-news" title="경주시정뉴스">
+          <BoardTable
+            caption="관광지 사진에 쓴 경주시정뉴스 사진: 자료, 제공 기관, 이용허락, 기준일, 주소"
+            head={["자료", "제공 기관", "이용허락", "기준일", "주소"]}
+            cols={["24%", "18%", "20%", "14%", "auto"]}
+            align={["l", "l", "l", "c", "l"]}
+            rows={GJ_NEWS.map((r) => [
+              `${r.name}(${placesLabel(r.placeIds)}, ${r.count}장)`,
+              r.who,
+              r.license,
+              `${r.got} 받음`,
+              <OutLink key="u" href={r.page}>
+                {r.page.replace(/^https:\/\//, "")}
               </OutLink>,
             ])}
           />
