@@ -29,7 +29,7 @@ export type QuickItem = {
   href: string;
   icon: IconName;
   children?: { label: string; href: string }[];
-  /** 궁능에 짝이 없어 새로 지은 이름(점선 밑줄 Ph로 보인다) */
+  /** 궁능에 짝이 없어 새로 지은 이름(Ph 로 적어 두는 기록. 09-27부터 화면 표시 없음) */
   ph?: boolean;
 };
 

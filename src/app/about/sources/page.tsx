@@ -8,7 +8,6 @@
 import type { Metadata } from "next";
 import { pageMetadata } from "@/site/og";
 import { Section, SubPage } from "@/components/layout/PageParts";
-import { Icon } from "@/components/icons";
 import { MENU } from "@/site/ia";
 import { koglCondition, koglLabel, type KoglType } from "@/data/photos";
 import { SOURCES } from "@/data/bf";
@@ -29,12 +28,12 @@ const PAGE = SECTION.children![1];
 export const metadata: Metadata = pageMetadata(PAGE.label, PAGE.href);
 
 
-/** 새 창으로 여는 바깥 링크 */
+/** 새 창으로 여는 바깥 링크. 새 창 표시는 KRDS ico-go 하나(NewWinIcon, 화면 읽기용 '(새 창)' 포함, 09-27) */
 function OutLink({ href, children }: { href: string; children: React.ReactNode }) {
   return (
     <a href={href} className={s.outLink} target="_blank" rel="noopener noreferrer" title="새 창 열림">
       {children}
-      <Icon name="external" size={18} strokeWidth={1.8} />
+      <NewWinIcon />
     </a>
   );
 }

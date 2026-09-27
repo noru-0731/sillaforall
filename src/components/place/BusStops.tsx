@@ -3,7 +3,8 @@
 // - 오시는 길 쪽(BusStopUnits): 노선 줄을 누르면(<details>, 무장애 정보 쪽 접는 절의 '열기'·'닫기'와 ∨) 궁능 표(BoardTable)가 펼쳐진다.
 //   표 한 줄이 노선 하나: 줄 머리 노선번호, 내용 칸에 기점·종점·첫차시간·막차시간·배차간격(값 있는 것). 칸 이름은 TAGO 명세의 국문 이름 그대로.
 //   (휴대전화 390·글자 가장 크게에서 칸 여섯 짜리 표는 넘쳐, 이용안내 표와 같은 두 칸 표로 했다.)
-// - 인쇄 쪽(BusStopUnitsPrint): 펼침 없이 노선번호·첫차시간·막차시간 세 칸 표.
+// - 인쇄 쪽(BusStopUnitsPrint): 펼침 없이 노선번호·첫차시간·막차시간 세 칸 표. 같은 노선번호가 시간이 다른 줄로 둘 이상 나오는 정류장은
+//   노선번호 다음에 '기점' 칸(오시는 길 펼침 표의 칸 이름)을 더한 네 칸 표(09-27).
 // - 노선이 오픈스트리트맵으로 남은 정류장(src osm)은 그 줄 아래에 오픈스트리트맵 출처 줄.
 // 자료: data/bus.json(도구/12_버스_문단_사이트.py → 도구/20_버스_TAGO.py).
 import { Fragment } from "react";
@@ -108,17 +109,34 @@ export function BusStopUnits({ stops }: { stops: BusStop[] }) {
   );
 }
 
-/** 인쇄 쪽: 펼침 없이 노선번호·첫차시간·막차시간 표(보이는 값이 같은 줄은 한 번) */
+/** 인쇄 표의 줄(보이는 값이 같은 줄은 한 번). withStart 면 노선번호 다음에 기점 */
+function printRows(lines: BusLine[], withStart: boolean): string[][] {
+  const rows: string[][] = [];
+  for (const l of lines) {
+    const r = withStart ? [l.no, val(l.start), val(l.first), val(l.last)] : [l.no, val(l.first), val(l.last)];
+    if (!rows.some((x) => x.join("\u0000") === r.join("\u0000"))) rows.push(r);
+  }
+  return rows;
+}
+
+/**
+ * 인쇄 쪽: 펼침 없이 노선번호·첫차시간·막차시간 표(보이는 값이 같은 줄은 한 번).
+ * 세 칸으로 같은 노선번호가 둘 이상의 줄(시간이 다름)로 나오는 정류장은 '기점' 칸을 더한다(09-27). 그런 줄이 없으면 세 칸 그대로.
+ */
 export function BusStopUnitsPrint({ stops, keepClass }: { stops: BusStop[]; keepClass?: string }) {
   return (
     <>
       {stops.map((b) => {
         const tit = stopTitle(b.name, b.stopNo);
-        const rows: [string, string, string][] = [];
-        for (const l of linesOf(b)) {
-          const r: [string, string, string] = [l.no, val(l.first), val(l.last)];
-          if (!rows.some((x) => x.join("\u0000") === r.join("\u0000"))) rows.push(r);
-        }
+        const ls = linesOf(b);
+        const rows3 = printRows(ls, false);
+        const withStart = new Set(rows3.map((r) => r[0])).size < rows3.length;
+        const rows = withStart ? printRows(ls, true) : rows3;
+        const head = withStart ? ["노선번호", "기점", "첫차시간", "막차시간"] : ["노선번호", "첫차시간", "막차시간"];
+        // 네 칸 표 머리 글은 좁은 화면에서 낱말 사이('노선|번호', '첫차|시간')에서만 줄을 바꾼다(.busTable4)
+        const headCells = withStart
+          ? head.map((h) => (h.length === 4 ? <Fragment key={h}>{h.slice(0, 2)}<wbr />{h.slice(2)}</Fragment> : h))
+          : head;
         return (
           <div key={b.stopNo ?? b.name} className={`${s.transUnit}${keepClass ? " " + keepClass : ""}`}>
             <p className={s.transUnitTit}>{tit}</p>
@@ -126,11 +144,14 @@ export function BusStopUnitsPrint({ stops, keepClass }: { stops: BusStop[]; keep
               <>
                 {b.distM !== null && <p className={s.transUnitTxt}>직선거리 {fmtM(b.distM)}</p>}
                 <BoardTable
-                  className={s.busTable}
-                  caption={`${tit} 노선: 노선번호, 첫차시간, 막차시간`}
-                  head={["노선번호", "첫차시간", "막차시간"]}
-                  cols={["34%", "33%", "33%"]}
-                  rows={rows.map(([no, a, b]) => [<RouteNo key="n" no={no} />, a, b])}
+                  className={withStart ? `${s.busTable} ${s.busTable4}` : s.busTable}
+                  caption={`${tit} 노선: ${head.join(", ")}`}
+                  head={headCells}
+                  cols={withStart ? ["22%", "34%", "22%", "22%"] : ["34%", "33%", "33%"]}
+                  rows={rows.map(([no, ...rest]) => [
+                    <RouteNo key="n" no={no} />,
+                    ...rest.map((v, i) => (withStart && i === 0 ? <span key="st" className={s.busStart}>{v}</span> : v)),
+                  ])}
                 />
               </>
             ) : (

@@ -14,6 +14,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Icon } from "@/components/icons";
 import { Ph } from "@/components/layout/Ph";
+import { NewWinIcon } from "@/components/layout/NewWin";
 import { KoglBox, Photo } from "@/components/royal";
 import type { ViewerPhoto } from "./placeData";
 import s from "./PhotoViewer.module.css";
@@ -112,8 +113,7 @@ export default function PhotoViewer({ photos, placeName }: { photos: ViewerItem[
         {!onPhoto && <p className={s.name}>{nameText}</p>}
         <a href={cur.large ?? cur.url} target="_blank" rel="noopener noreferrer" className={s.orig}>
           <Ph>원본 보기</Ph>
-          <Icon name="external" size={16} strokeWidth={1.8} />
-          <span className="sr-only">(새 창)</span>
+          <NewWinIcon />
         </a>
       </div>
 

@@ -2,6 +2,7 @@
 // bus.json 만드는 곳: 05_사이트/도구/12_버스_문단_사이트.py(정류장·오픈스트리트맵 노선) → 05_사이트/도구/20_버스_TAGO.py(TAGO 노선).
 // - 정류장: 국토교통부 전국 버스정류장 위치정보(정보수집일 2025-10-31)와 오픈스트리트맵 정류장 점을 합친 목록에서 곳 좌표와 직선거리가 가장 짧은 셋.
 //   좌표를 빌린 곳(서악서원)은 거리 없이 이름이 맞은 정류장. posSrc "osm" 은 이름·번호·좌표를 오픈스트리트맵에서 얻은 정류장.
+//   TAGO 정류소 이름과 다른 정류장(01011)은 TAGO 이름으로 적는다(TAGO_STOP_NAME, 09-27).
 // - 노선 번호(src "tago"): 국토교통부 TAGO 정류소별경유노선. 정류장 번호로 TAGO 정류소와 짝지었다. 다른 도시 노선은 '포항 800'처럼 적힌다.
 //   짝을 못 찾은 정류장(src "osm")은 오픈스트리트맵 버스 노선 관계의 번호 그대로(그 줄에 오픈스트리트맵 출처를 붙인다).
 // - 노선 줄(routes): TAGO 노선정보항목의 기점·종점·첫차시간·막차시간·배차간격(평일·토요일·일요일). 첫차·막차는 기점 기준 값이다.
@@ -55,9 +56,20 @@ export const TAGO_APIS: ApiMeta[] = [BUS.meta.tago.stop, BUS.meta.tago.route];
 /** 경주역(KTX) 정류장 이름(국토부 파일 이름 그대로) */
 export const KTX_NAME = BUS.meta.ktx.name;
 
+/**
+ * 정류장 이름을 TAGO 버스정류소정보 이름으로 적는 정류장(09-27 결정: 원자료 가운데 더 최근 것).
+ * 정류장 이름은 국토교통부 전국 버스정류장 위치정보(정보수집일 2025-10-31) 값이고, 번호로 짝지은 TAGO 정류소(2026-09-26 받음)와
+ * 이름이 다른 정류장은 이 하나다(도구/out/20_버스_대조.md 6절, 182줄 가운데 1줄). bus.json 은 도구 결과 그대로 두고 여기서 바꾼다
+ * (20_버스_TAGO.py 가 사이트 bus.json 의 정류장 이름·번호를 07_버스.py 결과와 맞춰 보므로).
+ */
+const TAGO_STOP_NAME: Record<string, string> = { "01011": "한국반도체마이스터고" };
+
 /** 이 곳의 정류장(가까운 차례, 최대 셋). 없으면 빈 목록 */
 export function busStopsOf(id: string): BusStop[] {
-  return BUS.places[id]?.stops ?? [];
+  return (BUS.places[id]?.stops ?? []).map((s) => {
+    const name = s.src === "tago" && s.stopNo ? TAGO_STOP_NAME[s.stopNo] : undefined;
+    return name ? { ...s, name } : s;
+  });
 }
 
 /** 정류장 하나의 노선 줄(TAGO 값). src osm 이거나 노선이 없으면 빈 목록 */

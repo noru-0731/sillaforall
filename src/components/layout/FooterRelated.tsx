@@ -3,6 +3,7 @@
 // 푸터 오른쪽 "관련사이트 바로가기 ∨" 펼침. 누르면 위로 목록이 열린다. Esc·바깥 누름으로 닫힌다.
 import { useEffect, useId, useRef, useState } from "react";
 import { Icon } from "@/components/icons";
+import { NewWinIcon } from "./NewWin";
 
 const SITES = [
   { label: "대한민국 구석구석(한국관광공사)", href: "https://korean.visitkorea.or.kr" },
@@ -41,8 +42,7 @@ export default function FooterRelated() {
           <li key={s.href}>
             <a href={s.href} target="_blank" rel="noopener noreferrer" title="새 창 열림">
               {s.label}
-              <Icon name="external" size={16} strokeWidth={1.8} />
-              <span className="sr-only">(새 창 열림)</span>
+              <NewWinIcon />
             </a>
           </li>
         ))}

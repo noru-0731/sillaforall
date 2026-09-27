@@ -27,7 +27,7 @@ export const STEPFREE_PLACES = SF.places;
 const ROW_LABEL: Record<string, string> = { "걸리는 시간": "소요시간" };
 export const rowLabelOf = (k: string) => ROW_LABEL[k] ?? k;
 
-/** 새로 지은 칸 이름(점선으로 보인다). 레퍼런스 칸 이름으로 바꿔 적는 칸은 점선 없음 */
+/** 새로 지은 칸 이름(Ph 로 적어 두는 기록. 09-27부터 화면 표시 없음). 레퍼런스 칸 이름으로 바꿔 적는 칸은 Ph 없음 */
 export const isPhLabel = (k: string) => SF.meta.phLabels.includes(k) && !(k in ROW_LABEL);
 
 /** 칸마다 붙는 짧은 출처 이름. 원문 칸이 줄 칸과 다르면 괄호에 원문 칸 이름 */

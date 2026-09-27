@@ -1,7 +1,7 @@
 // '계단 없는 길' 곳 덩어리(deck 갈래). 서버 컴포넌트.
 // 무장애 정보 > 계단 없는 길 쪽(/barrier-free/step-free)과, 실린 곳의 무장애 정보 쪽 끝 절이 같은 덩어리를 쓴다.
 // 곳 이름(그 곳 무장애 정보 쪽 링크) → 길 이름(자료에 나온 이름, 있을 때만) → 구분/내용 표. 칸마다 내용 아래에 출처 한 줄.
-// 칸 이름·값은 자료 그대로(data/stepfree.json, 도구/19_계단없는길.py). 새로 지은 칸 이름만 점선.
+// 칸 이름·값은 자료 그대로(data/stepfree.json, 도구/19_계단없는길.py). 새로 지은 칸 이름만 Ph(09-27부터 화면 표시 없음).
 import Link from "next/link";
 import { Ph } from "@/components/layout/Ph";
 import { BoardTable } from "@/components/royal";

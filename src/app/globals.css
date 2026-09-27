@@ -1903,12 +1903,7 @@ a.rc-blackbar:hover {
   }
 }
 
-/* 임시 문구: 점선 밑줄(사용자 확인 전, 새로 지은 글) */
-.ph {
-  text-decoration: underline dashed;
-  text-decoration-color: var(--site-gray);
-  text-underline-offset: 0.3em;
-}
+/* 새로 지은 글(<Ph>)의 점선 밑줄 규칙(.ph)은 09-27 사용자 결정("점선도 다 지웁시다")으로 뺐다. Ph 는 글만 그린다 */
 
 /* 인쇄: 틀을 빼고 본문만. 제목 아래 알약 줄(같은 권역 관광지로 가기)과 쪽 안 목차도 종이에서는 쓸 데가 없어 뺀다(가14) */
 @media print {
