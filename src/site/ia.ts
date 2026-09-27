@@ -16,7 +16,7 @@ export type SideMenuLink = { label: string; href: string };
 export type SideMenuItem = { label: string; href: string; children?: SideMenuLink[] };
 export type SideMenu = { title: string; items: SideMenuItem[] };
 
-export const SITE_NAME = "경주 관광지 안내";
+export const SITE_NAME = "신라길"; // 09-27 사용자 결정(주소 sillaway.vercel.app 과 같게). 전 이름 "경주 관광지 안내"
 
 export const MENU: NavItem[] = [
   {
