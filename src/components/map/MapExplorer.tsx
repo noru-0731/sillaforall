@@ -17,7 +17,8 @@ import type { AreaKey, Place } from "@/data";
 import { cn } from "@/lib/cn";
 import { Icon } from "@/components/icons";
 import Photo from "@/components/royal/Photo";
-import { photoCreditOf } from "@/data/credit";
+import { koglKeyOf, photoCreditOf } from "@/data/credit";
+import { PhotoLicenseBox } from "@/components/royal/KoglBox";
 import { SegTabs } from "@/components/royal/PillTabs";
 import { InfoBox } from "@/components/royal/Bits";
 import MapView from "./MapView";
@@ -221,7 +222,15 @@ export default function MapExplorer({
               <Icon name="arrow-right" size={18} strokeWidth={2} />
             </Link>
           </div>
-          {photo && <div className={s.kogl}>{kogl[photo.from === "gallery" ? `by:${photo.by ?? ""}` : photo.type] ?? kogl[photo.type]}</div>}
+          {/* 공공누리 상자: 관광정보·관광사진 정보 사진은 서버가 만들어 준 상자(kogl), 채운 사진(국가유산청·위키미디어)은 사진의 이용허락 칸으로 여기서 만든다 */}
+          {photo && (
+            <div className={s.kogl}>
+              {(() => {
+                const k = koglKeyOf(photo);
+                return k === null ? <PhotoLicenseBox photo={photo} /> : (kogl[k] ?? kogl[photo.type]);
+              })()}
+            </div>
+          )}
         </section>
       )}
     </div>

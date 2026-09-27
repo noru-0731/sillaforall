@@ -157,8 +157,18 @@ export function cleanPhotoName(name?: string | null): string | null {
 }
 
 /** made: 관광공사 사진 이름이 없어 붙인 이름("{관광지} {n}", 열린관광 사진 이름 꼴이라 09-27부터 점선 없음). by: 관광사진 정보 사진의 촬영자.
- *  credit: 사진 곁 출처(짧은 꼴) */
-export type ViewerPhoto = { url: string; small: string; type: Photo["type"]; name: string; made?: boolean; by?: string; credit: string };
+ *  credit: 사진 곁 출처(짧은 꼴). from·lic: 어디서 온 사진과 채운 사진(국가유산청·위키미디어)의 이용허락 칸(사진 아래 상자를 고른다) */
+export type ViewerPhoto = {
+  url: string;
+  small: string;
+  type: Photo["type"];
+  name: string;
+  made?: boolean;
+  by?: string;
+  credit: string;
+  from?: Photo["from"];
+  lic?: Photo["lic"];
+};
 
 /** 사진 쪽 넘기기에 넘길 사진 목록(보일 이름 포함). 이름이 없으면 "{관광지} {n}"(열린관광 사진 이름 꼴). */
 export function viewerPhotos(p: Place): ViewerPhoto[] {
@@ -171,7 +181,9 @@ export function viewerPhotos(p: Place): ViewerPhoto[] {
       name: clean ?? `${p.name} ${i + 1}`,
       made: !clean,
       credit: photoCreditOf(ph),
+      ...(ph.from ? { from: ph.from } : {}),
       ...(ph.from === "gallery" ? { by: ph.by ?? "" } : {}),
+      ...(ph.lic ? { lic: ph.lic } : {}),
     };
   });
 }
