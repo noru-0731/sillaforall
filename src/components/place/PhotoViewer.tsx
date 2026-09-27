@@ -7,7 +7,8 @@
 // 사진 출처(짧은 꼴 "ⓒ한국관광공사" 등): 제1유형은 큰 사진 왼쪽 위에 작은 딱지로 얹고(오른쪽 아래는 이름 상자 자리.
 //   왼쪽 아래에 두었더니 휴대전화에서 글자를 키우면 길어진 이름 상자가 딱지를 덮었다),
 //   제3유형은 큰 사진 틀 바로 아래 오른쪽 한 줄. 작은 사진 줄(고르는 단추)에는 적지 않는다(고른 사진이 큰 사진에 출처와 함께 보인다).
-//   아래 공공누리 글자 상자는 궁능 모양 그대로 둔다.
+//   아래 공공누리 글자 상자는 궁능 모양 그대로 둔다. 국가유산청 사진은 기관 이름·출처 줄이 국가유산청 것으로, 위키미디어 사진(CC)은
+//   같은 자리에 저작자·이용허락·파일 쪽 링크 상자(CcBox)를 둔다(09-27 사진 채우기).
 // "원본 보기"는 궁능 "이 저작물만 다운로드" 자리(14px 500, 높이 50, 좌우 20, 검정 바탕). 궁능에 짝이 없는 글이라 <Ph>.
 //   관광공사 사진 서버가 다른 누리집에서 파일을 받아 가는 허락(CORS)을 주지 않아 내려받기 대신 새 창으로 연다.
 //   같은 사진의 큰 판(large)이 있으면 그 주소를 연다.
@@ -15,7 +16,7 @@ import { useEffect, useRef, useState } from "react";
 import { Icon } from "@/components/icons";
 import { Ph } from "@/components/layout/Ph";
 import { NewWinIcon } from "@/components/layout/NewWin";
-import { KoglBox, Photo } from "@/components/royal";
+import { Photo, PhotoLicenseBox } from "@/components/royal";
 import type { ViewerPhoto } from "./placeData";
 import s from "./PhotoViewer.module.css";
 
@@ -137,7 +138,8 @@ export default function PhotoViewer({ photos, placeName }: { photos: ViewerItem[
         </ul>
       )}
 
-      <KoglBox type={cur.type} by={cur.by} className={s.kogl} />
+      {/* 공공누리 상자(관광정보·관광사진 정보·국가유산청 사진). 위키미디어 사진(CC)은 그 자리에 저작자·이용허락·파일 쪽 링크 상자 */}
+      <PhotoLicenseBox photo={cur} className={s.kogl} />
     </div>
   );
 }

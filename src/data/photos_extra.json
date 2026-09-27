@@ -1,0 +1,836 @@
+{
+ "p05": [
+  {
+   "from": "gallery",
+   "type": "Type1",
+   "name": "가을의 색",
+   "url": "https://tong.visitkorea.or.kr/cms2/website/89/2760989.jpg",
+   "small": "https://tong.visitkorea.or.kr/cms/resource_photo/89/2760989_image2_1.jpg",
+   "w": 1280,
+   "h": 855,
+   "by": "SONI ADITYA PRAKASH",
+   "month": "2021-01",
+   "galleryId": "2760989",
+   "conlabId": "EnRuma",
+   "credit": "ⓒ한국관광콘텐츠랩-SONI ADITYA PRAKASH",
+   "license": "공공누리 제1유형",
+   "got": "2026-09-27"
+  },
+  {
+   "from": "gyeongju",
+   "type": "Type1",
+   "name": "5. 운곡서원.jpg",
+   "file": "gj-p05-02",
+   "ws": [
+    480,
+    960,
+    1600
+   ],
+   "hs": [
+    320,
+    640,
+    1067
+   ],
+   "ow": 2400,
+   "oh": 1600,
+   "orig": "https://www.gyeongju.go.kr/upload//board/board_1334/bod_283417//8FF19F6021F34CF882376D79F40607C7.jpg",
+   "page": "https://www.gyeongju.go.kr/news/page.do?mnu_uid=1336&parm_bod_uid=283417&step=258",
+   "credit": "ⓒ경주시청",
+   "org": "경주시청",
+   "title": "가을맞이 슬기로운 단풍 여행…“경주 명소 9곳으로 오세요”",
+   "site": "www.gyeongju.go.kr",
+   "date": "2024-10-17",
+   "license": "공공누리 제1유형",
+   "got": "2026-09-27"
+  }
+ ],
+ "p06": [
+  {
+   "from": "gyeongju",
+   "type": "Type1",
+   "name": "건천 편백나무숲 모습",
+   "file": "gj-p06-01",
+   "ws": [
+    480,
+    960,
+    1599
+   ],
+   "hs": [
+    320,
+    640,
+    1066
+   ],
+   "ow": 1599,
+   "oh": 1066,
+   "orig": "https://www.gyeongju.go.kr/upload//board/board_1335/bod_234076//14F736EDB1D74DC8A4801B6D95A8C9C3.jpg",
+   "page": "https://www.gyeongju.go.kr/news/page.do?mnu_uid=1336&parm_bod_uid=234076&step=258",
+   "credit": "ⓒ경주시청",
+   "org": "경주시청",
+   "title": "경주 건천읍 송선리 힐링명소‘편백나무숲’ 숲 해설 개시",
+   "site": "www.gyeongju.go.kr",
+   "date": "2022-04-06",
+   "license": "공공누리 제1유형",
+   "got": "2026-09-27"
+  },
+  {
+   "from": "gyeongju",
+   "type": "Type1",
+   "name": "건천편백나무숲에서 숲해설가가 방문객들을 대상으로 숲해설을 진행하고 있다",
+   "file": "gj-p06-02",
+   "ws": [
+    480,
+    960,
+    1600
+   ],
+   "hs": [
+    335,
+    670,
+    1117
+   ],
+   "ow": 2400,
+   "oh": 1675,
+   "orig": "https://www.gyeongju.go.kr/upload//board/board_1342/bod_253929//D4D59FAA00284AA1AB1A74E86CBFD766.jpg",
+   "page": "https://www.gyeongju.go.kr/news/page.do?mnu_uid=1336&parm_bod_uid=253929&step=258",
+   "credit": "ⓒ경주시청",
+   "org": "경주시청",
+   "title": "경주시, 건천편백나무숲 및 황성공원 숲해설 프로그램 시작",
+   "site": "www.gyeongju.go.kr",
+   "date": "2023-03-09",
+   "license": "공공누리 제1유형",
+   "got": "2026-09-27"
+  }
+ ],
+ "p07": [
+  {
+   "from": "heritage",
+   "type": "Type1",
+   "name": "경주 남산 천룡사지 삼층석탑_전경 (촬영년도 : 2015년)",
+   "file": "kh-p07-05",
+   "ws": [
+    480,
+    960,
+    1600
+   ],
+   "hs": [
+    320,
+    641,
+    1068
+   ],
+   "ow": 4000,
+   "oh": 2670,
+   "orig": "https://www.khs.go.kr/unisearch/images/treasure/2021032614452501.JPG",
+   "page": "https://www.heritage.go.kr/heri/cul/culSelectDetail.do?ccbaCpno=1123711880000&ccbaKdcd=12&ccbaAsno=00118800&ccbaCtcd=37",
+   "credit": "ⓒ국가유산청",
+   "org": "국가유산청",
+   "title": "경주 남산 천룡사지 삼층석탑_전경 (촬영년도 : 2015년)",
+   "heritage": "경주 남산 천룡사지 삼층석탑",
+   "kind": "보물",
+   "license": "공공누리 제1유형",
+   "got": "2026-09-27"
+  },
+  {
+   "from": "heritage",
+   "type": "Type1",
+   "name": "경주 남산 천룡사지 삼층석탑_상륜부 (촬영년도 : 2015년)",
+   "file": "kh-p07-08",
+   "ws": [
+    480,
+    960,
+    1600
+   ],
+   "hs": [
+    320,
+    641,
+    1068
+   ],
+   "ow": 4000,
+   "oh": 2670,
+   "orig": "https://www.khs.go.kr/unisearch/images/treasure/2021032614452702.JPG",
+   "page": "https://www.heritage.go.kr/heri/cul/culSelectDetail.do?ccbaCpno=1123711880000&ccbaKdcd=12&ccbaAsno=00118800&ccbaCtcd=37",
+   "credit": "ⓒ국가유산청",
+   "org": "국가유산청",
+   "title": "경주 남산 천룡사지 삼층석탑_상륜부 (촬영년도 : 2015년)",
+   "heritage": "경주 남산 천룡사지 삼층석탑",
+   "kind": "보물",
+   "license": "공공누리 제1유형",
+   "got": "2026-09-27"
+  },
+  {
+   "from": "heritage",
+   "type": "Type1",
+   "name": "경주 남산 천룡사지 삼층석탑 (촬영년도 : 2015년)",
+   "file": "kh-p07-07",
+   "ws": [
+    480,
+    960
+   ],
+   "hs": [
+    719,
+    1438
+   ],
+   "ow": 2670,
+   "oh": 4000,
+   "orig": "https://www.khs.go.kr/unisearch/images/treasure/2021032614452700.JPG",
+   "page": "https://www.heritage.go.kr/heri/cul/culSelectDetail.do?ccbaCpno=1123711880000&ccbaKdcd=12&ccbaAsno=00118800&ccbaCtcd=37",
+   "credit": "ⓒ국가유산청",
+   "org": "국가유산청",
+   "title": "경주 남산 천룡사지 삼층석탑 (촬영년도 : 2015년)",
+   "heritage": "경주 남산 천룡사지 삼층석탑",
+   "kind": "보물",
+   "license": "공공누리 제1유형",
+   "got": "2026-09-27"
+  },
+  {
+   "from": "wikimedia",
+   "type": "Type1",
+   "name": "경주 남산 천룡사지 삼층석탑 01",
+   "file": "wm-p07-04",
+   "ws": [
+    480,
+    960
+   ],
+   "hs": [
+    720,
+    1440
+   ],
+   "ow": 2848,
+   "oh": 4272,
+   "orig": "https://upload.wikimedia.org/wikipedia/commons/6/64/%EA%B2%BD%EC%A3%BC_%EB%82%A8%EC%82%B0_%EC%B2%9C%EB%A3%A1%EC%82%AC%EC%A7%80_%EC%82%BC%EC%B8%B5%EC%84%9D%ED%83%91_01.JPG",
+   "page": "https://commons.wikimedia.org/wiki/File:%EA%B2%BD%EC%A3%BC_%EB%82%A8%EC%82%B0_%EC%B2%9C%EB%A3%A1%EC%82%AC%EC%A7%80_%EC%82%BC%EC%B8%B5%EC%84%9D%ED%83%91_01.JPG",
+   "credit": "ⓒEggmoon, CC BY-SA 3.0",
+   "author": "Eggmoon",
+   "title": "경주 남산 천룡사지 삼층석탑 01.JPG",
+   "license": "CC BY-SA 3.0",
+   "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+   "date": "2011-01-16 17:53:26",
+   "got": "2026-09-27"
+  },
+  {
+   "from": "heritage",
+   "type": "Type1",
+   "name": "경주 남산 천룡사지 삼층석탑",
+   "file": "kh-p07-01",
+   "ws": [
+    480,
+    683
+   ],
+   "hs": [
+    720,
+    1024
+   ],
+   "ow": 683,
+   "oh": 1024,
+   "orig": "https://www.khs.go.kr/unisearch/images/treasure/1622073.jpg",
+   "page": "https://www.heritage.go.kr/heri/cul/culSelectDetail.do?ccbaCpno=1123711880000&ccbaKdcd=12&ccbaAsno=00118800&ccbaCtcd=37",
+   "credit": "ⓒ국가유산청",
+   "org": "국가유산청",
+   "title": "경주 남산 천룡사지 삼층석탑",
+   "heritage": "경주 남산 천룡사지 삼층석탑",
+   "kind": "보물",
+   "license": "공공누리 제1유형",
+   "got": "2026-09-27"
+  }
+ ],
+ "p14": [
+  {
+   "from": "heritage",
+   "type": "Type1",
+   "name": "경주 읍성 복원동문(향일문) (고도보존육성과, 2018)",
+   "file": "kh-p14-09",
+   "ws": [
+    480,
+    960,
+    1600
+   ],
+   "hs": [
+    270,
+    540,
+    900
+   ],
+   "ow": 3264,
+   "oh": 1836,
+   "orig": "https://www.khs.go.kr/unisearch/images/history_site/2020052016134300.jpg",
+   "page": "https://www.heritage.go.kr/heri/cul/culSelectDetail.do?ccbaCpno=1333700960000&ccbaKdcd=13&ccbaAsno=00009600&ccbaCtcd=37",
+   "credit": "ⓒ국가유산청",
+   "org": "국가유산청",
+   "title": "경주 읍성 복원동문(향일문) (고도보존육성과, 2018)",
+   "heritage": "경주읍성",
+   "kind": "사적",
+   "license": "공공누리 제1유형",
+   "got": "2026-09-27"
+  },
+  {
+   "from": "heritage",
+   "type": "Type1",
+   "name": "경주 읍성 복원 성벽 (고도보존육성과, 2018)",
+   "file": "kh-p14-10",
+   "ws": [
+    480,
+    960,
+    1600
+   ],
+   "hs": [
+    270,
+    540,
+    900
+   ],
+   "ow": 3264,
+   "oh": 1836,
+   "orig": "https://www.khs.go.kr/unisearch/images/history_site/2020052016135800.jpg",
+   "page": "https://www.heritage.go.kr/heri/cul/culSelectDetail.do?ccbaCpno=1333700960000&ccbaKdcd=13&ccbaAsno=00009600&ccbaCtcd=37",
+   "credit": "ⓒ국가유산청",
+   "org": "국가유산청",
+   "title": "경주 읍성 복원 성벽 (고도보존육성과, 2018)",
+   "heritage": "경주읍성",
+   "kind": "사적",
+   "license": "공공누리 제1유형",
+   "got": "2026-09-27"
+  },
+  {
+   "from": "heritage",
+   "type": "Type1",
+   "name": "경주 읍성 복원 성벽 (고도보존육성과, 2018)",
+   "file": "kh-p14-11",
+   "ws": [
+    480,
+    960,
+    1600
+   ],
+   "hs": [
+    270,
+    540,
+    900
+   ],
+   "ow": 3264,
+   "oh": 1836,
+   "orig": "https://www.khs.go.kr/unisearch/images/history_site/2020052016135801.jpg",
+   "page": "https://www.heritage.go.kr/heri/cul/culSelectDetail.do?ccbaCpno=1333700960000&ccbaKdcd=13&ccbaAsno=00009600&ccbaCtcd=37",
+   "credit": "ⓒ국가유산청",
+   "org": "국가유산청",
+   "title": "경주 읍성 복원 성벽 (고도보존육성과, 2018)",
+   "heritage": "경주읍성",
+   "kind": "사적",
+   "license": "공공누리 제1유형",
+   "got": "2026-09-27"
+  },
+  {
+   "from": "heritage",
+   "type": "Type1",
+   "name": "경주 읍성 동쪽상공(서쪽으로 조망) (고도보존육성과, 2017)",
+   "file": "kh-p14-06",
+   "ws": [
+    480,
+    960,
+    1600
+   ],
+   "hs": [
+    270,
+    539,
+    899
+   ],
+   "ow": 2200,
+   "oh": 1236,
+   "orig": "https://www.khs.go.kr/unisearch/images/history_site/2020052016120100.JPG",
+   "page": "https://www.heritage.go.kr/heri/cul/culSelectDetail.do?ccbaCpno=1333700960000&ccbaKdcd=13&ccbaAsno=00009600&ccbaCtcd=37",
+   "credit": "ⓒ국가유산청",
+   "org": "국가유산청",
+   "title": "경주 읍성 동쪽상공(서쪽으로 조망) (고도보존육성과, 2017)",
+   "heritage": "경주읍성",
+   "kind": "사적",
+   "license": "공공누리 제1유형",
+   "got": "2026-09-27"
+  },
+  {
+   "from": "heritage",
+   "type": "Type1",
+   "name": "경주 읍성 복원된 치  (고도보존육성과, 2017)",
+   "file": "kh-p14-15",
+   "ws": [
+    480,
+    960,
+    1600
+   ],
+   "hs": [
+    319,
+    637,
+    1062
+   ],
+   "ow": 2388,
+   "oh": 1585,
+   "orig": "https://www.khs.go.kr/unisearch/images/history_site/2020052016145500.JPG",
+   "page": "https://www.heritage.go.kr/heri/cul/culSelectDetail.do?ccbaCpno=1333700960000&ccbaKdcd=13&ccbaAsno=00009600&ccbaCtcd=37",
+   "credit": "ⓒ국가유산청",
+   "org": "국가유산청",
+   "title": "경주 읍성 복원된 치  (고도보존육성과, 2017)",
+   "heritage": "경주읍성",
+   "kind": "사적",
+   "license": "공공누리 제1유형",
+   "got": "2026-09-27"
+  },
+  {
+   "from": "gyeongju",
+   "type": "Type1",
+   "name": "경주읍성 경관조명",
+   "file": "gj-p14-06",
+   "ws": [
+    480,
+    960,
+    1600
+   ],
+   "hs": [
+    326,
+    652,
+    1087
+   ],
+   "ow": 2400,
+   "oh": 1631,
+   "orig": "https://www.gyeongju.go.kr/upload//board/board_1342/bod_151002//172AAB492E6E446FB01BAAE4C76FD3F9.jpg",
+   "page": "https://www.gyeongju.go.kr/news/page.do?mnu_uid=1336&parm_bod_uid=151002&step=258",
+   "credit": "ⓒ경주시청",
+   "org": "경주시청",
+   "title": "신라이후 천년의 상징 경주읍성, 천년고도 새로운 야경 명소 부상",
+   "site": "www.gyeongju.go.kr",
+   "date": "2019-01-07",
+   "license": "공공누리 제1유형",
+   "got": "2026-09-27"
+  },
+  {
+   "from": "wikimedia",
+   "type": "Type1",
+   "name": "Gyeongjueupseong Town Wall Site",
+   "file": "wm-p14-07",
+   "ws": [
+    480,
+    960,
+    1600
+   ],
+   "hs": [
+    288,
+    576,
+    960
+   ],
+   "ow": 3200,
+   "oh": 1920,
+   "orig": "https://upload.wikimedia.org/wikipedia/commons/5/5f/Gyeongjueupseong_Town_Wall_Site.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:Gyeongjueupseong_Town_Wall_Site.jpg",
+   "credit": "ⓒQkqhrhkdtn, CC BY-SA 3.0",
+   "author": "Qkqhrhkdtn",
+   "title": "Gyeongjueupseong Town Wall Site.jpg",
+   "license": "CC BY-SA 3.0",
+   "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+   "date": "2015-05-11 13:20:51",
+   "got": "2026-09-27"
+  }
+ ],
+ "p16": [
+  {
+   "from": "heritage",
+   "type": "Type1",
+   "name": "경주 배동 석조여래삼존입상_전경 (촬영년도 : 2015년)",
+   "file": "kh-p16-25",
+   "ws": [
+    480,
+    960,
+    1600
+   ],
+   "hs": [
+    320,
+    640,
+    1067
+   ],
+   "ow": 4000,
+   "oh": 2667,
+   "orig": "https://www.khs.go.kr/unisearch/images/treasure/2021032514280702.jpg",
+   "page": "https://www.heritage.go.kr/heri/cul/culSelectDetail.do?ccbaCpno=1123700630000&ccbaKdcd=12&ccbaAsno=00006300&ccbaCtcd=37",
+   "credit": "ⓒ국가유산청",
+   "org": "국가유산청",
+   "title": "경주 배동 석조여래삼존입상_전경 (촬영년도 : 2015년)",
+   "heritage": "경주 배동 석조여래삼존입상",
+   "kind": "보물",
+   "license": "공공누리 제1유형",
+   "got": "2026-09-27"
+  },
+  {
+   "from": "heritage",
+   "type": "Type1",
+   "name": "경주 배동 석조여래삼존입상",
+   "file": "kh-p16-01",
+   "ws": [
+    480,
+    960,
+    1600
+   ],
+   "hs": [
+    320,
+    640,
+    1067
+   ],
+   "ow": 1600,
+   "oh": 1067,
+   "orig": "https://www.khs.go.kr/unisearch/images/treasure/1620135.jpg",
+   "page": "https://www.heritage.go.kr/heri/cul/culSelectDetail.do?ccbaCpno=1123700630000&ccbaKdcd=12&ccbaAsno=00006300&ccbaCtcd=37",
+   "credit": "ⓒ국가유산청",
+   "org": "국가유산청",
+   "title": "경주 배동 석조여래삼존입상",
+   "heritage": "경주 배동 석조여래삼존입상",
+   "kind": "보물",
+   "license": "공공누리 제1유형",
+   "got": "2026-09-27"
+  },
+  {
+   "from": "heritage",
+   "type": "Type1",
+   "name": "경주 배동 석조여래삼존입상_후경 (촬영년도 : 2015년)",
+   "file": "kh-p16-26",
+   "ws": [
+    480,
+    960,
+    1600
+   ],
+   "hs": [
+    320,
+    640,
+    1067
+   ],
+   "ow": 4000,
+   "oh": 2667,
+   "orig": "https://www.khs.go.kr/unisearch/images/treasure/2021032514280801.jpg",
+   "page": "https://www.heritage.go.kr/heri/cul/culSelectDetail.do?ccbaCpno=1123700630000&ccbaKdcd=12&ccbaAsno=00006300&ccbaCtcd=37",
+   "credit": "ⓒ국가유산청",
+   "org": "국가유산청",
+   "title": "경주 배동 석조여래삼존입상_후경 (촬영년도 : 2015년)",
+   "heritage": "경주 배동 석조여래삼존입상",
+   "kind": "보물",
+   "license": "공공누리 제1유형",
+   "got": "2026-09-27"
+  },
+  {
+   "from": "heritage",
+   "type": "Type1",
+   "name": "경주 배동 석조여래삼존입상_중앙 (촬영년도 : 2015년)",
+   "file": "kh-p16-24",
+   "ws": [
+    480,
+    960
+   ],
+   "hs": [
+    720,
+    1440
+   ],
+   "ow": 2667,
+   "oh": 4000,
+   "orig": "https://www.khs.go.kr/unisearch/images/treasure/2021032514280701.jpg",
+   "page": "https://www.heritage.go.kr/heri/cul/culSelectDetail.do?ccbaCpno=1123700630000&ccbaKdcd=12&ccbaAsno=00006300&ccbaCtcd=37",
+   "credit": "ⓒ국가유산청",
+   "org": "국가유산청",
+   "title": "경주 배동 석조여래삼존입상_중앙 (촬영년도 : 2015년)",
+   "heritage": "경주 배동 석조여래삼존입상",
+   "kind": "보물",
+   "license": "공공누리 제1유형",
+   "got": "2026-09-27"
+  },
+  {
+   "from": "heritage",
+   "type": "Type1",
+   "name": "경주 배동 석조여래삼존입상_좌측 (촬영년도 : 2015년)",
+   "file": "kh-p16-23",
+   "ws": [
+    480,
+    960
+   ],
+   "hs": [
+    720,
+    1440
+   ],
+   "ow": 2667,
+   "oh": 4000,
+   "orig": "https://www.khs.go.kr/unisearch/images/treasure/2021032514280605.jpg",
+   "page": "https://www.heritage.go.kr/heri/cul/culSelectDetail.do?ccbaCpno=1123700630000&ccbaKdcd=12&ccbaAsno=00006300&ccbaCtcd=37",
+   "credit": "ⓒ국가유산청",
+   "org": "국가유산청",
+   "title": "경주 배동 석조여래삼존입상_좌측 (촬영년도 : 2015년)",
+   "heritage": "경주 배동 석조여래삼존입상",
+   "kind": "보물",
+   "license": "공공누리 제1유형",
+   "got": "2026-09-27"
+  }
+ ],
+ "p18": [
+  {
+   "from": "heritage",
+   "type": "Type1",
+   "name": "경주활성리석불입상",
+   "file": "kh-p18-02",
+   "ws": [
+    480,
+    750
+   ],
+   "hs": [
+    335,
+    523
+   ],
+   "ow": 750,
+   "oh": 523,
+   "orig": "https://www.khs.go.kr/unisearch/images/cultural_material/1662556.jpg",
+   "page": "https://www.heritage.go.kr/heri/cul/culSelectDetail.do?ccbaCpno=3413700960000&ccbaKdcd=31&ccbaAsno=00009600&ccbaCtcd=37",
+   "credit": "ⓒ국가유산청",
+   "org": "국가유산청",
+   "title": "경주활성리석불입상",
+   "heritage": "경주활성리석불입상",
+   "kind": "문화유산자료",
+   "license": "공공누리 제1유형",
+   "got": "2026-09-27"
+  },
+  {
+   "from": "heritage",
+   "type": "Type1",
+   "name": "경주활성리석불입상",
+   "file": "kh-p18-01",
+   "ws": [
+    480,
+    547
+   ],
+   "hs": [
+    702,
+    800
+   ],
+   "ow": 547,
+   "oh": 800,
+   "orig": "https://www.khs.go.kr/unisearch/images/cultural_material/1662555.jpg",
+   "page": "https://www.heritage.go.kr/heri/cul/culSelectDetail.do?ccbaCpno=3413700960000&ccbaKdcd=31&ccbaAsno=00009600&ccbaCtcd=37",
+   "credit": "ⓒ국가유산청",
+   "org": "국가유산청",
+   "title": "경주활성리석불입상",
+   "heritage": "경주활성리석불입상",
+   "kind": "문화유산자료",
+   "license": "공공누리 제1유형",
+   "got": "2026-09-27"
+  }
+ ],
+ "p20": [
+  {
+   "from": "heritage",
+   "type": "Type1",
+   "name": "서악서원",
+   "file": "kh-p20-01",
+   "ws": [
+    480,
+    750
+   ],
+   "hs": [
+    331,
+    517
+   ],
+   "ow": 750,
+   "oh": 517,
+   "orig": "https://www.khs.go.kr/unisearch/images/monument/1654421.jpg",
+   "page": "https://www.heritage.go.kr/heri/cul/culSelectDetail.do?ccbaCpno=2333700190000&ccbaKdcd=23&ccbaAsno=00001900&ccbaCtcd=37",
+   "credit": "ⓒ국가유산청",
+   "org": "국가유산청",
+   "title": "서악서원",
+   "heritage": "서악서원",
+   "kind": "시도기념물",
+   "license": "공공누리 제1유형",
+   "got": "2026-09-27"
+  }
+ ],
+ "p30": [
+  {
+   "from": "wikimedia",
+   "type": "Type1",
+   "name": "GYJ-JC-DragonCave5",
+   "file": "wm-p30-01",
+   "ws": [
+    480,
+    960,
+    1600
+   ],
+   "hs": [
+    270,
+    540,
+    900
+   ],
+   "ow": 4624,
+   "oh": 2600,
+   "orig": "https://upload.wikimedia.org/wikipedia/commons/4/4c/GYJ-JC-DragonCave5.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:GYJ-JC-DragonCave5.jpg",
+   "credit": "ⓒDittwjfsdgkvkdjg, CC BY-SA 4.0",
+   "author": "Dittwjfsdgkvkdjg",
+   "title": "GYJ-JC-DragonCave5.jpg",
+   "license": "CC BY-SA 4.0",
+   "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+   "date": "2025-12-11",
+   "got": "2026-09-27",
+   "noCover": true
+  },
+  {
+   "from": "wikimedia",
+   "type": "Type1",
+   "name": "GYJ-JC-DragonCave1",
+   "file": "wm-p30-02",
+   "ws": [
+    480,
+    960,
+    1600
+   ],
+   "hs": [
+    270,
+    540,
+    900
+   ],
+   "ow": 4624,
+   "oh": 2600,
+   "orig": "https://upload.wikimedia.org/wikipedia/commons/a/ad/GYJ-JC-DragonCave1.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:GYJ-JC-DragonCave1.jpg",
+   "credit": "ⓒDittwjfsdgkvkdjg, CC BY-SA 4.0",
+   "author": "Dittwjfsdgkvkdjg",
+   "title": "GYJ-JC-DragonCave1.jpg",
+   "license": "CC BY-SA 4.0",
+   "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+   "date": "2025-12-11",
+   "got": "2026-09-27",
+   "noCover": true
+  },
+  {
+   "from": "wikimedia",
+   "type": "Type1",
+   "name": "GYJ-JC-DragonCave6",
+   "file": "wm-p30-03",
+   "ws": [
+    480,
+    960,
+    1600
+   ],
+   "hs": [
+    270,
+    540,
+    900
+   ],
+   "ow": 4624,
+   "oh": 2600,
+   "orig": "https://upload.wikimedia.org/wikipedia/commons/e/e1/GYJ-JC-DragonCave6.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:GYJ-JC-DragonCave6.jpg",
+   "credit": "ⓒDittwjfsdgkvkdjg, CC BY-SA 4.0",
+   "author": "Dittwjfsdgkvkdjg",
+   "title": "GYJ-JC-DragonCave6.jpg",
+   "license": "CC BY-SA 4.0",
+   "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+   "date": "2025-12-11",
+   "got": "2026-09-27",
+   "noCover": true
+  },
+  {
+   "from": "wikimedia",
+   "type": "Type1",
+   "name": "GYJ-JC-DragonCave3",
+   "file": "wm-p30-04",
+   "ws": [
+    480,
+    960,
+    1600
+   ],
+   "hs": [
+    270,
+    540,
+    900
+   ],
+   "ow": 4624,
+   "oh": 2600,
+   "orig": "https://upload.wikimedia.org/wikipedia/commons/c/cd/GYJ-JC-DragonCave3.jpg",
+   "page": "https://commons.wikimedia.org/wiki/File:GYJ-JC-DragonCave3.jpg",
+   "credit": "ⓒDittwjfsdgkvkdjg, CC BY-SA 4.0",
+   "author": "Dittwjfsdgkvkdjg",
+   "title": "GYJ-JC-DragonCave3.jpg",
+   "license": "CC BY-SA 4.0",
+   "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+   "date": "2025-12-11",
+   "got": "2026-09-27",
+   "noCover": true
+  }
+ ],
+ "p43": [
+  {
+   "from": "gyeongju",
+   "type": "Type1",
+   "name": "금장대 뷰포인트",
+   "file": "gj-p43-01",
+   "ws": [
+    480,
+    960,
+    1600
+   ],
+   "hs": [
+    320,
+    640,
+    1067
+   ],
+   "ow": 2400,
+   "oh": 1600,
+   "orig": "https://www.gyeongju.go.kr/upload//board/board_1342/bod_194906//B607D93B32D441628AF6290AC145587D.jpg",
+   "page": "https://www.gyeongju.go.kr/news/page.do?mnu_uid=1336&parm_bod_uid=194906&step=258",
+   "credit": "ⓒ경주시청",
+   "org": "경주시청",
+   "title": "‘형산강 8경’금장대 뷰포인트 완성",
+   "site": "www.gyeongju.go.kr",
+   "date": "2020-08-07",
+   "license": "공공누리 제1유형",
+   "got": "2026-09-27"
+  },
+  {
+   "from": "gyeongju",
+   "type": "Type1",
+   "name": "경주 금장대 전경과 누각 내부, 형산강 조망, 암각화 등 역사와 자연경관이 어우러진 금장대 모습.",
+   "file": "gj-p43-02",
+   "ws": [
+    480,
+    960,
+    1600
+   ],
+   "hs": [
+    320,
+    640,
+    1067
+   ],
+   "ow": 3000,
+   "oh": 2000,
+   "orig": "https://www.gyeongju.go.kr/upload//board/board_1334/bod_326461//B786DB9B101340F5AACE1B5A3EDA7CA3.jpg",
+   "page": "https://www.gyeongju.go.kr/news/page.do?mnu_uid=1336&parm_bod_uid=326461&step=258",
+   "credit": "ⓒ경주시청",
+   "org": "경주시청",
+   "title": "경주 금장대, 역사와 절경 품은 도심 대표 전망 명소로",
+   "site": "www.gyeongju.go.kr",
+   "date": "2026-07-27",
+   "license": "공공누리 제1유형",
+   "got": "2026-09-27"
+  }
+ ],
+ "p57": [
+  {
+   "from": "gyeongju",
+   "type": "Type1",
+   "name": "경주시 오류고아라해변을 찾은 피서객들이 해변과 물놀이를 즐기며 무더위를 식히고 있다.",
+   "file": "gj-p57-01",
+   "ws": [
+    480,
+    960,
+    1600
+   ],
+   "hs": [
+    320,
+    640,
+    1067
+   ],
+   "ow": 2400,
+   "oh": 1600,
+   "orig": "https://www.gyeongju.go.kr/upload//board/board_1334/bod_298545//01CEBFC685E941BF9AFE79B610C23207.jpg",
+   "page": "https://www.gyeongju.go.kr/news/page.do?mnu_uid=1336&parm_bod_uid=298545&step=258",
+   "credit": "ⓒ경주시청",
+   "org": "경주시청",
+   "title": "“경주 바다, 여름을 맞는다”… 오는 11일 해수욕장 일제히 개장",
+   "site": "www.gyeongju.go.kr",
+   "date": "2025-07-07",
+   "license": "공공누리 제1유형",
+   "got": "2026-09-27"
+  }
+ ]
+}

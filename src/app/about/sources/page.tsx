@@ -9,7 +9,8 @@ import type { Metadata } from "next";
 import { pageMetadata } from "@/site/og";
 import { Section, SubPage } from "@/components/layout/PageParts";
 import { MENU } from "@/site/ia";
-import { koglCondition, koglLabel, type KoglType } from "@/data/photos";
+import { extraSources, koglCondition, koglLabel, type KoglType } from "@/data/photos";
+import { placeById } from "@/data";
 import { SOURCES } from "@/data/bf";
 import { BUS_META, BUS_OSM_ROUTES_LEFT, TAGO_APIS } from "@/data/bus";
 import { stepFreeSourceRows } from "@/data/stepfree";
@@ -70,6 +71,22 @@ const REF_DATE: Record<(typeof PORTAL_KEYS)[number], string> = {
   mobilityCenter: "데이터 기준 일자 2025-08-20",
   bfCulture: "최종 작성일 2022-11-25",
 };
+
+// 채운 사진의 출처 줄(국가유산청 유산마다, 위키미디어 파일마다, 경주시정뉴스 기사마다)
+const EXTRA_ROWS = extraSources();
+const HERITAGE = EXTRA_ROWS.filter((r) => r.from === "heritage");
+const WIKIMEDIA = EXTRA_ROWS.filter((r) => r.from === "wikimedia");
+const GJ_NEWS = EXTRA_ROWS.filter((r) => r.from === "gyeongju");
+/** 사진을 쓴 관광지 이름(여럿이면 가운뎃점으로) */
+const placesLabel = (ids: string[]) => ids.map((id) => placeById(id)?.name ?? id).join("·");
+/** 위키미디어 파일 쪽 주소의 한글을 읽을 수 있게(%EA… → 한글). 풀 수 없으면 그대로 */
+function safeDecode(u: string): string {
+  try {
+    return decodeURIComponent(u);
+  } catch {
+    return u;
+  }
+}
 
 export default function SourcesPage() {
   return (
@@ -146,6 +163,80 @@ export default function SourcesPage() {
           <OutLink href="https://knto.or.kr/helpdeskCopyrightguide">knto.or.kr/helpdeskCopyrightguide</OutLink>
         </p>
       </Section>
+
+      {/* 채운 사진(09-27, data/photos_extra.json, 도구/22_사진_채우기.py): 국가유산청 국가유산 이미지. 유산마다 한 줄.
+          자료 칸은 국가유산청 자료의 국가유산 이름과 사진을 쓴 관광지, 주소는 국가유산포털의 그 유산 쪽 */}
+      {HERITAGE.length > 0 && (
+        <Section id="heritage" title="국가유산청 국가유산 이미지">
+          <BoardTable
+            caption="관광지 사진에 쓴 국가유산청 사진: 자료, 제공 기관, 이용허락, 기준일, 주소"
+            head={["자료", "제공 기관", "이용허락", "기준일", "주소"]}
+            cols={["24%", "18%", "20%", "14%", "auto"]}
+            align={["l", "l", "l", "c", "l"]}
+            rows={HERITAGE.map((r) => [
+              `${r.name}(${placesLabel(r.placeIds)}, ${r.count}장)`,
+              r.who,
+              r.license,
+              `${r.got} 받음`,
+              <OutLink key="u" href={r.page}>
+                {r.page.replace(/^https:\/\//, "")}
+              </OutLink>,
+            ])}
+          />
+          <p>
+            <OutLink href="https://www.khs.go.kr/html/HtmlPage.do?pg=/guide/copyright.jsp&mn=NS_08_03">www.khs.go.kr/html/HtmlPage.do?pg=/guide/copyright.jsp</OutLink>
+          </p>
+        </Section>
+      )}
+
+      {/* 채운 사진 가운데 위키미디어 공용 사진: 파일마다 저작자·이용허락·파일 쪽 링크(CC 이용허락의 출처 표시) */}
+      {WIKIMEDIA.length > 0 && (
+        <Section id="wikimedia" title="위키미디어 공용(Wikimedia Commons)">
+          <BoardTable
+            caption="관광지 사진에 쓴 위키미디어 공용 사진: 자료, 저작자, 이용허락, 기준일, 주소"
+            head={["자료", "저작자", "이용허락", "기준일", "주소"]}
+            cols={["24%", "18%", "20%", "14%", "auto"]}
+            align={["l", "l", "l", "c", "l"]}
+            rows={WIKIMEDIA.map((r) => [
+              `${r.name}(${placesLabel(r.placeIds)})`,
+              r.who,
+              r.licenseUrl ? (
+                <OutLink key="l" href={r.licenseUrl}>
+                  {r.license}
+                </OutLink>
+              ) : (
+                r.license
+              ),
+              `${r.got} 받음`,
+              <OutLink key="u" href={r.page}>
+                {safeDecode(r.page.replace(/^https:\/\//, ""))}
+              </OutLink>,
+            ])}
+          />
+        </Section>
+      )}
+
+      {/* 채운 사진 가운데 경주시정뉴스(경주시청 최신기사) 사진: 기사마다 한 줄. 자료 칸은 기사 제목과 사진을 쓴 관광지,
+          이용허락은 기사 쪽 공공누리 상자('경주시청이 창작한 최신기사 저작물은 "공공누리" 제1유형:출처표시 …'), 주소는 그 기사 쪽 */}
+      {GJ_NEWS.length > 0 && (
+        <Section id="gyeongju-news" title="경주시정뉴스">
+          <BoardTable
+            caption="관광지 사진에 쓴 경주시정뉴스 사진: 자료, 제공 기관, 이용허락, 기준일, 주소"
+            head={["자료", "제공 기관", "이용허락", "기준일", "주소"]}
+            cols={["24%", "18%", "20%", "14%", "auto"]}
+            align={["l", "l", "l", "c", "l"]}
+            rows={GJ_NEWS.map((r) => [
+              `${r.name}(${placesLabel(r.placeIds)}, ${r.count}장)`,
+              r.who,
+              r.license,
+              `${r.got} 받음`,
+              <OutLink key="u" href={r.page}>
+                {r.page.replace(/^https:\/\//, "")}
+              </OutLink>,
+            ])}
+          />
+        </Section>
+      )}
 
       <Section id="portal" title="공공데이터포털(data.go.kr)">
         <BoardTable

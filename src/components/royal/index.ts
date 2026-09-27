@@ -5,7 +5,7 @@ export { default as BoardTable } from "./BoardTable";
 export { BlackBar, IconHeading, OffsetPhoto, InfoBox, CircleButton, TipList } from "./Bits";
 export { default as Photo, CreditTag, CreditBelow, SIZES } from "./Photo";
 export type { CreditCorner } from "./Photo";
-export { default as KoglBox } from "./KoglBox";
+export { default as KoglBox, CcBox, PhotoLicenseBox } from "./KoglBox";
 export { default as Slider } from "./Slider";
 export { default as FilterPills } from "./FilterPills";
 export type { FilterPillItem } from "./FilterPills";
