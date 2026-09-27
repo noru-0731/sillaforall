@@ -51,6 +51,8 @@ export default function HomeHero({
   const [idx, setIdx] = useState(0);
   const [playing, setPlaying] = useState(true);
   const [hold, setHold] = useState(false);
+  // 사진이 안 뜬 칸(<Photo>가 빈 판으로 바꿈, royal/FailHide.tsx): 글 상자의 사진 출처도 뺀다
+  const [bad, setBad] = useState<string[]>([]);
   const reduce = useReducedMotion();
   const trackId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
@@ -91,14 +93,21 @@ export default function HomeHero({
                   aria-hidden={!on}
                   inert={!on}
                 >
-                  <Photo photo={sl.photo} alt={sl.name} height="100%" sizes={SIZES.hero} loading={i === 0 ? "eager" : "lazy"} />
+                  <Photo
+                    photo={sl.photo}
+                    alt={sl.name}
+                    height="100%"
+                    sizes={SIZES.hero}
+                    loading={i === 0 ? "eager" : "lazy"}
+                    onFail={() => setBad((b) => [...b, sl.id])}
+                  />
                   <div className={s.visualPanel}>
                     {sl.kicker && <p className={s.visualKicker}>{sl.kicker}</p>}
                     <p className={s.visualName}>
                       <Link href={`/places/${sl.id}`}>{sl.name}</Link>
                     </p>
                     <p className={s.visualMeta}>{sl.meta}</p>
-                    <p className={s.visualCredit}>{sl.credit}</p>
+                    {!bad.includes(sl.id) && <p className={s.visualCredit}>{sl.credit}</p>}
                   </div>
                 </div>
               );

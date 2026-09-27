@@ -43,6 +43,7 @@ import { withJosa } from "@/lib/josa";
 import { bfLines, hoursLines, hoursNoteLines } from "@/lib/breaks";
 import { Icon, type IconName } from "@/components/icons";
 import { CircleButton, CreditBelow, CreditTag, Photo, SIZES } from "@/components/royal";
+import FailHide from "@/components/royal/FailHide";
 import { parkingFill, toiletFill, walkFill, type Fill } from "@/data/fill";
 import { FillTail } from "@/components/place/FillText";
 import { Ph } from "@/components/layout/Ph";
@@ -154,8 +155,24 @@ export default async function PlaceSubmain({ params }: Props) {
     <div id="contents">
       <h1 className="sr-only">{home.label}</h1>
 
-      {/* 맨 위 큰 사진 */}
-      <div className={`${s.visual}${cover ? " " + s.fade : hero ? " " + s.visualContain : ""}`}>
+      {/* 맨 위 큰 사진. 안 뜨면(FailHide) 사진이 없는 곳과 같은 빈 판, 제3유형 출처 줄도 숨김 */}
+      <FailHide
+        className={`${s.visual}${cover ? " " + s.fade : hero ? " " + s.visualContain : ""}`}
+        fallback={
+          <div className={s.visual}>
+            <Photo photo={null} alt="" height="100%" bg="dark" />
+          </div>
+        }
+        after={
+          /* 제3유형뿐인 곳: 출처를 사진 위에 얹지 않고 큰 사진 틀 바로 아래 오른쪽 한 줄 */
+          !cover &&
+          hero && (
+            <div className={s.inner}>
+              <CreditBelow text={photoCreditOf(hero)} />
+            </div>
+          )
+        }
+      >
         {cover ? (
           <>
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -172,18 +189,12 @@ export default async function PlaceSubmain({ params }: Props) {
         ) : (
           <Photo photo={hero} alt={`${p.name} 사진`} height="100%" bg="dark" loading="eager" />
         )}
-      </div>
-      {/* 제3유형뿐인 곳: 출처를 사진 위에 얹지 않고 큰 사진 틀 바로 아래 오른쪽 한 줄 */}
-      {!cover && hero && (
-        <div className={s.inner}>
-          <CreditBelow text={photoCreditOf(hero)} />
-        </div>
-      )}
-      {/* 가15 작은 사진 석 장 + 나머지 장수. 소리로 듣기는 건너뛴다(사진 쪽으로 가는 링크 줄) */}
+      </FailHide>
+      {/* 가15 작은 사진 석 장 + 나머지 장수. 소리로 듣기는 건너뛴다(사진 쪽으로 가는 링크 줄). 안 뜬 장은 그 칸만 숨김(FailHide) */}
       {thumbs.length > 0 && (
         <ul className={`${s.inner} ${s.thumbs}`} aria-label={`${p.name} 사진`} data-read-skip="">
           {thumbs.map(({ ph, i }) => (
-            <li key={ph.url}>
+            <FailHide as="li" key={ph.url}>
               <Link href={`${photos.href}#photo-${i + 1}`} className={s.thumb}>
                 <Photo
                   photo={{ url: ph.small ?? ph.url, type: ph.type }}
@@ -198,7 +209,7 @@ export default async function PlaceSubmain({ params }: Props) {
               </Link>
               {/* 사진 아래 한 줄 출처: 제3유형은 늘, 제1유형은 휴대전화(칸 가로 85 안팎이라 딱지가 사진을 덮음)에서만. PC 제1유형은 사진 위 딱지 */}
               <CreditBelow text={photoCreditOf(ph)} className={ph.type === "Type1" ? s.thumbCreditM : undefined} />
-            </li>
+            </FailHide>
           ))}
           <li>
             <Link href={photos.href} className={`${s.thumb} ${s.thumbMore}`}>
@@ -259,14 +270,17 @@ export default async function PlaceSubmain({ params }: Props) {
               const slot = slots[i];
               // 제1유형 한 장: 줄여 둔 판이 있으면(대표 사진이 띠에 들 때) 여러 폭, 없으면 원 주소
               const one = slot.kind === "type1" ? localPhoto(slot.photo, "big") : null;
-              const cls = [s.strip, i % 2 ? s.stripEven : "", slot.kind === "film" ? s.stripFilm : "", slot.kind === "empty" ? s.stripPlain : ""]
-                .filter(Boolean)
-                .join(" ");
-              return (
-                <li key={st.href}>
+              // plain: 사진 없는 띠 모양. 제1유형 한 장이 안 뜨면(FailHide) 이 모양으로 바꾼다. 필름 줄은 안 뜬 장만 숨긴다
+              const item = (plain: boolean) => {
+                const cls = [s.strip, i % 2 ? s.stripEven : "", slot.kind === "film" && !plain ? s.stripFilm : "", slot.kind === "empty" || plain ? s.stripPlain : ""]
+                  .filter(Boolean)
+                  .join(" ");
+                return (
                   <Link href={st.href} className={cls}>
                     <span className={s.stripImg}>
-                      {slot.kind === "type1" && one ? (
+                      {plain ? (
+                        <span className={s.plate} />
+                      ) : slot.kind === "type1" && one ? (
                         <>
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
@@ -284,8 +298,7 @@ export default async function PlaceSubmain({ params }: Props) {
                         <>
                           <span className={s.film}>
                             {slot.photos.map((ph) => (
-                              // eslint-disable-next-line @next/next/no-img-element
-                              <img key={ph.url} src={ph.url} alt="" loading="lazy" decoding="async" data-kogl="Type3" />
+                              <FailHide as="img" key={ph.url} src={ph.url} alt="" loading="lazy" decoding="async" data-kogl="Type3" />
                             ))}
                           </span>
                           {/* 제3유형 필름 줄: 사진 위에 얹지 않고 줄 바로 아래 오른쪽 한 줄(같은 출처는 한 번) */}
@@ -300,7 +313,14 @@ export default async function PlaceSubmain({ params }: Props) {
                       <span className={s.stripBig}>{st.big}</span>
                     </span>
                   </Link>
-                </li>
+                );
+              };
+              return slot.kind === "type1" && one ? (
+                <FailHide as="li" key={st.href} fallback={<li>{item(true)}</li>}>
+                  {item(false)}
+                </FailHide>
+              ) : (
+                <li key={st.href}>{item(false)}</li>
               );
             })}
           </ul>

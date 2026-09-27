@@ -12,6 +12,7 @@ import { MENU, SITE_NAME } from "@/site/ia";
 import { places, placeById } from "@/data";
 import { coverPhoto, heroPhoto, localPhoto, photoCreditOf } from "@/data/photos";
 import { SIZES } from "@/components/royal/Photo";
+import FailHide from "@/components/royal/FailHide";
 import s from "./about.module.css";
 
 const SECTION = MENU[3];
@@ -43,8 +44,9 @@ export default function AboutPage() {
       side={SECTION}
       current={PAGE.href}
     >
+      {/* 사진이 안 뜨면(FailHide) 사진이 없을 때와 같이 사진 칸째 뺀다 */}
       {photo && (
-        <figure className={s.gFigure}>
+        <FailHide as="figure" className={s.gFigure}>
           <div className={s.gPhoto}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -59,7 +61,7 @@ export default function AboutPage() {
           <figcaption className="rc-pcredit rc-pcredit--br">
             {photoPlace} · {photoCreditOf(photo)}
           </figcaption>
-        </figure>
+        </FailHide>
       )}
 
       <div className={s.gBody}>

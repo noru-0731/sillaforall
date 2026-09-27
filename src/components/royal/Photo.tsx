@@ -13,7 +13,9 @@
 //     관광정보 목록에 들어 있어도 콘텐츠랩 사진과 같은 그림(주소가 /cms/resource_photo/ 등)이면 원 주소 그대로.
 //   - 제3유형(변경 금지): 줄이지 않고 관광공사 서버 원 주소 그대로.
 //   어느 쪽이든 출처 표기는 같다.
+// 안 뜬 사진(관광공사 서버가 막히거나 느려 오류): 깨진 그림 표시 대신 사진이 없을 때와 같은 빈 판을 그리고 사진 곁 출처도 숨긴다(FailHide.tsx).
 import type { Photo as PhotoData } from "@/data/photos";
+import FailHide from "./FailHide";
 
 /**
  * 자리마다 img sizes 값. 휴대전화 폭(767 이하)은 사진이 그려지는 폭(CSS 픽셀) ÷ 1.25(= × 0.8), 768 이상은 그려지는 폭 그대로.
@@ -58,6 +60,7 @@ export default function Photo({
   sizes = "100vw",
   credit,
   creditAt = "br",
+  onFail,
 }: {
   photo: (Pick<PhotoData, "url" | "type"> & Partial<Pick<PhotoData, "w" | "large" | "lw" | "from" | "by" | "srcset">>) | null | undefined;
   /** 대체 글(뜻 없는 꾸밈 사진이면 "") */
@@ -79,23 +82,34 @@ export default function Photo({
   credit?: string | null;
   /** 제1유형 출처 딱지를 얹을 구석: br 오른쪽 아래(기본), bl 왼쪽 아래, tr 오른쪽 위, tl 왼쪽 위 */
   creditAt?: CreditCorner;
+  /** 사진이 안 떴을 때 부모에게 알림(클라이언트 컴포넌트에서만. 틀 밖에 둔 출처 등을 부모가 숨길 때) */
+  onFail?: () => void;
 }) {
   const style: React.CSSProperties = { aspectRatio: ratio, height };
-  if (!photo) {
-    return (
-      <span className={`rc-photo rc-photo--empty${className ? " " + className : ""}`} style={{ ...style, minHeight: ratio || height ? undefined : "20rem" }}>
-        등록된 사진이 없습니다.
-      </span>
-    );
-  }
+  const empty = (
+    <span className={`rc-photo rc-photo--empty${className ? " " + className : ""}`} style={{ ...style, minHeight: ratio || height ? undefined : "20rem" }}>
+      등록된 사진이 없습니다.
+    </span>
+  );
+  if (!photo) return empty;
   const contain = photo.type === "Type3" || fit === "contain";
   const cls = `rc-photo${contain ? " rc-photo--contain" : ""}${bg === "dark" ? " rc-photo--dark" : ""}${!ratio && !height ? " rc-photo--auto" : ""}${className ? " " + className : ""}`;
   // 줄여 둔 판 여러 폭(srcset)이 있으면 그것. 없고 큰 판이 있으면 두 판을 너비와 함께 준다(작은 판 너비를 모르면 940으로 본다. 관광공사 사진 목록의 보통 너비).
   const srcSet =
     photo.srcset ?? (photo.large && photo.large !== photo.url ? `${photo.url} ${photo.w ?? 940}w, ${photo.large} ${photo.lw ?? 1620}w` : undefined);
   const onPhoto = !!credit && photo.type === "Type1";
-  const frame = (
-    <span className={cls} style={style} data-kogl={photo.type} data-from={photo.from} data-by={photo.by}>
+  return (
+    <FailHide
+      as="span"
+      className={cls}
+      style={style}
+      data-kogl={photo.type}
+      data-from={photo.from}
+      data-by={photo.by}
+      fallback={empty}
+      after={credit && !onPhoto ? <CreditBelow text={credit} /> : undefined}
+      onFail={onFail}
+    >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={photo.url}
@@ -107,14 +121,7 @@ export default function Photo({
         style={!contain && position ? { objectPosition: position } : undefined}
       />
       {onPhoto && <CreditTag text={credit} at={creditAt} />}
-    </span>
-  );
-  if (!credit || onPhoto) return frame;
-  return (
-    <>
-      {frame}
-      <CreditBelow text={credit} />
-    </>
+    </FailHide>
   );
 }
 

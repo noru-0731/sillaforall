@@ -7,6 +7,7 @@ import type { NavItem, SideMenu, SideMenuLink } from "@/site/ia";
 import { bannerPhoto as pickBanner, photoCreditOf, TOURAPI_CREDIT } from "@/data/photos";
 import { Icon } from "@/components/icons";
 import { SIZES } from "@/components/royal/Photo";
+import FailHide from "@/components/royal/FailHide";
 import { MobileMenuBar, PageTools, SideMenuNav } from "./SubPageParts";
 import { Ph } from "./Ph";
 
@@ -137,12 +138,20 @@ export function SubPage({
 
   return (
     <div className="rc-sub">
-      <div className="rc-sub-visual">
+      {/* 배너 사진이 안 뜨면(FailHide) 사진 없는 배너와 같이 글자만(사진 출처도 뺀다) */}
+      <FailHide
+        className="rc-sub-visual"
+        fallback={
+          <div className="rc-sub-visual">
+            <p className="rc-sub-visual__tit">{bannerText}</p>
+          </div>
+        }
+      >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         {photoUrl && <img src={photoUrl} srcSet={photoSrcSet} sizes={photoSrcSet ? SIZES.banner : undefined} alt="" decoding="async" />}
         <p className="rc-sub-visual__tit">{bannerText}</p>
         {photoCaption && <p className="rc-sub-visual__credit">{photoCaption}</p>}
-      </div>
+      </FailHide>
       <MobileMenuBar label={barLabel} links={barLinks} current={cur} />
       <div className="rc-sub-inner">
         {lnb && <SideMenuNav menu={lnb} current={cur} />}

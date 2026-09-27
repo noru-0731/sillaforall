@@ -17,6 +17,7 @@ import { Ph } from "@/components/layout/Ph";
 import { KoglBox, Photo } from "@/components/royal";
 import type { ViewerPhoto } from "./placeData";
 import s from "./PhotoViewer.module.css";
+import FailHide from "@/components/royal/FailHide";
 
 /** large: 같은 사진의 큰 판 주소(있으면 "원본 보기"가 이것을 연다). tall: 세로 사진(세로 > 가로) */
 export type ViewerItem = ViewerPhoto & { large?: string; tall?: boolean };
@@ -120,7 +121,7 @@ export default function PhotoViewer({ photos, placeName }: { photos: ViewerItem[
       {n > 1 && (
         <ul className={s.thumbs} aria-label="작은 사진" ref={thumbsRef}>
           {photos.map((ph, j) => (
-            <li key={ph.url}>
+            <FailHide as="li" key={ph.url}>
               <button
                 type="button"
                 className={`${s.thumb}${j === i ? " " + s.thumbOn : ""}`}
@@ -132,7 +133,7 @@ export default function PhotoViewer({ photos, placeName }: { photos: ViewerItem[
                   {j + 1}번째 사진 보기: {ph.name}
                 </span>
               </button>
-            </li>
+            </FailHide>
           ))}
         </ul>
       )}
