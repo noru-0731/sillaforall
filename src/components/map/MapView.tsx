@@ -813,8 +813,8 @@ export default function MapView({
                   <span className={cn(s.dot, s.dotOn)} />
                 </span>
               </span>
-              {/* 첫 쪽 가운데 띠 이름(점선 없음, 09-27 점선 1차 정리) */}
-              덩어리 관광지
+              {/* 첫 쪽 가운데 띠 이름(09-27 사용자 결정 '연관 관광지') */}
+              연관 관광지
             </li>
           )}
           <li>
