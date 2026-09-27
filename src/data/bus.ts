@@ -1,5 +1,6 @@
 // 버스 정류장 자료 도우미(오시는 길 대중교통). 서버 컴포넌트에서만 부른다.
-// bus.json 만드는 곳: 05_사이트/도구/12_버스_문단_사이트.py(정류장·오픈스트리트맵 노선) → 05_사이트/도구/20_버스_TAGO.py(TAGO 노선).
+// bus.json 만드는 곳: 05_사이트/도구/12_버스_문단_사이트.py(정류장·오픈스트리트맵 노선) → 05_사이트/도구/20_버스_TAGO.py(TAGO 노선)
+//   → 05_사이트/도구/23_버스_주노선.py(표에 싣는 주 노선. 20 을 다시 돌리면 23 도 다시 돌린다).
 // - 정류장: 국토교통부 전국 버스정류장 위치정보(정보수집일 2025-10-31)와 오픈스트리트맵 정류장 점을 합친 목록에서 곳 좌표와 직선거리가 가장 짧은 셋.
 //   좌표를 빌린 곳(서악서원)은 거리 없이 이름이 맞은 정류장. posSrc "osm" 은 이름·번호·좌표를 오픈스트리트맵에서 얻은 정류장.
 //   TAGO 정류소 이름과 다른 정류장(01011)은 TAGO 이름으로 적는다(TAGO_STOP_NAME, 09-27).
@@ -7,6 +8,9 @@
 //   짝을 못 찾은 정류장(src "osm")은 오픈스트리트맵 버스 노선 관계의 번호 그대로(그 줄에 오픈스트리트맵 출처를 붙인다).
 // - 노선 줄(routes): TAGO 노선정보항목의 기점·종점·첫차시간·막차시간·배차간격(평일·토요일·일요일). 첫차·막차는 기점 기준 값이다.
 //   화면에 보이는 값이 같은 routeid 는 도구에서 한 줄로 묶었다.
+// - 표에 싣는 줄(table, 09-27 사용자 "메인 노선만 빼고 깔끔하게 알아서"): 주 노선 = 경주역(KTX) 정류소나 경주 시외버스·고속버스터미널 정류소를
+//   지나는 노선(TAGO 노선별경유정류소목록). 번호마다 한 줄, 정류장마다 최대 10줄(경주역 → 터미널 → 배차간격(평일) 짧은 차례).
+//   주 노선이 없는 정류장은 노선 전부를 같은 차례로 10줄까지. 표에 들지 않은 번호(more)는 '경유노선' 줄에 번호만. 규칙과 셈은 도구/out/20_버스_대조.md 9절.
 // - fromKtx: 경주역(KTX) 정류소가 그 정류장보다 앞에 있는 노선의 번호(TAGO 노선별경유정류소 차례. src "osm" 이면 오픈스트리트맵 노선 관계 차례).
 import raw from "./bus.json";
 
@@ -33,8 +37,12 @@ export type BusStop = {
   /** 정류장 이름·번호·좌표를 오픈스트리트맵에서 얻었으면 "osm" */
   posSrc?: "osm";
   routes: string[];
-  /** src tago 일 때 노선 줄 열쇠(routes 표) */
+  /** src tago 일 때 노선 줄 열쇠(routes 표). 그 정류장을 지나는 줄 전부(기록용) */
   lines?: string[];
+  /** src tago 일 때 화면 표에 싣는 줄 열쇠(번호마다 한 줄, 최대 10줄, 화면 차례) */
+  table?: string[];
+  /** src tago 일 때 표에 들지 않은 노선 번호('경유노선' 줄, 번호 차례) */
+  more?: string[];
   fromKtx: string[];
 };
 type BusPlace = { name: string; byName: boolean; stops: BusStop[] };
@@ -51,8 +59,14 @@ const BUS = raw as unknown as {
 };
 
 export const BUS_META = BUS.meta;
-/** TAGO 두 API(자료 출처 쪽 표): 버스정류소정보, 버스노선정보 */
-export const TAGO_APIS: ApiMeta[] = [BUS.meta.tago.stop, BUS.meta.tago.route];
+/**
+ * TAGO 두 API(자료 출처 쪽 표): 버스정류소정보, 버스노선정보. ops 는 쓴 작업(상세기능) 이름, 공공데이터포털 화면 글 그대로
+ * (도구/cache/출처확인/datagokr_15098534.html, datagokr_15098529.html). 경유 정류소 목록은 경주역(KTX)에서 오는 노선과 주 노선(09-27)에 쓴다.
+ */
+export const TAGO_APIS: (ApiMeta & { ops: string[] })[] = [
+  { ...BUS.meta.tago.stop, ops: ["도시코드 목록 조회", "좌표기반근접정류소 목록조회", "정류소별경유노선 목록조회"] },
+  { ...BUS.meta.tago.route, ops: ["노선정보항목 조회", "노선별경유정류소목록 조회"] },
+];
 /** 경주역(KTX) 정류장 이름(국토부 파일 이름 그대로) */
 export const KTX_NAME = BUS.meta.ktx.name;
 
@@ -72,9 +86,14 @@ export function busStopsOf(id: string): BusStop[] {
   });
 }
 
-/** 정류장 하나의 노선 줄(TAGO 값). src osm 이거나 노선이 없으면 빈 목록 */
+/** 정류장 하나의 표 줄(TAGO 값, 주 노선 차례로 최대 10줄). src osm 이거나 노선이 없으면 빈 목록 */
 export function linesOf(stop: BusStop): BusLine[] {
-  return (stop.lines ?? []).map((k) => BUS.routes[k]).filter(Boolean);
+  return (stop.table ?? []).map((k) => BUS.routes[k]).filter(Boolean);
+}
+
+/** 표에 들지 않은 노선 번호('경유노선' 줄). 없으면 빈 목록 */
+export function moreRoutesOf(stop: BusStop): string[] {
+  return stop.more ?? [];
 }
 
 /** 배차간격 칸: 값이 하나라도 있는 것만(평일 → 토요일 → 일요일) */
