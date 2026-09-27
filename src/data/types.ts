@@ -16,7 +16,7 @@ export type Place = {
   filled: number; // 28항목 가운데 글이 적힌 항목 수
   three: { parking: string | null; walk: string | null; toilet: string | null }; // 주차, 걷는 길(접근로·출입통로), 화장실 — 무장애 여행 정보 글 그대로, 없으면 null
   move: Record<string, string | null>; // 이동 일곱 항목 무장애 여행 정보 글
-  cluster: string | null; // 같은 여행 덩어리: 문무대왕면 / 안강·선도 / 산내·건천
+  cluster: string | null; // 연관 관광지 묶음(화면 이름 09-27 '덩어리' → '연관 관광지', 데이터랩 '중심-연관 관광지'): 문무대왕면 / 안강·선도 / 산내·건천
   plan: 1 | 2 | null; // 1차 등록 / 2차 등록 대상
   nearestRegistered: string | null; // 비어 있는 13곳만: 가장 가까운 등록 관광지
   lon: number;
