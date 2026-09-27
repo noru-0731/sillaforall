@@ -11,6 +11,7 @@ import { createPortal } from "react-dom";
 import { AREA_LINKS, LEFT_BAR, MENU, SITE_NAME, depth3Of, sectionOf } from "@/site/ia";
 import { Icon } from "@/components/icons";
 import { CreditTag } from "@/components/royal/Photo";
+import FailHide from "@/components/royal/FailHide";
 import { useDisplaySettings } from "./DisplaySettings";
 import d3 from "./HeaderParts.module.css";
 
@@ -293,6 +294,8 @@ function MobileNav({
   const current = sectionOf(pathname);
   const [active, setActive] = useState(() => Math.max(0, MENU.findIndex((m) => m.href === current?.href)));
   const [openD3, setOpenD3] = useState<string | null>(null);
+  // 사진이 안 뜬 권역 카드(royal/FailHide.tsx): 사진이 없는 카드와 같이 사진·출처 딱지 없이
+  const [badArea, setBadArea] = useState<string[]>([]);
   const panelRef = useRef<HTMLElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
 
@@ -345,19 +348,30 @@ function MobileNav({
       </button>
 
       <ul className="rc-mnav__areas" aria-label="권역 지도 바로가기">
-        {areaCards.map((a) => (
-          <li key={a.key}>
-            <Link href={a.href} className="rc-mnav__area">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              {a.photo && <img src={a.photo} alt="" loading="lazy" decoding="async" />}
-              <span>
-                <AreaName label={a.label} />
-              </span>
-              {/* 사진 출처(제1유형). 오른쪽 아래는 권역 이름 판이 차지해 오른쪽 위에 얹는다 */}
-              {a.photo && a.credit && <CreditTag text={a.credit} at="tr" />}
-            </Link>
-          </li>
-        ))}
+        {areaCards.map((a) => {
+          const photo = badArea.includes(a.key) ? null : a.photo;
+          return (
+            <li key={a.key}>
+              <Link href={a.href} className="rc-mnav__area">
+                {photo && (
+                  <FailHide
+                    as="img"
+                    src={photo}
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                    onFail={() => setBadArea((b) => [...b, a.key])}
+                  />
+                )}
+                <span>
+                  <AreaName label={a.label} />
+                </span>
+                {/* 사진 출처(제1유형). 오른쪽 아래는 권역 이름 판이 차지해 오른쪽 위에 얹는다 */}
+                {photo && a.credit && <CreditTag text={a.credit} at="tr" />}
+              </Link>
+            </li>
+          );
+        })}
       </ul>
       <div className="rc-mnav__gap" />
 

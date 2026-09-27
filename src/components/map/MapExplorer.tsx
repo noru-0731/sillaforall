@@ -95,7 +95,9 @@ export default function MapExplorer({
   // 이 범위(거르기 전)에 계단 없는 길 곳이 없으면(불국사권) 표시도 범례 줄도 넘기지 않는다. 세부 지도의 sfHere 와 같은 셈이라
   // 카카오가 안 떠서 도식 지도로 돌아가도 범례가 같다(09-27 점검 고침).
   const sfScope = stepFree && all.some((p) => stepFree.ids.includes(p.id)) ? stepFree : undefined;
-  const photo = sel ? photos[sel.id] : null;
+  // 사진이 안 뜬 곳(royal/FailHide.tsx)은 사진이 없는 곳과 같이(빈 판, 공공누리 상자 없음)
+  const [badPhoto, setBadPhoto] = useState<string[]>([]);
+  const photo = sel && !badPhoto.includes(sel.id) ? photos[sel.id] : null;
   const ov = sel ? splitOverview(sel.overview) : null;
 
   const choose = (id: string) => {
@@ -205,6 +207,7 @@ export default function MapExplorer({
             loading="eager"
             className={s.photo}
             credit={photo ? photoCreditOf(photo) : null}
+            onFail={() => setBadPhoto((b) => [...b, sel.id])}
           />
           <div className={s.txt}>
             {ov ? (

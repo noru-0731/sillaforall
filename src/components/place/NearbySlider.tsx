@@ -7,10 +7,12 @@
 // 지금 사진의 출처(짧은 꼴 "ⓒ한국관광공사" 등)는 사진 오른쪽 위에 작은 딱지로 얹는다(아래 두 구석은 이름 판·조작 상자 자리).
 // 사진 링크는 읽기 도구에서 숨기므로(aria-hidden) 딱지는 그 밖(판 안)에 둔다.
 // 사진 파일: 관광정보 제1유형은 줄여 둔 판 여러 폭(srcset, sizes 는 SIZES.nearby)이 온다(placeData nearbySlides).
+// 사진이 안 뜨면(관광공사 서버가 막히거나 느림) 그 장의 사진과 출처 딱지만 숨긴다(royal/FailHide.tsx). 이름·조작 상자는 그대로.
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Icon } from "@/components/icons";
 import { CreditTag, SIZES } from "@/components/royal/Photo";
+import FailHide from "@/components/royal/FailHide";
 import { useReducedMotion } from "@/components/home/bits";
 import { placeLand } from "./landing";
 import s from "./NearbySlider.module.css";
@@ -37,6 +39,8 @@ export default function NearbySlider({
   const [i, setI] = useState(0);
   const [playing, setPlaying] = useState(true);
   const [hold, setHold] = useState(false);
+  // 안 뜬 사진 주소
+  const [bad, setBad] = useState<string[]>([]);
   const reduce = useReducedMotion();
   const rootRef = useRef<HTMLDivElement>(null);
   const n = slides.length;
@@ -50,6 +54,7 @@ export default function NearbySlider({
 
   if (!n) return null;
   const cur = slides[i];
+  const shown = !bad.includes(cur.url);
   const go = (d: number) => setI((i + d + n) % n);
   return (
     <>
@@ -73,16 +78,19 @@ export default function NearbySlider({
           tabIndex={-1}
           aria-hidden="true"
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={cur.url}
-            srcSet={cur.srcset}
-            sizes={cur.srcset ? SIZES.nearby : undefined}
-            alt=""
-            loading="lazy"
-            decoding="async"
-            key={cur.url}
-          />
+          {shown && (
+            <FailHide
+              as="img"
+              src={cur.url}
+              srcSet={cur.srcset}
+              sizes={cur.srcset ? SIZES.nearby : undefined}
+              alt=""
+              loading="lazy"
+              decoding="async"
+              key={cur.url}
+              onFail={() => setBad((b) => [...b, cur.url])}
+            />
+          )}
         </Link>
         <div className={s.bar}>
           <p
@@ -127,7 +135,7 @@ export default function NearbySlider({
             </div>
           )}
         </div>
-        <CreditTag text={cur.credit} at="tr" />
+        {shown && <CreditTag text={cur.credit} at="tr" />}
       </div>
     </>
   );

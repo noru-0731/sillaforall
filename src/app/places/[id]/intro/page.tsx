@@ -20,6 +20,7 @@ import type { Photo as PhotoData } from "@/data/photos";
 import { placeCrumbs, placePages, placeSideMenu, PLACE_BANNER } from "@/site/ia";
 import { Section, SubPage } from "@/components/layout/PageParts";
 import { BoardTable, CreditBelow, OffsetPhoto, Photo, SIZES } from "@/components/royal";
+import FailHide from "@/components/royal/FailHide";
 import { overviewParas } from "@/data/overview";
 import { extraFeeRowsOf, extraRowsOf } from "@/data/introExtra";
 import { gluedLines, hoursLines, hoursNoteLines } from "@/lib/breaks";
@@ -113,19 +114,28 @@ export default async function PlaceIntro({ params }: Props) {
   return (
     <SubPage crumbs={placeCrumbs(p, page)} title={page.label} banner={PLACE_BANNER} sideMenu={placeSideMenu(p)} current={page.href}>
       <div>
-        <OffsetPhoto>
-          <Photo
-            photo={photo}
-            alt={`${p.name} 사진`}
-            ratio="101/50"
-            bg="light"
-            loading="eager"
-            sizes={SIZES.introTop}
-            credit={photo?.type === "Type1" ? photoCreditOf(photo) : null}
-          />
-        </OffsetPhoto>
-        {/* 제3유형: 사진 위에 얹지 않고 사진(어긋난 테두리 틀) 아래 오른쪽 한 줄 */}
-        {photo && photo.type !== "Type1" && <CreditBelow text={photoCreditOf(photo)} className={s.photoCredit} />}
+        {/* 사진이 안 뜨면(FailHide) 사진이 없는 곳과 같은 빈 판, 제3유형 출처 줄도 숨김 */}
+        <FailHide
+          fallback={
+            <OffsetPhoto>
+              <Photo photo={null} alt="" ratio="101/50" bg="light" />
+            </OffsetPhoto>
+          }
+        >
+          <OffsetPhoto>
+            <Photo
+              photo={photo}
+              alt={`${p.name} 사진`}
+              ratio="101/50"
+              bg="light"
+              loading="eager"
+              sizes={SIZES.introTop}
+              credit={photo?.type === "Type1" ? photoCreditOf(photo) : null}
+            />
+          </OffsetPhoto>
+          {/* 제3유형: 사진 위에 얹지 않고 사진(어긋난 테두리 틀) 아래 오른쪽 한 줄 */}
+          {photo && photo.type !== "Type1" && <CreditBelow text={photoCreditOf(photo)} className={s.photoCredit} />}
+        </FailHide>
         <IntroMark className={s.introMark} />
 
         {ov ? (
@@ -136,8 +146,9 @@ export default async function PlaceIntro({ params }: Props) {
                 <div className={st.story}>
                   <div className={st.pics}>
                     <ul className={st.picList}>
+                      {/* 안 뜬 사진은 그 칸만 숨김(FailHide) */}
                       {side.map((ph) => (
-                        <li key={ph.url}>
+                        <FailHide as="li" key={ph.url}>
                           <Photo
                             photo={ph}
                             alt={cleanPhotoName(ph.name) ?? `${p.name} 사진`}
@@ -147,7 +158,7 @@ export default async function PlaceIntro({ params }: Props) {
                           />
                           {/* 사진 아래 한 줄 출처: 제3유형은 늘, 제1유형은 휴대전화 3칸 격자(칸 가로 115 안팎)에서만. PC 제1유형은 사진 위 딱지 */}
                           <CreditBelow text={photoCreditOf(ph)} className={ph.type === "Type1" ? st.picCreditM : undefined} />
-                        </li>
+                        </FailHide>
                       ))}
                     </ul>
                   </div>
