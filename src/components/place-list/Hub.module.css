@@ -80,3 +80,86 @@
 .dashNote {
   margin-top: 1.5rem;
 }
+
+/* 묶음마다 주차·접근로·화장실 표(09-29, HubThree). 칸 값 모양은 무장애 정보가 있는 곳 표(barrier-free/bf.module.css)와 같다 */
+.three {
+  margin-top: 6rem;
+}
+.threeTit {
+  margin-bottom: 2rem;
+  font-size: 2.2rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--rc-text);
+}
+.threeTable :global(.rc-board) td {
+  padding-top: 1.2rem;
+  padding-bottom: 1.2rem;
+}
+.threeTxt {
+  white-space: pre-line;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+.mList {
+  display: none;
+}
+@container rc-main (max-width: 1119px) {
+  .three {
+    margin-top: 4rem;
+  }
+  .threeTit {
+    font-size: 2rem;
+  }
+  .threeTable {
+    display: none;
+  }
+  .mList {
+    display: block;
+    border-top: 0.2rem solid var(--rc-line-strong);
+    border-bottom: 0.1rem solid var(--rc-line-table);
+  }
+  .mItem {
+    padding: 1.5rem 1.5rem 1.6rem;
+    border-bottom: 0.1rem solid var(--rc-line-light);
+  }
+  .mItem:last-child {
+    border-bottom: 0;
+  }
+  .mName {
+    display: inline-flex;
+    align-items: center;
+    min-height: 4.4rem;
+    font-size: 1.8rem;
+    font-weight: 500;
+    line-height: 1.35;
+    color: var(--rc-text);
+  }
+  .mName:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.3rem;
+  }
+  .mThree {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    font-size: 1.6rem;
+    line-height: 1.5;
+    color: var(--rc-text-sub);
+  }
+  .mThree > div {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .mThree dt {
+    flex: 0 0 auto;
+    min-width: 5.2rem;
+    font-weight: 500;
+    color: var(--rc-text);
+  }
+  .mThree dd {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+}

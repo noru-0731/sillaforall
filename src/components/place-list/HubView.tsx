@@ -8,7 +8,7 @@ import { PlaceCardList } from "./PlaceCards";
 import type { CardPlace } from "./types";
 import s from "./Hub.module.css";
 
-export default function HubView({ groups }: { groups: { hub: string; cards: CardPlace[] }[] }) {
+export default function HubView({ groups }: { groups: { hub: string; cards: CardPlace[]; three?: React.ReactNode }[] }) {
   const uid = useId();
   const [i, setI] = useState(0);
   const g = groups[i];
@@ -35,6 +35,7 @@ export default function HubView({ groups }: { groups: { hub: string; cards: Card
             <span className={s.count}>{g.cards.length}곳</span>
           </h2>
           <PlaceCardList items={g.cards} />
+          {g.three}
         </section>
       )}
     </div>
