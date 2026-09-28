@@ -269,12 +269,12 @@ export default function MapView({
       const sp = toScreen(hlPt.b, vw);
       if (onScreen(sp, R_HL)) markers.push({ kind: "single", key: hlPt.p.id, p: hlPt.p, x: sp.x, y: sp.y, own: true, hl: true, emph: hlPt.emph });
     }
-    // 이 관광지 점은 묶지 않고 따로 그려서, 묶음 점과 거의 같은 자리에 오면 묶음 점의 누를 자리가 가려진다.
-    // 그때는 묶음 점을 이 관광지 점에서 가로나 세로로 25px 떨어지게 비켜 놓는다(WCAG 2.5.8 누름 대상 크기 24px).
+    // 이 관광지 점은 묶지 않고 따로 그려서, 다른 점과 거의 같은 자리에 오면 그 점의 누를 자리가 가려진다.
+    // 그때는 그 점(묶음 점이나 한 곳 점)을 이 관광지 점에서 가로나 세로로 25px 떨어지게 비켜 놓는다(WCAG 2.5.8 누름 대상 크기 24px).
     const hlM = markers.find((m) => m.kind === "single" && m.hl);
     if (hlM) {
       for (const m of markers) {
-        if (m.kind !== "group") continue;
+        if (m === hlM) continue;
         const dx = m.x - hlM.x;
         const dy = m.y - hlM.y;
         if (Math.max(Math.abs(dx), Math.abs(dy)) >= HIT_GAP) continue;

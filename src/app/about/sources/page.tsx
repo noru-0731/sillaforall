@@ -2,6 +2,7 @@
 // 맨 위 안내 글(윗선 남색) → 공공누리 유형 카드(사진이 쓰는 두 유형) → • 줄과 (예시) 상자 → 출처별 칸.
 // 자리표시 글만 있던 '한국관광 데이터랩' 칸과 맨 아래 문의 상자는 09-27 사용자 결정("자리표시 줄 빼기")으로 뺐다.
 // 09-28(사용자 "알아서"): '한국관광 데이터랩' 칸을 사실 칸(메뉴 이름, 제공 기관, 기간, 주소)만으로 되살렸다. 새로 지은 글은 없다.
+// 09-28 밤: 데이터랩 칸 아래에 누구나 신라 칸(관광지 61곳 무장애 정보 CSV 내려받기)을 더했다.
 // KRDS 출처 문장은 행정안전부가 정한 그대로 둔다.
 // 09-27 점선 1차 정리(05_사이트/11_안건_점선_문구.md): 유형 카드 아래 이 누리집 쓰임 줄 둘, '사진은 …' 점 줄, 카카오 칸 '지도(오시는 길, 편의시설)' 줄,
 // 제공 기관 칸 괄호 설명, 이용허락 칸의 '… 표시 없음' 글은 뺐다(이용허락 칸은 빈칸, 09-27 사용자 "나머지는 그냥 비워요"와 같은 꼴).
@@ -19,6 +20,7 @@ import { GJ_SOURCE } from "@/data/gj";
 import areas6 from "@/data/areas6.json";
 import { BoardTable } from "@/components/royal";
 import { NewWinIcon } from "@/components/layout/NewWin";
+import { Ph } from "@/components/layout/Ph";
 import s from "../about.module.css";
 
 /** 경주문화관광 권역별 관광지(권역 여섯 쪽 가운데 첫 쪽) */
@@ -203,6 +205,28 @@ export default function SourcesPage() {
               <OutLink key="u" href="https://datalab.visitkorea.or.kr">
                 datalab.visitkorea.or.kr
               </OutLink>,
+            ],
+          ]}
+        />
+      </Section>
+
+      {/* 09-28 밤: 관광지 61곳 무장애 정보 표(CSV, app/sillaforall-61.csv/route.ts). 칸 값은 관람 도우미와 같고, 칸마다 자료 이름을 옆 칸에 적었다.
+          표 이름 '관광지 61곳 무장애 정보'는 사이트 메뉴·칸 이름을 이은 새 말이라 <Ph>. 칸 꼴은 위 데이터랩 칸과 같다(이용허락 칸 빈칸) */}
+      <Section id="sillaforall" title="누구나 신라">
+        <BoardTable
+          caption="누구나 신라에서 내려받는 자료: 자료, 제공 기관, 이용허락, 기준일, 주소"
+          head={["자료", "제공 기관", "이용허락", "기준일", "주소"]}
+          cols={["24%", "18%", "20%", "14%", "auto"]}
+          align={["l", "l", "l", "c", "l"]}
+          rows={[
+            [
+              <Ph key="n">관광지 61곳 무장애 정보(CSV)</Ph>,
+              "누구나 신라",
+              "",
+              "2026-09-28",
+              <a key="u" href="/sillaforall-61.csv" download className={s.outLink}>
+                sillaforall-61.csv
+              </a>,
             ],
           ]}
         />
