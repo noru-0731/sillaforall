@@ -228,6 +228,18 @@ export default function SourcesPage() {
                 sillaforall-61.csv
               </a>,
             ],
+            // 09-28 밤: 전국 256개 시군구 관광지 6,683곳(데이터랩 관광지별 성/연령 방문 집중률 2026년 1~8월, 관광정보 목록 안)의
+            // 구분(노년층 중심·세대 공통·청년층 중심)과 무장애 여행 정보 등록 여부. 데이터랩 비중 값은 싣지 않는다.
+            // 만든 곳: 12차/산출/전국_집중률_대조(fetch.mjs, analyze.py) → public/sillaforall-national.csv
+            [
+              <Ph key="n">전국 관광지 무장애 정보 등록(CSV)</Ph>,
+              "누구나 신라",
+              "",
+              "2026-09-28",
+              <a key="u" href="/sillaforall-national.csv" download className={s.outLink}>
+                sillaforall-national.csv
+              </a>,
+            ],
           ]}
         />
       </Section>
