@@ -1737,15 +1737,31 @@
    "items": [
     {
      "kind": "toiletA",
-     "src": "bfCulture",
-     "name": "경주국립공원",
-     "distanceM": 1641,
-     "lat": 35.801916,
-     "lon": 129.214889,
+     "src": "toiletStd",
+     "name": "서남산 주차장",
+     "distanceM": 1837,
+     "lat": 35.798939,
+     "lon": 129.206889,
      "fields": [
       [
-       "장애인 화장실 유무",
-       "Y"
+       "구분",
+       "공중화장실"
+      ],
+      [
+       "개방시간",
+       "24시간"
+      ],
+      [
+       "남성용-장애인용대변기수",
+       1
+      ],
+      [
+       "남성용-장애인용소변기수",
+       1
+      ],
+      [
+       "소재지도로명주소",
+       "경상북도 경주시 포석로 647"
       ]
      ],
      "far": true,
@@ -1821,21 +1837,6 @@
    "items": [
     {
      "kind": "toiletA",
-     "src": "bfCulture",
-     "name": "경주국립공원",
-     "distanceM": 372,
-     "lat": 35.801916,
-     "lon": 129.214889,
-     "fields": [
-      [
-       "장애인 화장실 유무",
-       "Y"
-      ]
-     ],
-     "no": 1
-    },
-    {
-     "kind": "toiletA",
      "src": "toiletStd",
      "name": "서남산 주차장",
      "distanceM": 487,
@@ -1863,7 +1864,7 @@
        "경상북도 경주시 포석로 647"
       ]
      ],
-     "no": 2
+     "no": 1
     },
     {
      "kind": "toiletA",
@@ -1898,7 +1899,7 @@
        "경상북도 경주시 배동 454-3"
       ]
      ],
-     "no": 3
+     "no": 2
     },
     {
      "kind": "toiletA",
@@ -1914,7 +1915,7 @@
       ]
      ],
      "contentId": "126208",
-     "no": 4
+     "no": 3
     },
     {
      "kind": "toilet",
@@ -1937,7 +1938,7 @@
        "경상북도 경주시 포석로 692-25"
       ]
      ],
-     "no": 5
+     "no": 4
     },
     {
      "kind": "toilet",
@@ -1948,7 +1949,7 @@
      "lon": 129.206852,
      "fields": [],
      "osm": "node/11434325754",
-     "no": 6
+     "no": 5
     },
     {
      "kind": "charger",
@@ -1984,12 +1985,12 @@
       ]
      ],
      "far": true,
-     "no": 7
+     "no": 6
     }
    ],
    "rest": [],
    "inRadius": {
-    "toiletA": 4,
+    "toiletA": 3,
     "toilet": 2,
     "parking": 0,
     "charger": 0,
@@ -2033,21 +2034,6 @@
     },
     {
      "kind": "toiletA",
-     "src": "bfCulture",
-     "name": "경주국립공원",
-     "distanceM": 446,
-     "lat": 35.801916,
-     "lon": 129.214889,
-     "fields": [
-      [
-       "장애인 화장실 유무",
-       "Y"
-      ]
-     ],
-     "no": 2
-    },
-    {
-     "kind": "toiletA",
      "src": "toiletStd",
      "name": "포석정",
      "distanceM": 702,
@@ -2079,7 +2065,7 @@
        "경상북도 경주시 배동 454-3"
       ]
      ],
-     "no": 3
+     "no": 2
     },
     {
      "kind": "toiletA",
@@ -2095,7 +2081,7 @@
       ]
      ],
      "contentId": "126208",
-     "no": 4
+     "no": 3
     },
     {
      "kind": "toilet",
@@ -2118,7 +2104,7 @@
        "경상북도 경주시 포석로 692-25"
       ]
      ],
-     "no": 5
+     "no": 4
     },
     {
      "kind": "toilet",
@@ -2129,7 +2115,7 @@
      "lon": 129.206852,
      "fields": [],
      "osm": "node/11434325754",
-     "no": 6
+     "no": 5
     },
     {
      "kind": "charger",
@@ -2165,12 +2151,12 @@
       ]
      ],
      "far": true,
-     "no": 7
+     "no": 6
     }
    ],
    "rest": [],
    "inRadius": {
-    "toiletA": 4,
+    "toiletA": 3,
     "toilet": 2,
     "parking": 0,
     "charger": 0,
@@ -9823,22 +9809,6 @@
     },
     {
      "kind": "toiletA",
-     "src": "korwith",
-     "name": "경주시 관광특구",
-     "distanceM": 210,
-     "lat": 35.832253,
-     "lon": 129.288867,
-     "fields": [
-      [
-       "화장실",
-       "장애인 화장실 있음"
-      ]
-     ],
-     "contentId": "1957348",
-     "no": 3
-    },
-    {
-     "kind": "toiletA",
      "src": "bfCulture",
      "name": "경주엑스포공원또봇정크아트뮤지엄",
      "distanceM": 210,
@@ -9850,7 +9820,7 @@
        "Y"
       ]
      ],
-     "no": 4
+     "no": 3
     },
     {
      "kind": "toiletA",
@@ -9865,12 +9835,27 @@
        "Y"
       ]
      ],
-     "no": 5
+     "no": 4
     },
     {
      "kind": "toiletA",
      "src": "bfCulture",
      "name": "경주엑스포대공원 천마의궁전",
+     "distanceM": 210,
+     "lat": 35.832253,
+     "lon": 129.288867,
+     "fields": [
+      [
+       "장애인 화장실 유무",
+       "Y"
+      ]
+     ],
+     "no": 5
+    },
+    {
+     "kind": "toiletA",
+     "src": "bfCulture",
+     "name": "국립정동극장 경주사업소",
      "distanceM": 210,
      "lat": 35.832253,
      "lon": 129.288867,
@@ -9932,7 +9917,7 @@
    ],
    "rest": [],
    "inRadius": {
-    "toiletA": 22,
+    "toiletA": 21,
     "toilet": 1,
     "parking": 0,
     "charger": 0,
@@ -10197,22 +10182,6 @@
    "items": [
     {
      "kind": "toiletA",
-     "src": "korwith",
-     "name": "경주시 관광특구",
-     "distanceM": 0,
-     "lat": 35.832253,
-     "lon": 129.288867,
-     "fields": [
-      [
-       "화장실",
-       "장애인 화장실 있음"
-      ]
-     ],
-     "contentId": "1957348",
-     "no": 1
-    },
-    {
-     "kind": "toiletA",
      "src": "bfCulture",
      "name": "경주엑스포공원또봇정크아트뮤지엄",
      "distanceM": 0,
@@ -10224,7 +10193,7 @@
        "Y"
       ]
      ],
-     "no": 2
+     "no": 1
     },
     {
      "kind": "toiletA",
@@ -10239,7 +10208,7 @@
        "Y"
       ]
      ],
-     "no": 3
+     "no": 2
     },
     {
      "kind": "toiletA",
@@ -10254,7 +10223,7 @@
        "Y"
       ]
      ],
-     "no": 4
+     "no": 3
     },
     {
      "kind": "toiletA",
@@ -10269,7 +10238,7 @@
        "Y"
       ]
      ],
-     "no": 5
+     "no": 4
     },
     {
      "kind": "toiletA",
@@ -10284,6 +10253,22 @@
        "Y"
       ]
      ],
+     "no": 5
+    },
+    {
+     "kind": "toiletA",
+     "src": "korwith",
+     "name": "경주세계문화엑스포 기념관",
+     "distanceM": 205,
+     "lat": 35.834015,
+     "lon": 129.289515,
+     "fields": [
+      [
+       "화장실",
+       "장애인 전용 화장실 있음(전시장 내, 공원에 각 1개씩)"
+      ]
+     ],
+     "contentId": "3307775",
      "no": 6
     },
     {
@@ -10336,7 +10321,7 @@
    ],
    "rest": [],
    "inRadius": {
-    "toiletA": 23,
+    "toiletA": 22,
     "toilet": 1,
     "parking": 0,
     "charger": 0,
@@ -11628,7 +11613,7 @@
     }
    ],
    "inRadius": {
-    "toiletA": 26,
+    "toiletA": 25,
     "toilet": 2,
     "parking": 0,
     "charger": 0,
