@@ -56,6 +56,7 @@ const R_BUBBLE = 20; // .bubble 4rem
 const R_SF = 8; // .sfMark 1.6rem(계단 없는 길 표시)
 const SF_APART = 10; // 계단 없는 길 표시에서 다른 점 가장자리는 제 점 가장자리보다 이만큼(px) 넘게 멀어야 한다(어느 점 표시인지 헷갈리지 않게)
 const MERGE = 44; // 화면에서 이 거리(px) 안의 점은 묶음 점 하나로(누름 영역 44px가 겹치지 않게)
+const HIT_GAP = 25; // 이 관광지 점과 묶음 점 사이(가로나 세로) 최소 거리: 가려지지 않는 누를 자리 24px 넘게
 const STEP = 1.6; // 확대 단추 한 번의 배율
 const LEGEND_GAP = 20; // 안쪽 범례와 지도 사이
 const CTRL = { right: 16, top: 16, w: 32, h: 32 * 3 }; // 오른쪽 위 + − ↻ (MapView.module.css .controls)
@@ -267,6 +268,23 @@ export default function MapView({
     if (hlPt) {
       const sp = toScreen(hlPt.b, vw);
       if (onScreen(sp, R_HL)) markers.push({ kind: "single", key: hlPt.p.id, p: hlPt.p, x: sp.x, y: sp.y, own: true, hl: true, emph: hlPt.emph });
+    }
+    // 이 관광지 점은 묶지 않고 따로 그려서, 묶음 점과 거의 같은 자리에 오면 묶음 점의 누를 자리가 가려진다.
+    // 그때는 묶음 점을 이 관광지 점에서 가로나 세로로 25px 떨어지게 비켜 놓는다(WCAG 2.5.8 누름 대상 크기 24px).
+    const hlM = markers.find((m) => m.kind === "single" && m.hl);
+    if (hlM) {
+      for (const m of markers) {
+        if (m.kind !== "group") continue;
+        const dx = m.x - hlM.x;
+        const dy = m.y - hlM.y;
+        if (Math.max(Math.abs(dx), Math.abs(dy)) >= HIT_GAP) continue;
+        const d = Math.hypot(dx, dy);
+        const ux = d ? dx / d : 0;
+        const uy = d ? dy / d : 1;
+        const k = HIT_GAP / Math.max(Math.abs(ux), Math.abs(uy));
+        m.x = hlM.x + ux * k;
+        m.y = hlM.y + uy * k;
+      }
     }
 
     // 이미 차지한 자리: 점, 묶음 점, 모서리의 방위표·축척(왼쪽 위), 오른쪽 위 단추, 안쪽 범례
