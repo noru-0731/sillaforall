@@ -43,6 +43,17 @@ export function nearby(p: Place, n = 9): NearPlace[] {
     .map((x) => ({ place: x.q, distM: p.approx || x.q.approx ? null : Math.round(x.d * 1000) }));
 }
 
+/** 서브메인 "연관 관광지"(09-28): 같은 연관 관광지 묶음(places.json cluster, 데이터랩 「중심-연관 관광지 지도」로 묶은 곳)의 다른 곳을
+ *  권역과 상관없이 가까운 차례로. 묶음이 없는 곳은 빈 목록 */
+export function hubMates(p: Place): NearPlace[] {
+  if (!p.cluster) return [];
+  return places
+    .filter((q) => q.cluster === p.cluster && q.id !== p.id)
+    .map((q) => ({ q, d: distKm(p, q) }))
+    .sort((a, b) => a.d - b.d)
+    .map((x) => ({ place: x.q, distM: p.approx || x.q.approx ? null : Math.round(x.d * 1000) }));
+}
+
 /** 직선거리 글: 1km 아래는 m(무장애 시안 "직선거리 131m" 꼴), 1km부터는 km 소수 한 자리 */
 export function fmtDist(m: number): string {
   return m < 1000 ? `${m.toLocaleString("ko-KR")}m` : `${(m / 1000).toFixed(1)}km`;

@@ -9,6 +9,9 @@ import { RouteTop, ToTop } from "@/components/layout/PageTop";
 import { AREA_LINKS, SITE_NAME } from "@/site/ia";
 import { areaPhoto, photoCreditOf } from "@/data/photos";
 import { SITE_DESC, SITE_OG, SITE_URL } from "@/site/og";
+// 방문 기록(09-28, 사용자 "알아서"): Vercel Web Analytics. 쿠키를 쓰지 않고 쪽 조회 수만 센다. 화면에 보이는 것은 없다.
+// 대시보드(프로젝트 gyeongju-guide > Analytics)에서 켜야 기록이 쌓인다.
+import { Analytics } from "@vercel/analytics/next";
 
 // 링크 미리보기(site/og.ts): 사이트 기본 og 제목·설명·사진·종류·언어와 트위터 카드. og:url 은 쪽마다 그 쪽 주소로 둔다(site/og.ts).
 export const metadata: Metadata = {
@@ -44,6 +47,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           </div>
           <RouteTop />
         </DisplaySettingsProvider>
+        <Analytics />
       </body>
     </html>
   );

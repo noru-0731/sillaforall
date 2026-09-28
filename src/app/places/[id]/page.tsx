@@ -48,10 +48,10 @@ import { parkingFill, toiletFill, walkFill, type Fill } from "@/data/fill";
 import { FillTail } from "@/components/place/FillText";
 import { Ph } from "@/components/layout/Ph";
 import ReadAloud from "@/components/layout/ReadAloud";
-import { nearestAccessibleToilet } from "@/data/bf";
+import { nearestWithin } from "@/data/bf";
 import { parseOpenRule, ruleShowsAnything } from "@/lib/openNow";
 import OpenNow from "@/components/place/OpenNow";
-import { anyPhoto, areaLabelOf, coverPhoto, fmtDist, nearby, nearbySlides, phoneOf, stripCredit, stripSlots } from "@/components/place/placeData";
+import { anyPhoto, areaLabelOf, coverPhoto, fmtDist, hubMates, nearby, nearbySlides, phoneOf, stripCredit, stripSlots } from "@/components/place/placeData";
 import NearbySlider from "@/components/place/NearbySlider";
 import PageSteps from "@/components/place/PageSteps";
 import { placeLand, SUBMAIN_TITLE_ID } from "@/components/place/landing";
@@ -111,7 +111,8 @@ export default async function PlaceSubmain({ params }: Props) {
     const text = fill && clean(bfLines(fill.text));
     return fill && text ? { value: text, tail: <FillTail src={fill.src} /> } : { value: null };
   };
-  const toiletA = nearestAccessibleToilet(p.id);
+  // 가까운 장애인 화장실: 직선 1km 안만(화장실 칸 채우기 data/fill.ts 와 같은 거리). 1km 밖이면 빈칸(05_사이트/11_안건_점선_문구.md 다11, 09-28 사용자 "알아서")
+  const toiletA = nearestWithin(p.id, "toiletA", 1000);
   const quick: {
     label: React.ReactNode;
     key: string;
@@ -149,6 +150,7 @@ export default async function PlaceSubmain({ params }: Props) {
     { small: "", big: dir.label, href: dir.href },
   ];
   const near = nearby(p, 9);
+  const hub = hubMates(p); // 연관 관광지 묶음의 다른 곳(묶음이 있는 9곳만)
   const slides = nearbySlides(p);
 
   return (
@@ -348,6 +350,29 @@ export default async function PlaceSubmain({ params }: Props) {
                 </li>
               ))}
             </ul>
+            {/* 09-28(사용자 "알아서"): 연관 관광지 묶음이 있는 9곳은 주변 관광지 아래에 같은 묶음 곳을 같은 줄 모양으로 싣는다.
+                제목은 메뉴 이름 '연관 관광지'(site/ia.ts), 둥근 단추는 그 메뉴 쪽(/list/hub)으로. 새로 지은 글은 없다 */}
+            {hub.length > 0 && (
+              <>
+                <div className={`${s.leftHead} ${s.leftHeadNext}`}>
+                  <h2 id="hub-tit">연관 관광지</h2>
+                  <CircleButton href="/list/hub" label="연관 관광지" />
+                </div>
+                <ul className={s.nearList} aria-labelledby="hub-tit">
+                  {hub.map(({ place: q, distM }) => (
+                    <li key={q.id}>
+                      <Link href={placeLand(q.id)}>
+                        <span className={s.nearName}>{q.name}</span>
+                        <span className={s.nearDong}>
+                          {q.dong}
+                          {distM !== null && <> · 직선거리 {fmtDist(distM)}</>}
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
           </div>
           <div className={s.right}>
             {slides.length ? (

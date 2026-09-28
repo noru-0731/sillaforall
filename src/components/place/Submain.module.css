@@ -356,6 +356,10 @@
   padding: 2rem 3rem;
   background: var(--rc-bg-bar);
 }
+/* 주변 관광지 아래 둘째 머리(연관 관광지, 09-28): 위 목록과 30 띄움 */
+.leftHeadNext {
+  margin-top: 3rem;
+}
 .leftHead {
   display: flex;
   align-items: center;

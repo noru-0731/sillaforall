@@ -169,6 +169,7 @@ export default async function PlaceBarrierFree({ params }: Props) {
         {groups.length === 0 && <SourceLines lines={[BF_CREDIT]} />}
       </>
     ) : (
+      <>
       <ul className={s.boxes}>
         <Box icon="wheelchair" title="무장애 여행 정보">
           등록된 무장애 여행 정보가 없습니다.
@@ -186,6 +187,20 @@ export default async function PlaceBarrierFree({ params }: Props) {
           </Box>
         )}
       </ul>
+      {/* 09-28(사용자 "알아서"): 미등록 곳도 관람 도우미와 같은 채운 값(data/fill.ts, 자료 꼬리)을 세 상자로 보인다.
+          관람 도우미의 접근로·화장실 칸이 이 쪽으로 이어지는데, 전에는 '등록된 … 없습니다'만 있어 값이 끊겼다. 값이 없으면 빈칸 */}
+      <ul className={`${s.boxes} ${s.boxesNext}`}>
+        <Box icon="parking" title="주차">
+          <FillText fill={parkingFill(p)} />
+        </Box>
+        <Box icon="walk" title="접근로">
+          <FillText fill={walkFill(p)} />
+        </Box>
+        <Box icon="toilet" title="화장실">
+          <FillText fill={toiletFill(p)} />
+        </Box>
+      </ul>
+      </>
     ),
   });
 
