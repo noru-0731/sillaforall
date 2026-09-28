@@ -176,7 +176,9 @@ export function nearestAccessibleToilet(id: string): AmenityItem | null {
 
 /** 구역 전체를 좌표 한 점으로 올린 무장애 기록(도구/06_편의시설.py AREA_RECORDS 와 같음). 직선거리가 실제 거리가 아니라 '가장 가까운 곳'으로 고르지 않는다 */
 const AREA_RECORDS = new Set(["1957348"]); // 경주시 관광특구
-const isAreaRecord = (i: AmenityItem) => !!i.contentId && AREA_RECORDS.has(i.contentId);
+// 배리어프리 문화예술관광지의 '경주국립공원'도 공원 전체를 한 점으로 올린 기록이다(콘텐츠 번호 없음, 09-28: 삼불사 가까운 장애인 화장실로 뽑히던 것을 뺌)
+const AREA_NAMES = new Set(["경주국립공원"]);
+const isAreaRecord = (i: AmenityItem) => (!!i.contentId && AREA_RECORDS.has(i.contentId)) || (i.src === "bfCulture" && AREA_NAMES.has(i.name ?? ""));
 
 /** 이 거리(m) 안에서 가장 가까운 한 곳(종류별, 빈 칸 채우기 data/fill.ts). 찾는 거리 밖이라 가장 가까운 한 곳으로 실린 것(far)은 뺀다 */
 
