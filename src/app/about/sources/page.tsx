@@ -183,7 +183,7 @@ export default function SourcesPage() {
           이용허락 칸은 다른 칸과 같이 빈칸(09-27 "나머지는 그냥 비워요") */}
       <Section id="datalab" title="한국관광 데이터랩">
         <BoardTable
-          caption="관광지 목록과 연관 관광지에 쓴 한국관광 데이터랩 자료: 자료, 제공 기관, 이용허락, 기준일, 주소"
+          caption="관광지 목록, 연관 관광지, 보완 순위에 쓴 한국관광 데이터랩 자료: 자료, 제공 기관, 이용허락, 기준일, 주소"
           head={["자료", "제공 기관", "이용허락", "기준일", "주소"]}
           cols={["24%", "18%", "20%", "14%", "auto"]}
           align={["l", "l", "l", "c", "l"]}
@@ -206,6 +206,16 @@ export default function SourcesPage() {
                 datalab.visitkorea.or.kr
               </OutLink>,
             ],
+            // 09-29: 관광지마다 '내비게이션 목적지 검색량 추이'(달마다 검색 건수). CSV 보완 순서·보완 순위에만 쓰고 값은 싣지 않는다
+            [
+              "관광지별 분석",
+              "한국관광공사",
+              "",
+              "2026년 1~8월",
+              <OutLink key="u" href="https://datalab.visitkorea.or.kr">
+                datalab.visitkorea.or.kr
+              </OutLink>,
+            ],
           ]}
         />
       </Section>
@@ -223,7 +233,7 @@ export default function SourcesPage() {
               <Ph key="n">관광지 61곳 무장애 정보(CSV)</Ph>,
               "누구나 신라",
               "",
-              "2026-09-28",
+              "2026-09-29",
               <a key="u" href="/sillaforall-61.csv" download className={s.outLink}>
                 sillaforall-61.csv
               </a>,
@@ -231,11 +241,12 @@ export default function SourcesPage() {
             // 09-28 밤: 전국 256개 시군구 관광지 6,683곳(데이터랩 관광지별 성/연령 방문 집중률 2026년 1~8월, 관광정보 목록 안)의
             // 구분(노년층 중심·세대 공통·청년층 중심)과 무장애 여행 정보 등록 여부. 데이터랩 비중 값은 싣지 않는다.
             // 만든 곳: 12차/산출/전국_집중률_대조(fetch.mjs, analyze.py) → public/sillaforall-national.csv
+            // 09-29: 끝 칸 '보완 순위'(노년층 중심 미등록 2,361곳, 「관광지별 분석」 내비게이션 목적지 검색량 × 60대 이상 비중 순). 12차/산출/전국_검색량(make_csv.py)
             [
               <Ph key="n">전국 관광지 무장애 정보 등록(CSV)</Ph>,
               "누구나 신라",
               "",
-              "2026-09-28",
+              "2026-09-29",
               <a key="u" href="/sillaforall-national.csv" download className={s.outLink}>
                 sillaforall-national.csv
               </a>,

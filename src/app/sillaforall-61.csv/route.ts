@@ -14,9 +14,10 @@ export const dynamic = "force-static";
 const SITE = "https://sillaforall.vercel.app";
 const BF_NAME = "한국관광공사 무장애 여행 정보";
 const SIDE = { old: "노년층 중심", mid: "세대 공통", young: "청년층 중심" } as const;
-// 보완 순서는 서식4 본문과 같게: 60대 이상 검색 상위 30곳 안 미등록 두 곳(문무대왕릉 p29, 골굴사 p09)이 1,
-// 나머지 우선순위 곳(노년층 중심 미등록 12곳, 기본 3항목을 못 채운 기림사·옥산서원, places.json plan 이 있는 곳)이 2. 모두 16곳
-const FIRST: Record<string, true> = { p29: true, p09: true };
+// 보완 순서는 서식4 본문과 같게(09-29): 보완 우선순위 16곳(문무대왕릉, 노년층 중심 미등록 13곳, 기본 3항목을 못 채운 기림사·옥산서원)을
+// 데이터랩 「관광지별 분석」 내비게이션 목적지 검색량(2026년 1~8월 합) × 60대 이상 비중(집중률) 큰 순으로 1~16.
+// 화랑의언덕은 검색량 자료가 없어 끝. 계산은 04_분석_경주 노년/12차/산출/전국_검색량(fetch.mjs, gj61.py)
+const ORDER: Record<string, number> = { p29: 1, p04: 2, p08: 3, p09: 4, p02: 5, p10: 6, p16: 7, p06: 8, p14: 9, p03: 10, p17: 11, p05: 12, p18: 13, p12: 14, p07: 15, p01: 16 };
 
 const srcName = (key: string) => (SOURCES as Record<string, { name: string }>)[key]?.name ?? key;
 
@@ -46,7 +47,7 @@ function row(p: Place): string[] {
     p.contact ?? "",
     SIDE[p.side],
     p.registered ? "등록" : "미등록",
-    p.id in FIRST ? "1" : p.plan ? "2" : "",
+    ORDER[p.id] ? String(ORDER[p.id]) : "",
     ...parking,
     ...walk,
     ...toilet,
