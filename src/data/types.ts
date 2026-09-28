@@ -10,7 +10,7 @@ export type Place = {
   area: string | null; // 시내동 / 읍면 / 관광동
   side: Side;
   share60: number; // 60대 이상 몫(%) 2026년 1~8월
-  share60prev: number; // 60대 이상 몫(%) 2025년
+  share60prev: number | null; // 60대 이상 몫(%) 2025년. 2025년 값이 없는 곳(경주남산, 09-28 61곳에 듦)은 null. 사이트 화면은 이 칸을 쓰지 않는다
   share2030: number; // 20·30대 몫(%) 2026년 1~8월
   registered: boolean; // 한국관광공사 무장애 여행 정보에 올라 있는지(무장애 정보가 있는 곳)
   filled: number; // 28항목 가운데 글이 적힌 항목 수

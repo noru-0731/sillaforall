@@ -44,7 +44,7 @@ export const areas: Area[] = AREA_DEFS.map((a) => {
 
 export const areaByKey = (k: string) => areas.find((a) => a.key === k);
 
-// 우편번호: 관광공사 관광정보(detailCommon2 zipcode)에서 꺼낸 다섯 자리(도구/05_우편번호.py). 없는 곳 7곳은 null.
+// 우편번호: 관광공사 관광정보(detailCommon2 zipcode)에서 꺼낸 다섯 자리(도구/05_우편번호.py). 없는 곳 6곳은 null.
 const ZIPS = zipRaw as Record<string, string>;
 /** 관광지 우편번호(다섯 자리). 없으면 null */
 export const zipOf = (id: string): string | null => ZIPS[id] ?? null;

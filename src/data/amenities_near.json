@@ -1732,6 +1732,90 @@
     "shelter": 0
    }
   },
+  "p62": {
+   "name": "남산",
+   "items": [
+    {
+     "kind": "toiletA",
+     "src": "bfCulture",
+     "name": "경주국립공원",
+     "distanceM": 1641,
+     "lat": 35.801916,
+     "lon": 129.214889,
+     "fields": [
+      [
+       "장애인 화장실 유무",
+       "Y"
+      ]
+     ],
+     "far": true,
+     "no": 1
+    },
+    {
+     "kind": "toilet",
+     "src": "osm",
+     "name": null,
+     "distanceM": 113,
+     "lat": 35.788884,
+     "lon": 129.223996,
+     "fields": [],
+     "osm": "way/1384208130",
+     "no": 2
+    },
+    {
+     "kind": "charger",
+     "src": "charger",
+     "name": "경주시 교통약자 이동지원센터",
+     "distanceM": 7043,
+     "lat": 35.851768,
+     "lon": 129.228792,
+     "fields": [
+      [
+       "설치장소설명",
+       "1층 현관"
+      ],
+      [
+       "평일운영시각",
+       "09:00~18:00"
+      ],
+      [
+       "토요일운영시각",
+       "00:00~00:00"
+      ],
+      [
+       "공휴일운영시각",
+       "00:00~00:00"
+      ],
+      [
+       "동시사용가능대수",
+       1
+      ],
+      [
+       "관리기관전화번호",
+       "054-777-2811"
+      ]
+     ],
+     "far": true,
+     "no": 3
+    }
+   ],
+   "rest": [
+    {
+     "kind": "bench",
+     "lat": 35.788842,
+     "lon": 129.22287,
+     "distanceM": 26
+    }
+   ],
+   "inRadius": {
+    "toiletA": 0,
+    "toilet": 1,
+    "parking": 0,
+    "charger": 0,
+    "bench": 1,
+    "shelter": 0
+   }
+  },
   "p16": {
    "name": "삼불사",
    "items": [
@@ -4243,73 +4327,6 @@
    "inRadius": {
     "toiletA": 9,
     "toilet": 5,
-    "parking": 0,
-    "charger": 0,
-    "bench": 0,
-    "shelter": 0
-   }
-  },
-  "p35": {
-   "name": "마우나오션리조트",
-   "items": [
-    {
-     "kind": "toiletA",
-     "src": "korwith",
-     "name": "관성솔밭해변",
-     "distanceM": 7932,
-     "lat": 35.6597,
-     "lon": 129.4522,
-     "fields": [
-      [
-       "화장실",
-       "장애인 전용 화장실 있음(해변 공중화장실)"
-      ]
-     ],
-     "contentId": "1621854",
-     "far": true,
-     "no": 1
-    },
-    {
-     "kind": "charger",
-     "src": "charger",
-     "name": "외동읍행정복지센터",
-     "distanceM": 5341,
-     "lat": 35.717248,
-     "lon": 129.327057,
-     "fields": [
-      [
-       "설치장소설명",
-       "1층 현관"
-      ],
-      [
-       "평일운영시각",
-       "09:00~18:00"
-      ],
-      [
-       "토요일운영시각",
-       "00:00~00:00"
-      ],
-      [
-       "공휴일운영시각",
-       "00:00~00:00"
-      ],
-      [
-       "동시사용가능대수",
-       1
-      ],
-      [
-       "관리기관전화번호",
-       "054-779-8130"
-      ]
-     ],
-     "far": true,
-     "no": 2
-    }
-   ],
-   "rest": [],
-   "inRadius": {
-    "toiletA": 0,
-    "toilet": 0,
     "parking": 0,
     "charger": 0,
     "bench": 0,

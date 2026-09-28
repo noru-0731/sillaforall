@@ -36,7 +36,7 @@
   display: flex;
   width: fit-content;
   max-width: 100%;
-  overflow-wrap: anywhere; /* 글자 크게 + 좁은 폭에서 긴 이름(마우나오션리조트 등)이 옆 칸과 겹치거나 화면 밖으로 나가지 않게(.d3 a와 같음) */
+  overflow-wrap: anywhere; /* 글자 크게 + 좁은 폭에서 긴 이름(나정고운모래해변 등)이 옆 칸과 겹치거나 화면 밖으로 나가지 않게(.d3 a와 같음) */
   align-items: center;
   font-size: 1.8rem;
   font-weight: 500;

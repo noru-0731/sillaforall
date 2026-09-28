@@ -123,7 +123,7 @@
   font-weight: 500;
   line-height: 1.8rem;
   color: var(--rc-text-faint);
-  overflow-wrap: anywhere; /* 글자 가장 크게에서 긴 이름(마우나오션리조트 등)이 칸 밖으로 나가지 않게 */
+  overflow-wrap: anywhere; /* 글자 가장 크게에서 긴 이름(나정고운모래해변 등)이 칸 밖으로 나가지 않게 */
 }
 .mList .mLink::before {
   content: "";
