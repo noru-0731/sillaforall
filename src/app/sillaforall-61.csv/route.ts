@@ -13,6 +13,9 @@ export const dynamic = "force-static";
 const SITE = "https://sillaforall.vercel.app";
 const BF_NAME = "한국관광공사 무장애 여행 정보";
 const SIDE = { old: "노년층 중심", mid: "세대 공통", young: "청년층 중심" } as const;
+// 보완 순서는 서식4 본문과 같게: 60대 이상 검색 상위 30곳 안 미등록 두 곳(문무대왕릉 p29, 골굴사 p09)이 1,
+// 나머지 우선순위 곳(노년층 중심 미등록 12곳, 기본 3항목을 못 채운 기림사·옥산서원, places.json plan 이 있는 곳)이 2. 모두 16곳
+const FIRST: Record<string, true> = { p29: true, p09: true };
 
 const srcName = (key: string) => (SOURCES as Record<string, { name: string }>)[key]?.name ?? key;
 
@@ -42,7 +45,7 @@ function row(p: Place): string[] {
     p.contact ?? "",
     SIDE[p.side],
     p.registered ? "등록" : "미등록",
-    p.plan ? `${p.plan}차` : "",
+    p.id in FIRST ? "1" : p.plan ? "2" : "",
     ...parking,
     ...walk,
     ...toilet,
@@ -59,7 +62,7 @@ const HEAD = [
   "문의 전화",
   "구분(2026년 1~8월)",
   "한국관광공사 무장애 여행 정보(2026-09-13 목록)",
-  "보완 차례",
+  "보완 순서",
   "주차",
   "주차 자료",
   "접근로",
