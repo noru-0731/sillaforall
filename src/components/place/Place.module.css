@@ -555,6 +555,10 @@
 .bfHead .mapCon + .bfIcons {
   margin-top: 3rem;
 }
+/* 문의 전화 줄 아래 관광정보 수정요청 줄(09-28 밤) */
+.bfHead .mapCon + .mapCon {
+  margin-top: 2rem;
+}
 /* 그림 줄(카카오맵 매장 정보: 그림 위, 칸 이름 아래). 그림은 세 상자와 같은 36, 이름은 본문 16px. 선은 세 상자와 같은 윗선 2px·아랫선 1px */
 .bfIcons {
   display: grid;

@@ -40,6 +40,8 @@ import { StepFreeOnPlace } from "@/components/place/StepFree";
 import { parkingFirst } from "@/components/place/amenityOrder";
 import { menuPage } from "@/components/place-list/helpers";
 import { STEPFREE_HREF, stepFreeOf } from "@/data/stepfree";
+import { GUGSEOK_NAME, gugseokUrl } from "@/data/gugseok";
+import { NewWinIcon } from "@/components/layout/NewWin";
 import s from "@/components/place/Place.module.css";
 
 type Props = { params: Promise<{ id: string }> };
@@ -132,6 +134,7 @@ export default async function PlaceBarrierFree({ params }: Props) {
   const am = amenitiesOf(p.id);
   const items = parkingFirst(am?.items ?? []); // deck 갈래: 공영주차장을 맨 앞 종류로(오시는 길 번호와 같게)
   const tel = phoneOf(p.contact);
+  const gg = gugseokUrl(p.id);
   const fields = bfFilledFieldsOf(p.id);
   const gj = gjOf(p.id);
 
@@ -376,7 +379,7 @@ export default async function PlaceBarrierFree({ params }: Props) {
 
   return (
     <SubPage crumbs={placeCrumbs(p, page)} title={page.label} banner={PLACE_BANNER} sideMenu={placeSideMenu(p)} current={page.href}>
-      {(p.contact || fields.length > 0) && (
+      {(p.contact || gg || fields.length > 0) && (
         <div className={s.bfHead}>
           {/* 가10 문의 전화: 오시는 길 '연락처' 줄과 같은 모양, 관광정보 문의 글 그대로(번호만 전화 걸기 링크) */}
           {p.contact && (
@@ -393,6 +396,20 @@ export default async function PlaceBarrierFree({ params }: Props) {
                 ) : (
                   p.contact
                 )}
+              </p>
+            </div>
+          )}
+          {/* 09-28 밤: 대한민국 구석구석의 이 관광지 쪽(새 창). 그 쪽의 '관광정보 수정요청' 단추로 빈칸 보완을 한국관광공사에 요청할 수 있다.
+              줄 이름은 구석구석 단추 이름, 링크 글은 누리집 이름 그대로(새로 지은 글 없음). 모양은 위 문의 전화 줄과 같다. 58곳(data/gugseok.ts) */}
+          {gg && (
+            <div className={s.mapCon}>
+              <Icon name="info" size={18} strokeWidth={2} />
+              <p className={s.mapConTit}>관광정보 수정요청</p>
+              <p className={s.mapConTxt}>
+                <a href={gg} target="_blank" rel="noopener noreferrer">
+                  {GUGSEOK_NAME}
+                  <NewWinIcon />
+                </a>
               </p>
             </div>
           )}

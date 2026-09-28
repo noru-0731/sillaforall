@@ -7,6 +7,7 @@ import type { Place } from "@/data";
 import { parkingFill, toiletFill, walkFill, type Fill } from "@/data/fill";
 import { nearestWithin, SOURCES } from "@/data/bf";
 import { GJ_SOURCE } from "@/data/gj";
+import { gugseokUrl } from "@/data/gugseok";
 
 export const dynamic = "force-static";
 
@@ -53,6 +54,7 @@ function row(p: Place): string[] {
     t ? String(t.distanceM) : "",
     t ? srcName(t.src) : "",
     `${SITE}/places/${p.id}`,
+    gugseokUrl(p.id) ?? "",
   ];
 }
 
@@ -73,6 +75,7 @@ const HEAD = [
   "직선거리(m)",
   "가까운 장애인 화장실 자료",
   "누구나 신라 주소",
+  "대한민국 구석구석 주소(관광정보 수정요청)",
 ];
 
 const esc = (v: string) => {
