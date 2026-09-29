@@ -152,7 +152,7 @@ export default function BarrierFreeGuidePage() {
               ["전체", total],
               ["무장애 정보가 있는 곳", registered.length],
               ["무장애 정보가 없는 곳", unregistered.length],
-              ...THREE_KEYS.map((k) => [THREE_TEXT[k], filled(k)]),
+              ...THREE_KEYS.map((k) => [k === "walk" ? `${THREE_TEXT.walk}(또는 출입통로)` : THREE_TEXT[k], filled(k)]), // 09-29: 접근로 글이 없으면 출입통로 글로 센다(참고자료 표 3-2 범례와 같은 이름)
             ]}
           />
         </div>
