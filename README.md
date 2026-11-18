@@ -1,36 +1,37 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 누구나 신라
 
-## Getting Started
+경주 관광지 61곳의 위치와 무장애 정보를 한곳에 모은 안내 누리집입니다. 2026년 9월 한국관광 데이터랩 활용 경진대회에 내려고 만들었습니다.
 
-First, run the development server:
+배포 주소: https://sillaforall.vercel.app
+
+## 만든 이유
+
+한국관광 데이터랩 자료로 경주 관광지별 방문자의 세대 구성을 2025년과 2026년으로 비교하니, 60대 이상 방문자의 몫이 오른 관광지가 많았습니다. 그런데 노년층이 많이 찾는 관광지일수록 한국관광공사 무장애 여행 정보에 등록되지 않은 곳이 많았습니다. 휠체어나 유모차로 갈 수 있는지, 장애인 화장실과 주차장이 있는지를 찾기 어려운 곳이 노년층이 가는 곳에 몰려 있었습니다. 그래서 61곳의 무장애 정보를 모으고, 비어 있던 칸을 공식 자료와 사진으로 채워 보여 주는 누리집을 만들었습니다.
+
+## 할 수 있는 일
+
+- 권역별 지도(보문, 시내, 불국사, 동해안, 남산, 서악·북부)에서 관광지를 고릅니다.
+- 관광지마다 접근로, 주차, 화장실, 출입구 같은 무장애 항목과 사진, 찾아가는 길을 봅니다.
+- 무장애 정보 보는 법과 항목별 요약표가 있습니다.
+- 글자 크기와 선명한 화면 모드를 바꿀 수 있습니다. 화면 틀은 정부 디지털 서비스 디자인 시스템(KRDS)을 따랐습니다.
+
+## 자료
+
+- 한국관광 데이터랩(관광지별 세대 구성)
+- 한국관광공사 TourAPI(관광지 목록, 무장애 정보)
+- 사진은 경주시정뉴스(공공누리 제1유형)와 위키미디어 공용(CC BY-SA) 자료를 썼고, 출처를 사이트의 자료 출처 쪽에 적었습니다.
+
+## 만든 방법
+
+- Next.js 16, React 19, TypeScript, 카카오 지도.
+- 자료 분석과 기획은 팀이 함께 했고, 누리집 구현은 김동훈이 AI 코딩 도구(Claude Code)로 진행했습니다.
+- 이 화면 틀은 뒤에 만든 해치동행 시제품에서도 다시 썼습니다.
+
+## 실행
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+지도를 띄우려면 `.env.local`에 `NEXT_PUBLIC_KAKAO_MAP_KEY`(카카오 JavaScript 키)를 넣습니다.
